@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Linux">
+      <UniqueIdentifier>{66f0fb62-04e7-42ef-915e-45d7c375870a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ProcessThread">
+      <UniqueIdentifier>{455e1498-fbfb-4b86-9b89-37096e03fe51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TransmitData">
+      <UniqueIdentifier>{6802e797-7a96-4be9-a840-55841bbe7a55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Transaction">
+      <UniqueIdentifier>{8e04dd52-051c-4300-a43c-c0c6ea8af154}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\code\application\Application.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\xSys\xSys_win32.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\xCardOpera\xCardOpera_win32.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\debug\debugOut.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\xStorage\xStorage.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\xConfig\xAppConfig.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\xSys\xSys_linux.c">
+      <Filter>Linux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\peripheral\modulePeripheral.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\ProcessThread\ManageThread.c">
+      <Filter>ProcessThread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\TransmitData\TransmitData.c">
+      <Filter>TransmitData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\TransmitData\xCom_win32.c">
+      <Filter>TransmitData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\TransmitData\xCom_linux.c">
+      <Filter>Linux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\TransmitData\xSharedMemory_win32.c">
+      <Filter>TransmitData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\TransmitData\xSharedMemory_linux.c">
+      <Filter>Linux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\TransmitData\xSocketClient.c">
+      <Filter>TransmitData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\peripheral\xDev_win32.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\peripheral\xDev_linux.c">
+      <Filter>Linux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\transaction\Transaction_M1.c">
+      <Filter>Transaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\transaction\SecuritySam.c">
+      <Filter>Transaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\transaction\Transaction.c">
+      <Filter>Transaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\TransmitData\xThreadQueue.c">
+      <Filter>TransmitData</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\code\application\Application.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\xSys\xSys.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\xCardOpera\xCardOpera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\xStorage\xStorage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\public\debugOut.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\xConfig\xAppConfig.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\peripheral\modulePeripheral.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\public\ManageThread.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\public\ExchangeDataPT.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\TransmitData\xCom.h">
+      <Filter>TransmitData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\TransmitData\xSharedMemory.h">
+      <Filter>TransmitData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\TransmitData\xSocketClient.h">
+      <Filter>TransmitData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\peripheral\xDev.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\transaction\Transaction_M1.h">
+      <Filter>Transaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\transaction\SecuritySam.h">
+      <Filter>Transaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\transaction\Transaction.h">
+      <Filter>Transaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\TransmitData\xThreadQueue.h">
+      <Filter>TransmitData</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

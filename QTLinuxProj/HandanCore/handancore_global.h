@@ -1,0 +1,12 @@
+#ifndef HANDANCORE_GLOBAL_H
+#define HANDANCORE_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(HANDANCORE_LIBRARY)
+#  define HANDANCORESHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define HANDANCORESHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // HANDANCORE_GLOBAL_H
