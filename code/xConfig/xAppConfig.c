@@ -115,6 +115,7 @@ int installAfcParam(char curPath[]) {
 	//bzero(&LNT_Para, sizeof(LNT_Para));
 	memset(&DivInfo, 0x00, sizeof(DivInfo));
 
+#if 0
 	ReadParam(BIT_IS_FIRST_FLAG, Param.IsFirstFlag, 4);//读初始化标志
 
 	if (memcmp(Param.IsFirstFlag, "ZZ02", 4) != 0)//初始化标志判断
@@ -227,8 +228,9 @@ int installAfcParam(char curPath[]) {
 	CFG_LoadFile(CFG_WHT, false);
 	CFG_LoadFile(CFG_WPB, false);
 	CFG_LoadFile(CFG_PRI, false);
+#endif
 
-	return true;
+	return BOOL_TRUE;
 }
 
 #if SPLIT_BAR	// other buffer

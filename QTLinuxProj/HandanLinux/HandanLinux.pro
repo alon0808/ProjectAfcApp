@@ -10,12 +10,23 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = HandanLinux
 TEMPLATE = app
-CFLAGS = -Wno-psabi
+QMAKE_CFLAGS += -Wno-psabi
+DEFINES += _linux_
 
+INCLUDEPATH += ../../code/public
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    ui_accessinterface.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    ui_accessinterface.h
 
 FORMS    += mainwindow.ui
+
+unix:!macx: LIBS += -L$$PWD/../Bin/ -lUtilProStaic
+
+INCLUDEPATH += $$PWD/../Bin
+DEPENDPATH += $$PWD/../Bin
+
+unix:!macx: PRE_TARGETDEPS += $$PWD/../Bin/libUtilProStaic.a

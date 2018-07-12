@@ -25,6 +25,9 @@
     <Filter Include="Transaction">
       <UniqueIdentifier>{8e04dd52-051c-4300-a43c-c0c6ea8af154}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Linux\QtUI">
+      <UniqueIdentifier>{0e47496b-7ded-42b8-b436-3146015ead9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -93,6 +96,12 @@
     <ClCompile Include="..\..\code\TransmitData\xThreadQueue.c">
       <Filter>TransmitData</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\QTLinuxProj\HandanLinux\main.cpp">
+      <Filter>Linux\QtUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\QTLinuxProj\HandanLinux\mainwindow.cpp">
+      <Filter>Linux\QtUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\code\application\Application.h">
@@ -146,5 +155,13 @@
     <ClInclude Include="..\..\code\TransmitData\xThreadQueue.h">
       <Filter>TransmitData</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\QTLinuxProj\HandanLinux\mainwindow.h">
+      <Filter>Linux\QtUI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\QTLinuxProj\HandanLinux\mainwindow.ui">
+      <Filter>Linux\QtUI</Filter>
+    </None>
   </ItemGroup>
 </Project>

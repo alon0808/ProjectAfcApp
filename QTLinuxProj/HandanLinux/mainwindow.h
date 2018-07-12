@@ -5,6 +5,7 @@
 
 namespace Ui {
 class MainWindow;
+//static MainWindow *s_mainUI;
 }
 
 class MainWindow : public QMainWindow
@@ -14,11 +15,13 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
 private:
-    void resizeEvent(QResizeEvent * event);
+    void QResizeEvent(const QSize &size, const QSize &oldSize);
 
 private:
     Ui::MainWindow *ui;
+    //static Ui::MainWindow *s_mainUI;
 };
 
 #endif // MAINWINDOW_H

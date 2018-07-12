@@ -1,12 +1,12 @@
 #include "Macro_Proj.h"
 #include "Transaction.h"
 #include "UtilityProc.h"
+#include "xCardOpera.h"
 //#define _MODULE_PERIPHERAL_N_FUNCTION_C
 #include "modulePeripheral.h"
 #include "Transaction_M1.h"
 #include "SecuritySam.h"
 //#define _XCARD_OPERA_N_FUNCTION_C
-#include "xCardOpera.h"
 
 
 #include <string.h>

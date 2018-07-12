@@ -11,8 +11,8 @@
 #include <string.h>
 #include <Tlhelp32.h>
 
-#pragma comment(lib,"E:\\三联众瑞项目文件夹\\afcapp\\vs2015\\Debug\\UtilPro.lib")
-#pragma comment(lib,"E:\\三联众瑞项目文件夹\\afcapp\\vs2015\\Debug\\SystemRelation.lib")
+#pragma comment(lib,"E:\\三联众瑞项目文件夹\\afcapp\\ProjectAfcApp\\vs2015\\Debug\\UtilPro.lib")
+#pragma comment(lib,"E:\\三联众瑞项目文件夹\\afcapp\\ProjectAfcApp\\vs2015\\Debug\\SystemRelation.lib")
 
 #define POS_BUF_TYPE	0
 #define POS_BUF_PARAM	1
