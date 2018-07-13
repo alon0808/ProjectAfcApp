@@ -20,14 +20,81 @@
 
 #define PeripheralRAMSize	500
 
-extern TUINT32 ProcModulePeripheral(TLPVOID params);
+// declare static function
+static TUINT32 ProcModulePeripheral(TLPVOID params);
 
 static TLPVOID s_threadDisplay = NULL;
 static TUINT32 s_threadDisplayId = 0;
 static int s_hSharedMoery = REF_INVALID;
 static int s_hSharedMoeryWatchDog = REF_INVALID;
-static char *s_pDataBuffer = NULL;
+static unsigned char *s_pDataBuffer = NULL;
 static volatile int s_threadDisplayStatus = TS_Invalid;
+
+
+
+static TUINT32 ProcModulePeripheral(TLPVOID params) {
+
+    char *curPath = (char *)params;
+    unsigned char *pDataBuf = NULL;;
+    //int len = 0;
+    int tmpI, tmpI1, tmpI2;
+    char *pTmpCh = NULL;
+    int pos = 0;
+    int retcode = 0;
+    stDataBuffer stData;
+    //	char aaaa[1000];
+
+    PRINT_DEBUG("ProcModulePeripheral(curPath):%s", curPath);
+
+    s_threadDisplayStatus = TS_Running;
+    stData.pBuffer = s_pDataBuffer;
+
+    while (curPath != NULL)
+    {
+        stData.blen = PeripheralRAMSize;
+        //pDataBuf = s_pDataBuffer;
+        retcode = readData(s_hSharedMoery, &stData);
+        if (retcode == Ret_OK) {
+
+            pDataBuf = stData.pBuffer;
+            switch (pDataBuf[POS_BUF_TYPE])
+            {
+            case PT_Display:
+                pos = POS_BUF_PARAM;
+                tmpI = GET_INT32(pDataBuf + pos);
+                pos += 4;
+                tmpI1 = GET_INT32(pDataBuf + pos);
+                pos += 4;
+                tmpI2 = GET_INT32(pDataBuf + pos);
+                pos += 4;
+                pTmpCh = (char *)pDataBuf + pos;
+#if SWITCH_DEBUG_UI
+                sprintf(pDataBuf + len, "%d,%d,%d,%s", tmpI, tmpI1, tmpI2, pTmpCh);
+                PRINT_DEBUG(pDataBuf + len);
+#endif
+                ShowInUI(tmpI, tmpI1, pTmpCh, tmpI2);
+                break;
+            default:
+                break;
+            }
+        }
+        else if (retcode == Ret_Err_Fatal) {	// need to realloc the share memory
+            uninstallHandle(s_hSharedMoery);
+            s_hSharedMoery = initSharedMemory(SharedMemoryName, 0x00, 50);
+            if (s_hSharedMoery < 0) {
+                return Ret_Error;
+            }
+        }
+        PRINT_INFOR("xUsleep");
+        //xUsleep(50);
+    }
+    s_threadDisplayStatus = TS_Terminate;
+
+    PRINT_INFOR("ProcModulePeripheral exit");
+    return 0;
+}
+
+
 
 /**
 * @Description - start application, start thread
@@ -117,69 +184,6 @@ int feedWatchDog(void) {
 
 	return retCode;
 }
-
-static TUINT32 ProcModulePeripheral(TLPVOID params) {
-
-	char *curPath = (char *)params;
-	char *pDataBuf = NULL;;
-	//int len = 0;
-	int tmpI, tmpI1, tmpI2;
-	char *pTmpCh = NULL;
-	int pos = 0;
-	int retcode = 0;
-	stDataBuffer stData;
-	//	char aaaa[1000];
-
-	PRINT_DEBUG("ProcModulePeripheral(curPath):%s", curPath);
-
-	s_threadDisplayStatus = TS_Running;
-	stData.pBuffer = s_pDataBuffer;
-
-	while (curPath != NULL)
-	{
-		stData.blen = PeripheralRAMSize;
-		//pDataBuf = s_pDataBuffer;
-		retcode = readData(s_hSharedMoery, &stData);
-		if (retcode == Ret_OK) {
-			
-			pDataBuf = stData.pBuffer;
-			switch (pDataBuf[POS_BUF_TYPE])
-			{
-			case PT_Display:
-				pos = POS_BUF_PARAM;
-				tmpI = GET_INT32(pDataBuf + pos);
-				pos += 4;
-				tmpI1 = GET_INT32(pDataBuf + pos);
-				pos += 4;
-				tmpI2 = GET_INT32(pDataBuf + pos);
-				pos += 4;
-				pTmpCh = pDataBuf + pos;
-#if SWITCH_DEBUG_UI
-				sprintf(pDataBuf + len, "%d,%d,%d,%s", tmpI, tmpI1, tmpI2, pTmpCh);
-				PRINT_DEBUG(pDataBuf + len);
-#endif
-				ShowInUI(tmpI, tmpI1, pTmpCh, tmpI2);
-				break;
-			default:
-				break;
-			}
-		}
-		else if (retcode == Ret_Err_Fatal) {	// need to realloc the share memory
-			unregisterHandle(s_hSharedMoery);
-			s_hSharedMoery = initSharedMemory(SharedMemoryName, 0x00, 50);
-			if (s_hSharedMoery < 0) {
-				return Ret_Error;
-			}
-		}
-		PRINT_INFOR("xUsleep");
-		//xUsleep(50);
-	}
-	s_threadDisplayStatus = TS_Terminate;
-
-	PRINT_INFOR("ProcModulePeripheral exit");
-	return 0;
-}
-
 
 
 #if SPLIT_BAR	// other buffer

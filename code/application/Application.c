@@ -11,7 +11,7 @@
 #include "Transaction.h"
 
 #include <stdlib.h>
-#include <windows.h>
+//#include <windows.h>
 
 #define AppName "afc_app.x"
 

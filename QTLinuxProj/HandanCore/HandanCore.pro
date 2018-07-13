@@ -8,6 +8,10 @@ QT       -= core gui
 
 TARGET = HandanCore
 TEMPLATE = lib
+DEFINES += _linux_
+
+INCLUDEPATH += ../../code/public
+INCLUDEPATH += ../../code/UtilProc
 
 DEFINES += HANDANCORE_LIBRARY
 

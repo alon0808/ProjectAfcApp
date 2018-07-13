@@ -19,10 +19,12 @@ INCLUDEPATH += ../../code/UtilProc
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ui_accessinterface.cpp
+    ui_accessinterface.cpp \
+    customevent.cpp
 
 HEADERS  += mainwindow.h \
-    ui_accessinterface.h
+    ui_accessinterface.h \
+    customevent.h
 
 FORMS    += mainwindow.ui
 
@@ -32,3 +34,8 @@ INCLUDEPATH += $$PWD/../Bin
 DEPENDPATH += $$PWD/../Bin
 
 unix:!macx: PRE_TARGETDEPS += $$PWD/../Bin/libUtilPro.a
+
+unix:!macx: LIBS += -L$$PWD/../Bin/ -lSystemRelation
+
+INCLUDEPATH += $$PWD/../Bin
+DEPENDPATH += $$PWD/../Bin

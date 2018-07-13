@@ -8,8 +8,8 @@
 
 
 int func_UiAccess(unsigned char* pParam){
-    //emit Ui::MainWindow::notify(pParam);
-    //TLV_PTR tlvs
+
+    //QCoreApplication::postEvent(g_ui, new YourEvent());
 
     return Ret_OK;
 }
