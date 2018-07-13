@@ -106,7 +106,7 @@ int initThreadQueue(TUINT32 threadId) {
 	return registHandle(TT_TREAD_QUEUE, (TLPVOID)hand);
 }
 
-int uninstallHandle(int hand) {
+int unregisterHandle(int hand) {
 	stHandleInfo *pHandleInfor = NULL;
 	int retcode = Ret_OK;
 	pHandleInfor = s_phandleInfo + hand;

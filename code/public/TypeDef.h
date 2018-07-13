@@ -63,16 +63,21 @@ extern "C"
 
 #ifndef _TYPE_ERet_Code_
 #define _TYPE_ERet_Code_
-	typedef enum {
-		Ret_Error = -32768,	// error occur
-		Ret_Err_Overflow = -32767,	// overflow
-		Ret_Err_Param = -32766,	// parameter is error 
-		Ret_Err_Fatal = -32765,	// fatal error
-		Ret_Err_TimeOut = -32764,	// timeout
-		Ret_Err_N_Support = -32763,	// not support
-		Ret_OK = 0,	// successful
-		Ret_Continue = 1,	// more operators need to be done, some special situation
-	}ERet_Code;	// return code
+typedef enum{
+    Ret_Error  =-32768,       // error occur,0x8000
+    Ret_Err_Overflow=-32767,  // overflow,0x8001
+    Ret_Err_Param=-32766,     // parameter is error ,0x8002
+    Ret_Err_Fatal=-32765,     // fatal error,0x8003
+    Ret_Err_TimeOut=-32764,   // timeout,0x8004
+    Ret_Err_N_Support=-32763, // not support,0x8005
+    Ret_Err_Format=-32762,    // error in format,0x8006
+    Ret_Err_Repeat=-32761,    // repeat data element,0x8007
+    Ret_Err_N_Exist=-32760,   // not exist,0x8008
+    Ret_OK     =0,            // successful,0x0000
+    Ret_NO     =0,            // ,0x0000
+    Ret_YES    =1,            // YES,or NO,0x0001
+    Ret_Continue=2,           // more operators need to be done, some special situation,0x0002
+}ERet_Code ;
 #endif
 
 

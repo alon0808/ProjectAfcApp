@@ -165,7 +165,7 @@ static TUINT32 ProcModulePeripheral(TLPVOID params) {
 			}
 		}
 		else if (retcode == Ret_Err_Fatal) {	// need to realloc the share memory
-			uninstallHandle(s_hSharedMoery);
+			unregisterHandle(s_hSharedMoery);
 			s_hSharedMoery = initSharedMemory(SharedMemoryName, 0x00, 50);
 			if (s_hSharedMoery < 0) {
 				return Ret_Error;

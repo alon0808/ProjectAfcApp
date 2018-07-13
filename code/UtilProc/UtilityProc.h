@@ -23,6 +23,13 @@ typedef struct
 	TUINT8 *pTlvStart;
 }StrTlv;
 
+typedef struct {
+    unsigned int tag;
+    unsigned int len;
+    unsigned char *pValue;
+    unsigned char *pBegin;
+}stTlv;
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -54,6 +61,15 @@ extern "C"
 
 	int PareseAllTlvs(TUINT8 *pSrc, int srcLen, StrTlv *pTlvs, int *pTlvCount);
 	int PareseAllTls(TUINT8 *pSrc, int srcLen, StrTlv *pTlvs, int *pTlvCount);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+    extern unsigned char getSignXor(unsigned char *pSrc, int len);
+    extern int findT1L2VFirst(void *pSrc, int len, TUINT32 tag, stTlv *pTlvs);
+    extern int PareseT1L2V(void *pSrc, int len, stTlv *pTlvs, int *pOLen);
+    extern int PareseT1L2V_8583(void *pSrc, int len, stTlv pTlvs[65]);
+    extern int BuildT1L2V(stTlv *pTlvs, int len, unsigned char *pSrc, int *pOLen);
+    extern int SetTLV(stTlv *pTlv, TUINT32 tag, int len, void *pSrc);
 
 
 #ifdef __cplusplus

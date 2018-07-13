@@ -19,8 +19,12 @@
 // Æ½Ì¨, Èç linux,windows,stm32
 #ifdef _WIN32
 #define WHICH_PLATFORM	_WIN32_PLATFORM_V
-#else define _linux_
+#else
+#ifdef _linux_
 #define WHICH_PLATFORM	_LINUX_PLATFORM_V
+#else
+#error ("None of platform is supported")
+#endif
 #endif
 
 #if WHICH_PLATFORM == _WIN32_PLATFORM_V

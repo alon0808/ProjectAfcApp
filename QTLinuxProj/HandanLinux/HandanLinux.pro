@@ -14,6 +14,8 @@ QMAKE_CFLAGS += -Wno-psabi
 DEFINES += _linux_
 
 INCLUDEPATH += ../../code/public
+INCLUDEPATH += ../../code/UtilProc
+
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -24,9 +26,9 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-unix:!macx: LIBS += -L$$PWD/../Bin/ -lUtilProStaic
+unix:!macx: LIBS += -L$$PWD/../Bin/ -lUtilPro
 
 INCLUDEPATH += $$PWD/../Bin
 DEPENDPATH += $$PWD/../Bin
 
-unix:!macx: PRE_TARGETDEPS += $$PWD/../Bin/libUtilProStaic.a
+unix:!macx: PRE_TARGETDEPS += $$PWD/../Bin/libUtilPro.a

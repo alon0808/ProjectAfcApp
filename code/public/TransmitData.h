@@ -16,7 +16,7 @@ extern "C"
 	extern int writeData(int hand, stDataBuffer *pStData);
 	extern int readData(int hand, stDataBuffer *pStData);
 
-	extern int uninstallHandle(int hand);
+	extern int unregisterHandle(int hand);
 
 #ifdef __cplusplus
 };
