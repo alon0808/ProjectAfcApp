@@ -10,7 +10,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = HandanLinux
 TEMPLATE = app
-QMAKE_CFLAGS += -Wno-psabi
+QMAKE_CFLAGS = -Wno-psabi
+QMAKE_CXXFLAGS = $$QMAKE_CFLAGS
 DEFINES += _linux_
 
 INCLUDEPATH += ../../code/public
@@ -39,3 +40,8 @@ unix:!macx: LIBS += -L$$PWD/../Bin/ -lSystemRelation
 
 INCLUDEPATH += $$PWD/../Bin
 DEPENDPATH += $$PWD/../Bin
+
+DISTFILES += \
+    ../preBuild.sh \
+    ../postBuild.sh \
+    ../../../../../../appConst.sh

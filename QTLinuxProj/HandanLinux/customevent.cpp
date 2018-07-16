@@ -35,4 +35,3 @@ void MySender::postEvent(QObject *r, QEvent *e)
     QCoreApplication::postEvent(r, e);
 }
 
-

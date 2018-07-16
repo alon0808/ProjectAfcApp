@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "ui_accessinterface.h"
 
 namespace Ui {
 class MainWindow;
@@ -17,11 +18,12 @@ public:
     ~MainWindow();
 
 private:
-    void QResizeEvent(const QSize &size, const QSize &oldSize);
-
-private:
     Ui::MainWindow *ui;
     //static Ui::MainWindow *s_mainUI;
+    MyThread *t;
+
+private slots:
+    void processUiAccess(QString msg);
 };
 
 #endif // MAINWINDOW_H

@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -38,6 +39,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->verticalLayout->setSizeConstraint(QLayout::SetMaximumSize);
     //ui->verticalLayoutWidget->maximumSize();
     //connect(&render,SIGNAL(notify(int)),this,SLOT(OnNotify(int)));
+    t = new MyThread();
+       t->start();
+        connect(t, SIGNAL(dataChanged(QString)), this, SLOT(processUiAccess(QString)));
+
+
 
 }
 
@@ -45,4 +51,10 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::processUiAccess(QString msg)
+{
+    ui->textEdit->append(msg);
+}
+
 

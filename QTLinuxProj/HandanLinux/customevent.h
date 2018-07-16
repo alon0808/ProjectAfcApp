@@ -1,6 +1,10 @@
 #ifndef CUSTOMEVENT_H
 #define CUSTOMEVENT_H
 
+#include <QtDebug>
+#include <QEvent>
+#include <QCoreApplication>
+#include <QObject>
 
 class customEvent : public QEvent
 {
@@ -18,5 +22,22 @@ public:
     static bool sendEvent(QObject *r, QEvent *e);
     static void postEvent(QObject *receiver, QEvent *event);
 };
+
+#if 0
+class MyArmy :public QObject
+{
+public:
+    MyArmy() ;
+    void MyEventHandler(QEvent *e);
+	bool event(QEvent *e);
+};
+//
+class MyWatcher :public QObject
+{
+public:
+    MyWatcher() ;
+	bool eventFilter(QObject *r, QEvent *e);
+};
+#endif
 
 #endif // CUSTOMEVENT_H
