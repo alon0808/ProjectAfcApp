@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = HandanLinux
 TEMPLATE = app
-QMAKE_CFLAGS = -Wno-psabi
+QMAKE_CFLAGS = -Wno-psabi -fvisibility=hidden
 QMAKE_CXXFLAGS = $$QMAKE_CFLAGS
 DEFINES += _linux_
 

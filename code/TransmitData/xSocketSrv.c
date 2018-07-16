@@ -1,4 +1,4 @@
-#include "Macro_Project.h"
+#include "Macro_Proj.h"
 #include "TypeDef.h"
 #include "xSocketSrv.h"
 #include "string.h"
@@ -7,13 +7,17 @@
 #include <stdio.h>
 
 
+#if WHICH_PLATFORM == _LUNIX_PLATFORM_V
+#define aaa
+#endif
+
+
 #if (WHICH_PLATFORM == _WIN32_PLATFORM_V)
 #include "winsock.h"
 #pragma comment(lib,"Ws2_32")
 #define XSOCKET_SEND_PARAM4		0
 typedef int socklen_t;  
 typedef int ssize_t;  
-
 #elif (WHICH_PLATFORM == _LUNIX_PLATFORM_V)
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -195,7 +199,7 @@ TUINT32 SocketSvrAccept(TUINT32 sock_fd, TUINT32 *pConn_fd)
 
 	if (*pConn_fd != 0)
 	{
-		SocketSvrSend(*pConn_fd, (UINT8 *)&ret, 2);
+        SocketSvrSend(*pConn_fd, (TUINT8 *)&ret, 2);
 		*pConn_fd = 0;
 	}
 

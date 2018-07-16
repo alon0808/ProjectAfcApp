@@ -76,7 +76,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;SYSTEM_RELATION_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\code\public\;..\..\code\UtilProc\;..\..\code\xSys;..\..\code\xStorage\;..\..\code\xConfig\;..\..\code\peripheral\;..\..\code\xCardOpera\;..\..\code\transaction\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -152,6 +152,7 @@
     <ClCompile Include="..\..\code\TransmitData\xSharedMemory_linux.c" />
     <ClCompile Include="..\..\code\TransmitData\xSharedMemory_win32.c" />
     <ClCompile Include="..\..\code\TransmitData\xSocketClient.c" />
+    <ClCompile Include="..\..\code\TransmitData\xSocketSrv.c" />
     <ClCompile Include="..\..\code\TransmitData\xThreadQueue.c" />
     <ClCompile Include="..\..\code\xCardOpera\xCardOpera_win32.c" />
     <ClCompile Include="..\..\code\xConfig\xAppConfig.c" />
@@ -171,12 +172,17 @@
     <ClCompile Include="..\..\QTLinuxProj\HandanLinux\mainwindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\QTLinuxProj\HandanLinux\ui_accessinterface.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\code\application\Application.h" />
     <ClInclude Include="..\..\code\peripheral\modulePeripheral.h" />
     <ClInclude Include="..\..\code\peripheral\xDev.h" />
+    <ClInclude Include="..\..\code\project\SystemRelation.h" />
     <ClInclude Include="..\..\code\public\debugOut.h" />
+    <ClInclude Include="..\..\code\public\DllDef.h" />
     <ClInclude Include="..\..\code\public\ExchangeDataPT.h" />
     <ClInclude Include="..\..\code\public\ManageThread.h" />
     <ClInclude Include="..\..\code\transaction\SecuritySam.h" />
@@ -185,6 +191,7 @@
     <ClInclude Include="..\..\code\TransmitData\xCom.h" />
     <ClInclude Include="..\..\code\TransmitData\xSharedMemory.h" />
     <ClInclude Include="..\..\code\TransmitData\xSocketClient.h" />
+    <ClInclude Include="..\..\code\TransmitData\xSocketSrv.h" />
     <ClInclude Include="..\..\code\TransmitData\xThreadQueue.h" />
     <ClInclude Include="..\..\code\xCardOpera\xCardOpera.h" />
     <ClInclude Include="..\..\code\xConfig\xAppConfig.h" />
@@ -194,6 +201,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\QTLinuxProj\HandanLinux\mainwindow.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\QTLinuxProj\HandanLinux\ui_accessinterface.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
   </ItemGroup>

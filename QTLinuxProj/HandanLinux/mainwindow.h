@@ -19,7 +19,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    //static Ui::MainWindow *s_mainUI;
     MyThread *t;
 
 private slots:

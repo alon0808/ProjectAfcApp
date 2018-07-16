@@ -1,3 +1,4 @@
+#include "Macro_Proj.h"
 #include "TypeDef.h"
 #include "xSocketClient.h"
 #include <string.h>
@@ -46,7 +47,7 @@ struct sockaddr_in addr_serv;
 struct sockaddr_in addr_client; //本地的地址信息
 
 
-static INT32 xSocketInitUnderWin32(void)
+static TINT32 xSocketInitUnderWin32(void)
 {
 #if (WHICH_PLATFORM == _WIN32_PLATFORM_V)
 	TUINT16 wVersionRequested;

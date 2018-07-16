@@ -102,6 +102,15 @@
     <ClCompile Include="..\..\QTLinuxProj\HandanLinux\mainwindow.cpp">
       <Filter>Linux\QtUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\QTLinuxProj\HandanLinux\ui_accessinterface.cpp">
+      <Filter>Linux\QtUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\QTLinuxProj\HandanLinux\customevent.cpp">
+      <Filter>Linux\QtUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\TransmitData\xSocketSrv.c">
+      <Filter>TransmitData</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\code\application\Application.h">
@@ -158,10 +167,27 @@
     <ClInclude Include="..\..\QTLinuxProj\HandanLinux\mainwindow.h">
       <Filter>Linux\QtUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\QTLinuxProj\HandanLinux\ui_accessinterface.h">
+      <Filter>Linux\QtUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\QTLinuxProj\HandanLinux\customevent.h">
+      <Filter>Linux\QtUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\public\DllDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\project\SystemRelation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\TransmitData\xSocketSrv.h">
+      <Filter>TransmitData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\QTLinuxProj\HandanLinux\mainwindow.ui">
       <Filter>Linux\QtUI</Filter>
     </None>
+    <None Include="..\..\QTLinuxProj\postBuild.sh" />
+    <None Include="..\..\QTLinuxProj\preBuild.sh" />
   </ItemGroup>
 </Project>

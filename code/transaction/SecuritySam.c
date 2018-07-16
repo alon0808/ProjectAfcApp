@@ -30,7 +30,7 @@ typedef union
 static unKeyStore *s_pKeyStore = NULL;
 static s_isSamOK[SSLOT_MAX_LEN];
 
-extern int GS_PSAM_Verify(int Idx);
+static int GS_PSAM_Verify(int Idx);
 
 static inline int initSam(int slot)
 {

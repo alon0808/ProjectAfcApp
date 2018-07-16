@@ -8,6 +8,8 @@ QT       -= core gui
 
 TARGET = SystemRelation
 TEMPLATE = lib
+QMAKE_CFLAGS = -fvisibility=hidden
+QMAKE_CXXFLAGS = $$QMAKE_CFLAGS
 DEFINES += _linux_
 
 # add include file directory
@@ -19,6 +21,7 @@ INCLUDEPATH += ../../code/xConfig
 INCLUDEPATH += ../../code/peripheral
 INCLUDEPATH += ../../code/xCardOpera
 INCLUDEPATH += ../../code/transaction
+INCLUDEPATH += ../../code/project
 
 DEFINES += SYSTEMRELATION_LIBRARY
 
@@ -61,7 +64,14 @@ HEADERS += systemrelation.h\
     ../../code/TransmitData/xThreadQueue.h \
     ../../code/xConfig/xAppConfig.h \
     ../../code/xStorage/xStorage.h \
-    ../../code/xSys/xSys.h
+    ../../code/xSys/xSys.h \
+    ../../code/project/SystemRelation.h \
+    ../../code/public/debugOut.h \
+    ../../code/public/DllDef.h \
+    ../../code/public/Macro_Proj.h \
+    ../../code/public/ManageThread.h \
+    ../../code/public/TransmitData.h \
+    ../../code/public/TypeDef.h
 
 unix {
     target.path = /usr/lib
