@@ -154,6 +154,7 @@
     <ClCompile Include="..\..\code\TransmitData\xSocketClient.c" />
     <ClCompile Include="..\..\code\TransmitData\xSocketSrv.c" />
     <ClCompile Include="..\..\code\TransmitData\xThreadQueue.c" />
+    <ClCompile Include="..\..\code\xCardOpera\xCardOpera_linux.c" />
     <ClCompile Include="..\..\code\xCardOpera\xCardOpera_win32.c" />
     <ClCompile Include="..\..\code\xConfig\xAppConfig.c" />
     <ClCompile Include="..\..\code\xStorage\xStorage.c" />

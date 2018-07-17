@@ -119,4 +119,15 @@ TINT32 xSysRecvThreadMsg(int hQueue, TUINT32 msgId, stDataBuffer *pRecvInfo)
 	return Ret_OK;
 }
 
+
+void xSyscreateQueueIfNotExisted()
+{
+
+}
+
+void xSysdestroyQueueIfNotExisted()
+{
+
+}
+
 #endif

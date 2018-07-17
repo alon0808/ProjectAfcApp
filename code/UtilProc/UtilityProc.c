@@ -18,9 +18,12 @@
 @ resourse       [IN]: input data 1;
 @ destination [INOUT]: IN,input data 2; OUT, xor result of data1 and data2;
 */
-void XOR_Bytes(const TUINT8 *resourse, TUINT8 *destination, int length)
+void XOR_Bytes(const void *resourse, void *destination, int length)
 {
-	if (resourse == NULL || destination == NULL || length < 0)
+    TUINT8 *prHead = (TUINT8 *)resourse;
+    TUINT8 *pdHead = (TUINT8 *)destination;
+
+    if (prHead == NULL || pdHead == NULL || length < 0)
 	{
 		//printf("字节异或时,发生严重错误!!!");
 		return ;
@@ -28,9 +31,9 @@ void XOR_Bytes(const TUINT8 *resourse, TUINT8 *destination, int length)
 
 	while (length > 0)
 	{
-		*destination ^= *resourse;
-		destination++;
-		resourse++;
+        *pdHead ^= *prHead;
+        pdHead++;
+        prHead++;
 		length--;
 	}		
 }
@@ -38,46 +41,47 @@ void XOR_Bytes(const TUINT8 *resourse, TUINT8 *destination, int length)
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-TUINT16 NumOf_NonZero_Bits(TUINT8 *pIn, TUINT8 in_len)
+TUINT16 NumOf_NonZero_Bits(void *pIn, TUINT8 in_len)
 {
 	TUINT8 i;
 	TUINT16 retValue;
+    TUINT8 *piHead = (TUINT8 *)pIn;
 
-	if (pIn == NULL || in_len>63)
+    if (piHead == NULL || in_len>63)
 	{
 		return 0xFFFF;
 	}
 	for (i=0,retValue=0; i<in_len; i++)
 	{
-		if ((pIn[i]&0x80) != 0x00)
+        if ((piHead[i]&0x80) != 0x00)
 		{
 			retValue++;
 		}
-		if ((pIn[i]&0x40) != 0x00)
+        if ((piHead[i]&0x40) != 0x00)
 		{
 			retValue++;
 		}
-		if ((pIn[i]&0x20) != 0x00)
+        if ((piHead[i]&0x20) != 0x00)
 		{
 			retValue++;
 		}
-		if ((pIn[i]&0x10) != 0x00)
+        if ((piHead[i]&0x10) != 0x00)
 		{
 			retValue++;
 		}
-		if ((pIn[i]&0x08) != 0x00)
+        if ((piHead[i]&0x08) != 0x00)
 		{
 			retValue++;
 		}
-		if ((pIn[i]&0x04) != 0x00)
+        if ((piHead[i]&0x04) != 0x00)
 		{
 			retValue++;
 		}
-		if ((pIn[i]&0x02) != 0x00)
+        if ((piHead[i]&0x02) != 0x00)
 		{
 			retValue++;
 		}
-		if ((pIn[i]&0x01) != 0x00)
+        if ((piHead[i]&0x01) != 0x00)
 		{
 			retValue++;
 		}
@@ -86,20 +90,22 @@ TUINT16 NumOf_NonZero_Bits(TUINT8 *pIn, TUINT8 in_len)
 	return retValue;
 }
 // 
-void memcpyE(TUINT8 *pDes, TUINT8 *pSrc, int len)
+void memcpyE(void *pDes, void *pSrc, int len)
 {
 	int i=0;
+    TUINT8 *pdHead = (TUINT8 *)pDes;
+    TUINT8 *psHead = (TUINT8 *)pSrc;
 
 	// 参数检查
-	if (pDes==NULL || pSrc==NULL || len <= 0)
+    if (pdHead==NULL || psHead==NULL || len <= 0)
 	{
 		return;
 	}
-	if (pDes<=pSrc || (pSrc+len) < pDes)
+    if (pdHead<=psHead || (psHead+len) < pdHead)
 	{	// copy from left to right
 		for (i=0; i < len; ++i)
 		{
-			pDes[i] = pSrc[i];
+            pdHead[i] = psHead[i];
 		}
 	}
 	else
@@ -107,28 +113,29 @@ void memcpyE(TUINT8 *pDes, TUINT8 *pSrc, int len)
 		i = len - 1;	// len must not be 0
 		while(i > 0)
 		{
-			pDes[i] = pSrc[i];
+            pdHead[i] = psHead[i];
 			--i;
 		}	
-		pDes[i] = pSrc[i];
+        pdHead[i] = psHead[i];
 	}
 }
 // 
-int replaceE(TUINT8 *pSrc, char oldCh, char newCh, int len)
+int replaceE(void *pSrc, char oldCh, char newCh, int len)
 {
 	int i = 0;
 	int ret = 0;
+    TUINT8 *pHead = (TUINT8 *)pSrc;
 
 	// 参数检查
-	if (pSrc == NULL || len <= 0)
+    if (pHead == NULL || len <= 0)
 	{
 		return ret;
 	}
 
 	for (i = 0; i < len; ++i)
 	{
-		if (pSrc[i] == oldCh) {
-			pSrc[i] = newCh;
+        if (pHead[i] == oldCh) {
+            pHead[i] = newCh;
 			++ret;
 		}
 	}

@@ -1,6 +1,6 @@
 #include "Macro_Proj.h"
 
-#if 1 || WHICH_PLATFORM == _WIN32_PLATFORM_V
+#if WHICH_PLATFORM == _LINUX_PLATFORM_V
 #include "xThreadQueue.h"
 #include "UtilityProc.h"
 #include "xSys.h"
@@ -30,12 +30,11 @@ typedef enum {
 * @Return int(ERet_Code) - 0 is successful
 */
 TLPVOID xTQOpenQueue(TUINT32 threadId) {
-     xSyscreateQueueIfNotExisted();
-     return 1;
+	return xSyscreateQueueIfNotExisted(threadId);
 }
 
 int xTQCloseQueue(TLPVOID pQueueHandle) {
-    xSysdestroyQueueIfNotExisted();
+	xSysdestroyQueueIfNotExisted(pQueueHandle);
 	return Ret_OK;
 }
 /**

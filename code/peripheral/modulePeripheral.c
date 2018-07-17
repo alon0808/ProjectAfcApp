@@ -8,6 +8,7 @@
 #include "xSys.h"
 #include "TransmitData.h"
 #include "xStorage.h"
+#include "TransmitData.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -21,7 +22,7 @@
 #define PeripheralRAMSize	500
 
 // declare static function
-static TUINT32 ProcModulePeripheral(TLPVOID params);
+static void * ProcModulePeripheral(TLPVOID params);
 
 static TLPVOID s_threadDisplay = NULL;
 static TUINT32 s_threadDisplayId = 0;
@@ -32,7 +33,7 @@ static volatile int s_threadDisplayStatus = TS_Invalid;
 
 
 
-static TUINT32 ProcModulePeripheral(TLPVOID params) {
+static void * ProcModulePeripheral(TLPVOID params) {
 
     char *curPath = (char *)params;
     unsigned char *pDataBuf = NULL;;
@@ -79,10 +80,10 @@ static TUINT32 ProcModulePeripheral(TLPVOID params) {
             }
         }
         else if (retcode == Ret_Err_Fatal) {	// need to realloc the share memory
-            uninstallHandle(s_hSharedMoery);
+            unregisterHandle(s_hSharedMoery);
             s_hSharedMoery = initSharedMemory(SharedMemoryName, 0x00, 50);
             if (s_hSharedMoery < 0) {
-                return Ret_Error;
+                return (void *)Ret_Error;
             }
         }
         PRINT_INFOR("xUsleep");
@@ -91,7 +92,7 @@ static TUINT32 ProcModulePeripheral(TLPVOID params) {
     s_threadDisplayStatus = TS_Terminate;
 
     PRINT_INFOR("ProcModulePeripheral exit");
-    return 0;
+    return (void *)Ret_OK;
 }
 
 
@@ -139,7 +140,7 @@ int initPeripheral(char curPath[], TFuncShowInUI funcShowInUi) {
 int sendDisplayMsg(int row, int column, char *pMsg, int textPosition) {
 	int len = 0;
 	int refTmp = 0;
-	char *pTmpBuf = NULL;
+    TUINT8 *pTmpBuf = NULL;
 	int pos = 0;
 	int retCode = Ret_OK;
 	stDataBuffer stData;
@@ -178,7 +179,7 @@ int feedWatchDog(void) {
 	stDataBuffer stData;
 
 
-	stData.pBuffer = "\x01\x01\x01\x01";
+    stData.pBuffer = (TUINT8 *)"\x01\x01\x01\x01";
 	stData.blen = 5;
 	retCode = writeData(s_hSharedMoeryWatchDog, &stData);
 

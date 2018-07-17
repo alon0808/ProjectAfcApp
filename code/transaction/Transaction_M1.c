@@ -82,7 +82,7 @@ static int M1_Card_GetListinfo() {
 			pM1ListInfo->PublishSector = i;
 			break;
 		case AREA_TXNRECORD:
-			if (j >= sizeof(pM1ListInfo->HistoryRecordSector)) {
+            if (j >= (int)sizeof(pM1ListInfo->HistoryRecordSector)) {
 				PRINT_ERROR("illegal format of list information block:%d", j);
 				retcode = Ret_Error;
 				goto M1_Card_GetListinfo_OVER;

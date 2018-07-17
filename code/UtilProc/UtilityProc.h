@@ -36,13 +36,13 @@ extern "C"
 #endif
 
 
-	extern TUINT16 NumOf_NonZero_Bits(TUINT8 *pIn, TUINT8 in_len);
+    extern TUINT16 NumOf_NonZero_Bits(void *pIn, TUINT8 in_len);
 
- 	extern void XOR_Bytes(const TUINT8 *resourse, TUINT8 *destination, int length);
+    extern void XOR_Bytes(const void *resourse, void *destination, int length);
 
- 	extern void memcpyE(TUINT8 *pDes, TUINT8 *pSrc, int len);
+    extern void memcpyE(void *pDes, void *pSrc, int len);
 
-	extern int replaceE(TUINT8 *pSrc, char oldCh, char newCh, int len);
+    extern int replaceE(void *pSrc, char oldCh, char newCh, int len);
 
 	//////////////////////////////////////////////////////////////////////////
 

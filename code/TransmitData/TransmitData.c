@@ -4,6 +4,7 @@
 #include "xSharedMemory.h"
 #include "xSocketClient.h"
 #include "xStorage.h"
+#include "xThreadQueue.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -29,7 +30,7 @@ typedef struct {
 //TLPVOID s_handles[5] = { NULL, NULL, NULL, NULL, NULL };
 //TLPVOID s_handles[5] = { NULL, NULL, NULL, NULL, NULL };
 static stHandleInfo *s_phandleInfo = NULL;
-static TUINT8 s_isInit = FALSE;
+//static TUINT8 s_isInit = FALSE;
 
 
 static int registHandle(int transmitType, TLPVOID pHandle) {
@@ -39,7 +40,7 @@ static int registHandle(int transmitType, TLPVOID pHandle) {
 		return REF_INVALID;
 	}
 	//s_phandleInfo = xStor_MallocAppRam(sizeof(stHandleInfo)*HANDLES_COUNT);
-	if (pHandle <= 0) {
+    if (pHandle == 0) {
 		return -1;
 	}
 	for (i = 0; i < HANDLES_COUNT; ++i)
@@ -98,15 +99,15 @@ int initSocket(char ip[], int port) {
 }
 
 int initThreadQueue(TUINT32 threadId) {
-	TUINT32 hand = 0;
+    TLPVOID hand = 0;
 
 	initTransmitData();
 	hand = xTQOpenQueue(threadId);
 
-	return registHandle(TT_TREAD_QUEUE, (TLPVOID)hand);
+    return registHandle(TT_TREAD_QUEUE, hand);
 }
 
-int uninstallHandle(int hand) {
+int unregisterHandle(int hand) {
 	stHandleInfo *pHandleInfor = NULL;
 	int retcode = Ret_OK;
 	pHandleInfor = s_phandleInfo + hand;

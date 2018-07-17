@@ -45,8 +45,8 @@ extern "C"
 	 *
 	 * @Return
 	 */
-	extern void print2debug(TINT32 printLevel, TINT32 line, char *pMsg, ...);
-	extern void print2debugBys(TINT32 printLevel, TINT32 line, char *pMsg, void *pBuf, int bLen);
+    extern void print2debug(TINT32 printLevel, TINT32 line, void *pMsg, ...);
+    extern void print2debugBys(TINT32 printLevel, TINT32 line, void *pMsg, void *pBuf, int bLen);
 
 
 #ifdef __cplusplus

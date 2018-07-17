@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <stdlib.h>
 
 typedef struct
 {
@@ -20,7 +21,10 @@ typedef struct
 static CRITICAL_SECTION s_SemaHandleConfig;
 #elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
 #include <pthread.h>
-static pthread_mutex_t s_SemaHandleTempRam = NULL;
+#include <sys/types.h>
+#include <sys/stat.h>
+#include<unistd.h>
+static pthread_mutex_t s_SemaHandleConfig = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 #define FILENAME_CONFIG	"flashparam"
@@ -33,16 +37,16 @@ static stDivInfo DivInfo;
 int initAfcParam(char curPath[]) {
 	int len = 0;
 	int bufRef = 0;
-	char *pBuf = NULL;
+    TUINT8 *pBuf = NULL;
 	int retcode = 0;
 	int tmpI;
-	char *pTmpCh = NULL, *pTmpCh1;
-	char bakCh = 0;	// backup
+    char *pTmpCh = NULL, *pTmpCh1;
+    TUINT8 bakCh = 0;	// backup
 
 	len = strlen(curPath);
 	bufRef = xStor_MallocTempRam(len + 100);
 	pBuf = xStor_GetTempRamPoint(bufRef);
-	pTmpCh = pBuf + 30;
+    pTmpCh = (char *)pBuf + 30;
 	if (s_fdParam >= 0) {
 		close(s_fdParam);
 	}
@@ -105,9 +109,9 @@ int initAfcParam(char curPath[]) {
 }
 
 int installAfcParam(char curPath[]) {
-	int i = 0;
-	int retcode = Ret_OK;
-	TUINT8 buffer[512] = { 0 };
+//	int i = 0;
+//	int retcode = Ret_OK;
+//	TUINT8 buffer[512] = { 0 };
 
 	initAfcParam(curPath);
 

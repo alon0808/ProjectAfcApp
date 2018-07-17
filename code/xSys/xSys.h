@@ -4,7 +4,13 @@
 
 //typedef TUINT32 (*ThreadStartAddr)(TLPVOID lpThreadParameter);
 
-typedef unsigned int(*ThreadStartAddr)(TLPVOID lpThreadParameter);
+typedef void *(*ThreadStartAddr)(TLPVOID lpThreadParameter);
+
+typedef struct
+{
+    /*@shared@*/TUINT8 * pData;
+    TINT32  nData;
+}TMsgInfo;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Macro for function invoke
@@ -32,7 +38,7 @@ typedef unsigned int(*ThreadStartAddr)(TLPVOID lpThreadParameter);
 #if (WHICH_PLATFORM == _WIN32_PLATFORM_V)
 #define xSysCreateMutext(mutext) InitializeCriticalSection(&mutext)
 #elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
-#define xSysCreateMutext(mutext) pthread_mutex_init(&mutext)
+#define xSysCreateMutext(mutext) pthread_mutex_init(&mutext, NULL)
 #endif
 
 // judge the mutex is valid or not
@@ -63,26 +69,6 @@ typedef unsigned int(*ThreadStartAddr)(TLPVOID lpThreadParameter);
 #define xSysGiveMute(mutext)	pthread_mutex_unlock(&mutext)
 #endif
 
-// Create queue
-#if (WHICH_PLATFORM == _WIN32_PLATFORM_V)
-#define xSysCreateQueue(queue, count, unitSize)	queue
-#elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
-#endif
-
-// Destroy queue
-#if (WHICH_PLATFORM == _WIN32_PLATFORM_V)
-#define xSysDeleteQueue(queue, count, unitSize)
-#elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
-//#define xSysDeleteQueue(queue, count, unitSize)
-#endif
-
-// Destroy queue
-#if (WHICH_PLATFORM == _WIN32_PLATFORM_V)
-#define xSysDeleteQueueByModuleID(moduleId)
-#elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
-//#define xSysDeleteQueueByModuleID(moduleId)
-#endif
-
 // thread functions
 
 
@@ -90,6 +76,7 @@ typedef unsigned int(*ThreadStartAddr)(TLPVOID lpThreadParameter);
 extern "C"
 {
 #endif
+
 
 	extern TLPVOID xCreateThread(TUINT32 *pThreadId, ThreadStartAddr startAddr, TLPVOID params);
 
@@ -105,8 +92,8 @@ extern "C"
 
 
 	// message queue
-	//extern void *xSys_createQueueIfNotExisted(void);
-	//extern TINT32 xSysdestroyQueueIfNotExisted(void *pQueueHandle);
+	extern void xSyscreateQueueIfNotExisted(void);
+	extern void xSysdestroyQueueIfNotExisted(void);
 
 	/**
 	*@Description - Post module message

@@ -17,19 +17,20 @@
 
 static TLPVOID s_threadApp = NULL;
 TStorageInit s_storInit;
-static char s_coreRam[1000];
-static char s_appRam[1000];
-static char s_tempRam[1000];
-static char s_doublelinkRam[1000];
+static TUINT8 s_coreRam[1000];
+static TUINT8 s_appRam[1000];
+static TUINT8 s_tempRam[1000];
+static TUINT8 s_doublelinkRam[1000];
 
 
-static TUINT32 ProcAppMain(TLPVOID params) {
+static void * ProcAppMain(TLPVOID params) {
 	TUINT32 retValue = THREAD_AppTransaction;
 	int i = 3, j = 1;
 	int retcode = Ret_OK;
 
 	retcode = InitTransaction();
 	if (retcode != Ret_OK) {
+        UNUSED_VAR(params);
 		PRINT_ERROR("fail to InitTransaction:%d", retcode);
 		//return retcode;
 	}
@@ -60,7 +61,7 @@ static TUINT32 ProcAppMain(TLPVOID params) {
 
 	PRINT_INFOR("ProcAppMain exit");
 
-	return retValue;
+    return (void *)retValue;
 }
 
 void InitApp(char curPath[], TFuncShowInUI funcShowInUI) {
@@ -100,7 +101,7 @@ void InitApp(char curPath[], TFuncShowInUI funcShowInUI) {
 
 void StartApp(void) {
 	// init storage
-	int retCode = Ret_Error;
+//	int retCode = Ret_Error;
 
 	feedWatchDog();
 	//funcShowInUI(3, 5, "ÇëË¢¿¨°ÉM1", TP_MIDDLE);

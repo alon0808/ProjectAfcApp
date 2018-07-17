@@ -44,4 +44,6 @@ DEPENDPATH += $$PWD/../Bin
 DISTFILES += \
     ../preBuild.sh \
     ../postBuild.sh \
-    ../../../../../../appConst.sh
+    ../../../../../../appConst.sh \
+    ../prebuild.sh \
+    ../postbuild.sh

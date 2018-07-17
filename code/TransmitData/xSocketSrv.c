@@ -7,18 +7,13 @@
 #include <stdio.h>
 
 
-#if WHICH_PLATFORM == _LUNIX_PLATFORM_V
-#define aaa
-#endif
-
-
 #if (WHICH_PLATFORM == _WIN32_PLATFORM_V)
 #include "winsock.h"
 #pragma comment(lib,"Ws2_32")
 #define XSOCKET_SEND_PARAM4		0
 typedef int socklen_t;  
 typedef int ssize_t;  
-#elif (WHICH_PLATFORM == _LUNIX_PLATFORM_V)
+#elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -79,7 +74,7 @@ static void xSocketClose(TUINT32 connfd)
 {
 #if (WHICH_PLATFORM == _WIN32_PLATFORM_V)
 	closesocket(connfd);
-#elif (WHICH_PLATFORM == _LUNIX_PLATFORM_V)
+#elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
 	close(connfd);
 #endif
 }
@@ -118,7 +113,7 @@ TINT32 SocketSvrInit(TINT8 *pSourceIPAdds, TUINT32 nSourcePort, TUINT32 *pSock_f
 	//设置为阻塞模式
 #if (WHICH_PLATFORM == _WIN32_PLATFORM_V)
 	ioctlsocket(s_Sock_fd, FIONBIO, (u_long*)&iMode);
-#elif (WHICH_PLATFORM == _LUNIX_PLATFORM_V)
+#elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
 	ioctl(s_Sock_fd, FIONBIO, &iMode);
 #endif
 	//reuse the port

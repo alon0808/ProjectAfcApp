@@ -34,7 +34,7 @@ static volatile TINT32 s_posTempRamUsed = 0;
 static CRITICAL_SECTION s_SemaHandleTempRam;
 #elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
 #include <pthread.h>
-static pthread_mutex_t s_SemaHandleTempRam = NULL;
+static pthread_mutex_t s_SemaHandleTempRam = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 #if (WHICH_PLATFORM == _WIN32_PLATFORM_V)
@@ -42,7 +42,7 @@ static pthread_mutex_t s_SemaHandleTempRam = NULL;
 static CRITICAL_SECTION s_SemaHandleCoreRam;
 #elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
 #include <pthread.h>
-static pthread_mutex_t s_SemaHandleCoreRam = NULL;
+static pthread_mutex_t s_SemaHandleCoreRam = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 #if (WHICH_PLATFORM == _WIN32_PLATFORM_V)
@@ -50,7 +50,7 @@ static pthread_mutex_t s_SemaHandleCoreRam = NULL;
 static CRITICAL_SECTION s_SemaHandleApplicationRam;
 #elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
 #include <pthread.h>
-static pthread_mutex_t s_SemaHandleApplicationRam = NULL;
+static pthread_mutex_t s_SemaHandleApplicationRam = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 static TBufferUnit s_ramContent[SIZE_RAM_CONTENT];
@@ -71,7 +71,7 @@ typedef struct
 static CRITICAL_SECTION s_SemaHandleDoubleLinkList;
 #elif (WHICH_PLATFORM == _LINUX_PLATFORM_V)
 #include <pthread.h>
-static pthread_mutex_t s_SemaHandleDoubleLinkList = NULL;
+static pthread_mutex_t s_SemaHandleDoubleLinkList = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 #define MaxSize_DoubleLinkList		20

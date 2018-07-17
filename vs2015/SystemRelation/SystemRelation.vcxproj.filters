@@ -93,9 +93,6 @@
     <ClCompile Include="..\..\code\transaction\Transaction.c">
       <Filter>Transaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\code\TransmitData\xThreadQueue.c">
-      <Filter>TransmitData</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\QTLinuxProj\HandanLinux\main.cpp">
       <Filter>Linux\QtUI</Filter>
     </ClCompile>
@@ -109,6 +106,12 @@
       <Filter>Linux\QtUI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\TransmitData\xSocketSrv.c">
+      <Filter>TransmitData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\xCardOpera\xCardOpera_linux.c">
+      <Filter>Linux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\TransmitData\xThreadQueue.c">
       <Filter>TransmitData</Filter>
     </ClCompile>
   </ItemGroup>

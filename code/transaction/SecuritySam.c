@@ -8,7 +8,7 @@
 #include "UtilityProc.h"
 
 #include <stdio.h>
-
+#include <string.h>
 
 #define SAM_CMD_SELECT_FILE	"\x00\xA4\x00\x00\x02"	// 选择文件
 #define SAM_CMD_VERIFY_PIN	"\x00\x20\x00\x00\x03"	// 选择文件
@@ -28,7 +28,7 @@ typedef union
 
 
 static unKeyStore *s_pKeyStore = NULL;
-static s_isSamOK[SSLOT_MAX_LEN];
+static TUINT8 s_isSamOK[SSLOT_MAX_LEN];
 
 static int GS_PSAM_Verify(int Idx);
 
@@ -41,7 +41,7 @@ static inline int initSam(int slot)
 		baud = 38400;
 	}
 	if (s_pKeyStore == NULL) {	// init first time
-		memset(s_isSamOK, 0x00, SSLOT_MAX_LEN);
+        memset(s_isSamOK, 0x00, SSLOT_MAX_LEN);
 		s_pKeyStore = (unKeyStore *)xStor_MallocCoreRam(sizeof(unKeyStore));
 		if (s_pKeyStore == NULL) {
 			PRINT_ERROR("initSam.fail to malloc unKeyStore:%d", s_pKeyStore);
@@ -109,6 +109,7 @@ static int GS_PSAM_Verify(int Idx)
 	pTmpBuf = xStor_GetTempRamPoint(refTmp);
 	if (pTmpBuf == NULL) {
 		retcode = Ret_Error;
+        UNUSED_VAR(Idx);
 		goto GS_PSAM_Verify_OVER;
 	}
 

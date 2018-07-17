@@ -76,8 +76,8 @@ static void xSocketClose(TUINT32 connfd)
 	closesocket(connfd);
 #endif
 
-#ifdef _LINUX_
-	close();
+#if (WHICH_PLATFORM == _LINUX_PLATFORM_V)
+    close(connfd);
 #endif
 	connfd = 0;
 }
