@@ -30,7 +30,7 @@ int InitTransaction() {
 	// init sam card
 	pos = 1;
 	sendDisplayMsg(pos, 1, "初始化SAM卡1", TP_LEFT);
-	retcode = SAM_Verify(SAM_SLOT_GS);
+    //retcode = SAM_Verify(SAM_SLOT_GS);
 	if (retcode != Ret_OK) {
 		sendDisplayMsg(pos, 1, "Err", TP_RIGHT);
 		PRINT_ERROR("fail to SAM_Verify:%d,%d", SAM_SLOT_GS, retcode);
@@ -40,7 +40,7 @@ int InitTransaction() {
 	}
 	++pos;
 	sendDisplayMsg(pos, 1, "初始化SAM卡2", TP_LEFT);
-	retcode = SAM_Verify(SAM_SLOT_ZJB);
+    //retcode = SAM_Verify(SAM_SLOT_ZJB);
 	if (retcode != Ret_OK) {
 		sendDisplayMsg(pos, 1, "Err", TP_RIGHT);
 		PRINT_ERROR("fail to SAM_Verify:%d,%d", SAM_SLOT_ZJB, retcode);

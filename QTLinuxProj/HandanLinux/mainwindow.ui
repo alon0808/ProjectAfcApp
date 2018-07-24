@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>350</height>
+    <width>800</width>
+    <height>460</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,20 +19,32 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralWidget">
+   <property name="minimumSize">
+    <size>
+     <width>800</width>
+     <height>640</height>
+    </size>
+   </property>
    <property name="maximumSize">
     <size>
-     <width>600</width>
-     <height>320</height>
+     <width>800</width>
+     <height>640</height>
     </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-image: url(:/timg.jpg);</string>
    </property>
    <widget class="QTextEdit" name="textEdit">
     <property name="geometry">
      <rect>
-      <x>5</x>
+      <x>0</x>
       <y>10</y>
-      <width>600</width>
-      <height>350</height>
+      <width>361</width>
+      <height>401</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -43,14 +55,58 @@
     </property>
     <property name="maximumSize">
      <size>
-      <width>600</width>
-      <height>350</height>
+      <width>800</width>
+      <height>451</height>
      </size>
     </property>
     <property name="font">
      <font>
       <pointsize>20</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-width:0;
+border-style:outset;
+color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="html">
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:20pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;d&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_2">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>10</y>
+      <width>381</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>221</width>
+      <height>192</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>800</width>
+      <height>451</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-width:0;
+border-style:outset;
+color: rgb(255, 255, 255);</string>
     </property>
     <property name="html">
      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -66,8 +122,8 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
-     <height>25</height>
+     <width>800</width>
+     <height>28</height>
     </rect>
    </property>
    <property name="defaultUp">

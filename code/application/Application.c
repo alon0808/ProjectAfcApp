@@ -37,7 +37,7 @@ static void * ProcAppMain(TLPVOID params) {
 
 	while (TRUE) {
 
-		retcode = ProcessCardTransaction(); 
+        //retcode = ProcessCardTransaction();
 		if (retcode != Ret_OK) {
 			//PRINT_ERROR("fail to InitTransaction:%d", retcode);
 			//return retcode;

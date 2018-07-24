@@ -12,6 +12,8 @@
 #include <signal.h>
 #include <sys/msg.h>
 
+#define MODULE_MESSAGE_QUEUE_KEY_START  1565
+
 typedef struct
 {
     long rcvThreadId;
@@ -160,7 +162,21 @@ TUINT8 xIsAppRunning(const char *pAppName) {
 	return (iRetVal == -1);
 }
 
-
+void xSyscreateQueueIfNotExisted()
+{
+    pthread_mutex_lock(&gs_queue_mutex);
+       if (gs_msgQueueId < 0)
+       {
+           gs_msgQueueId = msgget((key_t)(MODULE_MESSAGE_QUEUE_KEY_START), 0666 | IPC_CREAT | IPC_EXCL);
+           while (gs_msgQueueId < 0)
+           {
+               gs_msgQueueId = msgget((key_t)(MODULE_MESSAGE_QUEUE_KEY_START), 0666 | IPC_CREAT);
+               msgctl(gs_msgQueueId, IPC_RMID, NULL);
+               gs_msgQueueId = msgget((key_t)(MODULE_MESSAGE_QUEUE_KEY_START), 0666 | IPC_CREAT);
+           }
+       }
+       pthread_mutex_unlock(&gs_queue_mutex);
+}
 
 void xSysdestroyQueueIfNotExisted()
 {

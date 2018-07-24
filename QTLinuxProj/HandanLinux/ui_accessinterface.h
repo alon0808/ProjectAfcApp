@@ -16,12 +16,36 @@ typedef enum {
 	FPARAM_COLUMN = 2,          // column of screen,0x0002
 }emFuncParam;
 
+#define SCREEN_ROW			8
+#define SCREEN_COLUMN		50
+#define SCREEN_COLUMN_ALL	(SCREEN_COLUMN + 2)
+
+#ifndef TYPEDEF_TEXT_POSITION
+#define TYPEDEF_TEXT_POSITION
+// ÎÄ±¾Î»ÖÃ
+typedef enum
+{
+    TP_INVALID = 0,
+    TP_LEFT,
+    TP_MIDDLE,
+    TP_RIGHT
+}emTextPostion;
+#endif
+
+
+typedef struct {
+    int row;
+    int column;
+    char *msg;	// for printf
+    int textPosition;
+}stMsg;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 	//extern int initUIAccessInterface();
 
-	extern int func_UiAccess(unsigned char* pParam);
+    extern void func_UiAccess(int row, int column, char msg[], int textPosition = TP_INVALID);
 
 #ifdef __cplusplus
 }
@@ -35,12 +59,13 @@ class MyThread : public QThread
 public:
 	explicit MyThread(QObject *parent = 0);
 	virtual void run();
+    //void showUI(stMsg *pMsgSt);
 
 private:
 
 
 signals:
-	void dataChanged(QString);
+    void dataChanged(stMsg *pMsgSt);
 
 	public slots:
 };

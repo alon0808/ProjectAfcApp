@@ -4,7 +4,11 @@
 #include "xSys.h"
 
 
+TLPVOID xOpenCom(char comN[], int baund) {
+    TLPVOID hCom = NULL;
 
+    return hCom;
+}
 
 
 #endif

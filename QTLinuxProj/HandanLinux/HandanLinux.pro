@@ -16,6 +16,7 @@ DEFINES += _linux_
 
 INCLUDEPATH += ../../code/public
 INCLUDEPATH += ../../code/UtilProc
+INCLUDEPATH += ../../code/application
 
 
 SOURCES += main.cpp\
@@ -47,3 +48,6 @@ DISTFILES += \
     ../../../../../../appConst.sh \
     ../prebuild.sh \
     ../postbuild.sh
+
+RESOURCES += \
+    ../HandanResource/mainres.qrc

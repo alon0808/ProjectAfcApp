@@ -22,7 +22,8 @@ private:
     MyThread *t;
 
 private slots:
-    void processUiAccess(QString msg);
+    void clearInUI(int line=0);
+    void processUiAccess(stMsg *pStMsg);
 };
 
 #endif // MAINWINDOW_H

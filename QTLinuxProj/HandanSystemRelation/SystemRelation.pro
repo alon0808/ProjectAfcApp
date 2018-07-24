@@ -85,3 +85,10 @@ unix {
 
 INCLUDEPATH += $$PWD/../Bin
 DEPENDPATH += $$PWD/../Bin
+
+unix:!macx: LIBS += -L$$PWD/../Bin/ -lUtilProStaic
+
+INCLUDEPATH += $$PWD/../Bin
+DEPENDPATH += $$PWD/../Bin
+
+unix:!macx: PRE_TARGETDEPS += $$PWD/../Bin/libUtilProStaic.a
