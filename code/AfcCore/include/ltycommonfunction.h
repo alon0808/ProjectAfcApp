@@ -25,26 +25,26 @@
 
 int ConvertHexStringToValue(const char *HexStr, unsigned long *value);
 int IsHexCharacter(char hex);
-int ConvertDecStringToValue(const char *DecStr, int *value);
+//int ConvertDecStringToValue(const char *DecStr, int *value);
 int ConvertDecStringToValue(const char *DecStr, unsigned long *value);
 int IsDecCharacter(char hex);
 void uSleep(unsigned int MicroSecond);
 void mSleep(unsigned int  MilliSecond);
-bool MakeDirectory(const char *directory);
-bool IsValidDateTime(datetime_t *pDateTime);
-bool GetMaxDayForMonth(unsigned char year, unsigned char month, unsigned char *day);
-bool CaculateWeek(unsigned char year, unsigned char month, unsigned char day, week_t *pWeek);
-bool RectangleOverlap(rectanglearea_t *pRect1, rectanglearea_t *pRect2);
-bool DotInRectangle(int x, int y, rectanglearea_t *pRect);
-bool GetMaxValueForSpecifyDigit(int digit, unsigned long *pValue);
+TBOOL MakeDirectory(const char *directory);
+TBOOL IsValidDateTime(datetime_t *pDateTime);
+TBOOL GetMaxDayForMonth(unsigned char year, unsigned char month, unsigned char *day);
+TBOOL CaculateWeek(unsigned char year, unsigned char month, unsigned char day, week_t *pWeek);
+TBOOL RectangleOverlap(rectanglearea_t *pRect1, rectanglearea_t *pRect2);
+TBOOL DotInRectangle(int x, int y, rectanglearea_t *pRect);
+TBOOL GetMaxValueForSpecifyDigit(int digit, unsigned long *pValue);
 void PrintCurTimeOfDay(char *header);
 void PrintDateTime(char *header, const datetime_t *pDatetime);
 typedef void *(*ThreadEntryPtrType)(void *);
 int CreateNormalThread(ThreadEntryPtrType entry, void *para, pthread_t *pid);
 picturetype_t GetPictureType(char *pName);
-bool CalculateRectangleOverlap(rectanglearea_t *pRect1, rectanglearea_t *pRect2, rectanglearea_t *pResult);
+TBOOL CalculateRectangleOverlap(rectanglearea_t *pRect1, rectanglearea_t *pRect2, rectanglearea_t *pResult);
 void CaluculateMiddleAlignCoordiante(int xin, int yin, int win, int hin, int w, int h, int *x, int *y);
-bool AddBiasForDirPath(char *path);
+TBOOL AddBiasForDirPath(char *path);
 int Utf8ToUnicode(const char *pString, unsigned char *unicode, int unicodelen);
 #endif/*__RMCOMMONFUNCTION_H__*/
 

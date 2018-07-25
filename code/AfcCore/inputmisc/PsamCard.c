@@ -3,7 +3,7 @@
 /// @author Zhou
 /// @version V1.0.0
 /// @date 2018-06-19
-
+#include "Macro_Proj.h"
 //#include "LtyTypeDef.h"
 //#include "LtyError.h"
 #include "SlzrTypeDef.h"
@@ -866,7 +866,8 @@ SLZR_U32 QRCodeInit(SLZR_U8 *RcvBuff, SLZR_U32 *RcvBuff_len)
 	//for(i=0; i<5; i++)
 	{
 		Ret = UartRead_QRCodeData(RcvBuff, RcvBuff_len);
-		if(Ret == MI_OK)	// && *RcvBuff_len > 5
+		if(
+Ret == MI_OK)	// && *RcvBuff_len > 5
 		{
 	//		printf("QRCode-:");	{	printf("RcvBuff-:%s\n", RcvBuff);}
 			return SLZR_SUCCESS;

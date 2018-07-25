@@ -4,6 +4,7 @@
 * 描述   :交通部CPU卡消费文件
 * 建立   :15/11/2015 @zzc	
 **************************************************/
+#include "Macro_Proj.h"
 
 #include <unistd.h>
 #include <stdio.h>

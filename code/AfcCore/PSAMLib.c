@@ -2,7 +2,7 @@
 
 
 //兼容原有PSAM函数。IC卡，及其它 函数
-
+#include "Macro_Proj.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/types.h>

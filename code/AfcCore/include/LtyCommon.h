@@ -62,7 +62,7 @@ extern LTY_U8  LtyStrAsc2Hex(LTY_U8 u8Asc);
 extern void HEXOUT(void *pData, unsigned int len);
 
 unsigned short checksum(unsigned short *buffer, int size);
-bool validate_checksum(unsigned short *buffer, int size);
+TBOOL validate_checksum(unsigned short *buffer, int size);
 
 #define MAX_CHANNEL_NUM             16
 #define MAX_IPC_NUM             9
@@ -173,10 +173,10 @@ typedef enum lty_LANGUAGE_E{
 	LANGUAGE_TAI,
 }LANGUAGE_E;
 
-bool GetQueueMessage(PMSGQUEUE msg_que, MSG_CONTEXT_S* pmsg);
-bool PutQueueMessage (PMSGQUEUE msg_que, MSG_CONTEXT_S* pmsg);
+TBOOL GetQueueMessage(PMSGQUEUE msg_que, MSG_CONTEXT_S* pmsg);
+TBOOL PutQueueMessage (PMSGQUEUE msg_que, MSG_CONTEXT_S* pmsg);
 void Queue_Deinit(PMSGQUEUE pMsgQueue);
-bool Queue_Init (PMSGQUEUE pMsgQueue, int iBufferLen);
+TBOOL Queue_Init (PMSGQUEUE pMsgQueue, int iBufferLen);
 
 LTY_RESULT LtyFsScanDir(LTY_STRING pFullPath, LTY_U32 u32FileType,
                         int (*cb)(LTY_STRING pFileName, LTY_U32 u32Type, LTY_LPVOID pCbArg),
@@ -218,17 +218,6 @@ int LtyUpdateDomainServIp();
 LTY_RESULT ModInsert(const char* pszMod, const char* option);
 LTY_RESULT ModUnload(const LTY_STRING pszModName);
 const char *moderror(int err);
-
-namespace gps
-{
-
- 	// 计算弧度
-	double rad(double d);
-
-	// 从两个gps坐标点（经纬度）获得两点的直线距离，单位是米
-	unsigned int CalcDistance(float fLati1, float fLong1, float fLati2, float fLong2);
- 
-}
 
 void getVideoBitrate(int level, int *bitrate);
 #define UDISK_MOUNTDIR "/mnt/udisk"

@@ -285,9 +285,6 @@
     <ClInclude Include="..\..\code\AfcCore\Other\WatchDog.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\code\AfcCore\SlDemo\Macro_Proj.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\code\AfcCore\Other\Uart.h">
       <Filter>头文件</Filter>
     </ClInclude>

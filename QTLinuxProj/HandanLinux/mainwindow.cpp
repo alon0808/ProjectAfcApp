@@ -61,18 +61,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	qDebug() << "UTF8±à";
 
-
-    this->setWindowFlags(this->windowFlags() &~ Qt::WindowMaximizeButtonHint &~ Qt::WindowMinimizeButtonHint);
+    // hide the max and min button of window
+    this->setWindowFlags(this->windowFlags() &~ Qt::WindowMinMaxButtonsHint);
 	//ui->textEdit->set
     ui->textEdit_main->setText(QString::fromLocal8Bit("san lian zhong rui"));
 
     ui->textEdit_main->append(QString::fromLocal8Bit("ÊÇUTF8±àÂëµÄ"));
 	//ui->textEdit->setSizePolicy();
 
+    // make textedit with transparent background
     ui->textEdit_main->setAttribute(Qt::WA_TranslucentBackground, true);
 
     ui->textEdit_log->setAttribute(Qt::WA_TranslucentBackground, true);
 
+    // hide some bars
     ui->toolBar->hide();
     ui->mainToolBar->hide();
     ui->menuBar->hide();

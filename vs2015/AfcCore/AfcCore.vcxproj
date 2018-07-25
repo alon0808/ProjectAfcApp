@@ -257,7 +257,6 @@
     <ClInclude Include="..\..\code\AfcCore\SlDemo\DemoMain.h" />
     <ClInclude Include="..\..\code\AfcCore\SlDemo\GPRS.h" />
     <ClInclude Include="..\..\code\AfcCore\SlDemo\LightColor.h" />
-    <ClInclude Include="..\..\code\AfcCore\SlDemo\Macro_Proj.h" />
     <ClInclude Include="..\..\code\AfcCore\SlDemo\ProcCharacter.h" />
     <ClInclude Include="..\..\code\AfcCore\SlDemo\xSysApi_LanTai.h" />
     <ClInclude Include="..\..\code\public\debugOut.h" />

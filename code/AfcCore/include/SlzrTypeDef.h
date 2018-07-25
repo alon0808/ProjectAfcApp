@@ -1029,6 +1029,8 @@ typedef struct {
 
 }stCardInfo;
 
+#ifndef _BITS8_ATTR_
+#define _BITS8_ATTR_
 typedef struct {
 	unsigned char bit0 : 1;	//111
 	unsigned char bit1 : 1;
@@ -1044,7 +1046,7 @@ typedef union {
 	unsigned char dataCh;
 	stBits8 bits;
 }unBits8;
-
+#endif
 
 //同一个连接重连时间延时30秒
 #define CONNECT_DLYTIME 30

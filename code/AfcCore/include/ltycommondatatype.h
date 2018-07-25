@@ -13,6 +13,8 @@
 #include <stdio.h>
 //#include "rmcommondefine.h"
 
+//typedef int bool;
+
 // ”∆µ÷∆ Ω
 typedef enum {
     VIDEO_SYS_PAL = 0,/*PAL*/
@@ -227,7 +229,7 @@ typedef struct _frameinfo_{
 
 typedef struct _list_{
     char *data;
-    _list_ *pNext;
+    struct _list_ *pNext;
 }list_t;
 
 

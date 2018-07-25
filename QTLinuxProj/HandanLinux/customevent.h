@@ -18,8 +18,8 @@ class MySender:public QCoreApplication
 {
 public:
     MySender(int argc, char *argv[]):QCoreApplication(argc, argv) {}
-    bool notify(QObject *r, QEvent *e);
-    static bool sendEvent(QObject *r, QEvent *e);
+    TBOOL notify(QObject *r, QEvent *e);
+    static TBOOL sendEvent(QObject *r, QEvent *e);
     static void postEvent(QObject *receiver, QEvent *event);
 };
 

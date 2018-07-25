@@ -1,6 +1,8 @@
 #include "Macro_Proj.h"
 #include "ProcCharacter.h"
 
+#include <string.h>
+
 
 unsigned char getSignXor(unsigned char *pSrc, int len) {
 	unsigned char xorCh = 0;
@@ -168,7 +170,7 @@ int SetTLV(stTlv *pTlv, int tag, int len, void *pSrc) {
 	pTlv->pValue = (unsigned char *)pSrc;
 
 
-	MSG_LOG("SetTLV(%d,%d):", tag, len);
+//	MSG_LOG("SetTLV(%d,%d):", tag, len);
 	//BCD_LOG(pSrc, len, 1);
 
 	return Ret_OK;

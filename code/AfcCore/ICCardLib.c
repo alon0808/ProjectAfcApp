@@ -1,5 +1,6 @@
 
 //兼容原有的函数，方便移植代码。
+#include "Macro_Proj.h"
 
 #include <unistd.h>
 #include <stdio.h>

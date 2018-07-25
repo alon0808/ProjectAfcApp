@@ -3,6 +3,7 @@
 /// @author Jesse Xu <zhimo811@gmail.com>
 /// @version V1.0.0
 /// @date 2017-12-18
+#include "Macro_Proj.h"
 #include "IcCardCtrlApi.h"
 #include "PsamCard.h"
 #include "SlzrError.h"

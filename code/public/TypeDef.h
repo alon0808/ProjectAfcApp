@@ -29,6 +29,8 @@ extern "C"
 #ifndef TYPE_BASIC_DEFINE
 #define TYPE_BASIC_DEFINE
 
+	typedef char TBOOL;
+
 	typedef char TINT8;
 
 	typedef unsigned char TUINT8;
