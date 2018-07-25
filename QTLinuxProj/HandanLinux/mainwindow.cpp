@@ -62,15 +62,20 @@ MainWindow::MainWindow(QWidget *parent) :
 	qDebug() << "UTF8编";
 
 
+    this->setWindowFlags(this->windowFlags() &~ Qt::WindowMaximizeButtonHint &~ Qt::WindowMinimizeButtonHint);
 	//ui->textEdit->set
-	ui->textEdit->setText(QString::fromLocal8Bit("san lian zhong rui"));
+    ui->textEdit_main->setText(QString::fromLocal8Bit("san lian zhong rui"));
 
-	ui->textEdit->append(QString::fromLocal8Bit("是UTF8编码的"));
+    ui->textEdit_main->append(QString::fromLocal8Bit("是UTF8编码的"));
 	//ui->textEdit->setSizePolicy();
 
-    ui->textEdit->setAttribute(Qt::WA_TranslucentBackground, true);
+    ui->textEdit_main->setAttribute(Qt::WA_TranslucentBackground, true);
 
-    ui->textEdit_2->setAttribute(Qt::WA_TranslucentBackground, true);
+    ui->textEdit_log->setAttribute(Qt::WA_TranslucentBackground, true);
+
+    ui->toolBar->hide();
+    ui->mainToolBar->hide();
+    ui->menuBar->hide();
 
 	//ui->verticalLayout->setSizeConstraint(QLayout::SetMaximumSize);
 	//ui->verticalLayoutWidget->maximumSize();
@@ -175,7 +180,7 @@ void MainWindow::processUiAccess(stMsg *pStMsg)
 		}
 		memcpy(pTmpCh + column, msg, textLen);
 	}
-    ui->textEdit->setText(msg);
+    ui->textEdit_main->setText(msg);
 	//pRichEditCtrl->SetWindowTextA(pContent);
 
 #if 0
@@ -223,7 +228,7 @@ showInUI_OVER:
 
 void MainWindow::clearInUI(int line) {
     //CAfcappWinUIDlg *pHndWin = this;
-    QTextEdit *pRichEditCtrl = ui->textEdit;
+    QTextEdit *pRichEditCtrl = ui->textEdit_main;
     char content[100];// = "";
                       //	int index, length;
     int i, tmpI;
@@ -272,7 +277,7 @@ void MainWindow::clearInUI(int line) {
         }
 
         memset(pTmpCh, ' ', SCREEN_COLUMN);
-        ui->textEdit->setText(pContent);
+        ui->textEdit_main->setText(pContent);
         //pRichEditCtrl->SetWindowTextA(pContent);
     }
 }

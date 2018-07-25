@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>460</height>
+    <height>426</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -17,7 +17,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>三联众瑞科技</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../HandanResource/mainres.qrc">
+    <normaloff>:/公司LOG.ico</normaloff>:/公司LOG.ico</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -38,13 +42,13 @@
    <property name="styleSheet">
     <string notr="true">background-image: url(:/timg.jpg);</string>
    </property>
-   <widget class="QTextEdit" name="textEdit">
+   <widget class="QTextEdit" name="textEdit_main">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>10</y>
       <width>361</width>
-      <height>401</height>
+      <height>351</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -77,13 +81,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;d&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit_2">
+   <widget class="QTextEdit" name="textEdit_log">
     <property name="geometry">
      <rect>
       <x>370</x>
       <y>10</y>
       <width>381</width>
-      <height>401</height>
+      <height>351</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -155,6 +159,8 @@ p, li { white-space: pre-wrap; }
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="../HandanResource/mainres.qrc"/>
+ </resources>
  <connections/>
 </ui>

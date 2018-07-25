@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{627E7934-268B-4497-8DE0-40513B08EF82}</ProjectGuid>
+    <RootNamespace>HandanDemo</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\include\;$(SolutionDir)..\..\linuxsystem_include;$(SolutionDir)..\inputmisc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\inputmisc\IcCardCtrlApi.cpp" />
+    <ClCompile Include="..\inputmisc\PsamCard.cpp" />
+    <ClCompile Include="..\inputmisc\Uart.cpp" />
+    <ClCompile Include="..\main.cpp" />
+    <ClCompile Include="..\SlDemo\DemoMain.c" />
+    <ClCompile Include="..\SlDemo\ProcCharacter.c" />
+    <ClCompile Include="..\SlDemo\xSysApi_LanTai.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\apparel.h" />
+    <ClInclude Include="..\include\debug_.h" />
+    <ClInclude Include="..\include\ev.h" />
+    <ClInclude Include="..\include\InitSystem.h" />
+    <ClInclude Include="..\include\kfifo.h" />
+    <ClInclude Include="..\include\LtyCommon.h" />
+    <ClInclude Include="..\include\ltycommondatatype.h" />
+    <ClInclude Include="..\include\ltycommonfunction.h" />
+    <ClInclude Include="..\include\LtyError.h" />
+    <ClInclude Include="..\include\LtyLog.h" />
+    <ClInclude Include="..\include\LtyMessage.h" />
+    <ClInclude Include="..\include\LtyTimer.h" />
+    <ClInclude Include="..\include\LtyTypeDef.h" />
+    <ClInclude Include="..\inputmisc\IcCardCtrlApi.h" />
+    <ClInclude Include="..\inputmisc\PsamCard.h" />
+    <ClInclude Include="..\inputmisc\Uart.h" />
+    <ClInclude Include="..\ltyapp\alsa\include\alsa\input.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\alisp.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\asoundef.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\conf.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\control.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\control_external.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\error.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\global.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\hwdep.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\input.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\mixer.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\mixer_abst.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\output.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_external.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_extplug.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_ioplug.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_old.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_plugin.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_rate.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\rawmidi.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\seq.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\seqmid.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\seq_event.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\seq_midi_event.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\asoc.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\asound_fm.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\emu10k1.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\hdsp.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\hdspm.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\sb16_csp.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\sscape_ioctl.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\tlv.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\type_compat.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\timer.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\topology.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\use-case.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\version.h" />
+    <ClInclude Include="..\ltyp2\alsa\include\sys\asoundlib.h" />
+    <ClInclude Include="..\SlDemo\DemoMain.h" />
+    <ClInclude Include="..\SlDemo\Macro_Proj.h" />
+    <ClInclude Include="..\SlDemo\ProcCharacter.h" />
+    <ClInclude Include="..\SlDemo\xSysApi_LanTai.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Makefile" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

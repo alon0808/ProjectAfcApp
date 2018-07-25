@@ -35,8 +35,14 @@ lst/
 [Rr]elease/
 .svn/
 .vs/
+ipch/
 
 
 #special
 VEDIT/
 *.TMP
+
+#system
+ltyappcomm/
+ltyp2/
+ltyapp/

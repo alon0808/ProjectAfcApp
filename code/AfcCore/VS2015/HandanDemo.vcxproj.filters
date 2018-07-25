@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{0418e90e-c4f6-437c-8086-5fbed2a8bd14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Demo">
+      <UniqueIdentifier>{fcb7ef26-1826-440e-aa1c-a80419f20a34}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inputmisc\Uart.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inputmisc\PsamCard.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inputmisc\IcCardCtrlApi.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SlDemo\DemoMain.c">
+      <Filter>Demo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SlDemo\xSysApi_LanTai.cpp">
+      <Filter>Demo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SlDemo\ProcCharacter.c">
+      <Filter>Demo</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ltyp2\alsa\include\sys\asoundlib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\version.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\use-case.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\topology.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\timer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\type_compat.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\tlv.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\sscape_ioctl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\sb16_csp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\hdspm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\hdsp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\emu10k1.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\asound_fm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\sound\asoc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\seqmid.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\seq_midi_event.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\seq_event.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\seq.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\rawmidi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_rate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_plugin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_old.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_ioplug.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_extplug.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm_external.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\pcm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\output.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\mixer_abst.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\mixer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\input.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\hwdep.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\global.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\error.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\control_external.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\control.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\conf.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\asoundef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyp2\alsa\include\alsa\alisp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ltyapp\alsa\include\alsa\input.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inputmisc\Uart.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inputmisc\PsamCard.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inputmisc\IcCardCtrlApi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ltycommonfunction.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ltycommondatatype.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\kfifo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ev.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\debug_.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\apparel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\LtyTypeDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\LtyTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\LtyMessage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\LtyLog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\LtyError.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\LtyCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\InitSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SlDemo\ProcCharacter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SlDemo\DemoMain.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SlDemo\xSysApi_LanTai.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SlDemo\Macro_Proj.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Makefile">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+</Project>

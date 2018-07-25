@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="常用头文件">
+      <UniqueIdentifier>{085634d7-5221-495d-a27b-bd3b9c61d37d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -33,5 +36,454 @@
     <ClInclude Include="..\..\code\public\TransmitData.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\alisp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\sound\asoc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\sound\asound_fm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\asoundef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\asoundlib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\sys\asoundlib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\conf.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\control.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\control_external.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\sound\emu10k1.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\error.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\global.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\sound\hdsp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\sound\hdspm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\hwdep.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\input.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\mixer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\mixer_abst.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\output.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\pcm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\pcm_external.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\pcm_extplug.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\pcm_ioplug.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\pcm_old.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\pcm_plugin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\pcm_rate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\rawmidi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\sound\sb16_csp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\seq.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\seq_event.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\seq_midi_event.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\seqmid.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\sound\sscape_ioctl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\timer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\sound\tlv.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\topology.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\sound\type_compat.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\use-case.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyapp\alsa\include\alsa\version.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\CPUCard.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\DEF8583.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\GPRSdatatype.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\GprsSocket.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ICCardLib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\libsm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\MYDES.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\PSAMLib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\RecordFile.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\SL8583.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\inputmisc\GPIOCtrl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\inputmisc\IcCardCtrlApi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\inputmisc\LightBeep.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\inputmisc\PsamCard.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\inputmisc\Uart.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\inputmisc\WatchDog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\apparel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\City-handan.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\CPUCARJTB.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\Debug_ .h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\debug_.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\ev.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\InitSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\kfifo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\LtyCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\ltycommonfunction.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\LtyError.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\LtyLog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\LtyMessage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\LtyTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\LtyTypeDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\Main_City.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\SlzrError.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\SlzrTypeDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\StructDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\szct.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\SlDemo\LightColor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\SlDemo\ProcCharacter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\SlDemo\DemoMain.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\SlDemo\xSysApi_LanTai.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\SlDemo\GPRS.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\GPS\gpsd.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Other\LightBeep.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Other\WatchDog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\SlDemo\Macro_Proj.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Other\Uart.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\alisp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\sound\asoc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\sound\asound_fm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\asoundef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\asoundlib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\sys\asoundlib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\conf.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\control.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\control_external.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\sound\emu10k1.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\error.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\global.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\sound\hdsp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\sound\hdspm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\hwdep.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\input.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\mixer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\mixer_abst.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\output.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\pcm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\pcm_external.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\pcm_extplug.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\pcm_ioplug.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\pcm_old.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\pcm_plugin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\pcm_rate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\rawmidi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\sound\sb16_csp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\seq.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\seq_event.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\seq_midi_event.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\seqmid.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\sound\sscape_ioctl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\timer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\sound\tlv.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\topology.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\sound\type_compat.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\use-case.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\version.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Other\LtyTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Other\LtyTypeDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\ltycommondatatype.h">
+      <Filter>常用头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\code\AfcCore\ICCardLib.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\CPUCard.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\CPUCARJTB.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\GprsSocket.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\main.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\MYDES.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\PSAMLib.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\RecordFile.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\SL8583_4GLinux.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\inputmisc\GPIOCtrl.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\inputmisc\IcCardCtrlApi.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\inputmisc\PsamCard.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\inputmisc\Uart.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\SlDemo\DemoMain.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\SlDemo\GPRS.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\SlDemo\LightColor.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\SlDemo\ProcCharacter.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\SlDemo\xSysApi_LanTai.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\GPS\gps_setttyS2.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\Other\LightBeep.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\Other\WatchDog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\Other\Uart.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>timg.jpg</file>
+        <file>公司LOG.ico</file>
+        <file>三联众瑞图标灰的.ico</file>
     </qresource>
 </RCC>

@@ -79,7 +79,7 @@ void MyThread::run()
     while(true)
     {
         qDebug() << "now i is: " << i;
-        QThread::msleep(5000);
+        QThread::msleep(10000);
         if (s_curPos == 2){
             /*can not operate the GUI directly from another thread, I guess signal-slot mechanism should be used.
             //this->tEdit->setText("test");

@@ -27,6 +27,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WatchDog", "WatchDog\WatchD
 		{A1A8A157-6432-45AE-B6FA-3ABA4E7620F8} = {A1A8A157-6432-45AE-B6FA-3ABA4E7620F8}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9B81D906-6EA6-4AA3-89D2-F5A5A1227DF9}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
