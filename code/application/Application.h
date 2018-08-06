@@ -25,7 +25,7 @@ extern "C"
 	*
 	* @Return void
 	*/
-	extern void StartApp(void);
+//	extern void StartApp(void);
 
 #ifdef __cplusplus
 };

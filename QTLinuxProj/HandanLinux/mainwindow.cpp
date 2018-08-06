@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include "Application.h"
+#include "handancore.h"
 
 static char s_showContent[SCREEN_COLUMN_ALL * SCREEN_ROW];
 
@@ -89,10 +90,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	}
     char *p = getcwd(buffer, sizeof(buffer));
     qDebug() << buffer;
-
     //InitApp(buffer, func_UiAccess);
 
-    //StartApp();
+    StartApp(0, NULL);
 }
 
 MainWindow::~MainWindow()

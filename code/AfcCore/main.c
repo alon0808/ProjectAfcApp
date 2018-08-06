@@ -23,6 +23,8 @@
 #include "ICCardLib.h"
 #include "PSAMLib.h"
 
+#include "handancore.h"
+
 typedef struct 
 {
 	unsigned char packetStatus;			//°üµÄ×´Ì¬
@@ -69,7 +71,7 @@ extern void* getNetData(void *arg);
 extern unsigned char CPUPsamInitJTB(void);
 extern void *main_GPRS(void *arg);
 extern void *onemsSecondDly(void *arg);
-int main(int argc, const char **argv)
+AFC_CORE__API int StartApp(int argc, const char **argv)
 {
 //	char c;
 	SLZR_U8 RcvBuff[512]; 

@@ -17,6 +17,7 @@ DEFINES += _linux_
 INCLUDEPATH += ../../code/public
 INCLUDEPATH += ../../code/UtilProc
 INCLUDEPATH += ../../code/application
+INCLUDEPATH += ../../QTLinuxProj/HandanCore
 
 
 SOURCES += main.cpp\
@@ -51,3 +52,8 @@ DISTFILES += \
 
 RESOURCES += \
     ../HandanResource/mainres.qrc
+
+unix:!macx: LIBS += -L$$PWD/../Bin/ -lHandanCore
+
+INCLUDEPATH += $$PWD/../Bin
+DEPENDPATH += $$PWD/../Bin

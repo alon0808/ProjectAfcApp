@@ -3,7 +3,7 @@
 
 const QEvent::Type customEvent::MyEventType = (QEvent::Type)QEvent::registerEventType(QEvent::User+100);
 
-TBOOL MySender::notify(QObject *r, QEvent *e)
+bool MySender::notify(QObject *r, QEvent *e)
 {
     qDebug()<<"notify got event MyEventType !\n";
     if(e->type() == customEvent::MyEventType){
@@ -13,7 +13,7 @@ TBOOL MySender::notify(QObject *r, QEvent *e)
     return QCoreApplication::notify(r, e);
 }
 
-TBOOL MySender::sendEvent(QObject *r, QEvent *e)
+bool MySender::sendEvent(QObject *r, QEvent *e)
 {
     qDebug()<<"sendEvent got event MyEventType !";
     qDebug()<<"e->type() == "<<e->type();

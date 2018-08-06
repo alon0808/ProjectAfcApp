@@ -1,6 +1,6 @@
 #ifndef CUSTOMEVENT_H
 #define CUSTOMEVENT_H
-
+//#include "Macro_Proj.h"
 #include <QtDebug>
 #include <QEvent>
 #include <QCoreApplication>
@@ -18,8 +18,8 @@ class MySender:public QCoreApplication
 {
 public:
     MySender(int argc, char *argv[]):QCoreApplication(argc, argv) {}
-    TBOOL notify(QObject *r, QEvent *e);
-    static TBOOL sendEvent(QObject *r, QEvent *e);
+    bool notify(QObject *r, QEvent *e);
+    static bool sendEvent(QObject *r, QEvent *e);
     static void postEvent(QObject *receiver, QEvent *event);
 };
 

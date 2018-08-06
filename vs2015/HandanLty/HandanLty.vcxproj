@@ -1,0 +1,405 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{75E5A3DB-DE04-49AA-AAFC-CF2D68AD708F}</ProjectGuid>
+    <RootNamespace>HandanLty</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\qrc_LtyApp.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\qrc_LtyP2.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_about_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_arrive_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_camera_config_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_card_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_comboboxitem.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_commondelegatecontrol.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_commonlist.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_commonshadowwidget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_commontablemodel.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_commonuiinit.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_common_data.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_common_interface.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_common_query_header.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_common_query_list.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_common_query_mode.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_common_query_table.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_coordinate_collection_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_cycloprogress.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_declaration_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_define_screen.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_definitionbutton.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_driver_menu_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_dynamic_text.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_glappeventfilter.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_head_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_history_info_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_mainwindow.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_main_message_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_main_page.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_main_page2.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_menu_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_message_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_mycheckbox.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_myinputpanel.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_myinputpanelcontext.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_mytableview.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_my_export.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_my_messagebox.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_my_messagebox1.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_my_mouse_event.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_my_pushbutton.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_navigateleftbutton.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_navigate_left.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_network_select.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_network_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_parent_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_passageway_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_passenger_flow_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_passenger_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_password1_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_password_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_pay_info_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_pos_config_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_progress_box.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_protocol.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_register_info_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_run_status_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_scrollcontroller.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_senior_setup_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_service_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_setting_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_state_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_steering_wheel.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_storage_manage_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_switch_config_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_system_maintain_config.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_system_maintain_upgrade.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_system_maintain_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_system_manage.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_system_setup_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_videotape_export.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_videotape_playback.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_videotape_query_header.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_videotape_query_list.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_videotape_query_mode.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_videotape_query_table.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_videotape_query_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_videotape_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_video_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\build-d2-QT4_8_ARM-Debug\temp\debug\moc\moc_voice_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\define_screen.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\main.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\myinputpanel.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\myinputpanelcontext.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\arrive_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\cJSON.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\basemodeldata.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\card_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\comboboxitem.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\commondelegatecontrol.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\commonlist.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\commonshadowwidget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\commontablemodel.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\commonuiinit.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\customevent.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\cycloprogress.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\define_screen.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\definitionbutton.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\glappeventfilter.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\main_message_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\mycheckbox.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\mytableview.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\my_export.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\my_messagebox.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\my_messagebox1.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\my_mouse_event.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\my_pushbutton.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\navigateleftbutton.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\parent_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\password1_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\password_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\progress_box.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\scrollcontroller.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common_interface.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\ltystring.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\ltyuicallinterface.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\msglist.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\common_data.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\declaration_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\dynamic_text.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\head_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\common_view\common_query_header.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\common_view\common_query_list.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\common_view\common_query_mode.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\common_view\common_query_table.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\videotape_query\videotape_query_header.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\videotape_query\videotape_query_list.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\videotape_query\videotape_query_mode.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\videotape_query\videotape_query_table.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\main.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\mainwindow.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\main_page.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\main_page2.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\about_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\driver_menu_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\message_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\passageway_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\passenger_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\pay_info_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\run_status_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\system_manage.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\videotape_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\navigate_left.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\protocol.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\service_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\setting_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\shundown_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\state_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\steering_wheel.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\camera_config_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\coordinate_collection_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\history_info_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\network_select.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\network_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\passenger_flow_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\pos_config_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\register_info_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\senior_setup_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\storage_manage_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\switch_config_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\system_maintain_config.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\system_maintain_upgrade.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\system_maintain_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\system_setup_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\videotape_export.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\videotape_playback.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\videotape_query_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\video_widget.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\voice_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\main.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\CardClt.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\CardSvr.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\guicontrol.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\gui_screen.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\MainCtrlMsglist.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\sysdesk.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\.conf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\define_screen.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\myinputpanel.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\myinputpanelcontext.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\arrive_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\cJSON.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\basemodeldata.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\card_dialog.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\comboboxitem.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\commondelegatecontrol.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\commonlist.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\commonshadowwidget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\commontablemodel.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\commonuiinit.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\customevent.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\cycloprogress.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\define_screen.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\definitionbutton.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\glappeventfilter.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\iconLocation.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\main_message_dialog.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\mycheckbox.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\mytableview.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\my_export.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\my_messagebox.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\my_messagebox1.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\my_mouse_event.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\my_pushbutton.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\navigateleftbutton.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\parent_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\password1_dialog.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\password_dialog.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\progress_box.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common\scrollcontroller.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\common_interface.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\ltystring.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\ltyuicallinterface.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\msglist.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\common_data.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\declaration_dialog.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\dynamic_text.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\head_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\include\myinputpanel.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\include\myinputpanelcontext.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\include\syszuxim.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\include\syszuxpinyin.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\common_view\common_query_header.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\common_view\common_query_list.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\common_view\common_query_mode.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\common_view\common_query_table.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\videotape_query\videotape_query_header.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\videotape_query\videotape_query_list.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\videotape_query\videotape_query_mode.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\videotape_query\videotape_query_table.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\LtyCommonDefine.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\LtyCommonStyle.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\mainwindow.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\main_page.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\main_page2.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\about_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\driver_menu_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\message_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\passageway_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\passenger_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\pay_info_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\run_status_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\system_manage.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu\videotape_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\menu_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\navigate_left.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\protocol.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\service_dialog.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\setting_dialog.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\shundown_dialog.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\state_dialog.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\steering_wheel.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\camera_config_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\coordinate_collection_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\history_info_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\network_select.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\network_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\passenger_flow_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\pos_config_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\register_info_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\senior_setup_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\storage_manage_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\switch_config_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\system_maintain_config.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\system_maintain_upgrade.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\system_maintain_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\system_setup_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\videotape_export.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\videotape_playback.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\system_manage\videotape_query_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\video_widget.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\voice_dialog.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\CardClt.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\CardSvr.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\cJSON.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\guicontrol.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\gui_screen.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\ltyuicallinterface.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\MainCtrlMsglist.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\sysdesk.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

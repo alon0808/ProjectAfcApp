@@ -1,0 +1,23 @@
+1.打开工程
+使用QtCreator 打开 L12_P2_GUI/d2.pro文件
+
+2.编译
+该代码有两种使用模式：
+(1)如果所有的功能都使用Qt开发，将.pro文件中的 找到 TEMPLATE = lib，将其改为 TEMPLATE = app。并把L12_P2_GUI/main.cpp中的代码注释都放开。编译完成后会生成LtyP2GUI可执行程序。
+(2)如果是只Qt开发界面，就保持现状直接编译。编译完成后会生成libLtyP2GUI.so动态库。
+
+使用QtCreator 编译，编译完后会在 编译路径/output/debug 下生成动态库文件。
+
+3.嵌入式环境配置
+(1)将 环境搭建目录下的 qt 文件夹复制到 /ltyapp/lib/中。
+(2)将编译生成的libLtyP2GUI.so(如果有的话)复制到/ltyapp/lib/中。
+(3)输入环境变量：
+export LD_LIBRARY_PATH="/ltyapp/lib:$LD_LIBRARY_PATH"
+export QWS_DISPLAY="LinuxFb:mmWidth100:mmHeight130:0"
+export QT_INSTALL_PATH=/ltyapp/lib/qt
+export LD_LIBRARY_PATH=/lib:/usr/lib:${QT_INSTALL_PATH}/lib:/ltyapp/lib:${LD_LIBRARY_PATH}
+export QT_QWS_FONTDIR=${QT_INSTALL_PATH}/lib/fonts
+export QT_PLUGIN_PATH=${QT_INSTALL_PATH}/plugins
+
+4.启动界面
+如果是编译生成的是libLtyP2GUI.so，那么使用该界面，需要使用 QTGUI/guicontrol.cpp 和 QTGUI/sysdesk.cpp 中的函数启动界面，以及于界面交互，详情参考 工程/main.cpp。
