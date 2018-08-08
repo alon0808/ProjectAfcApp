@@ -17,8 +17,8 @@ DEFINES += _linux_
 
  LIBS += -L. -linputpanel_p2
 
-DEFINES += APPLICATION_TYPE_D2
-#DEFINES += APPLICATION_TYPE_P2
+#DEFINES += APPLICATION_TYPE_D2
+DEFINES += APPLICATION_TYPE_P2
 
 TEMPLATE = app
 #TEMPLATE = lib
@@ -48,7 +48,7 @@ contains(TEMPLATE, "lib") {
  DEFINES += CURRENT_ARM_RUN
 }
 
-
+INCLUDEPATH += ../../../../code/public
 
 SOURCES += main.cpp\
     menu_widget.cpp \
@@ -248,7 +248,7 @@ contains(DEFINES,APPLICATION_TYPE_P2){
 
 
 debug{
-   TARGET = $$join(TARGET,,,d)
+   #TARGET = $$join(TARGET,,,d)
 
    DESTDIR = .
    DLLDESTDIR = .
@@ -264,30 +264,7 @@ debug{
    MOC_DIR = ./temp/release/moc
 }
 
+unix:!macx: LIBS += -L$$PWD/../../../Bin/ -lHandanCore
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+INCLUDEPATH += $$PWD/../../../Bin
+DEPENDPATH += $$PWD/../../../Bin

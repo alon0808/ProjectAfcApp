@@ -1505,7 +1505,7 @@ unsigned char PsamInitialize(void)
 	// 	display(2,1,"ÇëµÈ´ý......",0);
 
 #ifdef _debug_ICcard_
-	debugstring("PSAM init9999:%d\r\n", psamZJB.SLot);
+    MSG_LOG("PSAM init9999:%d\r\n", psamZJB.SLot);
 #endif
 
 #ifdef BUS_PRO_JSB

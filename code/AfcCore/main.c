@@ -1,4 +1,5 @@
 #include "Macro_Proj.h"
+#include "libHandanCore.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -25,7 +26,7 @@
 
 #include "handancore.h"
 
-typedef struct 
+typedef struct
 {
 	unsigned char packetStatus;			//包的状态
 	unsigned short length;				//发送包长度
@@ -35,35 +36,46 @@ typedef struct
 }TCP_IP_PACKET1;
 
 //
-int  CreateDir(const   char   *sPathName)  
-{  
-	char   DirName[256];  
-	strcpy(DirName,   sPathName);  
-	int   i,len   =   strlen(DirName);  
-	if(DirName[len-1]!='/')  
-		strcat(DirName,   "/");  
-	
-	len   =   strlen(DirName);  
-	
-	for(i=1;   i<len;   i++)  
-	{  
-		if(DirName[i]=='/')  
-		{  
-			DirName[i]   =   0;  
-			if(  access(DirName,   F_OK)!=0   )  
-			{  
-				if(mkdir(DirName,   0755)==-1)  
-				{   
-					perror("mkdir   error");   
-					return   -1;   
-				}  
-			}  
-			DirName[i]   =   '/';  
-		}  
-	}  
-	
-	return   0;  
- } 
+int  CreateDir(const   char   *sPathName)
+{
+	char   DirName[256];
+	strcpy(DirName, sPathName);
+	int   i, len = strlen(DirName);
+	if (DirName[len - 1] != '/')
+		strcat(DirName, "/");
+
+	len = strlen(DirName);
+
+	for (i = 1; i < len; i++)
+	{
+		if (DirName[i] == '/')
+		{
+			DirName[i] = 0;
+			if (access(DirName, F_OK) != 0)
+			{
+				if (mkdir(DirName, 0755) == -1)
+				{
+					perror("mkdir   error");
+					return   -1;
+				}
+			}
+			DirName[i] = '/';
+		}
+	}
+
+	return   0;
+}
+
+static stUIData s_UIData;
+
+AFC_CORE__API stUIData *GetStatusData(void) {
+
+	//memcpy(s_UIData.devId, firstv)
+
+	//s_UIData.devId = 
+
+	return &s_UIData;
+}
 
 //激活网络
 extern void *main_NetConnect(void *arg);
@@ -71,15 +83,15 @@ extern void* getNetData(void *arg);
 extern unsigned char CPUPsamInitJTB(void);
 extern void *main_GPRS(void *arg);
 extern void *onemsSecondDly(void *arg);
-AFC_CORE__API int StartApp(int argc, const char **argv)
+AFC_CORE__API void* StartApp(void *argv)//int argc, 
 {
-//	char c;
-	SLZR_U8 RcvBuff[512]; 
-	SLZR_U8 buf[5]={20,12,0,0};
-//	struct ev_loop *loop;
+	//	char c;
+	SLZR_U8 RcvBuff[512];
+	SLZR_U8 buf[5] = { 20,12,0,0 };
+	//	struct ev_loop *loop;
 	SLZR_U32 RcvBuff_len, u32Ret;
 
-	
+
 #ifdef KEYBOARD
 	pthread_t tidmain_ExKeyBoard;
 #endif
@@ -90,18 +102,18 @@ AFC_CORE__API int StartApp(int argc, const char **argv)
 	pthread_t tidgetNetData1;
 	pthread_t tidgetNetData2;
 	pthread_t tidgetNetData3;
-	
+
 	sleep(1);
 
 	printf("-----------main start-------------\n");
 
 
-// 	CPsamCard();
-// 	
-	
+	// 	CPsamCard();
+	// 	
+
 	printf("hello World\n");
-	
-	if(CreateDir(WorkDir) != 0){	//建立工作目录，如果存在则不建，否则新建
+
+	if (CreateDir(WorkDir) != 0) {	//建立工作目录，如果存在则不建，否则新建
 		MessageBox(1, "工作目录建立失败");
 		while (1)
 		{
@@ -114,11 +126,11 @@ AFC_CORE__API int StartApp(int argc, const char **argv)
 	Card_Init();
 	R485_Init();
 
-//	CPsamCard_Init();
+	//	CPsamCard_Init();
 
 
-	for(u32Ret=0; u32Ret<3; u32Ret++){	//有时候会错，多试几次。
-		if(PsamInitialize() == ST_OK)
+	for (u32Ret = 0; u32Ret < 3; u32Ret++) {	//有时候会错，多试几次。
+		if (PsamInitialize() == ST_OK)
 			break;
 		sleep(1);
 
@@ -139,14 +151,14 @@ AFC_CORE__API int StartApp(int argc, const char **argv)
 		printf("Create thread tidmain_GPRS error!\n");
 		//exit(1);
 	}
-	printf("Create thread tidmain_GPRS, TID: %lu\n", tidmain_GPRS);	
+	printf("Create thread tidmain_GPRS, TID: %lu\n", tidmain_GPRS);
 
 	if (pthread_create(&tidonemsSecondDly, NULL, onemsSecondDly, NULL) != 0)	//主要是用于计时器.
 	{
 		printf("Create thread tidonemsSecondDly error!\n");
 		//exit(1);
 	}
-	printf("Create thread tidonemsSecondDly, TID: %lu\n", tidonemsSecondDly);	
+	printf("Create thread tidonemsSecondDly, TID: %lu\n", tidonemsSecondDly);
 	if (pthread_create(&tidgetNetData0, NULL, getNetData, (void *)0) != 0)
 	{
 		printf("Create thread getNetData0 error!\n");
@@ -175,11 +187,11 @@ AFC_CORE__API int StartApp(int argc, const char **argv)
 		//exit(1);
 	}
 #endif
-	
+
 	Light_main(QR_LIGHT, LIGHT_OPEN, QR_W, (char *)buf);
 
 	beep(3, 10, 10);
-	while(1){
+	while (1) {
 
 		main_card();
 
@@ -187,39 +199,39 @@ AFC_CORE__API int StartApp(int argc, const char **argv)
 
 		usleep(100000);
 
-// 		if((u32Ret % 10) == 0){
-// 			R485WriteData(RcvBuff, 10);
-// 		}
-// 
-// 		R485ReadData(RcvBuff, &RcvBuff_len);
+		// 		if((u32Ret % 10) == 0){
+		// 			R485WriteData(RcvBuff, 10);
+		// 		}
+		// 
+		// 		R485ReadData(RcvBuff, &RcvBuff_len);
 
 	}
 
-	
+
 	u32Ret = 0;
 	memset(RcvBuff, '1', sizeof(RcvBuff));
-//	CmdPSAMbps(1);
-	
-	//1.运行语音
-	//Voice_main(WelCome);
-	
+	//	CmdPSAMbps(1);
 
-	//去掉看门狗
+		//1.运行语音
+		//Voice_main(WelCome);
+
+
+		//去掉看门狗
 	system("wtd off");
-	
+
 	//屏幕上方灯打开蓝色
-	
-/**/	Light_main(SCREEN_LIGHT, LIGHT_OPEN, SCREEN_B, (char *)buf);
-	
+
+	/**/	Light_main(SCREEN_LIGHT, LIGHT_OPEN, SCREEN_B, (char *)buf);
+
 	Voice_main(Thanks_Again);
 
 	printf("LL:%2X\n", sizeof(TCP_IP_PACKET1));
 
 	Light_main(SCREEN_LIGHT, LIGHT_OPEN, SCREEN_R, (char *)buf);
-	
+
 	//扫码灯打开绿色
 	Light_main(QR_LIGHT, LIGHT_OPEN, QR_G, (char *)buf);
-	
+
 	Voice_main(Invaild_Code);
 
 	Light_main(QR_LIGHT, LIGHT_OPEN, QR_W, (char *)buf);
@@ -230,61 +242,61 @@ AFC_CORE__API int StartApp(int argc, const char **argv)
 	//后背LED显示
 	buf[0] = '2'; buf[1] = '.'; buf[2] = '8'; buf[3] = '0'; buf[4] = 0x00;
 	Light_main(LED_LIGHT, 0, 0, (char *)buf);
-			
+
 	Voice_main(WelCome);
 
 
 	buf[0] = '1'; buf[1] = '.'; buf[2] = '6'; buf[3] = 0x00;
 	Light_main(LED_LIGHT, 0, 0, (char *)buf);
-	
+
 	//6.获取按键的键值
 	int key, value;
 	key = KeyBoard_main(&value);
-	printf("Key is %d %s\n", key, (value) ? "Down": "Up");
+	printf("Key is %d %s\n", key, (value) ? "Down" : "Up");
 
 	//10.GPRS
-		
-	char receivebuf[1000],sendbuf[100]="helloworld slzr..!";	
+
+	char receivebuf[1000], sendbuf[100] = "helloworld slzr..!";
 	char serv_ip[20] = "139.199.213.63";
 	int serv_port = 60000, sendlen, revlen;
 	sendlen = strlen(sendbuf);
-	
+
 	GPRS_main(serv_ip, serv_port, sendbuf, sendlen, receivebuf, &revlen);
 
 	printf("The ReceiveBuf is %s", receivebuf);
-/**/
-	//13.GPS
-	//GPS_main();
-	
+	/**/
+		//13.GPS
+		//GPS_main();
+
 	CPsamCard_Init();
 	u32Ret = CPsamCard_QRCodeInit(RcvBuff, &RcvBuff_len);
-	printf("QRCode:");	
-    if(u32Ret == SLZR_SUCCESS)
+	printf("QRCode:");
+	if (u32Ret == SLZR_SUCCESS)
 	{
 		printf("RcvBuff:%s\n", RcvBuff);
 	}
 
-		
-	return 0;
+
+	return NULL;
 
 }
 
 /*
 void main(void)
-{	
+{
 #ifdef _debug_
 	unsigned int i;
-	
+
 	printf("TCP_IP_PACKET1:len:%X\n", sizeof(TCP_IP_PACKET1));
-	
+
 	printf("GPS_INFO:len:%X\n", sizeof(GPS_INFO));
-	
+
 	printf("stDiaoDuinfo:len:%X\n", sizeof(stDiaoDuinfo));
-	
+
 	printf("stStaeInfo:len:%X\n", sizeof(stStaeInfo));
-	
+
 	printf("铁电用量1:%X\n", sizeof(BIT_HISREC_SND+20));
-		
+
 	printf("铁电用量2:%X\n", sizeof(BIT_FE_END_ADDR));
 #endif
 
@@ -294,5 +306,5 @@ void main(void)
 
 //	CmdPSAMbps(1);
 
-	
+
 }*/

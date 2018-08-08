@@ -41,6 +41,8 @@ public:
         kEnumPushbuttonStationName1
 
     };
+private:
+	int m_seconds;
 signals:
     void signal_button_menu();
     void signal_button_exit();
@@ -86,6 +88,8 @@ private:
     QPushButton *m_pushbutton_platform_status1; //tmp图标
     
     QPushButton *m_pushbutton_sd_status;
+
+	QLabel *m_label_slzr; //时间显示
 
     QLabel *m_label_time; //时间显示
     QLabel *m_label_time1; //时间显示

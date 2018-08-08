@@ -414,6 +414,9 @@
     <ClInclude Include="..\..\code\AfcCore\include\ltycommondatatype.h">
       <Filter>常用头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\libHandanCore.h">
+      <Filter>常用头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\code\AfcCore\ICCardLib.c">

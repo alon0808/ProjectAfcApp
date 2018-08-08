@@ -147,6 +147,7 @@
     <ClInclude Include="..\..\code\AfcCore\include\ev.h" />
     <ClInclude Include="..\..\code\AfcCore\include\InitSystem.h" />
     <ClInclude Include="..\..\code\AfcCore\include\kfifo.h" />
+    <ClInclude Include="..\..\code\AfcCore\include\libHandanCore.h" />
     <ClInclude Include="..\..\code\AfcCore\include\LtyCommon.h" />
     <ClInclude Include="..\..\code\AfcCore\include\ltycommondatatype.h" />
     <ClInclude Include="..\..\code\AfcCore\include\ltycommonfunction.h" />

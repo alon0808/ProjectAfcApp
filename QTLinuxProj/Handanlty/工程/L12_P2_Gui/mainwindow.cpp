@@ -34,9 +34,11 @@
 #include <unistd.h>
 #include <pthread.h>
 
+#include "DllDef.h"
+
 pthread_cond_t gui_msg_cond_com2 = 	PTHREAD_COND_INITIALIZER;
 pthread_mutex_t gui_msg_mutex_com2 = 	PTHREAD_MUTEX_INITIALIZER;
-int screen_flag  = 0;
+int screen_flag = 1;
 
 
 static MainWindow *gMainPageThis = NULL;
@@ -53,10 +55,13 @@ MainWindow *MainWindow::getInstance()
     return gMainPageThis;
 }
 
+extern AFC_CORE__API void* StartApp(void *argv);//int argc,
 
 MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
 {
+    pthread_t tidgetNetData1 = 0;
+
     gMainPageThis = this;
     this->setFixedSize(1024,768);
     this->setObjectName("MainWindow");
@@ -133,6 +138,13 @@ MainWindow::MainWindow(QWidget *parent) :
 #if(!defined(APPLICATION_TYPE_D2) && !defined(APPLICATION_TYPE_P2))
     CProtocol::getInstance()->call_json_system_passenger_flow(7,2,0);
 #endif
+
+	//#else
+	if (pthread_create(&tidgetNetData1, NULL, StartApp, (void *)1) != 0)
+	{
+		printf("Create thread getNetData1 error!\n");
+		//exit(1);
+	}
 
 }
 

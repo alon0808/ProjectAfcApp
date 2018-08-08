@@ -92,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug() << buffer;
     //InitApp(buffer, func_UiAccess);
 
-    StartApp(0, NULL);
+    StartApp(NULL);
 }
 
 MainWindow::~MainWindow()
