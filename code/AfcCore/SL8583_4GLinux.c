@@ -1967,7 +1967,7 @@ unsigned char GJDataDeal(unsigned char *pakege)
 #endif
 	
 	
-	gGprsinfo.isNetOK[0] = 0x03;
+	gGprsinfo.isNetOK[LINK_GJ] = 0x03;
 	if((sAlen+2) < Alen){//还有其它数据
 		nestpP = (unsigned char *)((&rgprsPoint->Revbuf[0])+sAlen);
 		nestpLen = (Alen - sAlen - 2);

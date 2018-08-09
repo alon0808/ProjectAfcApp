@@ -10,6 +10,8 @@
 #include "dynamic_text.h"
 #include <QDebug>
 #include "class/ltystring.h"
+#include "libHandanCore.h"
+
 
 #define STATION_NAME_SHOW_FONT_SIZE     30
 #define STATION_NAME_SHOW_LENGTH        160
@@ -1680,7 +1682,26 @@ void CMainPage2::slot_1s_timer()
 	}
 
 	if (m_seconds > 5 || m_seconds < 0) {
+		stUIData *uiData = GetStatusData();
+		QString msgText = "邯郸公交 ";
+		char buffer[500];
+		if (uiData->isGJOk) {
+			msgText += "G";
+		}
+		else {
+			msgText += "N";
+		}
+		if (uiData->isGpsOk) {
+			msgText += "R";
+		}
+		else {
+			msgText += "L";
+		}
+		sprintf(buffer, "v%X.%02X", (uiData->version >> 8) & 0x00FF, uiData->version & 0x00FF);
+		msgText += (buffer);
+		msgText += ("\n");
 
+		m_label_slzr->setText(msgText);
 		m_seconds = 0;
 	}
 	else {
@@ -1716,8 +1737,8 @@ void CMainPage2::slot_dynamic_text_event(const CDynTextParam &_param)
 			slot_head_widget_notify(kEnumMainPageCurrentStationName, 0, &eventData);         //当前站名
 
 		}break;
-}
-		}break;
+		}
+	}break;
 	case kEnumPushbuttonStationName1:
 	{
 		switch (_param.m_action)
@@ -1735,7 +1756,7 @@ void CMainPage2::slot_dynamic_text_event(const CDynTextParam &_param)
 			slot_head_widget_notify(kEnumMainPageCurrentStationName1, 0, &eventData);         //当前站名
 
 		}break;
-		}
+	}
 	}break;
 	case kEnumLabelMessageShow:
 	{
@@ -1760,10 +1781,10 @@ void CMainPage2::slot_dynamic_text_event(const CDynTextParam &_param)
 			slot_head_widget_notify(kEnumMainPageCurrentMessage, 0, &eventData);
 
 		}break;
-	}
+		}
 
 	}break;
-	}
+}
 }
 
 

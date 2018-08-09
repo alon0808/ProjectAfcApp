@@ -291,7 +291,9 @@
     <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\QTGUI\sysdesk.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\QTLinuxProj\HandanCore\HandanCore.pro" />
     <None Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\.conf" />
+    <None Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\d2.pro" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\define_screen.h" />

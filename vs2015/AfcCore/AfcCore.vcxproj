@@ -260,6 +260,7 @@
     <ClInclude Include="..\..\code\AfcCore\SlDemo\LightColor.h" />
     <ClInclude Include="..\..\code\AfcCore\SlDemo\ProcCharacter.h" />
     <ClInclude Include="..\..\code\AfcCore\SlDemo\xSysApi_LanTai.h" />
+    <ClInclude Include="..\..\code\AfcCore\xSys_Lantaiyuan.h" />
     <ClInclude Include="..\..\code\public\debugOut.h" />
     <ClInclude Include="..\..\code\public\Macro_Proj.h" />
     <ClInclude Include="..\..\code\public\ManageThread.h" />
@@ -289,6 +290,7 @@
     <ClCompile Include="..\..\code\AfcCore\SlDemo\LightColor.c" />
     <ClCompile Include="..\..\code\AfcCore\SlDemo\ProcCharacter.c" />
     <ClCompile Include="..\..\code\AfcCore\SlDemo\xSysApi_LanTai.cpp" />
+    <ClCompile Include="..\..\code\AfcCore\xSys_Lantaiyuan.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

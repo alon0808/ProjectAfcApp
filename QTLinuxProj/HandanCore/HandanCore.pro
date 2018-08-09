@@ -56,7 +56,6 @@ HEADERS += handancore.h\
     ../../code/AfcCore/include/apparel.h \
     ../../code/AfcCore/include/City-handan.h \
     ../../code/AfcCore/include/CPUCARJTB.h \
-    ../../code/AfcCore/include/Debug_ .h \
     ../../code/AfcCore/include/debug_.h \
     ../../code/AfcCore/include/ev.h \
     ../../code/AfcCore/include/InitSystem.h \

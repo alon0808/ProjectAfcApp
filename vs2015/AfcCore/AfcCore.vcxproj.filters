@@ -16,6 +16,9 @@
     <Filter Include="常用头文件">
       <UniqueIdentifier>{085634d7-5221-495d-a27b-bd3b9c61d37d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="关注文件">
+      <UniqueIdentifier>{0351284a-5981-4429-8dba-cafa59b3d174}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -258,9 +261,6 @@
     <ClInclude Include="..\..\code\AfcCore\include\StructDef.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\code\AfcCore\include\szct.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\code\AfcCore\SlDemo\LightColor.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -417,6 +417,12 @@
     <ClInclude Include="..\..\code\AfcCore\include\libHandanCore.h">
       <Filter>常用头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\xSys_Lantaiyuan.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\szct.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\code\AfcCore\ICCardLib.c">
@@ -483,6 +489,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\Other\Uart.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\xSys_Lantaiyuan.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

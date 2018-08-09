@@ -8,8 +8,6 @@ extern void debugdata(unsigned char *value, unsigned int uclen, unsigned char mo
 extern unsigned char ASCII2ZBcod(char *strin, unsigned char *ZBbuf, unsigned char ZBlen);
 extern unsigned char ZBcod2ASCII(unsigned char *ZBbuf, unsigned char ZBlen, char *strin);
 
-extern void Get_SerialNum(unsigned char *sv);
-extern void Get_SerialNumF4(unsigned char *ser);
 
 //最多4组,设置多少ms
 extern void set_timer0(unsigned int tick, unsigned char tID);

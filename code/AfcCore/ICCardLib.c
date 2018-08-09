@@ -29,6 +29,7 @@
 #include "libsm.h"
 #include "RecordFile.h"
 #include "GprsSocket.h"
+#include "xSys_Lantaiyuan.h"
 
 #define _debug_ICcard_
 

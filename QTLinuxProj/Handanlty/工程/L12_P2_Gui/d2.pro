@@ -49,6 +49,7 @@ contains(TEMPLATE, "lib") {
 }
 
 INCLUDEPATH += ../../../../code/public
+INCLUDEPATH += ../../../../code/AfcCore/include
 
 SOURCES += main.cpp\
     menu_widget.cpp \

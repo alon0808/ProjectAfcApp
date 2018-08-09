@@ -2,7 +2,6 @@
 //Socket 通讯相关
 
 #include "Macro_Proj.h"
-
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -42,6 +41,7 @@
 #include "PSAMLib.h"
 #include "SL8583.h"
 #include "RecordFile.h"
+#include "GprsSocket.h"
 
 
 #define _debug_gprs
@@ -842,7 +842,7 @@ void TaskRecWrite(void)
 		return;
 	}
 
-	if(gGprsinfo.isNetOK[0] == 0){//GPRSLinkProcess = 21,但是已经断开了，需要重新连接
+	if(gGprsinfo.isNetOK[LINK_GJ] == 0){//GPRSLinkProcess = 21,但是已经断开了，需要重新连接
 		gGprsinfo.GPRSLinkProcess = GPRS_NEED_CLOSEIP;//tcpipClose(0);
 		return;
 	}
@@ -850,16 +850,16 @@ void TaskRecWrite(void)
 
 	if(gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD){//正在等待上个命令应答
 		if(gSendOverTime == 0){//接收应签超时
-			close(g_socketfd[0]);
-			gGprsinfo.isNetOK[0] = FALSE;
+			close(g_socketfd[LINK_GJ]);
+			gGprsinfo.isNetOK[LINK_GJ] = FALSE;
 			gGprsinfo.GPRSLinkProcess = GPRS_NEED_CLOSEIP;
 		}
 		return;
 	}
 
 	
-	if(gGprsinfo.isNetOK[0] == 0){
-		MSG_LOG("没有连接公交:%d\r\n", gGprsinfo.isNetOK[0]);
+	if(gGprsinfo.isNetOK[LINK_GJ] == 0){
+		MSG_LOG("没有连接公交:%d\r\n", gGprsinfo.isNetOK[LINK_GJ]);
 		return;
 	}
 
@@ -1036,7 +1036,7 @@ void *main_NetConnect(void *arg)
 	
 	while (1) {
 		
-		if(gGprsinfo.isNetOK[0] == 0){
+		if(gGprsinfo.isNetOK[LINK_GJ] == 0){
 			if((t++ % 100) == 0){
 				system("pppd file /mnt/app/ltyapp/etc/ppp/3gdial");			//开始执行会出错，如果网络不成功每10秒执行一次。测试时如果网络成功，执行这个也没有影响
 				

@@ -555,6 +555,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\.conf" />
+    <None Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\d2.pro" />
+    <None Include="..\..\QTLinuxProj\HandanCore\HandanCore.pro" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\mainwindow.h">

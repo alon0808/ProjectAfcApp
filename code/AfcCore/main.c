@@ -25,6 +25,7 @@
 #include "PSAMLib.h"
 
 #include "handancore.h"
+#include "xSys_Lantaiyuan.h"
 
 typedef struct
 {
@@ -68,11 +69,18 @@ int  CreateDir(const   char   *sPathName)
 
 static stUIData s_UIData;
 
-AFC_CORE__API stUIData *GetStatusData(void) {
+AFC_CORE__API stUIData* GetStatusData(void) {
 
-	//memcpy(s_UIData.devId, firstv)
-
+	Get_SerialNum(s_UIData.devId);
+	//s_UIData.isDDOk = gGprsinfo.isNetOK[link_DD];
+	s_UIData.isGJOk = gGprsinfo.isNetOK[LINK_GJ];
+	memcpy(s_UIData.lineId, gDeviceParaTab.LineNo, LEN_LINE_ID);
 	//s_UIData.devId = 
+	s_UIData.linkStatus = gGprsinfo.GPRSLinkProcess;
+	s_UIData.modVer = 0x001;
+	s_UIData.task = gGprsinfo.gmissflag;
+	s_UIData.uploadRec = 0;
+	s_UIData.version = SOFT_VER_TIME_LOG;
 
 	return &s_UIData;
 }
