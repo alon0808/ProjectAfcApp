@@ -28,37 +28,19 @@
 
 //#define _debugPSAM_
 
-
-
-void debugstring(const char *str)
-{
-	printf("%s", str);
-}
-
-void debugdata(unsigned char *value, unsigned int uclen, unsigned char mode)
-{
-	unsigned int i;
-	for(i = 0;i < uclen; i++)
-	{
-		printf("%02X", value[i]);
-	}
-
-	if((mode&0x01) == 1)
-		printf("\r\n");
-}
-
-void over_turn(unsigned char length,unsigned char *ptr)
+void over_turn(unsigned char length, unsigned char *ptr)
 {
 	unsigned char i;
 	unsigned char temp[16];
 	//memcpy(temp, ptr, length);
 	memcpy(temp, ptr, length);
-	
-	for(i=0;i<length;i++)
+
+	for (i = 0; i < length; i++)
 	{
-		ptr[i]=temp[length-i-1];
+		ptr[i] = temp[length - i - 1];
 	}
 }
+
 
 
 //字符串转整型数 '9'>=strASC>='0'
@@ -850,70 +832,6 @@ int DataTimeDec(unsigned char *datatime1, unsigned char *datatime2)
 }
 
 
-
-
-//打开fileName指定的文件，从中读取第lineNumber行
-//返回值：成功返回1，失败返回0
-int get_file_line(char *result,char *fileName,int lineNumber)
-{
-	
-#define FILEBUFFER_LENGTH 5000
-#define EMPTY_STR ""
-
-    FILE *filePointer;
-    int i=0;
-    char buffer[FILEBUFFER_LENGTH];
-    char *temp;
-
-    memset(buffer,'\0',FILEBUFFER_LENGTH*sizeof(char));
-    strcpy(buffer,EMPTY_STR);
-
-    if((fileName==NULL)||(result==NULL))
-    {
-        return 0;
-    }
-
-    if(!(filePointer=fopen(fileName,"rb")))
-    {return 0;}
-
-	
-    while((!feof(filePointer))&&(i<lineNumber))
-    {
-        if(!fgets(buffer,FILEBUFFER_LENGTH,filePointer))
-        {
-            return 0;
-        }
-        i++;//差点又忘记加这一句了
-    }
-	
-    if(0!=fclose(filePointer))
-    {
-        return 0;
-    }
-	
-    if(0!=strcmp(buffer,EMPTY_STR))
-    {
-        while(NULL!=(temp=strstr(buffer,"\n")))
-        {
-            *temp='\0';
-        }
-
-        while(NULL!=(temp=strstr(buffer,"\r")))
-        {
-            *temp='\0';
-        }
-
-		
-
-        strcpy(result,buffer);
-    }else
-    {
-        strcpy(result,EMPTY_STR);
-        return 0;
-    }
-	
-    return 1;
-}
 
 unsigned char time_invalid(unsigned char *time_buff)
 {

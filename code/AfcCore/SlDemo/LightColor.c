@@ -2,7 +2,7 @@
 #include "LightColor.h"
 #include "DemoMain.h"
 
-#include "ProcCharacter.h"
+#include "UtilityProc.h"
 
 #include "inputmisc/GPIOCtrl.h"
 

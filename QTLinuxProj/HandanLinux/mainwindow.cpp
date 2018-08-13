@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 #include "Application.h"
-#include "handancore.h"
+#include "libHandanCore.h"
 
 static char s_showContent[SCREEN_COLUMN_ALL * SCREEN_ROW];
 

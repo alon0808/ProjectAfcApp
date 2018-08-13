@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\code\AfcCore\CPUCard.h" />
+    <ClInclude Include="..\..\code\AfcCore\debugInfor.h" />
     <ClInclude Include="..\..\code\AfcCore\DEF8583.h" />
     <ClInclude Include="..\..\code\AfcCore\GPRSdatatype.h" />
     <ClInclude Include="..\..\code\AfcCore\GprsSocket.h" />
@@ -270,6 +271,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\code\AfcCore\CPUCard.c" />
     <ClCompile Include="..\..\code\AfcCore\CPUCARJTB.c" />
+    <ClCompile Include="..\..\code\AfcCore\debugInfor.c" />
     <ClCompile Include="..\..\code\AfcCore\GprsSocket.c" />
     <ClCompile Include="..\..\code\AfcCore\GPS\gps_setttyS2.c" />
     <ClCompile Include="..\..\code\AfcCore\ICCardLib.c" />
@@ -288,7 +290,6 @@
     <ClCompile Include="..\..\code\AfcCore\SlDemo\DemoMain.c" />
     <ClCompile Include="..\..\code\AfcCore\SlDemo\GPRS.c" />
     <ClCompile Include="..\..\code\AfcCore\SlDemo\LightColor.c" />
-    <ClCompile Include="..\..\code\AfcCore\SlDemo\ProcCharacter.c" />
     <ClCompile Include="..\..\code\AfcCore\SlDemo\xSysApi_LanTai.cpp" />
     <ClCompile Include="..\..\code\AfcCore\xSys_Lantaiyuan.c" />
   </ItemGroup>

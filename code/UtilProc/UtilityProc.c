@@ -143,6 +143,18 @@ int replaceE(void *pSrc, char oldCh, char newCh, int len)
 }
 
 
+unsigned char getSignXor(unsigned char *pSrc, int len) {
+	unsigned char xorCh = 0;
+	int i;
+
+	for (i = 0; i < len; i++)		//kid 到xr 值之前的校验
+	{
+		xorCh ^= pSrc[i];
+	}
+
+	return xorCh;
+}
+
 
 
 

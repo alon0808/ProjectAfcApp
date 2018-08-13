@@ -24,8 +24,9 @@
 #include "ICCardLib.h"
 #include "PSAMLib.h"
 
-#include "handancore.h"
+#include "libHandanCore.h"
 #include "xSys_Lantaiyuan.h"
+#include "GprsSocket.h"
 
 typedef struct
 {
@@ -71,7 +72,9 @@ static stUIData s_UIData;
 
 AFC_CORE__API stUIData* GetStatusData(void) {
 
-	Get_SerialNum(s_UIData.devId);
+	//Get_SerialNum(s_UIData.devId);
+	memcpy(s_UIData.devId, gDeviceParaTab.DeviceNo, 8);
+	s_UIData.devId[LEN_DEV_ID - 1] = '\0';
 	//s_UIData.isDDOk = gGprsinfo.isNetOK[link_DD];
 	s_UIData.isGJOk = gGprsinfo.isNetOK[LINK_GJ];
 	memcpy(s_UIData.lineId, gDeviceParaTab.LineNo, LEN_LINE_ID);

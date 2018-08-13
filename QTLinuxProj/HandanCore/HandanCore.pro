@@ -39,7 +39,6 @@ SOURCES += handancore.cpp \
     ../../code/AfcCore/SlDemo/DemoMain.c \
     ../../code/AfcCore/SlDemo/GPRS.c \
     ../../code/AfcCore/SlDemo/LightColor.c \
-    ../../code/AfcCore/SlDemo/ProcCharacter.c
 
 HEADERS += handancore.h\
         handancore_global.h \
@@ -160,7 +159,6 @@ HEADERS += handancore.h\
     ../../code/AfcCore/SlDemo/DemoMain.h \
     ../../code/AfcCore/SlDemo/GPRS.h \
     ../../code/AfcCore/SlDemo/LightColor.h \
-    ../../code/AfcCore/SlDemo/ProcCharacter.h
 
 unix {
     target.path = /usr/lib

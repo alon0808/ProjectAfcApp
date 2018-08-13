@@ -110,6 +110,7 @@ typedef struct {
 
 
 #include "debugOut.h"
+#include "debugInfor.h"
 
 #endif
 

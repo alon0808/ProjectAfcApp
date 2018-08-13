@@ -1,5 +1,4 @@
-
-
+#include "Macro_Proj.h"
 #include "main_page2.h"
 
 #include "LtyCommonDefine.h"
@@ -11,6 +10,7 @@
 #include <QDebug>
 #include "class/ltystring.h"
 #include "libHandanCore.h"
+#include "UtilityProc.h"
 
 
 #define STATION_NAME_SHOW_FONT_SIZE     30
@@ -1685,6 +1685,8 @@ void CMainPage2::slot_1s_timer()
 		stUIData *uiData = GetStatusData();
 		QString msgText = "邯郸公交 ";
 		char buffer[500];
+		int pos = 0;
+
 		if (uiData->isGJOk) {
 			msgText += "G";
 		}
@@ -1697,9 +1699,25 @@ void CMainPage2::slot_1s_timer()
 		else {
 			msgText += "L";
 		}
-		sprintf(buffer, "v%X.%02X", (uiData->version >> 8) & 0x00FF, uiData->version & 0x00FF);
+		sprintf(buffer, " v%X.%02X", (uiData->version >> 8) & 0x00FF, uiData->version & 0x00FF);
 		msgText += (buffer);
 		msgText += ("\n");
+		// 第二行
+		pos = 0;
+		BytesToChars(uiData->lineId, 2, buffer+ pos, 50);
+		pos += 4;
+		buffer[pos] = '-';
+		++pos;
+		BytesToChars(uiData->lineId + 2, 1, buffer + pos, 50);
+		pos += 2;
+        msgText += (buffer);
+        msgText += "路 ";
+		msgText += uiData->devId;
+		msgText += ("\n");
+        // the third line
+		sprintf(buffer, "IC:%d", uiData->uploadRec);
+		msgText += buffer;
+
 
 		m_label_slzr->setText(msgText);
 		m_seconds = 0;
@@ -1737,8 +1755,8 @@ void CMainPage2::slot_dynamic_text_event(const CDynTextParam &_param)
 			slot_head_widget_notify(kEnumMainPageCurrentStationName, 0, &eventData);         //当前站名
 
 		}break;
-		}
-	}break;
+	}
+}break;
 	case kEnumPushbuttonStationName1:
 	{
 		switch (_param.m_action)
@@ -1756,7 +1774,7 @@ void CMainPage2::slot_dynamic_text_event(const CDynTextParam &_param)
 			slot_head_widget_notify(kEnumMainPageCurrentStationName1, 0, &eventData);         //当前站名
 
 		}break;
-	}
+		}
 	}break;
 	case kEnumLabelMessageShow:
 	{

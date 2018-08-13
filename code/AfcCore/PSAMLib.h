@@ -1,9 +1,7 @@
 
 //creat by lks
 
-
-extern void debugstring(const char *str);
-extern void debugdata(unsigned char *value, unsigned int uclen, unsigned char mode);
+#include "debugInfor.h"
 
 extern unsigned char ASCII2ZBcod(char *strin, unsigned char *ZBbuf, unsigned char ZBlen);
 extern unsigned char ZBcod2ASCII(unsigned char *ZBbuf, unsigned char ZBlen, char *strin);
@@ -24,9 +22,6 @@ extern time_t BCDTime2Long(unsigned char*timee);
 //输出BCD时间：outBCDTime
 extern void TimeAdd(unsigned char*outBCDTime, unsigned char*bcdTime, unsigned int addSec);
 
-//打开fileName指定的文件，从中读取第lineNumber行
-//返回值：成功返回1，失败返回0
-extern int get_file_line(char *result,char *fileName,int lineNumber);
 
 
 extern void over_turn(unsigned char length,unsigned char *ptr);

@@ -9,7 +9,7 @@
 #include "inputmisc/IcCardCtrlApi.h"
 #include "inputmisc/GPIOCtrl.h"
 
-#include "ProcCharacter.h"
+#include "UtilityProc.h"
 
 
 /*CIcCardCtrlApi s_iccCardApi;

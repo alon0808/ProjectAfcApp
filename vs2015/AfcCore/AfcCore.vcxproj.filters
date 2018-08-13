@@ -423,6 +423,9 @@
     <ClInclude Include="..\..\code\AfcCore\include\szct.h">
       <Filter>关注文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\debugInfor.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\code\AfcCore\ICCardLib.c">
@@ -473,9 +476,6 @@
     <ClCompile Include="..\..\code\AfcCore\SlDemo\LightColor.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\code\AfcCore\SlDemo\ProcCharacter.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\SlDemo\xSysApi_LanTai.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -492,6 +492,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\xSys_Lantaiyuan.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\debugInfor.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

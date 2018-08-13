@@ -29,6 +29,8 @@
 #include "GprsSocket.h"
 #include "RecordFile.h"
 
+#include "xSys_Lantaiyuan.h"
+
 
 #define _debug_SL8583
 
@@ -315,7 +317,7 @@ unsigned int Build8583_14(unsigned char *dat, unsigned char t)
 	return 1;
 }
 
-extern  void Get_SerialNumF4(unsigned char *ser);
+//extern  void Get_SerialNumF4(unsigned char *ser);
 //9.1.3.21.	BM #41收单方终端标识码唯一号
 unsigned int Build8583_41(unsigned char *dat)
 {

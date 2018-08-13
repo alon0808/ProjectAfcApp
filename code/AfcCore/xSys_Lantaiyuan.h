@@ -1,5 +1,5 @@
-#ifndef _INCLUDE_XSYS_LANTAIYUAN_H_
-#define _INCLUDE_XSYS_LANTAIYUAN_H_
+#ifndef _INCLUDE_DEBUG_INFOR_H_
+#define _INCLUDE_DEBUG_INFOR_H_
 
 
 #ifdef __cplusplus

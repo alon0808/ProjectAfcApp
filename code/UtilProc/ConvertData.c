@@ -245,7 +245,7 @@ void DWORD_To_nFormat(TUINT32 inData, TUINT8* pOut, TUINT8 pOutLen)
 }
 
 
-TINT32 BytesToChars(const TUINT8 *pSrc, TINT32 nSrcLen, TUINT8 *pDest, TINT32 nDestLen)
+TINT32 BytesToChars(const void *pvSrc, TINT32 nSrcLen, void *pvDest, TINT32 nDestLen)
 {
 	TINT32 i;
 	TINT32 nPos;
@@ -254,6 +254,8 @@ TINT32 BytesToChars(const TUINT8 *pSrc, TINT32 nSrcLen, TUINT8 *pDest, TINT32 nD
 	TINT32 retValue = nSrcLen << 1;
 	/*@owned@*/
 	static const char *p = "0123456789ABCDEF";
+	const TUINT8 *pSrc = (TUINT8 *)pvSrc;
+	TUINT8 *pDest = (TUINT8 *)pvDest;
 
 	xAssert(pSrc != NULL);
 	xAssert(nSrcLen >= 0);

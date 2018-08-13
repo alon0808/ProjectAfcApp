@@ -34,7 +34,7 @@
 #include <unistd.h>
 #include <pthread.h>
 
-#include "DllDef.h"
+#include "libHandanCore.h"
 
 pthread_cond_t gui_msg_cond_com2 = 	PTHREAD_COND_INITIALIZER;
 pthread_mutex_t gui_msg_mutex_com2 = 	PTHREAD_MUTEX_INITIALIZER;
@@ -54,8 +54,6 @@ MainWindow *MainWindow::getInstance()
 {
     return gMainPageThis;
 }
-
-extern AFC_CORE__API void* StartApp(void *argv);//int argc,
 
 MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)

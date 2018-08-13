@@ -45,7 +45,7 @@ extern "C"
 	extern TUINT32 nFormat_to_DWORD(TUINT8 *pIn, TUINT8 in_len);
 	//extern TINT32 SMReadFile(TINT8 *fileName, UINT8 *fileBuffer, TUINT16 *length);
 
-	extern TINT32 BytesToChars(const TUINT8 *pSrc, TINT32 nSrcLen, TUINT8 *pDest, TINT32 nDestLen);
+	extern TINT32 BytesToChars(const void *pvSrc, TINT32 nSrcLen, void *pvDest, TINT32 nDestLen);
 
 	//extern TINT32 xBinToHexStr(const UINT8 *pSrc, TINT32 nSrcLen, UINT8 *pDest, TINT32 nDestLen);
 	extern TINT32 BytesToVersion(TUINT8 *pSrc, TINT32 srcLen, TUINT8 *pDes, TINT32 *pDesLen);
