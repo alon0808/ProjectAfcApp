@@ -581,7 +581,7 @@ void CMainPage2::left_right_init1()
 	m_label_slzr = new QLabel(this);
 	m_label_slzr->setFixedSize(230, 120);
 	m_label_slzr->move(200, 350);
-	m_label_slzr->setStyleSheet("QLabel{border:0px;background:transparent;font:25px;color:#ffffff; }");
+	m_label_slzr->setStyleSheet("QLabel{border:0px;background:transparent;font:20px;color:#ffffff; }");
 	m_label_slzr->setAlignment(Qt::AlignLeft);
 	m_label_slzr->setText("sdj11212111312312312321312flsjflsdf");
 	//m_label_slzr->show();
@@ -664,7 +664,6 @@ void CMainPage2::left_right_init1()
 	slot_1s_timer();
 
 	//set_message_content("中国智能公交系统整体方案提供商及服务商");
-
 
 	str_show = tr("");
 	str_sheet = "QLabel{border:0px solid #8ea2c0;background:transparent;font:20px;color:#ffffff;}";

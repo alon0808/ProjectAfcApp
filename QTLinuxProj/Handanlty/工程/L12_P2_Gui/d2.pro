@@ -50,6 +50,7 @@ contains(TEMPLATE, "lib") {
 
 INCLUDEPATH += ../../../../code/public
 INCLUDEPATH += ../../../../code/AfcCore/include
+INCLUDEPATH += ../../code/UtilProc
 
 SOURCES += main.cpp\
     menu_widget.cpp \
@@ -269,3 +270,10 @@ unix:!macx: LIBS += -L$$PWD/../../../Bin/ -lHandanCore
 
 INCLUDEPATH += $$PWD/../../../Bin
 DEPENDPATH += $$PWD/../../../Bin
+
+unix:!macx: LIBS += -L$$PWD/../../../Bin/ -lUtilPro
+
+INCLUDEPATH += $$PWD/../../../Bin
+DEPENDPATH += $$PWD/../../../Bin
+
+unix:!macx: PRE_TARGETDEPS += $$PWD/../../../Bin/libUtilPro.a

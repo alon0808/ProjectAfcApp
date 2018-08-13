@@ -14,7 +14,7 @@
 #endif
 
 
-#define SOFT_VER_TIME_LOG 0x100
+//#define SOFT_VER_TIME_LOG 0x100
 
 #define POS_Cand_FLAG "PLT"
 #define POS_EC20_FLAG "EC2"
@@ -935,11 +935,11 @@ typedef struct
 }stBusVerIfo;
 
 
-// typedef struct
-// {
-// 	unsigned char busticketVer[2];
-// 	unsigned char newbusticketVer[2];
-// }stBusTicketV;
+typedef struct
+{
+	unsigned char busticketVer[2];
+	unsigned char newbusticketVer[2];
+}stBusTicketV;
 
 #define MAXList 3
 #define MAXLINE 2048

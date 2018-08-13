@@ -32,6 +32,7 @@
 #include "ICCardLib.h"
 #include "CPUCard.h"
 #include "RecordFile.h"
+#include "szct.h"
 
 #define _debug_JTB_
 

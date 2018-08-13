@@ -12,7 +12,7 @@
 
 #include "inputmisc/GPIOCtrl.h"
 
-
+#include "szct.h"
 #include "LightColor.h"
 #include "GPRS.h"
 

@@ -30,6 +30,8 @@
 #include "RecordFile.h"
 #include "GprsSocket.h"
 #include "xSys_Lantaiyuan.h"
+#include "szct.h"
+#include "qpboc_head.h"
 
 #define _debug_ICcard_
 

@@ -15,7 +15,7 @@
 export LD_LIBRARY_PATH="/ltyapp/lib:$LD_LIBRARY_PATH"
 export QWS_DISPLAY="LinuxFb:mmWidth100:mmHeight130:0"
 export QT_INSTALL_PATH=/ltyapp/lib/qt
-export LD_LIBRARY_PATH=/lib:/usr/lib:${QT_INSTALL_PATH}/lib:/ltyapp/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=/lib:/usr/lib:${QT_INSTALL_PATH}/lib:/mnt/app/ltyapp/:${LD_LIBRARY_PATH}
 export QT_QWS_FONTDIR=${QT_INSTALL_PATH}/lib/fonts
 export QT_PLUGIN_PATH=${QT_INSTALL_PATH}/plugins
 

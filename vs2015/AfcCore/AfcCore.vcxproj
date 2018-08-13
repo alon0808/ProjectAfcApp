@@ -134,8 +134,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\code\AfcCore\CPUCard.h" />
+    <ClInclude Include="..\..\code\AfcCore\Crypto\MD5.h" />
+    <ClInclude Include="..\..\code\AfcCore\Crypto\MYDES.h" />
     <ClInclude Include="..\..\code\AfcCore\debugInfor.h" />
     <ClInclude Include="..\..\code\AfcCore\DEF8583.h" />
+    <ClInclude Include="..\..\code\AfcCore\Fatfiles.h" />
     <ClInclude Include="..\..\code\AfcCore\GPRSdatatype.h" />
     <ClInclude Include="..\..\code\AfcCore\GprsSocket.h" />
     <ClInclude Include="..\..\code\AfcCore\GPS\gpsd.h" />
@@ -160,6 +163,7 @@
     <ClInclude Include="..\..\code\AfcCore\include\Main_City.h" />
     <ClInclude Include="..\..\code\AfcCore\include\SlzrError.h" />
     <ClInclude Include="..\..\code\AfcCore\include\SlzrTypeDef.h" />
+    <ClInclude Include="..\..\code\AfcCore\include\STProLib.h" />
     <ClInclude Include="..\..\code\AfcCore\include\StructDef.h" />
     <ClInclude Include="..\..\code\AfcCore\include\szct.h" />
     <ClInclude Include="..\..\code\AfcCore\inputmisc\GPIOCtrl.h" />
@@ -247,7 +251,6 @@
     <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\use-case.h" />
     <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\alsa\version.h" />
     <ClInclude Include="..\..\code\AfcCore\ltyp2\alsa\include\sys\asoundlib.h" />
-    <ClInclude Include="..\..\code\AfcCore\MYDES.h" />
     <ClInclude Include="..\..\code\AfcCore\Other\LightBeep.h" />
     <ClInclude Include="..\..\code\AfcCore\Other\LtyTimer.h" />
     <ClInclude Include="..\..\code\AfcCore\Other\LtyTypeDef.h" />
@@ -261,6 +264,14 @@
     <ClInclude Include="..\..\code\AfcCore\SlDemo\LightColor.h" />
     <ClInclude Include="..\..\code\AfcCore\SlDemo\ProcCharacter.h" />
     <ClInclude Include="..\..\code\AfcCore\SlDemo\xSysApi_LanTai.h" />
+    <ClInclude Include="..\..\code\AfcCore\TxnRecord.h" />
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\add.h" />
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\add_2.h" />
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\qPBOC.h" />
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\qpboc_8583.h" />
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\qpboc_head.h" />
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\SQD.h" />
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\tms.h" />
     <ClInclude Include="..\..\code\AfcCore\xSys_Lantaiyuan.h" />
     <ClInclude Include="..\..\code\public\debugOut.h" />
     <ClInclude Include="..\..\code\public\Macro_Proj.h" />
@@ -271,6 +282,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\code\AfcCore\CPUCard.c" />
     <ClCompile Include="..\..\code\AfcCore\CPUCARJTB.c" />
+    <ClCompile Include="..\..\code\AfcCore\Crypto\MD5.c" />
+    <ClCompile Include="..\..\code\AfcCore\Crypto\MYDES.c" />
     <ClCompile Include="..\..\code\AfcCore\debugInfor.c" />
     <ClCompile Include="..\..\code\AfcCore\GprsSocket.c" />
     <ClCompile Include="..\..\code\AfcCore\GPS\gps_setttyS2.c" />
@@ -280,7 +293,6 @@
     <ClCompile Include="..\..\code\AfcCore\inputmisc\PsamCard.c" />
     <ClCompile Include="..\..\code\AfcCore\inputmisc\Uart.c" />
     <ClCompile Include="..\..\code\AfcCore\main.c" />
-    <ClCompile Include="..\..\code\AfcCore\MYDES.c" />
     <ClCompile Include="..\..\code\AfcCore\Other\LightBeep.cpp" />
     <ClCompile Include="..\..\code\AfcCore\Other\Uart.cpp" />
     <ClCompile Include="..\..\code\AfcCore\Other\WatchDog.cpp" />
@@ -291,6 +303,12 @@
     <ClCompile Include="..\..\code\AfcCore\SlDemo\GPRS.c" />
     <ClCompile Include="..\..\code\AfcCore\SlDemo\LightColor.c" />
     <ClCompile Include="..\..\code\AfcCore\SlDemo\xSysApi_LanTai.cpp" />
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\add.c" />
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\add_2.c" />
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\qPBOCrsa.c" />
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\qpboc_8583.c" />
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\SQD.c" />
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\tms.c" />
     <ClCompile Include="..\..\code\AfcCore\xSys_Lantaiyuan.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

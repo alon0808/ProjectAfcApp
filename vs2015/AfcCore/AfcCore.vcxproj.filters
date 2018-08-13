@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="常用头文件">
-      <UniqueIdentifier>{085634d7-5221-495d-a27b-bd3b9c61d37d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="关注文件">
       <UniqueIdentifier>{0351284a-5981-4429-8dba-cafa59b3d174}</UniqueIdentifier>
     </Filter>
@@ -172,9 +169,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\code\AfcCore\libsm.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\AfcCore\MYDES.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\code\AfcCore\PSAMLib.h">
@@ -411,12 +405,6 @@
     <ClInclude Include="..\..\code\AfcCore\Other\LtyTypeDef.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\code\AfcCore\include\ltycommondatatype.h">
-      <Filter>常用头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\AfcCore\include\libHandanCore.h">
-      <Filter>常用头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\code\AfcCore\xSys_Lantaiyuan.h">
       <Filter>源文件</Filter>
     </ClInclude>
@@ -425,6 +413,48 @@
     </ClInclude>
     <ClInclude Include="..\..\code\AfcCore\debugInfor.h">
       <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\libHandanCore.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\ltycommondatatype.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Crypto\MD5.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Crypto\MYDES.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\add.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\add_2.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\qPBOC.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\qpboc_8583.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\qpboc_head.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Fatfiles.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\TxnRecord.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\SQD.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\UnionPay\tms.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\STProLib.h">
+      <Filter>关注文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -438,12 +468,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\GprsSocket.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\code\AfcCore\main.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\code\AfcCore\MYDES.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\PSAMLib.c">
@@ -496,6 +520,33 @@
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\debugInfor.c">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\Crypto\MD5.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\Crypto\MYDES.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\add.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\add_2.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\qpboc_8583.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\qPBOCrsa.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\SQD.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\tms.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\main.c">
+      <Filter>关注文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -20,10 +20,12 @@
 //邯郸专网？
 #define NETAPN "hdgj.spjk.heapn"
 
+#define qPBOC_BUS	// 银行卡功能
+
 //同一张卡连刷延时秒数。
 #define NORM_DLY_TIME 0
 //卡不能连刷时间。
-#define WAIT_TIME 5
+//#define WAIT_TIME 5
 
 //定义后是小额收费。用于邯郸食堂
 //	#define _HD_XIAOER_

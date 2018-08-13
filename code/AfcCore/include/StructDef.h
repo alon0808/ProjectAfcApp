@@ -97,7 +97,7 @@ typedef struct
 #define Public_monthdealsum 4
 #define Public_blackflag 6
 #define Public_fileflag 7
-typedef struct 
+/*typedef struct
 {
 	unsigned char DealPo;		//卡交易指针	0
 	unsigned char MoneyDealSum[2];	//钱包交易次数  1
@@ -106,7 +106,7 @@ typedef struct
 	unsigned char BlackFlag;	//黑名单标志    6
 	unsigned char FileFlag;		//文件表示      7
 }Parameter8;
-
+*/
 
 
 #define BIT_SUM_MONEY		4
@@ -148,7 +148,7 @@ typedef struct
 #define RECORD_DEAL				0xba
 #define RECORD_NONE				0
 
-typedef struct 
+/*typedef struct
 {
 	unsigned char stop_flag;			//停车状态	1(停)0(运行)
 	unsigned char PlusSta;				//是否收取附加费		
@@ -170,7 +170,7 @@ typedef struct
 	unsigned char newbusBLKVer[2];//黑名单版本
 	unsigned char newbusLineVer[2];//线路信息版本
 	unsigned char newbusVoiceVer[2];//语音文件版本
-}stBusVerIfo;
+}stBusVerIfo;*/
 
 //当黑名单。程序下载中止后重新发起的延时，单位：秒
 #define GPRS_Login_dly  40
@@ -341,13 +341,14 @@ typedef struct{
 	unsigned int uiVer;		//线路信息版本
 	stStationInfo StationInfo[STATION_MAX_COUNT];//一条线路保存50个站点信息
 }stLineInfo;
+/*
 typedef struct
 {
 	unsigned char old_Purcs_Time[7];
 	unsigned char old_Purcs_LineNum[3];
 	unsigned char old_Purcs_Device[4];
 	unsigned char resear[2];
-}oldPursIfo;
+}oldPursIfo;*/
 typedef struct{
 	unsigned char ucId;			//编号
 	unsigned short usRDNo;		//路段编号

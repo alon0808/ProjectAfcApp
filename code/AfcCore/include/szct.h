@@ -46,21 +46,21 @@
 //程序版本号
 #define BasksofVer 100
 #ifdef _debug_
-	#define SOFT_VER_TIME_LOG 999
-	#define SOFT_VER_TIME "2011.11.11 QUAN"	//
+#define SOFT_VER_TIME_LOG 999
+#define SOFT_VER_TIME "2011.11.11 QUAN"	//
 
 #elif defined _HD_XIAOER_OPEN
-	#define SOFT_VER_TIME_LOG BasksofVer+102
-	#define SOFT_VER_TIME "2016.9.12 ZCZ"	//
+#define SOFT_VER_TIME_LOG BasksofVer+102
+#define SOFT_VER_TIME "2016.9.12 ZCZ"	//
 #elif defined _HD_XIAOER_
 //小额消费版本
-	#define SOFT_VER_TIME_LOG  BasksofVer+205
-	#define SOFT_VER_TIME "2016..12 ZCZ"	//
+#define SOFT_VER_TIME_LOG  BasksofVer+205
+#define SOFT_VER_TIME "2016..12 ZCZ"	//
 
 #else
 //这里是程序版本
-	#define SOFT_VER_TIME_LOG BasksofVer+58
-	#define SOFT_VER_TIME "2017.02.09"	//
+#define SOFT_VER_TIME_LOG BasksofVer+58
+#define SOFT_VER_TIME "2017.02.09"	//
 
 #endif
 
@@ -71,7 +71,7 @@
 #define _backLight_on_ 0
 #define _watchdog_open
 
-
+/*
 #ifdef _New_Bu_mode_
 	#define PSAM_GJ SAM4
 	#define PSAM_YD SAM3
@@ -80,36 +80,14 @@
 	#define PSAM_YD SAM1
 #elif defined BUS_PINGXIANG_
 	#define PSAM_GJ SAM2
-	#define PSAM_YD SAM1 
+	#define PSAM_YD SAM1
 #else
 	#define PSAM_GJ SAM1
-	#define PSAM_YD SAM2 
+	#define PSAM_YD SAM2
 #endif
 	#define PSAM_JTB SAM3
-//刷卡的类型
-//通用M1卡
-#define CARDSTYLE_NORM1 1
-//CPU卡
-#define CARDSTYLE_CPU 2
-//2.4G CPU卡
-#define CARDSTYLE_24CPU 3
-//艺达M1卡
-#define CARDSTYLE_YIDAM1 4
-//2.4G移动卡
-#define CARDSTYLE_24Mobile 5
-//2.4G电信卡
-#define CARDSTYLE_24CT 6
-//中科讯联2.4G 联通
-#define CARDSTYLE_24ZKXL 7
-//厦门盛华2.4G 联通、电信
-#define CARDSTYLE_24XMSH 8
-//安龙老卡
-#define CARDSTYLE_ANLONG 9
+*/
 
-#define SEND_FILE_ERROR_ 10
-
-#define  CARDSTYLE_JTB  11
-#define	 QPBOC_JTB      12 //交通电子现金
 //#define LED_DISPLAYNUM 
 #define BLACKSUM 16000
 
@@ -339,8 +317,6 @@
 #define ERR_BUFFER_FULL			201
 #define ERR_CARD_RESTORE		202
 //------------文件标识定义-------------
-#define KEYA				0
-#define KEYB				1
 #define PSAM_HEAD_FLAG		0x3b
 #define MW_CITY_STD			0x86 	//明华PSAM卡标志	
 #define MW_EF15				0x15	//应用公共信息标识
@@ -376,17 +352,17 @@
 #define ADF2_DEAL_COUNT		0x0004
 
 #ifdef _debug_
-	#define WAIT_TIME 1
+#define WAIT_TIME 1
 #else
-	#ifdef BUS_SYBAOSHI_
-		#define WAIT_TIME 20
-	#elif defined ZongKong_CPU_ //中控的CPU单独处理
-		#define WAIT_TIME 2
-	#elif defined _HD_XIAOER_ //邯郸小额消费等待时间2小时
-		#define WAIT_TIME 20
-	#else
-		#define WAIT_TIME 5
-	#endif
+#ifdef BUS_SYBAOSHI_
+#define WAIT_TIME 20
+#elif defined ZongKong_CPU_ //中控的CPU单独处理
+#define WAIT_TIME 2
+#elif defined _HD_XIAOER_ //邯郸小额消费等待时间2小时
+#define WAIT_TIME 20
+#else
+#define WAIT_TIME 5
+#endif
 #endif
 
 ///////////////////////////////固定长度定义/////////////////////////////////
@@ -509,7 +485,7 @@
 #define CARD_MOTH_CI		13				//邯郸次卡  可以随意刷
 #define CARD_LIANGTONG_STUF 14              //手机员工卡
 
-	
+
 #define  CARD_FENDUAN_Line	33		//分段线路票价卡
 ///////////////////////////////语音端口号//////////////////////////////
 #ifdef AUDIO_SOUND_OLD //老的16段语音
@@ -759,7 +735,7 @@ typedef struct
 //32 黑名单
 #define BIT_BLACK_2BLOK BIT_MobilREC_Start_BAK_CRC+4
 //27 公交GPRS程序下载参数(任务)表
-#define BIT_GPSDownLine_INFO	BIT_BLACK_2BLOK+32
+#define BIT_GPSDownLine_INFO	(BIT_BLACK_2BLOK+32)
 //4 pboc 记录流水号
 #define BIT_PBOC_NS	BIT_GPSDownLine_INFO+32
 //160  历史指针日期，每天更新一次历史指针和统计数据 日期时间7+[卡号+充值累计金额4+...]+CRC32(4)   8张卡
@@ -769,17 +745,23 @@ typedef struct
 //20 历史记录上传地址.用于GPRS传输历史记录指针.(首地址4+长度4+日期时间7+保留1+CRC324)=20字节,首地址是相对地址,要加上FLASH2_START1
 #define BIT_HISREC_SND (BIT_STUFFER_NO+4) //2536
 //8 累计刷卡计数 次数4+校验4
-#define BIT_SWAPCARD_TIMES BIT_HISREC_SND+20
+#define BIT_SWAPCARD_TIMES (BIT_HISREC_SND+20)
 //8 设置的刷卡上限 次数4+校验4
-#define BIT_SWTIMES_MAX BIT_SWAPCARD_TIMES+8
+#define BIT_SWTIMES_MAX (BIT_SWAPCARD_TIMES+8)
 //28 月统计，保存前一个月和当前月的刷卡统计 2 * (年月2+刷卡总次4+刷卡总金额4+CRC32校验4) = 28字节
 #define BIT_MOTH_TOJI_2 BIT_SWTIMES_MAX+8
 //8 车载机禁用标识，在后台签到返回及心跳包中更新 目前只有银联卡是否启用的。"启"+"0x00"+标识1+CRC32校验4 = 8字节
 #define BIT_Center_Ctrl_BU_Data (BIT_MOTH_TOJI_2+28)
 //4 单位,部门编号
-#define BIT_UNIT BIT_Center_Ctrl_BU_Data+8		
+#define BIT_UNIT (BIT_Center_Ctrl_BU_Data+8)
 // 136灰记录存储，暂用128字节，“有效”4 + 128 data+4CRC = 136
- #define BIT_UNKNOW_RECORD	BIT_UNIT + 4
+#define BIT_UNKNOW_RECORD	(BIT_UNIT + 4)
+
+
+#define BIS_BLK_63          (BIT_UNKNOW_RECORD+136)     //  0x1A29,
+#define BBIS_BLK_63_LEN      26
+
+#define BIT_END_ADDR		(BIS_BLK_63+BBIS_BLK_63_LEN)
 
 //----------------------------------
 //28(24) 调度命令信息  调度数据存在7168开始的地址，7K，铁电共8K能用1024字节
@@ -830,14 +812,15 @@ typedef struct
 //**********************************************
 //           交易记录的格式定义				  //
 //**********************************************
+#if 0
 #ifdef BUS_HANDAN_XX
-typedef struct  
+typedef struct
 {
 	unsigned char rPublishNumb[4];		//发行卡流水号
 	unsigned char rCardDealNumb[4];		//卡片交易流水
 	unsigned char rCardType;			//卡类
 	unsigned char rDealType;			//交易类型
-	
+
 	unsigned char rMoneyDealSum[2];		//钱包累计交易次数	
 	unsigned char rAfterMoney[4];		//原额
 	unsigned char rDealMoney[3];		//交易金额
@@ -853,7 +836,7 @@ typedef struct 		//控制卡交易
 	unsigned char rCardDealNumb[4];		//卡片交易流水
 	unsigned char rCardType;			//卡类
 	unsigned char rDealType;			//交易类型
-	
+
 	unsigned char rDealTime[7];			//采集时间
 	unsigned char rDriveNo[4];			//设备号
 	unsigned char rLineNo[4];			//线路编号
@@ -868,7 +851,7 @@ typedef struct
 	unsigned char rCardDealNumb[4];		//卡片交易流水
 	unsigned char rCardType;			//卡类
 	unsigned char rDealType;			//交易类型
-	
+
 	unsigned char rDealTime[7];			//采集时间
 	unsigned char MoneySum[4];				//本次消费总金额
 	unsigned char MonthSum[2];				//本次月票总次
@@ -885,7 +868,7 @@ typedef struct 		//控制卡交易
 	unsigned char rCardDealNumb[4];		//卡片交易流水
 	unsigned char rCardType;			//卡类
 	unsigned char rDealType;			//交易类型
-	
+
 	unsigned char rDelaTime[7];			//交易时间
 	unsigned char rPublishNumb2[4];		//发行卡流水号
 	unsigned char rReserveByte[5];		//保留
@@ -924,13 +907,14 @@ typedef struct
 }DEALRECODE;
 
 #endif //#ifdef BUS_HANDAN_
+#endif
 
 typedef struct
 {
 	unsigned char rDealTime[7];			//交易时间YYYY/MM/DD/HH/MM/SS
 	unsigned char rPublishNumb[2];		//没用
 	unsigned char rDealType;			//交易类型 10
-	
+
 	unsigned char rDeviceNo[4];			//设备号唯一号
 	unsigned char rCardType[2];			// 没用
 	unsigned char rName[16];			//姓名区
@@ -938,7 +922,7 @@ typedef struct
 	unsigned char rCardID[16];			//卡号
 }DEALRECODE_CS456_ASCii;
 
-typedef struct  
+typedef struct
 {
 	unsigned char rDeviceNo[4];//设备号
 	unsigned char rLineNo[2];//线路号
@@ -948,7 +932,7 @@ typedef struct
 	unsigned char rDriverNo[4];	//司机号
 	unsigned char dealCardNo[10];//交易卡号	钱包卡号 N
 	unsigned char posSerial[3];//POS终端交易流水号 N 压缩BCD码
-	
+
 	unsigned char KEYflagNO;//密钥索引号 CN
 	unsigned char KEYVer;//密钥版本号 N
 	unsigned char TAC[4];//消费充值TAC B
@@ -979,7 +963,7 @@ typedef struct
 // 	unsigned char rCrc[2];				//校验码
 }MobileDEALRECODE;
 
-typedef struct  
+typedef struct
 {
 	unsigned char rDeviceNo[8];			//设备号
 	unsigned char posHardW_flag;		//车载机硬件标识
@@ -990,12 +974,12 @@ typedef struct
 	unsigned char CurRecordPointer[4];		//当前记录指针
 	unsigned char CurPointer[4];			//起始地址
 	unsigned char BlackListNum[4];         //黑名单数量
-	
+
 	unsigned char rLineNo[2];			//线路号
 	unsigned char rResever[19];			//保留
 }SD_DEALRECODE;//绍东的记录格式_wxliu_V3.27_2010.12.15
 
-typedef struct{
+typedef struct {
 	unsigned char citycode[2];
 	unsigned char hanye[2];
 	unsigned char deviceNo[4];//设备号
@@ -1015,7 +999,7 @@ typedef struct{
 	unsigned char Rever[96];//预留
 }stPricetable;//新的票价
 
-typedef struct{
+typedef struct {
 	unsigned char flag[4];//标志：“黑单”
 	unsigned char index[3];// 位置
 	unsigned char DorI;//增加或删除标志
@@ -1023,13 +1007,13 @@ typedef struct{
 	unsigned char BCC;//校验
 }stAddBLKTEMP;
 
-typedef struct{
+typedef struct {
 	unsigned char cardNo[4];//此段操作员卡号
 	unsigned int chargeA;//钱包消费总金额
 	unsigned int RseverA;//次数消费总金额
 	unsigned int SaleA;//刷卡总次数
 }stSatone;
-typedef struct{
+typedef struct {
 	unsigned char DataTime[7];
 	stSatone infoBuf[8];
 	unsigned char resever[8];
@@ -1046,7 +1030,7 @@ typedef struct
 	unsigned char rDeviceSl[4];			//4-7 序列号终端机编号
 	unsigned char rinRun;				//8 是否营运代码1B
 	unsigned char rDealType;			//9 交易类型  E0--E6
-	
+
 	unsigned char ZULine[4];			//10-13 主线路编号
 	unsigned char ZiLine[4];			//14-17 子线路编号
 	unsigned char ulCardNo[4];			//18-21 司机卡号
@@ -1073,7 +1057,7 @@ typedef struct
 ////////电信2.4G 沈阳宝石相关结构//////////
 #define SELPHONE_valid 0xA5
 #define SELPHONE_SENDED 0xAA
-typedef struct  
+typedef struct
 {
 	char Style;				//标识，0xA5有效
 	char SellPhoneNo[14];	//手机号
@@ -1116,7 +1100,7 @@ typedef struct
 	unsigned char timeDly[2];	//13-14:本次上车允许最长时间长度 (HEX 单位分钟)
 	unsigned char Cxor;			//15：校验
 }stFDCard2;
-typedef struct{
+typedef struct {
 	unsigned char LineNo[3];	//线路编号，和公用的一致
 	unsigned char CXulieNo;		//票价卡序号
 	unsigned char CPriceNo[2];	//票价分类后的个数
@@ -1129,4 +1113,8 @@ typedef struct{
 	unsigned char Cxor;			//校验
 }stFDLineHead;	//分段线路头，卡中是第1扇区每2块。
 //----------------------------------------------
+
+
+#include "SlzrTypeDef.h"
+
 #endif

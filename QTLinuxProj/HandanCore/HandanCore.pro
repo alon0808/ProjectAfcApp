@@ -17,6 +17,8 @@ INCLUDEPATH += ../../code/UtilProc
 INCLUDEPATH += ../../code/AfcCore
 INCLUDEPATH += ../../code/AfcCore/include
 INCLUDEPATH += ../../code/AfcCore/SlDemo
+INCLUDEPATH += ../../code/AfcCore/UnionPay
+INCLUDEPATH += ../../code/AfcCore/Crypto
 
 LIBS = -lpthread -L./ltyp2/lib
 
@@ -30,7 +32,6 @@ SOURCES += handancore.cpp \
     ../../code/AfcCore/SL8583_4GLinux.c \
     ../../code/AfcCore/RecordFile.c \
     ../../code/AfcCore/PSAMLib.c \
-    ../../code/AfcCore/MYDES.c \
     ../../code/AfcCore/main.c \
     ../../code/AfcCore/inputmisc/GPIOCtrl.c \
     ../../code/AfcCore/inputmisc/IcCardCtrlApi.c \
@@ -39,6 +40,14 @@ SOURCES += handancore.cpp \
     ../../code/AfcCore/SlDemo/DemoMain.c \
     ../../code/AfcCore/SlDemo/GPRS.c \
     ../../code/AfcCore/SlDemo/LightColor.c \
+    ../../code/AfcCore/xSys_Lantaiyuan.c \
+    ../../code/AfcCore/debugInfor.c \
+    ../../code/AfcCore/UnionPay/qpboc_8583.c \
+    ../../code/AfcCore/UnionPay/qPBOCrsa.c \
+    ../../code/AfcCore/Crypto/MD5.c \
+    ../../code/AfcCore/Crypto/MYDES.c \
+    ../../code/AfcCore/UnionPay/add_2.c \
+    ../../code/AfcCore/UnionPay/add.c
 
 HEADERS += handancore.h\
         handancore_global.h \
@@ -159,6 +168,14 @@ HEADERS += handancore.h\
     ../../code/AfcCore/SlDemo/DemoMain.h \
     ../../code/AfcCore/SlDemo/GPRS.h \
     ../../code/AfcCore/SlDemo/LightColor.h \
+    ../../code/AfcCore/xSys_Lantaiyuan.h \
+    ../../code/AfcCore/UnionPay/qpboc_8583.h \
+    ../../code/AfcCore/UnionPay/qpboc_head.h \
+    ../../code/AfcCore/Crypto/MD5.h \
+    ../../code/AfcCore/Crypto/MYDES.h \
+    ../../code/AfcCore/UnionPay/qPBOC.h \
+    ../../code/AfcCore/UnionPay/add_2.h \
+    ../../code/AfcCore/UnionPay/add.h
 
 unix {
     target.path = /usr/lib
