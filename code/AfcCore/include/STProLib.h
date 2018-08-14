@@ -101,10 +101,6 @@ extern void crc_cu(unsigned char *string_cu,unsigned char length);
 //-----------------------------------------------------------
 /****************PUBLIC**********************/
 extern unsigned char checkIP(char *IPb);
-extern unsigned char bcdADD(unsigned char bcd1, unsigned char bcd2);
-extern unsigned char bcdDEC(unsigned char bcd1, unsigned char bcd2);
-extern unsigned int str2int(unsigned char *pstr, unsigned char len);
-extern unsigned int BCD2int(unsigned char *pstr, unsigned char len);
 
 extern void MessageBox(unsigned char ucIsError, char *pDispBuf);
 extern void TimeAdd(unsigned char*outBCDTime, unsigned char*bcdTime, unsigned int addSec);

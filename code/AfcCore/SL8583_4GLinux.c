@@ -377,7 +377,7 @@ unsigned int Build8583_45(unsigned char *dat)
 	memset(dat+pos,0,8);
 	memcpy(dat+pos,POS_Cand_FLAG,3);  pos += 8;
 	memcpy(dat+pos, gBusVerInfo.busProVer, 2);
-	over_turn(2, dat+pos);
+	RevertTurn(2, dat+pos);
     pos += 2;//程序版本
 	
 	memcpy(dat+pos, SL8583FileFLAG_BLK, 3); pos += 3;
@@ -386,7 +386,7 @@ unsigned int Build8583_45(unsigned char *dat)
     if(memcmp(gBusVerInfo.busBLKVer, "\xff\xff", 2) == 0)
 		memset(gBusVerInfo.busBLKVer, 0, 2);
         memcpy(dat+pos, gBusVerInfo.busBLKVer, 2);//黑名单版本2B
-	over_turn(2, dat+pos);
+	RevertTurn(2, dat+pos);
 	pos += 2;
 	
 	memcpy(dat+pos, SL8583FileFLAG_WHT, 3); pos += 3;	
@@ -394,7 +394,7 @@ unsigned int Build8583_45(unsigned char *dat)
 	memcpy(dat+pos,"BUS",3); pos += 8;
 
 	memcpy(dat+pos,gBusVerInfo.White_Ver, 2);//?????2B
-	over_turn(2, dat+pos);
+	RevertTurn(2, dat+pos);
 	pos += 2;
 	
 	memcpy(dat+pos, SL8583FileFLAG_WHT, 3); pos += 3;	
@@ -402,7 +402,7 @@ unsigned int Build8583_45(unsigned char *dat)
 	memcpy(dat+pos,"JTB",3); pos += 8;
 
 	memcpy(dat+pos,gBusVerInfo.White_Ver_JTB, 2);//?????2B
-	over_turn(2, dat+pos);
+	RevertTurn(2, dat+pos);
 	pos += 2;
 	
 // 	memcpy(dat+pos , SL8583FileFLAG_CSN, 3); pos += 3;
@@ -418,7 +418,7 @@ unsigned int Build8583_45(unsigned char *dat)
 	memcpy(dat+pos,SL8583FileFLAG_TPK, 3); pos += 3;
 	memset(dat+pos,0,8); pos += 8;
 	memcpy(dat+pos, gBusVerInfo.busTXTPKVer, 2);//腾讯公钥	腾讯二维码公钥文件
-	over_turn(2, dat+pos);
+	RevertTurn(2, dat+pos);
 	pos += 2;
 #endif
 	
@@ -462,11 +462,11 @@ unsigned int Build8583_47(unsigned char *dat)
 	pos += 3;
 
 	memcpy(dat+pos, gsl8583FileDownPara.Miss_ver, 2);		//需要下载的文件版本2B
-	over_turn(2, dat+pos);//上发给平台的是高位在前。
+	RevertTurn(2, dat+pos);//上发给平台的是高位在前。
 	pos += 2;
 	
 	memcpy(dat+pos, (unsigned char*)&gsl8583FileDownPara.Miss_offset, 4);//需要下载的偏移量
-	over_turn(4, dat+pos);//上发给平台的是高位在前。
+	RevertTurn(4, dat+pos);//上发给平台的是高位在前。
 	pos += 4;
 
 	if((gsl8583FileDownPara.Miss_ALL_LEn-gsl8583FileDownPara.Miss_offset)<slFileDonwLenPer)
@@ -474,7 +474,7 @@ unsigned int Build8583_47(unsigned char *dat)
 	else
 		i = slFileDonwLenPer;	//一次取。
 	memcpy(dat+pos, (unsigned char*)&i, 4);
-	over_turn(4, dat+pos);//上发给平台的是高位在前。
+	RevertTurn(4, dat+pos);//上发给平台的是高位在前。
 	pos += 4;
 
 	setBitmapBits(47, gsl8583bitmapaddr);
@@ -497,11 +497,11 @@ unsigned int Build8583_50(unsigned char *dat)
 	pos += 8;
 	
 	memcpy(dat+pos, gsl8583FileDownPara.Miss_ver, 2);		//需要下载的文件版本2B
-	over_turn(2, dat+pos);//上发给平台的是高位在前。
+	RevertTurn(2, dat+pos);//上发给平台的是高位在前。
 	pos += 2;
 	
 	memcpy(dat+pos, (unsigned char*)&gsl8583FileDownPara.Miss_offset, 4);//需要下载的偏移量
-	over_turn(4, dat+pos);//上发给平台的是高位在前。
+	RevertTurn(4, dat+pos);//上发给平台的是高位在前。
 	pos += 4;
 	
 	if((gsl8583FileDownPara.Miss_ALL_LEn-gsl8583FileDownPara.Miss_offset)<slFileDonwLenPer)
@@ -509,7 +509,7 @@ unsigned int Build8583_50(unsigned char *dat)
 	else
 		i = slFileDonwLenPer;	//一次取。
 	memcpy(dat+pos, (unsigned char*)&i, 4);
-	over_turn(4, dat+pos);//上发给平台的是高位在前。
+	RevertTurn(4, dat+pos);//上发给平台的是高位在前。
 	pos += 4;
 	
 	MSG_LOG("申请file:由%d到%d\r\n",gsl8583FileDownPara.Miss_offset,i);
@@ -545,15 +545,15 @@ unsigned int Build8583_51(unsigned char *dat)
 	pos  = 0;
 	
 	memcpy(dat+pos, gsl8583FileDownPara.Miss_ver, 2);//需要下载的文件版本2B
-	over_turn(2, dat+pos);//上发给平台的是高位在前。
+	RevertTurn(2, dat+pos);//上发给平台的是高位在前。
 	pos += 2;
 	
 	memcpy(dat+pos, (unsigned char*)&gsl8583FileDownPara.Miss_ALL_LEn, 4);//文件长度
-	over_turn(4, dat+pos);//上发给平台的是高位在前。
+	RevertTurn(4, dat+pos);//上发给平台的是高位在前。
 	pos += 4;
 	
 	memcpy(dat+pos, (unsigned char*)&gsl8583FileDownPara.Miss_offset, 4);//需要下载的偏移量
-	over_turn(4, dat+pos);//上发给平台的是高位在前。
+	RevertTurn(4, dat+pos);//上发给平台的是高位在前。
 	pos += 4;
 	
 	if((gsl8583FileDownPara.Miss_ALL_LEn-gsl8583FileDownPara.Miss_offset)<slFileDonwLenPer)
@@ -561,7 +561,7 @@ unsigned int Build8583_51(unsigned char *dat)
 	else
 		i = slFileDonwLenPer;	//一次取256字节。
 	memcpy(dat+pos, (unsigned char*)&i, 4);
-	over_turn(4, dat+pos);//上发给平台的是高位在前。
+	RevertTurn(4, dat+pos);//上发给平台的是高位在前。
 	pos += 4;
 	
 	setBitmapBits(51, gsl8583bitmapaddr);
@@ -1317,13 +1317,13 @@ void dealsl8583filelist(unsigned char *idat, unsigned char len)
  		i += 8;
 
 		memcpy((unsigned char*)&gsl8583filelist[pos].fileVer, idat+i, 2);//
-		over_turn(2, (unsigned char*)&gsl8583filelist[pos].fileVer);//平台下发的是高位在前。
+		RevertTurn(2, (unsigned char*)&gsl8583filelist[pos].fileVer);//平台下发的是高位在前。
 		i += 2;
 		memcpy((unsigned char*)&gsl8583filelist[pos].filelen, idat+i, 4);//
-		over_turn(4, (unsigned char*)&gsl8583filelist[pos].filelen);//平台下发的是高位在前。
+		RevertTurn(4, (unsigned char*)&gsl8583filelist[pos].filelen);//平台下发的是高位在前。
 		i += 4;
 		memcpy((unsigned char*)&gsl8583filelist[pos].crc32, idat+i, 4);//
-		over_turn(4, (unsigned char*)&gsl8583filelist[pos].crc32);//平台下发的是高位在前。
+		RevertTurn(4, (unsigned char*)&gsl8583filelist[pos].crc32);//平台下发的是高位在前。
 		i += 4;
 		MSG_LOG("gsl8583filelist[%d],Name:%c%c%c  Ver:0x%04X\r\n",pos,gsl8583filelist[pos].filename[0],gsl8583filelist[pos].filename[1],gsl8583filelist[pos].filename[2],gsl8583filelist[pos].fileVer);
 		MSG_LOG("fileVer2:%s\r\n",gsl8583filelist[pos].fileVer2);
@@ -1629,7 +1629,7 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 // 	MSG_LOG("allen:%d\r\n",dfile->Miss_ALL_LEn);
 #endif
 
-	over_turn(2,dfileinfo+11);
+	RevertTurn(2,dfileinfo+11);
 
 
 
@@ -1958,7 +1958,7 @@ unsigned char GJDataDeal(unsigned char *pakege)
 	Alen = rgprsPoint->bufLen;	//memcpy((unsigned char*)&Alen, pakege+1, 2);//数据域总长度
 	//	unsigned char msgtype;
 	memcpy((unsigned char*)&sAlen, rgprsPoint->Revbuf, 2) ;//memcpy((unsigned char*)&sAlen, pakege+3, 2);//8583包从第3字节开始，帧总长度，//前三个字节是 帧类型和帧长度，和数据无关
-	over_turn(2, (unsigned char*)&sAlen);
+	RevertTurn(2, (unsigned char*)&sAlen);
 #ifdef _debug_SL8583
 	debugstring("deal sl8583 CMD!\r\n");
 	debugstring("Alen:");
@@ -2027,9 +2027,9 @@ unsigned char GJDataDeal(unsigned char *pakege)
 	}
 	
 	memcpy((unsigned char*)&msgCmd, sl8583head->MSGtype, 2);//此包消息类型
-	over_turn(2, (unsigned char *)&msgCmd);
+	RevertTurn(2, (unsigned char *)&msgCmd);
 	memcpy((unsigned char *)&dealCode, sl8583head->MSGdealCode+1, 2);//交易处理码后两字节
-	over_turn(2, (unsigned char *)&dealCode);
+	RevertTurn(2, (unsigned char *)&dealCode);
 	
 	MSG_LOG("bitmap:");
 	BCD_LOG(sl8583head->MSGbitmap, 16, 1);
@@ -2132,7 +2132,7 @@ unsigned char GJDataDeal(unsigned char *pakege)
 		memcpy((unsigned char*)&stemp, pakege+msgf[field_ack].dbuf_addr, 2);
 		printf("CMD_CODE:");
 		debugdata( (unsigned char*)&stemp, 2, 1);
-		over_turn(2, (unsigned char*)&stemp);
+		RevertTurn(2, (unsigned char*)&stemp);
 
 		switch(stemp)
 		{
@@ -2379,7 +2379,7 @@ unsigned char GJDataDeal(unsigned char *pakege)
 		
 		msg_type  = 0;
 		memcpy(&msg_type,msg_down->msg_type,2);
-		over_turn(2,(unsigned char *)&msg_type);
+		RevertTurn(2,(unsigned char *)&msg_type);
 		switch(msg_type)
 		{
 		case 1://	补采集 bcd

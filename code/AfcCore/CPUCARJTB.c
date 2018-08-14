@@ -259,7 +259,7 @@ void ERR_DIS(const char *dis,unsigned char *dat)//显示错误
 	gBuInfo.g24GDisFlash=3;
 	gBuInfo.restore_flag=0;
 	memcpy((unsigned char*)&distem,dat,2);
-	over_turn(2,(unsigned char*)&distem);
+	RevertTurn(2,(unsigned char*)&distem);
 	sprintf(disbuf,"%04x",distem);
 	miniDispstr(6,0,disbuf,0);
 }
@@ -269,7 +269,7 @@ int DectoBCD(unsigned int Dec, unsigned char *Bcd, int length,unsigned char mode
 	    int i;  
 	     int temp;  
 		 if(mode==1)
-			over_turn(4,(unsigned char*)&Dec);
+			RevertTurn(4,(unsigned char*)&Dec);
 
 		    for(i=length-1; i>=0; i--)  
 		     {  
@@ -453,10 +453,10 @@ void Build_1E_Rec(unsigned char *Rvb,unsigned char mode){
 	JTB_1ER.eTracode=02;		//行业代码
 	memcpy(JTB_1ER.eLineNUm,gDeviceParaTab.LineNo,2);
 	memcpy((unsigned char*)&itm,(unsigned char*)&s_sum1,4);
-	over_turn(4,(unsigned char*)&itm);
+	RevertTurn(4,(unsigned char*)&itm);
 	memcpy(JTB_1ER.eDmoney,(unsigned char*)&itm,4);//交易金额
 	memcpy((unsigned char*)&itm,(unsigned char*)&a_sum1,4);
-	over_turn(4,(unsigned char*)&itm);
+	RevertTurn(4,(unsigned char*)&itm);
 	memcpy(JTB_1ER.eYuE,(unsigned char*)&itm,4);//余额
 	memcpy(JTB_1ER.eDealTime,(unsigned char*)&SysTime,7);
 	memcpy(JTB_1ER.eCityco,jtb17file.Citycode,2);
@@ -464,7 +464,7 @@ void Build_1E_Rec(unsigned char *Rvb,unsigned char mode){
 
 	
 	itm=5;
-	over_turn(4,(unsigned char*)&itm);
+	RevertTurn(4,(unsigned char*)&itm);
 	memcpy(JTB_1ER.eErrPriceMax,(unsigned char*)&itm,4);				//最大消费金额HEX(大端)
 	//最大消费金额
 	memcpy(Rvb,(unsigned char*)&JTB_1ER,48);
@@ -696,9 +696,9 @@ unsigned char GET_TRANSACTION_PROVE(unsigned char*outdata,unsigned char mode)
 		beep(3,100,100);
 #endif
 		memcpy((unsigned char*)&ii, stuInitPurchaseRet.cSnq, 2);
-		over_turn(2, (unsigned char*)&ii);
+		RevertTurn(2, (unsigned char*)&ii);
 		kk += 1;
-		over_turn(2, (unsigned char*)&ii);
+		RevertTurn(2, (unsigned char*)&ii);
 		memcpy(jtb18file.rEPsearl, (unsigned char*)&ii, 2);//8
 		memcpy(jtb18file.rPSAMnum, psamJTB.CardNO,6);
 		memcpy(jtb18file.rPursTime,stuSamInitPurchaseJTB.cDateTime,7);
@@ -787,7 +787,7 @@ unsigned char CPUDealCard_JTB(unsigned char mode, unsigned char cool)
 		gBuInfo.restore_flag=0;
 		return ST_ERROR;
 	}
-	over_turn(4, (unsigned char*)&value);
+	RevertTurn(4, (unsigned char*)&value);
 	a_sum1 = value;		//余额
 
 
@@ -865,7 +865,7 @@ unsigned char CPUDealCard_JTB(unsigned char mode, unsigned char cool)
 	if(s_sum1 > 2000)
 		return 22;
 	uitemp = s_sum1;
-	over_turn(4, (unsigned char*)&uitemp);
+	RevertTurn(4, (unsigned char*)&uitemp);
 	memcpy(sndbuf+i, (unsigned char*)&uitemp, 4); i+=4;
 	memcpy(sndbuf+i, psamJTB.CardNO, 6); i += 6;
 #ifdef _debug_JTB_
@@ -917,7 +917,7 @@ unsigned char CPUDealCard_JTB(unsigned char mode, unsigned char cool)
 	memcpy(stuSamInitPurchaseJTB.cKeyFactor,gCardinfo.FactorFlg,8);//发卡机构代码
 	
 	memcpy((unsigned char*)&a_sum1, stuInitPurchaseRet.cBalance, 4);//余额
-	over_turn(4, (unsigned char*)&a_sum1);
+	RevertTurn(4, (unsigned char*)&a_sum1);
 	
 #ifdef _debug_JTB_
 	MSG_LOG("a_sum:%d.%d元\r\n",a_sum1/100,a_sum1%100);
@@ -1070,11 +1070,11 @@ unsigned char IF_15_OK(unsigned char *Data){
 	unsigned char disbuf[2];
 	memcpy(gCardinfo.PublishBicker, jtb15file.cApp_sn,10);
 	memcpy((unsigned char*)&NowTime, (unsigned char *)&SysTime, 4);//当前日期
-	over_turn(4, (unsigned char*)&NowTime);
+	RevertTurn(4, (unsigned char*)&NowTime);
 	memcpy((unsigned char*)&start_time, jtb15file.cIssueDate, 4);//启用日期
-	over_turn(4, (unsigned char*)&start_time);
+	RevertTurn(4, (unsigned char*)&start_time);
 	memcpy((unsigned char*)&end_time, jtb15file.cValidDate, 4);//有效日期
-	over_turn(4, (unsigned char*)&end_time);
+	RevertTurn(4, (unsigned char*)&end_time);
 	memcpy(gCardinfo.FactorFlg,jtb15file.cPublisherSign,8);
 	memset(disbuf,0xff,2);
 	if(jtb15file.cStarFlag!=0x01){//0 未启用，1 启用 2 停用
@@ -1417,11 +1417,11 @@ unsigned char CPUcardType_JTB(unsigned char mode)
 	memcpy((unsigned char*)&jtb15file,revbuf+1,30);
 	memcpy(gCardinfo.PublishBicker, jtb15file.cApp_sn,10);
 	memcpy((unsigned char*)&uitemp, (unsigned char *)&SysTime, 4);//当前日期
-	over_turn(4, (unsigned char*)&uitemp);
+	RevertTurn(4, (unsigned char*)&uitemp);
 	memcpy((unsigned char*)&start_time, jtb15file.cIssueDate, 4);//启用日期
-	over_turn(4, (unsigned char*)&start_time);
+	RevertTurn(4, (unsigned char*)&start_time);
 	memcpy((unsigned char*)&end_time, jtb15file.cValidDate, 4);//有效日期
-	over_turn(4, (unsigned char*)&end_time);
+	RevertTurn(4, (unsigned char*)&end_time);
 	memcpy(gCardinfo.FactorFlg,jtb15file.cPublisherSign,8);
 	
 #ifdef _debug_JTB_

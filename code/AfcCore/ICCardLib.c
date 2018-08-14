@@ -32,6 +32,7 @@
 #include "xSys_Lantaiyuan.h"
 #include "szct.h"
 #include "qpboc_head.h"
+#include "UtilityProc.h"
 
 #define _debug_ICcard_
 
@@ -2172,10 +2173,10 @@ unsigned char Card_typeProcess(void)
 	debugdata((unsigned char*)&endTime, 4, 1);
 	debugdata((unsigned char*)&endTimeEn, 4, 1);
 #endif
-	over_turn(4, (unsigned char*)&nowTime);
-	over_turn(4, (unsigned char*)&startTime);
-	over_turn(4, (unsigned char*)&endTime);
-	over_turn(4, (unsigned char*)&endTimeEn);
+	RevertTurn(4, (unsigned char*)&nowTime);
+	RevertTurn(4, (unsigned char*)&startTime);
+	RevertTurn(4, (unsigned char*)&endTime);
+	RevertTurn(4, (unsigned char*)&endTimeEn);
 
 #ifdef _debug_ICcard_
 	debugstring("gCardinfo.card_catalog:");

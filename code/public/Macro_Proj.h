@@ -2,6 +2,7 @@
 #define _INCLUDE_MACRO_PROJ_H_
 
 #include "TypeDef.h"
+#include "SlzrTypeDef.h"
 
 // some value for system
 // software platform system
@@ -111,6 +112,7 @@ typedef struct {
 
 #include "debugOut.h"
 #include "debugInfor.h"
+#include "UtilityProc.h"
 
 #endif
 

@@ -10,7 +10,6 @@
 //#include "..\include\include.h" 
 //---------------------------------------------------------------------------
 
-extern void over_turn(unsigned char length,unsigned char *ptr);
 unsigned int GenerateCRC32(unsigned char *DataBuf,unsigned int len) 
 { 
 	unsigned int crc_32_tab[256] = {
@@ -76,7 +75,7 @@ unsigned int GenerateCRC32(unsigned char *DataBuf,unsigned int len)
 #endif
 			m_CRC=crc_32_tab[(m_CRC^(*(pD+i)))&0xff] ^ (m_CRC>>8);
 		}
-		over_turn(4, (unsigned char*)&m_CRC);
+		RevertTurn(4, (unsigned char*)&m_CRC);
 		return (m_CRC^0xffffffff);
 		//	return m_CRC;
 }

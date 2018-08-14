@@ -633,7 +633,7 @@ void write_re_flash(void)
 		delayxms(1);
 		
 		len_infor=inforLen;
-		over_turn(2,(unsigned char *)&len_infor);
+		RevertTurn(2,(unsigned char *)&len_infor);
 		memcpy(infor_temp, "\x55\xAA", 2);
 		memcpy(infor_temp+2, (unsigned char *)&len_infor, 2);
 		save_infor_add(ODA_FeRC_Write,infor_temp);

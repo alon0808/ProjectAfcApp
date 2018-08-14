@@ -28,15 +28,6 @@
 #include "xSys_Lantaiyuan.h"
 #include "GprsSocket.h"
 
-typedef struct
-{
-	unsigned char packetStatus;			//包的状态
-	unsigned short length;				//发送包长度
-	unsigned char TTL;					//生存时间
-	unsigned short Serial;				//发送序列号
-	unsigned char tcpBuffer[250];		//最大可发送7个记录
-}TCP_IP_PACKET1;
-
 //
 int  CreateDir(const   char   *sPathName)
 {

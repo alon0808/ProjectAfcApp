@@ -22,35 +22,6 @@ extern time_t BCDTime2Long(unsigned char*timee);
 //输出BCD时间：outBCDTime
 extern void TimeAdd(unsigned char*outBCDTime, unsigned char*bcdTime, unsigned int addSec);
 
-
-
-extern void over_turn(unsigned char length,unsigned char *ptr);
-//字符串转整型数 '9'>=strASC>='0'
-extern unsigned int Ascii2INT(unsigned char *strASC, unsigned char len);
-///////////////////////////////////////////////////
-//
-//  ASCII to BCD Code
-//
-///////////////////////////////////////////////////
-extern void Ascii2BCD(unsigned char *strASC,unsigned char *strBCD, unsigned int lenASC);
-////////////////////////////////////
-//
-// BCD to ASCII Code
-//
-////////////////////////////////////
-extern void BCD2Ascii( unsigned char *bcd, unsigned char *Ascii, unsigned int len );
-extern unsigned char Hex2BCD(unsigned char hex);
-////////////////////////////////////
-// BCD to HEX
-// 高位在低位
-////////////////////////////////////
-extern unsigned int BCD2HEX(unsigned char *bcd, unsigned char len);
-//单字节BCD码相加,返回相加后的BCD码
-extern unsigned char bcdADD(unsigned char bcd1, unsigned char bcd2);
-//单字节BCD码相减,返回BCD码
-extern unsigned char bcdDEC(unsigned char bcd1, unsigned char bcd2);
-extern unsigned int str2int(unsigned char *pstr, unsigned char len);
-extern unsigned int BCD2int(unsigned char *pstr, unsigned char len);
 extern unsigned char time_invalid(unsigned char *time_buff);
 extern void MessageBox(unsigned char mode, const char *dStr);
 extern void keyBoardStart(void);

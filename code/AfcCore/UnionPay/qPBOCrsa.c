@@ -2965,13 +2965,13 @@ unsigned char qPbocDisp_history(unsigned char mode, unsigned int Index)
 		memset(buffer, 0, 20);
 		temp = 0;
 		memcpy((unsigned char*)&temp, historyCheck.rDealMoney, 2);
-		over_turn(2, (unsigned char*)&temp);
+		RevertTurn(2, (unsigned char*)&temp);
 		sprintf((char*)buffer, _Font_KouKuandian, temp / 100, temp % 100);
 		display(2, 0, (char*)buffer, 0);
 		memset(buffer, 0, 20);
 		temp = 0;
 		memcpy((unsigned char*)&temp, historyCheck.rAferMoney, 4);
-		over_turn(4, (unsigned char*)&temp);
+		RevertTurn(4, (unsigned char*)&temp);
 
 		// 		memcpy((unsigned char*)&temp1, historyCheck.rDealMoney, 3);
 		// 		temp -= temp1;
@@ -3090,13 +3090,13 @@ unsigned char qPbocDisp_history(unsigned char mode, unsigned int Index)
 		memset(buffer,0,20);
 		temp=0;
 		memcpy((unsigned char*)&temp,historyCheck.rDealMoney,2);
-		over_turn(2, (unsigned char*)&temp);
+		RevertTurn(2, (unsigned char*)&temp);
 		sprintf((char*)buffer, _Font_KouKuandian, temp/100, temp%100);
 		display(2,0,(char*)buffer,0);
 		memset(buffer,0,20);
 		temp=0;
 		memcpy((unsigned char*)&temp, historyCheck.rAferMoney, 4);
-		over_turn(4, (unsigned char*)&temp);
+		RevertTurn(4, (unsigned char*)&temp);
 		
 // 		memcpy((unsigned char*)&temp1, historyCheck.rDealMoney, 3);
 // 		temp -= temp1;
@@ -3338,7 +3338,7 @@ unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff)
 	else
 		uiTemp = PosTradeCout; 
 	memcpy(pbocrec.rSrlTimer, (unsigned char*)&uiTemp, 2);//交易序列计数器---------------------
-	over_turn(2, pbocrec.rSrlTimer);
+	RevertTurn(2, pbocrec.rSrlTimer);
 
 	get_BER_TVL(QpbocTVLFCI.t_9F74.SizeOff,&TempTVL);
 	memcpy(pbocrec.rLicense, TempTVL.V, 6);//电子现金发卡行授权码
@@ -3621,7 +3621,7 @@ unsigned char qPbocBuildRec(unsigned char *qrecbuff)
 	else
 		uiTemp = PosTradeCout; 
 	memcpy(pbocrec.rSrlTimer, (unsigned char*)&uiTemp, 2);//交易序列计数器---------------------
-	over_turn(2, pbocrec.rSrlTimer);
+	RevertTurn(2, pbocrec.rSrlTimer);
 
 	get_BER_TVL(QpbocTVLFCI.t_9F74.SizeOff,&TempTVL);
 	memcpy(pbocrec.rLicense, TempTVL.V, 6);//电子现金发卡行授权码
@@ -4381,7 +4381,7 @@ static int QpbocGetPublishPKEY(void)
 
 
 	memcpy(Buffer, EnDataBuffer + B_PUBLISHC_EXPTIME, 2);
-	over_turn(2, Buffer);
+	RevertTurn(2, Buffer);
 	MSG_LOG("Now Time =%s\r\n", BCD2ASC((INT8U *)&SysTime.year_h, 7));
 	MSG_LOG("Exp Time =%02X%02X\r\n", Buffer[0], Buffer[1]);
 	if (memcmp(Buffer, (INT8U *)&SysTime.year_l, 2) <= 0) {
@@ -4493,7 +4493,7 @@ int QpbocGetICPKEY(void)
 	}
 
 	memcpy(Buffer, EnDataBuffer + B_ICC_EXPTIME, 2);
-	over_turn(2, Buffer);
+	RevertTurn(2, Buffer);
 	//	MSG_LOG("Now Time =%s\r\n",BCD2ASC((INT8U *)&SysTime.cer,7));
 	//	MSG_LOG("Exp Time =%02X%02X\r\n",Buffer[0],Buffer[1]);
 	if (memcmp(Buffer, (INT8U *)&SysTime.year_l, 2) <= 0) {
@@ -5263,7 +5263,7 @@ int qPBOCgetPublicKey(unsigned char pKeyVer, KEY_PUBLICMSG *pKeyOut)
 	//找到了，读出指数 和 模值
 	flashread(FLASH_PUBLICKEY_START + PKEY_e_offset + (i*PKEY_e_len), buff, PKEY_e_len);
 	memcpy((unsigned char*)&e, buff, 2);	//指数
-	over_turn(2, (unsigned char*)&e);
+	RevertTurn(2, (unsigned char*)&e);
 	memcpy((unsigned char*)&t, buff + 2, 2);	//模长
 	MSG_LOG("   指数:%02X%02X,模长:%d\r\n", buff[0], buff[1], t);
 
@@ -5511,7 +5511,7 @@ void qPbocDealPkey(void)
 
 		//e 指数区
 		memcpy(buff, (unsigned char*)&key.e_Key, 2);
-		over_turn(2, (unsigned char*)buff);				//需要高位在前
+		RevertTurn(2, (unsigned char*)buff);				//需要高位在前
 		memcpy(buff + 2, (unsigned char*)&key.n_KeyLen, 2);	//模值长度
 		flashwrite(FLASH_PUBLICKEY_START + PKEY_e_offset + (pIndex*PKEY_e_len), (unsigned char*)buff, PKEY_e_len);	//写入公钥指数2字节+模值长度2字节
 		//公钥模值区

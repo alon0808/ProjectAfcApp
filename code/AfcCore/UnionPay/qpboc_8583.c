@@ -1617,7 +1617,7 @@ unsigned int Build_qpboc_8583_55(unsigned char *dat, unsigned char isSetbitMap)
 	MSG_LOG("55.3:%04X:发卡行应用数据:", QpbocTVLFCI.t_9F10.TagValue);
 	BCD_LOG(TempTVL.V, TempTVL.L, 1);
 	memcpy(dat + pos, &QpbocTVLFCI.t_9F10.TagValue, 2);
-	over_turn(2, dat + pos);
+	RevertTurn(2, dat + pos);
 	pos += 2;
 	dat[pos++] = TempTVL.L;
 	memcpy(dat + pos, TempTVL.V, TempTVL.L);
@@ -1630,7 +1630,7 @@ unsigned int Build_qpboc_8583_55(unsigned char *dat, unsigned char isSetbitMap)
 	MSG_LOG("55.1:%04X:密文:", QpbocTVLFCI.t_9F26.TagValue);
 	BCD_LOG(TempTVL.V, TempTVL.L, 1);
 	memcpy(dat + pos, &QpbocTVLFCI.t_9F26.TagValue, 2);
-	over_turn(2, dat + pos);
+	RevertTurn(2, dat + pos);
 	pos += 2;
 	dat[pos++] = TempTVL.L;
 	memcpy(dat + pos, TempTVL.V, TempTVL.L);
@@ -1640,7 +1640,7 @@ unsigned int Build_qpboc_8583_55(unsigned char *dat, unsigned char isSetbitMap)
 	MSG_LOG("55.5:%04X:交易计数器:", QpbocTVLFCI.t_9F36.TagValue);
 	BCD_LOG(TempTVL.V, TempTVL.L, 1);
 	memcpy(dat + pos, &QpbocTVLFCI.t_9F36.TagValue, 2);
-	over_turn(2, dat + pos);
+	RevertTurn(2, dat + pos);
 	pos += 2;
 	dat[pos++] = TempTVL.L;
 	memcpy(dat + pos, TempTVL.V, TempTVL.L);
@@ -1710,7 +1710,7 @@ unsigned int Build_qpboc_8583_55(unsigned char *dat, unsigned char isSetbitMap)
 	MSG_LOG("55.9:%04X:授权金额:", QpbocTVLFCI.t_9F02.TagValue);
 	BCD_LOG(TempTVL.V, TempTVL.L, 1);
 	memcpy(dat + pos, &QpbocTVLFCI.t_9F02.TagValue, 2);
-	over_turn(2, dat + pos);
+	RevertTurn(2, dat + pos);
 	pos += 2;
 	dat[pos++] = TempTVL.L;
 	memcpy(dat + pos, TempTVL.V, TempTVL.L);
@@ -1720,7 +1720,7 @@ unsigned int Build_qpboc_8583_55(unsigned char *dat, unsigned char isSetbitMap)
 	MSG_LOG("55.10:%04X:货币代码:", QpbocTVLFCI.t_5F2A.TagValue);
 	BCD_LOG(TempTVL.V, TempTVL.L, 1);
 	memcpy(dat + pos, &QpbocTVLFCI.t_5F2A.TagValue, 2);
-	over_turn(2, dat + pos);
+	RevertTurn(2, dat + pos);
 	pos += 2;
 	dat[pos++] = TempTVL.L;
 	memcpy(dat + pos, TempTVL.V, TempTVL.L);
@@ -1741,7 +1741,7 @@ unsigned int Build_qpboc_8583_55(unsigned char *dat, unsigned char isSetbitMap)
 	MSG_LOG("55.4:%04X:随机数:", QpbocTVLFCI.t_9F37.TagValue);
 	BCD_LOG(TempTVL.V, TempTVL.L, 1);
 	memcpy(dat + pos, &QpbocTVLFCI.t_9F37.TagValue, 2);
-	over_turn(2, dat + pos);
+	RevertTurn(2, dat + pos);
 	pos += 2;
 	dat[pos++] = TempTVL.L;
 	memcpy(dat + pos, TempTVL.V, TempTVL.L);
@@ -3447,7 +3447,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 	memcpy((unsigned char*)&Alen, pakege + 1, 2);//数据域总长度
 	//	unsigned char msgtype;
 	memcpy((unsigned char*)&sAlen, pakege + 3, 2);//8583包从第3字节开始，帧总长度，//前三个字节是 帧类型和帧长度，和数据无关
-	over_turn(2, (unsigned char*)&sAlen);
+	RevertTurn(2, (unsigned char*)&sAlen);
 #if 0
 #ifdef _debug_
 	debugstring("QPBOC_DataDealdeal sl8583 CMD!\r\n");
@@ -3598,7 +3598,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 	}
 
 	memcpy((unsigned char*)&msgCmd, sl8583head->MSGtype, 2);//此包消息类型
-	over_turn(2, (unsigned char *)&msgCmd);
+	RevertTurn(2, (unsigned char *)&msgCmd);
 
 	MSG_LOG("bitmap:");
 	BCD_LOG(sl8583head->MSGbitmap, 8, 1);

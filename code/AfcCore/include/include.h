@@ -381,15 +381,6 @@ extern char get_back_para(unsigned char *bpara);
 #define FLASH1 1
 #define FLASH2 2
 
-typedef struct  {
-	unsigned char year_h;
-	unsigned char year_l;
-	unsigned char month;
-	unsigned char day;
-	unsigned char hours;
-	unsigned char minutes;
-	unsigned char seconds;
-}stcomtime;
 
 extern void CheckHzk(unsigned char mode);
 /*********************************************

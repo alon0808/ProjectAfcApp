@@ -60,7 +60,6 @@ HEADERS += handancore.h\
     ../../code/AfcCore/SL8583.h \
     ../../code/AfcCore/RecordFile.h \
     ../../code/AfcCore/PSAMLib.h \
-    ../../code/AfcCore/MYDES.h \
     ../../code/AfcCore/include/apparel.h \
     ../../code/AfcCore/include/City-handan.h \
     ../../code/AfcCore/include/CPUCARJTB.h \

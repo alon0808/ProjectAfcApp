@@ -42,7 +42,7 @@
 #include "SL8583.h"
 #include "RecordFile.h"
 #include "GprsSocket.h"
-
+#include "UtilityProc.h"
 
 #define _debug_gprs
 

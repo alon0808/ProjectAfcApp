@@ -1116,5 +1116,6 @@ typedef struct {
 
 
 #include "SlzrTypeDef.h"
+#include "UtilityProc.h"
 
 #endif

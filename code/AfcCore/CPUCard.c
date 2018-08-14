@@ -21,7 +21,7 @@
 #include "SlzrTypeDef.h"
 #include "PSAMLib.h"
 #include "MYDES.h"
-
+#include "szct.h"
 #include "ICCardLib.h"
 
 #define _debug_CPU_
@@ -90,7 +90,7 @@ unsigned char CPU_Read_Money(unsigned char *remb, unsigned char mode)
 	debugstring("---remb:====");
 	debugdata(revbuf,ret, 1);
 	memcpy((unsigned char*)&temp, revbuf+1, 4);
-	over_turn(4, (unsigned char*)&temp);
+	RevertTurn(4, (unsigned char*)&temp);
 	sprintf((char *)sndbuf, "余额:%d.%02d", temp/100, temp%100);
 	debugstring((char*)sndbuf);
 #endif
@@ -606,11 +606,11 @@ unsigned char CPUcardType(void)
 #endif
 		
 	memcpy((unsigned char*)&itemp, (unsigned char *)&SysTime, 4);//当前日期
-	over_turn(4, (unsigned char*)&itemp);
+	RevertTurn(4, (unsigned char*)&itemp);
 	memcpy((unsigned char*)&value, revbuf+21, 4);//启用日期
-	over_turn(4, (unsigned char*)&value);
+	RevertTurn(4, (unsigned char*)&value);
 	memcpy((unsigned char*)&pmoney, revbuf+25, 4);//有效日期
-	over_turn(4, (unsigned char*)&pmoney);
+	RevertTurn(4, (unsigned char*)&pmoney);
 	
 #ifdef _debug_CPU_
 	debugdata(gCardinfo.PublishBicker, 4, 1);
@@ -719,7 +719,7 @@ unsigned char CPUDealCard(unsigned char mode, unsigned char cool)
 	}
 
 	CPU_Read_Money((unsigned char*)&value, 3);
-	over_turn(4, (unsigned char*)&value);
+	RevertTurn(4, (unsigned char*)&value);
 	if(cardSound == 0xaa){//需要重刷
 #ifdef _debug_CPU_
 		debugstring("aa余额:");
@@ -729,9 +729,9 @@ unsigned char CPUDealCard(unsigned char mode, unsigned char cool)
 		if(value < a_sumR){//上次已经扣成功
 			memcpy(sndbuf, "\x02\x80\x5A\x00\x06\x02", 6);//memcpy(sndbuf, "\x02\x80\x5A\x00\x05\x02", 6);
 			memcpy((unsigned char*)&ii, stuInitPurchaseRet.cSnq, 2);
-			over_turn(2, (unsigned char*)&ii);
+			RevertTurn(2, (unsigned char*)&ii);
 			ii += 1;
-			over_turn(2, (unsigned char*)&ii);
+			RevertTurn(2, (unsigned char*)&ii);
 			memcpy(sndbuf+6, (unsigned char*)&ii, 2);
 			sndbuf[8] = 8;
 #ifdef _debug_CPU_
@@ -780,7 +780,7 @@ unsigned char CPUDealCard(unsigned char mode, unsigned char cool)
 	if((s_sum1 == 0) || (s_sum1 > 2000))
 		return 22;
 	value = s_sum1;
-	over_turn(4, (unsigned char*)&value);
+	RevertTurn(4, (unsigned char*)&value);
 	memcpy(sndbuf+i, (unsigned char*)&value, 4); i+=4;
 	if(ZJB_CARD)
 		memcpy(sndbuf+i, psamZJB.CardNO, 6); 
@@ -821,7 +821,7 @@ unsigned char CPUDealCard(unsigned char mode, unsigned char cool)
 	memcpy(stuSamInitPurchase.cMoney, (unsigned char*)&value, 4);
 	
 	memcpy((unsigned char*)&a_sum1, stuInitPurchaseRet.cBalance, 4);//余额
-	over_turn(4, (unsigned char*)&a_sum1);
+	RevertTurn(4, (unsigned char*)&a_sum1);
 	if (a_sum1 >= 5000000)
 	{
 		return 21;
@@ -893,7 +893,7 @@ unsigned char CPUDealCard(unsigned char mode, unsigned char cool)
 	memset(CPUinitdat, 0, 8);
 	
 	memcpy(snddat, (unsigned char*)&s_sum1, 4);
-	over_turn(4, snddat);
+	RevertTurn(4, snddat);
 	snddat[4] = 0x06;
 	memcpy(snddat+5, psamZJB.CardNO, 6);
 	memcpy(snddat+11, (unsigned char*)&SysTime, 7);//共18
