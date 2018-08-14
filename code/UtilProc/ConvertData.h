@@ -62,7 +62,7 @@ extern "C"
 	//  ASCII to BCD Code
 	//
 	///////////////////////////////////////////////////
-	extern void Ascii2BCD(unsigned char *strASC, unsigned char *strBCD, unsigned int lenASC);
+	extern void Ascii2BCD(const void* pDataASC, const void* pDataBCD, unsigned int lenASC);
 	////////////////////////////////////
 	//
 	// BCD to ASCII Code

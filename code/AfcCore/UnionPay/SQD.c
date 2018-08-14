@@ -18,7 +18,7 @@
 #include "add.h"
 #include "add_2.h"
 #include "SQD.h"
-#include "ProcCharacter.h"
+
 extern unsigned int c_serial;
 extern stcomtime SysTime;
 extern unsigned char gchn_eng;//中英文标志

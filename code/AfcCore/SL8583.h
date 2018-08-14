@@ -10,6 +10,7 @@
 #define		L_ASC		1	/*左对齐ASC码*/
 #define		R_BCD		2	/*右对齐BCD码*/
 #define		R_ASC		3	/*右对齐ASC码*/
+#define		BINARY		4
 
 
 //域所在的数组位置，注意这里的值比文档域的位序号少1

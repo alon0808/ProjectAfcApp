@@ -570,17 +570,6 @@ extern void sysfewrite(unsigned int Address_f,unsigned int length, unsigned char
 ****************************************************/
 extern void sysferead(unsigned int Address_f,unsigned int length,unsigned char *rec_data);
 
-extern void BCD2Ascii( unsigned char *bcd, unsigned char *Ascii, unsigned int len );
-extern void Ascii2BCD(unsigned char *strASC,unsigned char *strBCD, unsigned int lenASC);
-////////////////////////////////////
-// BCD to HEX
-// 高位在低位
-////////////////////////////////////
-extern unsigned int BCD2HEX(unsigned char *bcd, unsigned char len);
-//字符串转整型数 '9'>=strASC>='0'
-extern unsigned int Ascii2INT(unsigned char *strASC, unsigned char len);
-extern void Hex2BCD(unsigned char hex, unsigned char *bcd);
-
 extern void open_wdt(void);
 //文件系统空单是上面的值减去8M。
 extern unsigned int ugflash_capacity;

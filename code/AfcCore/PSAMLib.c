@@ -1,6 +1,4 @@
 
-
-
 //兼容原有PSAM函数。IC卡，及其它 函数
 #include "Macro_Proj.h"
 #include <unistd.h>
@@ -151,17 +149,6 @@ int get_datatime(char *odt)
 	return 0;
 }
 
-struct tm_slzr {
-        short tm_sec;     /* seconds after the minute - [0,59] */
-        short tm_min;     /* minutes after the hour - [0,59] */
-        short tm_hour;    /* hours since midnight - [0,23] */
-        short tm_mday;    /* day of the month - [1,31] */
-        short tm_mon;     /* months since January - [0,11] */
-        short tm_year;    /* years since 1900 */
-        short tm_wday;    /* days since Sunday - [0,6] */
-        short tm_yday;    /* days since January 1 - [0,365] */
-        short tm_isdst;   /* daylight savings time flag */
-        };
 /*++------------------------------------------------------------------------  
 Function:              localtimes Modification HistoryJurassic   KSLi          
 --------------------------------------------------------------------------*/
@@ -171,7 +158,7 @@ void localtimes(time_t timew,int timezonew,short *tm_timew)
 	char Days[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	unsigned int n32_Pass4year;              
 	int n32_hpery;    //计算时差  
-	struct tm_slzr tt;
+	tm_slzr tt;
 	int sll;
 	short ii;
 	timezonew = timezonew;
@@ -298,7 +285,7 @@ void localtimes(time_t timew,int timezonew,short *tm_timew)
 #define ChkMul(dest, src1, src2)   ( src1 ? (dest/src1 != src2) : 0 )
 
 
-time_t make_time_t (struct tm_slzr *tb)
+time_t make_time_t (tm_slzr *tb)
 {
 	////////时间计算-----------------------------------------
 	char Days[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -484,158 +471,6 @@ time_t make_time_t (struct tm_slzr *tb)
 err_mktime:
 // 		debugstring("Error,..........\r\n");
         return (time_t)(-1);
-}
-void Long2BCDTime(int Ltime, unsigned char*BCDtime)
-{
-//	struct tm_slzr *area;
-	short area[20];
-	unsigned char buff[16];
-	unsigned char pos;
-
-//	outport( AUXCON,0x0082);
-//	debugstring("L0~ ");
-//	debugdata((unsigned char*)&Ltime, 4);
-	pos = 0;
-//	area = localtime(&Ltime);
-	localtimes(Ltime, 0, area);
-//	debugstring("L1~ ");
-//	sprintf(buff + pos, "%04d", area ->tm_year + 1900); pos += 4;
-//	sprintf(buff + pos, "%02d", area->tm_mon + 1); pos += 2;
-//	sprintf(buff + pos, "%02d", area->tm_mday); pos += 2;
-//	sprintf(buff + pos, "%02d", area->tm_hour); pos += 2;
-//	sprintf(buff + pos, "%02d", area->tm_min); pos += 2;
-//	sprintf(buff + pos, "%02d", area->tm_sec); pos += 2;
-
-	sprintf((char*)buff + pos, "%04d", area[5] + 1900); pos += 4;
-	sprintf((char*)buff + pos, "%02d", area[4] + 1); pos += 2;
-	sprintf((char*)buff + pos, "%02d", area[3]); pos += 2;
-	sprintf((char*)buff + pos, "%02d", area[2]); pos += 2;
-	sprintf((char*)buff + pos, "%02d", area[1]); pos += 2;
-	sprintf((char*)buff + pos, "%02d", area[0]); pos += 2;	
-//	debugstring("L2~ ");
-	Ascii2BCD(buff, BCDtime, 14);
-
-//	debugstring("LT~ ");
-
-	return;
-}
-time_t BCDTime2Long(unsigned char*timee)
-{
-	time_t t_scr;
-	struct tm_slzr time_check;
-	unsigned short uiTemp;
-
-	t_scr = 0l;
-
-	uiTemp = (unsigned short)BCD2HEX(timee,2);
-	time_check.tm_year = uiTemp - 1900;
-	uiTemp = (unsigned short)BCD2HEX(timee+2,1);
-    time_check.tm_mon  = uiTemp - 1;
-	uiTemp = (unsigned short)BCD2HEX(timee+3,1);
-    time_check.tm_mday = uiTemp;
-	uiTemp = (unsigned short)BCD2HEX(timee+4,1);
-    time_check.tm_hour = uiTemp;
-	uiTemp = (unsigned short)BCD2HEX(timee+5,1);
-    time_check.tm_min  = uiTemp;
-	uiTemp = (unsigned short)BCD2HEX(timee+6,1);
-    time_check.tm_sec  = uiTemp;
-    time_check.tm_isdst = 0;//-1;
-	time_check.tm_wday = 0;
-	time_check.tm_yday = 0;
-//	t_scr = mktime(&time_check);
-	t_scr = make_time_t(&time_check);
-
-	return t_scr;
-}
-//时间加函数
-//输入BCD时间：bcdTime   要加和秒：addSec
-//输出BCD时间：outBCDTime
-void TimeAdd(unsigned char*outBCDTime, unsigned char*bcdTime, unsigned int addSec)
-{
-	time_t ttemp;
-	ttemp = BCDTime2Long(bcdTime);
-	ttemp += addSec;
-	Long2BCDTime(ttemp, outBCDTime);
-}
-
-//两个时间相减，单位为秒。前面时间减后面时间。
-int DataTimeDec(unsigned char *datatime1, unsigned char *datatime2)
-{
-	int l_time1, l_time2;
-
-	l_time1 = BCDTime2Long(datatime1);
-	l_time2 = BCDTime2Long(datatime2);
-
-	l_time1 -= l_time2;
-	
-	return l_time1;
-}
-
-
-
-unsigned char time_invalid(unsigned char *time_buff)
-{
-	unsigned int year;
-	unsigned char i;
-	
-	for(i=0;i<7;i++){
-		if(((time_buff[i]&0x0f) > 0x09)||(((time_buff[i]>>4)&0x0f) > 0x09))
-			return 0;
-	}
-	
-	if(time_buff[0]!=0x20)
-	{
-		if((time_buff[0]!=0x19)||(time_buff[1]!=0x99))
-			return 0;
-	}
-	
-	if((!time_buff[2])||(time_buff[2]>0x12))
-		return 0;
-	
-	switch(time_buff[2])
-	{
-	case 0x01:
-	case 0x03:
-	case 0x05:
-	case 0x07:
-	case 0x08:
-	case 0x10:
-	case 0x12:
-		if((!time_buff[3])||(time_buff[3]>0x31))
-			return 0;
-		break;	
-	case 0x04:
-	case 0x06:
-	case 0x09:
-	case 0x11:
-		if((!time_buff[3])||(time_buff[3]>0x30))
-			return 0;
-		break;
-	case 0x02:
-		year=(unsigned int)(time_buff[0]>>4)*1000+(time_buff[0]&0x0f)*100
-			+(time_buff[1]>>4)*10+(time_buff[1]&0x0f);
-		
-		if(year%4)
-		{
-			if((!time_buff[3])||(time_buff[3]>0x28))
-				return 0;
-			break;
-		}
-		else
-		{
-			if((!time_buff[3])||(time_buff[3]>0x29))
-				return 0;
-			break;
-		}
-	}
-	
-	if(time_buff[4]>0x23)
-		return 0;
-	if(time_buff[5]>0x59)
-		return 0;
-	if(time_buff[6]>0x59)
-		return 0;
-	return 1;
 }
 
 

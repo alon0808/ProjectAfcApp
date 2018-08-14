@@ -212,7 +212,7 @@ mode=4: KEK_SN;//密钥索引,保留未用
 mode=5: KEK[48];//KEK 16字节
 mode=6:同时设置1、2、3
 */
-extern void saveMobileParameter(unsigned char mode, void *pParam);
+extern void saveMobileParameter(unsigned char mode, const void *pParam);
 /*
 mode=1: shopNo[15];//商户编号
 mode=2: KEK[48];//KEK 16字节

@@ -1,4 +1,4 @@
-
+#include "Macro_Proj.h"
 #include <stdlib.h>
 #include "string.h"
 #include "stdio.h"
@@ -6,7 +6,7 @@
 #include "szct.h"
 #include "MYDES.h"
 #include "SL8583.h"
-#include "ProcCharacter.h"
+
 
 #include "Fatfiles.h"
 #include "Font.h"
@@ -22,6 +22,10 @@
 #include "add_2.h"
 #include "SQD.h"
 #include "tms.h"
+#include "HTTP.h"
+#include "GprsSocket.h"
+#include "ff.h"
+
 unsigned char g_supportQR = qr_aliPay | qr_weiXin | qr_unPay|car_;
 extern void dis_time_mini(unsigned char x, stcomtime *time);
 #if 0	// use for test valid ram
@@ -780,7 +784,7 @@ int Build_qpboc_8583_02(unsigned char *dat)
 		BCD2Ascii(TempTVL.V, temp, TempTVL.L);
 		MSG_LOG("temp:%s\r\n", temp);
 
-		p = strstr((const char *)temp, "D");
+		p = strstr((const char *)temp, (char *)"D");
 
 		if (p != NULL)
 		{
@@ -4861,7 +4865,7 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 
 	stMobileParameter smpPara;
 	unsigned int itemp;
-// 	MSG_LOG("使用铁电的大小=%d=\r\n",BIT_Retain);
+// 	MSG_LOG("使用铁电的大小=%d=\r\n",BIT_END_ADDR);
 // 	MSG_LOG("使用银联参数铁电的位置=%d=\r\n",BIT_qpbpc_para);
 // 	MSG_LOG("使用银联参数结构体的大小=%d=\r\n",sizeof(stMobileParameter));
 	//MSG_LOG("===1===\r\n");
@@ -5026,7 +5030,7 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 mode=1: shopNo[15];//商户编号
 mode=2: KEK[48];//KEK 16字节
 */
-void saveMobileParameter(unsigned char mode, void *pParam)
+void saveMobileParameter(unsigned char mode, const void *pParam)
 {
 	stMobileParameter smpPara;
 	unsigned int itemp;
@@ -5185,7 +5189,7 @@ extern unsigned char get_over_time_shuang(void);
 void Q_QPBOC_para_INIT(void)
 {
 
-	MSG_LOG("使用铁电的大小=%d=\r\n",BIT_Retain);
+	MSG_LOG("使用铁电的大小=%d=\r\n",BIT_END_ADDR);
 	MSG_LOG("使用银联参数铁电的位置=%d=\r\n",BIT_qpbpc_para);
 	MSG_LOG("使用银联参数结构体的大小=%d=\r\n",sizeof(stMobileParameter));
 

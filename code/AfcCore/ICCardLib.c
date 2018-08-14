@@ -1,12 +1,11 @@
-
 //兼容原有的函数，方便移植代码。
-#include "Macro_Proj.h"
 
+#include "Macro_Proj.h"
+#include <time.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <signal.h>
-#include <sys/time.h>
 
 #include "inputmisc/PsamCard.h"
 

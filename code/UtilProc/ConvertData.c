@@ -642,10 +642,12 @@ unsigned int Ascii2INT(unsigned char *strASC, unsigned char len)
 //  ASCII to BCD Code
 //
 ///////////////////////////////////////////////////
-void Ascii2BCD(unsigned char *strASC, unsigned char *strBCD, unsigned int lenASC)
+void Ascii2BCD(const void* pDataASC, const void* pDataBCD, unsigned int lenASC)
 {
 	unsigned int i, t;
 	unsigned char temp;
+	unsigned char *strASC = (unsigned char *)pDataASC;
+	unsigned char *strBCD = (unsigned char *)pDataBCD;
 
 	t = 0;
 	for (i = 0; i < lenASC;)

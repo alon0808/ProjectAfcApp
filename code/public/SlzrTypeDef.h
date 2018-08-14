@@ -52,6 +52,8 @@ typedef struct slzr_buf_s
 typedef SLZR_S32 SLZR_CHN;
 
 
+
+
 typedef struct  {
 	unsigned char year_h;
 	unsigned char year_l;
@@ -482,7 +484,17 @@ typedef enum
 	CARDSTYLE_QPBOC,
 	CARDSTYLE_UNPAY_ODA,	// 15
 	CARDSTYLE_QR_UNPAY_BUS,
+
 }CardCand_enum;
+
+
+#define ID_REC_QRC_GZT		0xA6		//贵州通二维码记录
+#define CARDSTYLE_QR_TX			0xA4		//腾讯二维码记录
+#define ID_REC_QRC_TX		0xA4		//腾讯二维码记录
+#define ID_REC_QRC_ZFB		0xA5		//支付宝二维码记录
+#define ID_REC_QRC_PBOC		0xA7		//银联二维码S
+// A8是可充二维码
+#define ID_REC_QRC_UNPAY_BUS	0xA9		//银联乘车码
 
 //mifare
 

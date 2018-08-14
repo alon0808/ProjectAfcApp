@@ -26,6 +26,23 @@
 #define BCD_LOG(...)
 #endif
 
+#define SWITCH_PBOC	1	// 是否支持银联功能,影响银行卡,银联付款码(非乘车码),通过银联的微信支付宝付款码
+
+#if SWITCH_PBOC
+//#define PBOC_TEST1	// 银联测试参数,加上公交等链接
+//#define  PBOC_TEST		//银联演示程序，只连接银联后台
+#define SWITCH_PBOC_GUILIN_DEBUG_gui 1
+#define SWITCH_PBOC_GUILIN_DEBUG	0
+#endif
+
+#ifdef PBOC_TEST1
+#define DOMAIN_SHANGHAI_UNIONPAY	"ipos.chinaums.com"
+#define DEV_TYPE	"EFS3000L"
+#else
+#define DOMAIN_SHANGHAI_UNIONPAY	"upos.chinaums.com"
+#define DEV_TYPE	"ESF3000L"
+#endif
+
 //用PC串口发送GPS轨迹信息，模拟车辆运行
 //#define _GPS_Speed
 //考勤功能
@@ -484,7 +501,7 @@
 #define CARD_JTB			12				//市民卡/交通部的卡类
 #define CARD_MOTH_CI		13				//邯郸次卡  可以随意刷
 #define CARD_LIANGTONG_STUF 14              //手机员工卡
-
+#define CARD_qPBOC_BUS		15				//91 银行卡卡类 [在有些地方银行卡卡类写成不同的]
 
 #define  CARD_FENDUAN_Line	33		//分段线路票价卡
 ///////////////////////////////语音端口号//////////////////////////////
@@ -757,11 +774,36 @@ typedef struct
 // 136灰记录存储，暂用128字节，“有效”4 + 128 data+4CRC = 136
 #define BIT_UNKNOW_RECORD	(BIT_UNIT + 4)
 
-
 #define BIS_BLK_63          (BIT_UNKNOW_RECORD+136)     //  0x1A29,
 #define BBIS_BLK_63_LEN      26
 
-#define BIT_END_ADDR		(BIS_BLK_63+BBIS_BLK_63_LEN)
+
+//批上送信息sizeof(stTradeBatchinfo)) =24
+#define BIT_TradeBatchinfo		BIS_BLK_63+BBIS_BLK_63_LEN
+//stMobilStyle = 88字节
+#define BIT_SingInStyle		(BIT_TradeBatchinfo+ 24) // 签到状态
+//pos 的参数信息  stMobileParameter  64
+#define BIT_qpbpc_para			BIT_SingInStyle +  88+30   //192
+
+//4 pboc 记录流水号 999999 后+1
+#define BIT_PBOC_NS_BIG		(BIT_qpbpc_para+64+64+128) 
+
+//500字节，st_qpoc_repurse 结构体 用于存储冲正的临时记录，如果有的时候要发送给后台
+#define BIT_repurse_infor	BIT_PBOC_NS_BIG+4
+#define BIT_repurse_infor_LEN      850
+
+#define BIT_PBOC_NS_8583           (BIT_repurse_infor + BIT_repurse_infor_LEN)     //  0x1019,银联用的11域交易流水4字节 BIT_PBOC_NS 这个有时候不对，会被覆盖，或者就是没有自增没有存储上，
+#define BIT_PBOC_NS_8583_LEN       4
+
+#define BIS_PAY_MODE          (BIT_PBOC_NS_8583+BIT_PBOC_NS_8583_LEN)     //  0x1A29,
+#define BIS_PAY_MODE_LEN      4
+#define BIT_BAK_ADDR_add		(BIS_PAY_MODE+BIS_PAY_MODE_LEN)	//12,首地址+尾地址+校验
+#define BIT_BAK_ADDR_add_LEN 12
+
+#define BIT_TMS_FILE_DOWNLOAD (BIT_BAK_ADDR_add+BIT_BAK_ADDR_add_LEN)     //  0x1A29,
+#define BIT_TMS_FILE_DOWNLOAD_LEN      216
+
+#define BIT_END_ADDR		(BIT_TMS_FILE_DOWNLOAD+BIT_TMS_FILE_DOWNLOAD_LEN)
 
 //----------------------------------
 //28(24) 调度命令信息  调度数据存在7168开始的地址，7K，铁电共8K能用1024字节
@@ -1114,6 +1156,29 @@ typedef struct {
 }stFDLineHead;	//分段线路头，卡中是第1扇区每2块。
 //----------------------------------------------
 
+
+
+//其它的二维码记录格式
+typedef struct {
+	unsigned char rQrcrecHead[6];		//记录标识，0-5
+	unsigned char rQrcrecHead2[2];		//记录标识，无线上传时不传记录标识6-7
+
+	unsigned char rCardDealNumb[4];		//设备交易流水8-11
+	unsigned char rDevSerial[4];		//设备唯一序列号 4  12-15
+	unsigned char rCardType;			//卡类 16
+	unsigned char rDealType;			//交易类型  17
+	unsigned char ruserTimes[2];		//使用次数 司机号高位  [分段 全程时间] 如果是中控的记录和下面共18字节为卡片的身份证号 18-19
+	unsigned char rAfterMoney[4];		//原额  20-23
+	unsigned char rDealMoney[3];		//交易金额 24-26
+	unsigned char rDealTime[7];			//交易时间YYYY/MM/DD/HH/MM/SS 27-33
+	unsigned char rDriverNo[4];			//司机卡号 34-37
+	unsigned char rDeviceNo[4];			//设备号 38-41
+	unsigned char rLineNo[2];			//线路号 42-43
+	unsigned char rProVer[2];			//程序版本号 44-45
+	unsigned char rTicket[2];			//票价 46-47
+	unsigned char rQRCdat[204];			//二维码信息。 48-251
+	unsigned char rTAC[4];				//  252-255
+}stOtherQRCrecord;
 
 #include "SlzrTypeDef.h"
 #include "UtilityProc.h"

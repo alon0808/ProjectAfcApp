@@ -71,6 +71,18 @@ extern "C"
     extern int BuildT1L2V(stTlv *pTlvs, int len, unsigned char *pSrc, int *pOLen);
     extern int SetTLV(stTlv *pTlv, TUINT32 tag, int len, void *pSrc);
 
+/////////////////////////////////
+	// time process
+
+	//两个时间相减，单位为秒。前面时间减后面时间。
+	extern int DataTimeDec(unsigned char *datatime1, unsigned char *datatime2);
+	extern time_t BCDTime2Long(unsigned char*timee);
+	//时间加函数
+	//输入BCD时间：bcdTime   要加和秒：addSec
+	//输出BCD时间：outBCDTime
+	extern void TimeAdd(unsigned char*outBCDTime, unsigned char*bcdTime, unsigned int addSec);
+
+	////////////////////////////////////
 
 #ifdef __cplusplus
 };

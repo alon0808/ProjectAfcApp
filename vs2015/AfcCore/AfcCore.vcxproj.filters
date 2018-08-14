@@ -458,19 +458,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\code\AfcCore\ICCardLib.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\CPUCard.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\CPUCARJTB.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\code\AfcCore\GprsSocket.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\code\AfcCore\PSAMLib.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\RecordFile.c">
@@ -483,9 +474,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\inputmisc\IcCardCtrlApi.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\code\AfcCore\inputmisc\PsamCard.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\inputmisc\Uart.c">
@@ -533,12 +521,6 @@
     <ClCompile Include="..\..\code\AfcCore\UnionPay\add_2.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\code\AfcCore\UnionPay\qpboc_8583.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\code\AfcCore\UnionPay\qPBOCrsa.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\UnionPay\SQD.c">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -546,6 +528,24 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\main.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\ICCardLib.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\GprsSocket.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\qPBOCrsa.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\UnionPay\qpboc_8583.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\PSAMLib.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\inputmisc\PsamCard.c">
       <Filter>关注文件</Filter>
     </ClCompile>
   </ItemGroup>

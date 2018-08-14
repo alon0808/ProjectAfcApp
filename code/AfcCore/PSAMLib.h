@@ -14,13 +14,6 @@ extern unsigned int get_timer0(unsigned char tID);
 //输入7个字节的BCD码
 extern void timewrite(unsigned char *bcdDateTime);
 extern int get_datatime(char *odt);
-//两个时间相减，单位为秒。前面时间减后面时间。
-extern int DataTimeDec(unsigned char *datatime1, unsigned char *datatime2);
-extern time_t BCDTime2Long(unsigned char*timee);
-//时间加函数
-//输入BCD时间：bcdTime   要加和秒：addSec
-//输出BCD时间：outBCDTime
-extern void TimeAdd(unsigned char*outBCDTime, unsigned char*bcdTime, unsigned int addSec);
 
 extern unsigned char time_invalid(unsigned char *time_buff);
 extern void MessageBox(unsigned char mode, const char *dStr);

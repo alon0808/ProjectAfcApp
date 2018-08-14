@@ -24,7 +24,7 @@
 #include "qpboc_head.h"
 #include "add.h"
 #define	LEN_QBOCTVL_DATA		1280
-#include "ProcCharacter.h"
+
 #ifdef qPBOC_BUS
 #include "RSA.h"
 

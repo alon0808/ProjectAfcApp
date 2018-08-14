@@ -103,10 +103,6 @@ extern void crc_cu(unsigned char *string_cu,unsigned char length);
 extern unsigned char checkIP(char *IPb);
 
 extern void MessageBox(unsigned char ucIsError, char *pDispBuf);
-extern void TimeAdd(unsigned char*outBCDTime, unsigned char*bcdTime, unsigned int addSec);
-
-//两个时间相减，单位为秒。前面时间减后面时间。
-extern int DataTimeDec(unsigned char *datatime1, unsigned char *datatime2);
 
 //len-要比较的个数（以uL为单位）  dat-数据  ul-每个单位的长度（int为4 short为2）
 extern unsigned int BinSCH(unsigned int len, unsigned char *dat, unsigned char *sdat, unsigned char uL);

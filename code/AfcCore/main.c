@@ -109,6 +109,7 @@ AFC_CORE__API void* StartApp(void *argv)//int argc,
 
 	printf("-----------main start-------------\n");
 
+	PRINT_INFOR("存储区最大地址BIT_END_ADDR:%d\n", BIT_END_ADDR);
 
 	// 	CPsamCard();
 	// 	
