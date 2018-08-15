@@ -109,6 +109,9 @@ typedef struct {
 #define UNUSED_VAR(var1)	if((var1) == (var1)){}
 #endif	
 
+////////////////////////////////////////////////////////////////////////////////
+#define HTTP_SSL	1
+
 
 #include "debugOut.h"
 #include "debugInfor.h"

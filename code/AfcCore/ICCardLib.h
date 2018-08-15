@@ -36,7 +36,6 @@ extern unsigned char Delay_Normal(void);
 extern unsigned int get_s_sum1(unsigned char mode);
 extern void Sound_cityCMD(unsigned char sMode);
 extern void DisRetry(void);
-extern void DisRetry2(void);
 extern unsigned char profile(unsigned char mode);
 extern void error(unsigned char code1,unsigned char Index);
 extern unsigned char FreeConsume(void);

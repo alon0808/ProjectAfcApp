@@ -180,7 +180,7 @@ extern unsigned char getMiKey(void);
 extern unsigned char Delay_Normal(void);
 extern void disp_no_swipe(void);
 extern void SetTcpPacketTTLTime(unsigned char val);
-extern unsigned char WriteRecord(unsigned char *buffer, unsigned char mode);
+//extern unsigned char WriteRecord(unsigned char *buffer, unsigned char mode);
 extern unsigned int get_s_sum1(unsigned char mode);
 extern void tcpipClose(unsigned char mode);
 
@@ -198,7 +198,7 @@ void BLK_63_int_first(void)
 	memset((unsigned char *)&TYPE_63, 0x30, sizeof(QPBOC_TYPE_63));
 	memcpy((unsigned char *)TYPE_63.Organization_, "0000PZGZ", 8);
 
-	fewrite(BIS_BLK_63, sizeof(QPBOC_TYPE_63), (unsigned char *)&TYPE_63);
+	sysfewrite(BIS_BLK_63, sizeof(QPBOC_TYPE_63), (unsigned char *)&TYPE_63);
 	MSG_LOG("63初始化=1\r\n");
 	BCD_LOG((unsigned char *)&TYPE_63, sizeof(QPBOC_TYPE_63), 1);
 };
@@ -3266,7 +3266,7 @@ unsigned char deal_qpoc_blk(unsigned char * data, unsigned int len)
 	}
 	memcpy(TYPE_63.card_no, data + 1, 10);
 //	BCD2Ascii((unsigned char *)&SysTime, TYPE_63.up_time, 4);
-	fewrite(BIS_BLK_63, sizeof(QPBOC_TYPE_63), (unsigned char *)&TYPE_63);
+	sysfewrite(BIS_BLK_63, sizeof(QPBOC_TYPE_63), (unsigned char *)&TYPE_63);
 	BCD_LOG((unsigned char *)&TYPE_63, sizeof(QPBOC_TYPE_63), 1);
 	//存黑名单
 	return 2;
@@ -4145,8 +4145,6 @@ pboc_8583dataDealEnd:
 }
 
 
-
-extern unsigned char PeekFrame(void);
 unsigned int gSendGLogin_qpoc = 0;
 unsigned  char keep_qpoc = 0;
 void find_qpboc_new_mission(void)//此任务一秒进一次

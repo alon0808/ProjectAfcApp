@@ -2,6 +2,7 @@
 #include "TypeDef.h"
 #include "UtilityProc.h"
 #include <string.h>
+#include <time.h>
 //#include <stdio.h>
 
 
@@ -156,6 +157,393 @@ unsigned char getSignXor(unsigned char *pSrc, int len) {
 }
 ///////////////////////////////////////////////////////////////////////
 
+
+
+/***
+*static time_t make_time_t(tb, ultflag) -
+*
+*功能:
+*		转换一个tm_slzr结构的时间到time_t的时间值
+*
+*输入:
+*       tm_slzr *tb - 需要转换的时间指针
+*
+*输出:
+*		如果成功，则返回指定日历时间编码：time_t格式。
+*		不成功，返回-1
+*
+*******************************************************************************/
+
+/*++------------------------------------------------------------------------
+Function:              localtimes Modification HistoryJurassic   KSLi
+--------------------------------------------------------------------------*/
+void localtimes(time_t timew, int timezonew, short *tm_timew)
+{
+	////////时间计算-----------------------------------------
+	char Days[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	unsigned int n32_Pass4year;
+	int n32_hpery;    //计算时差  
+	tm_slzr tt;
+	int sll;
+	short ii;
+	timezonew = timezonew;
+	sll = timew;
+	sll += 28800;
+	//	memcpy((unsigned char*)&tt, (unsigned char*)&timew, sizeof(tt));
+	//	debugstring("jkl:");
+	//	debugdata((unsigned char*)&timew, 4);
+	//	debugdata((unsigned char*)&sll, 4);
+	//	sll=sll-timezonew;
+	//    time += 28800l;
+	if (sll < 0)
+	{
+		sll = 0;
+	}    //取秒时间  
+
+		 //	debugdata((unsigned char*)&sll, 4);
+	ii = (int)(sll % 60);    //tm_timew->tm_sec
+	tt.tm_sec = ii;
+	//	debugdata((unsigned char*)&tt.tm_sec, 2);
+	sll /= 60;    //取分钟时间    
+				  //	debugdata((unsigned char*)&sll, 4);
+	ii = (int)(sll % 60);
+	tt.tm_min = ii;
+	//	debugdata((unsigned char*)&tt.tm_min, 4);
+	sll /= 60;    //取过去多少个四年，每四年有 1461*24 小时    
+				  //	debugdata((unsigned char*)&sll, 4);
+				  //	n32_Pass4year=(unsigned int)(time / (1461L * 24L));    //计算年份    
+	n32_Pass4year = sll / 35064l;//(1461L * 24L);    //计算年份
+								 //	debugdata((unsigned char*)&n32_Pass4year, 4);
+	ii = (int)(n32_Pass4year << 2) + 70;    //四年中剩下的小时数
+	tt.tm_year = ii;
+	//	debugdata((unsigned char*)&tt.tm_year, 4);    
+	sll %= 35064;//1461L * 24L;    //校正闰年影响的年份，计算一年中剩下的小时数
+				 //	debugdata((unsigned char*)&sll, 4);
+	for (;;) {        //一年的小时数        
+		n32_hpery = 8760;//365 * 24;        //判断闰年        
+		if ((ii & 3) == 0) {            //是闰年，一年则多24小时，即一天            
+			n32_hpery += 24;
+		}
+		if (sll < n32_hpery) {
+			break;
+		}
+		// 	debugstring("t0~ ");
+		ii++;
+		sll -= n32_hpery;
+	}    //小时数
+	tt.tm_year = ii;
+	//	debugdata((unsigned char*)&n32_hpery, 4);
+	ii = (int)(sll % 24);    //一年中剩下的天数
+	tt.tm_hour = ii;
+	//	debugdata((unsigned char*)&tt.tm_hour, 4);
+	sll /= 24;    //假定为闰年
+	sll++;    //校正润年的误差，计算月份，日期
+			  //	debugdata((unsigned char*)&sll, 4);
+	ii = tt.tm_year;
+	if ((ii & 3) == 0) {
+		if (sll > 60) {
+			sll--;
+		}
+		else {
+			if (sll == 60)
+			{
+				tt.tm_mon = 1;
+				tt.tm_mday = 29;
+				return;
+			}
+		}
+	}    //计算月日
+	ii = tt.tm_mon;
+	for (ii = 0; Days[ii] < sll; ii++)
+	{
+		//	debugstring("t1~ ");
+		//	debugdata((unsigned char*)&tt.tm_mon, 1);
+		//	debugdata((unsigned char*)&Days[tt.tm_mon], 1);
+		//	debugdata((unsigned char*)&sll, 4);
+		sll -= Days[ii];
+		if ((sll == 0) || (ii > 11))
+			break;
+	}
+	tt.tm_mon = ii;
+	ii = (short)(sll);
+	tt.tm_mday = ii;
+	//	debugstring("tt:");
+	//	debugdata((unsigned char*)&tt.tm_sec, sizeof(tt));
+	memcpy((unsigned char*)&tm_timew[0], (unsigned char*)&tt.tm_sec, sizeof(tt));
+	//	debugdata((unsigned char*)&tm_timew, sizeof(tt));
+	return;
+}
+
+
+//输入7个字节的BCD码
+void timewrite(unsigned char *bcdDateTime)
+{
+	int   year, mon, mday, hour, min, sec;
+
+	time_t   t;
+	struct     tm   nowtime;
+
+	year = BCD2int(bcdDateTime, 2);
+	mon = BCD2int(bcdDateTime + 2, 1);
+	mday = BCD2int(bcdDateTime + 3, 1);
+	hour = BCD2int(bcdDateTime + 4, 1);
+	min = BCD2int(bcdDateTime + 5, 1);
+	sec = BCD2int(bcdDateTime + 6, 1);
+
+	//	printf("[%s]:%d-%d-%d %d:%d:%d\r\n", __FUNCTION__, year, mon, mday, hour, min, sec);
+
+	nowtime.tm_sec = sec;   /*   Seconds.[0-60]   (1   leap   second)*/
+	nowtime.tm_min = min;  /*   Minutes.[0-59]   */
+	nowtime.tm_hour = hour; /*   Hours. [0-23]   */
+	nowtime.tm_mday = mday; /*   Day.[1-31]   */
+	nowtime.tm_mon = mon - 1; /*   Month. [0-11]   */
+	nowtime.tm_year = year - 1900; /*   Year-   1900.*/
+	nowtime.tm_isdst = -1;  /*   DST.[-1/0/1]*/
+
+							//	printf("[%s]:%d-%d-%d %d:%d:%d\r\n", __FUNCTION__, year, mon, mday, hour, min, sec);
+
+	t = mktime(&nowtime);
+	stime(&t);
+
+}
+
+int get_datatime(char *odt)
+{
+	time_t timer;//time_t就是long int 类型
+	struct tm *tblock;
+	int pos = 0;
+
+	timer = time(NULL);
+	//	timer += (8 * 60 * 60);
+	tblock = localtime(&timer);
+
+	sprintf(odt + pos, "%04d", tblock->tm_year + 1900);
+	pos += 4;
+	sprintf(odt + pos, "%02d", tblock->tm_mon + 1);
+	pos += 2;
+	sprintf(odt + pos, "%02d", tblock->tm_mday);
+	pos += 2;
+	sprintf(odt + pos, "%02d", tblock->tm_hour);
+	pos += 2;
+	sprintf(odt + pos, "%02d", tblock->tm_min);
+	pos += 2;
+	sprintf(odt + pos, "%02d", tblock->tm_sec);
+	pos += 2;
+	odt[pos] = 0;
+#ifdef _debugPSAM_
+	printf("Local time is: %s\n", odt);
+#endif
+	return 0;
+}
+
+#define _DAY_SEC           (24L * 60L * 60L)    /* secs in a day */
+#define _YEAR_SEC          (365L * _DAY_SEC)    /* secs in a year */
+#define _FOUR_YEAR_SEC     (1461L * _DAY_SEC)   /* secs in a 4 year interval */
+#define _DEC_SEC           315532800L           /* secs in 1970-1979 */
+#define _BASE_YEAR         70L                  /* 1970 is the base year */
+#define _BASE_DOW          4                    /* 01-01-70 was a Thursday */
+#define _LEAP_YEAR_ADJUST  17L                  /* Leap years 1900 - 1970 */
+#define _MAX_YEAR          138L                 /* 2038 is the max year */
+/*
+* ChkAdd evaluates to TRUE if dest = src1 + src2 has overflowed
+*/
+#define ChkAdd(dest, src1, src2)   ( ((src1 >= 0) && (src2 >= 0) \
+    && (dest < 0)) || ((src1 < 0) && (src2 < 0) && (dest >= 0)) )
+
+/*
+* ChkMul evaluates to TRUE if dest = src1 * src2 has overflowed
+*/
+#define ChkMul(dest, src1, src2)   ( src1 ? (dest/src1 != src2) : 0 )
+
+
+time_t make_time_t(tm_slzr *tb)
+{
+	////////时间计算-----------------------------------------
+	char Days[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	short i;
+	int tmptm1, tmptm2, tmptm3;
+	//        struct tm_slzr *tbtemp;
+
+	/*
+	* First, make sure tm_year is reasonably close to being in range.
+	*/
+	if (((tmptm1 = tb->tm_year) < _BASE_YEAR - 1) || (tmptm1 > _MAX_YEAR + 1))
+		goto err_mktime;
+	/*
+	* Adjust month value so it is in the range 0 - 11.  This is because
+	* we don't know how many days are in months 12, 13, 14, etc.
+	*/
+	if ((tb->tm_mon < 0) || (tb->tm_mon > 11)) {
+		/*
+		* no danger of overflow because the range check above.
+		*/
+		tmptm1 += (tb->tm_mon / 12);
+
+		if ((tb->tm_mon %= 12) < 0) {
+			tb->tm_mon += 12;
+			tmptm1--;
+		}
+
+		/*
+		* Make sure year count is still in range.
+		*/
+		if ((tmptm1 < _BASE_YEAR - 1) || (tmptm1 > _MAX_YEAR + 1))
+			goto err_mktime;
+	}
+
+	/***** HERE: tmptm1 holds number of elapsed years *****/
+
+	/*
+	* Calculate days elapsed minus one, in the given year, to the given
+	* month. Check for leap year and adjust if necessary.
+	*/
+	tmptm2 = Days[tb->tm_mon];
+	if (tmptm2 == 28)
+		tmptm2 += 3;
+	else if (tmptm2 < 31)
+		tmptm2 += 1;
+	for (i = 0; i < tb->tm_mon; i++)
+		tmptm2 += Days[i];
+	if (!(tmptm1 & 3) && (tb->tm_mon > 1))
+		//		if(tb->tm_mon > 1)
+		tmptm2++;
+	//debugstring("tmptm2:0:");
+	//debugdata((unsigned char*)&tmptm2, 4);
+	/*
+	* Calculate elapsed days since base date (midnight, 1/1/70, UTC)
+	*
+	*
+	* 365 days for each elapsed year since 1970, plus one more day for
+	* each elapsed leap year. no danger of overflow because of the range
+	* check (above) on tmptm1.
+	*/
+	tmptm3 = (tmptm1 - _BASE_YEAR) * 365 + ((tmptm1 - 1) >> 2)
+		- _LEAP_YEAR_ADJUST;
+
+	//debugstring("tmptm3:0:");
+	//debugdata((unsigned char*)&tmptm3, 4);
+	/*
+	* elapsed days to current month (still no possible overflow)
+	*/
+	tmptm3 += tmptm2;
+
+	//debugstring("tmptm3:1:");
+	//debugdata((unsigned char*)&tmptm3, 4);
+	/*
+	* elapsed days to current date. overflow is now possible.
+	*/
+	tmptm1 = tmptm3 + (tmptm2 = (long)(tb->tm_mday));
+	if (ChkAdd(tmptm1, tmptm3, tmptm2))
+		goto err_mktime;
+
+	tmptm1 -= 32;
+	//debugstring("tmptm1:0:");
+	//debugdata((unsigned char*)&tmptm1, 4);
+	/***** HERE: tmptm1 holds number of elapsed days *****/
+
+	/*
+	* Calculate elapsed hours since base date
+	*/
+	tmptm2 = tmptm1 * 24;
+	if (ChkMul(tmptm2, tmptm1, 24))
+		goto err_mktime;
+
+	//debugstring("tmptm2:1:");
+	//debugdata((unsigned char*)&tmptm2, 4);
+	tmptm1 = tmptm2 + (tmptm3 = (int)tb->tm_hour);
+	if (ChkAdd(tmptm1, tmptm2, tmptm3))
+		goto err_mktime;
+
+	//debugstring("tmptm1:1:");
+	//debugdata((unsigned char*)&tmptm1, 4);
+	/***** HERE: tmptm1 holds number of elapsed hours *****/
+
+	/*
+	* Calculate elapsed minutes since base date
+	*/
+
+	tmptm2 = tmptm1 * 60;
+	if (ChkMul(tmptm2, tmptm1, 60))
+		goto err_mktime;
+
+	//debugstring("tmptm2:3:");
+	//debugdata((unsigned char*)&tmptm2, 4);
+	tmptm1 = tmptm2 + (tmptm3 = (int)tb->tm_min);
+	if (ChkAdd(tmptm1, tmptm2, tmptm3))
+		goto err_mktime;
+
+	/***** HERE: tmptm1 holds number of elapsed minutes *****/
+
+	/*
+	* Calculate elapsed seconds since base date
+	*/
+
+	tmptm2 = tmptm1 * 60;
+	if (ChkMul(tmptm2, tmptm1, 60))
+		goto err_mktime;
+
+	//debugstring("tmptm2:4:");
+	//debugdata((unsigned char*)&tmptm2, 4);
+	tmptm1 = tmptm2 + (tmptm3 = (int)tb->tm_sec);
+	if (ChkAdd(tmptm1, tmptm2, tmptm3))
+		goto err_mktime;
+
+	//debugstring("tmptm1:2:");
+	//debugdata((unsigned char*)&tmptm1, 4);
+	/***** HERE: tmptm1 holds number of elapsed seconds *****/
+
+	//        if  ( ultflag ) {
+	//
+	//            /*
+	//             * Adjust for timezone. No need to check for overflow since
+	//             * localtime() will check its arg value
+	//             */
+	//
+	//#ifdef _WIN32
+	//            __tzset();
+	//#else  /* _WIN32 */
+	//#if defined (_M_MPPC) || defined (_M_M68K)
+	//            _tzset();
+	//#endif  /* defined (_M_MPPC) || defined (_M_M68K) */
+	//#endif  /* _WIN32 */
+	//
+	//            tmptm1 += _timezone;
+	//
+	//            /*
+	//             * Convert this second count back into a time block structure.
+	//             * If localtime returns NULL, return an error.
+	//             */
+	//            if ( (tbtemp = localtime(&tmptm1)) == NULL )
+	//                goto err_mktime;
+	//
+	//            /*
+	//             * Now must compensate for DST. The ANSI rules are to use the
+	//             * passed-in tm_isdst flag if it is non-negative. Otherwise,
+	//             * compute if DST applies. Recall that tbtemp has the time without
+	//             * DST compensation, but has set tm_isdst correctly.
+	//             */
+	//            if ( (tb->tm_isdst > 0) || ((tb->tm_isdst < 0) &&
+	//              (tbtemp->tm_isdst > 0)) ) {
+	//                tmptm1 += _dstbias;
+	//                tbtemp = localtime(&tmptm1);    /* reconvert, can't get NULL */
+	//            }
+	//
+	//        }
+	//        else {
+	//            if ( (tbtemp = gmtime(&tmptm1)) == NULL )
+	//                goto err_mktime;
+	//        }
+
+
+	//        *tb = *tbtemp;
+	tmptm1 -= 28800;	//8  timezone
+	return (time_t)tmptm1;
+
+err_mktime:
+	// 		debugstring("Error,..........\r\n");
+	return (time_t)(-1);
+}
+
 void Long2BCDTime(int Ltime, unsigned char*BCDtime)
 {
 	//	struct tm_slzr *area;
@@ -243,7 +631,6 @@ int DataTimeDec(unsigned char *datatime1, unsigned char *datatime2)
 }
 
 
-
 unsigned char time_invalid(unsigned char *time_buff)
 {
 	unsigned int year;
@@ -308,7 +695,4 @@ unsigned char time_invalid(unsigned char *time_buff)
 		return 0;
 	return 1;
 }
-
-
-
 

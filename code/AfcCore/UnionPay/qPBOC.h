@@ -2,7 +2,7 @@
  *    Copyright(c) 2008-2009, SANLIAN., Ltd.
  *                     ALL RIGHTS RESERVED
  *
- *  PRODUCT  : 
+ *  PRODUCT  :
  *
  *  FILENAME : qPBOC.c
  *  CREATOR  :             DATE: 2009-08-05 10:11
@@ -17,11 +17,11 @@
 #define _H_QPBOC_H
 #include "../include/include.h"
 
-//需要打开  _debug_
-//#define QPBOC_DEBUG
-//#define QPBOC_DEBUG_ER
+ //需要打开  _debug_
+ //#define QPBOC_DEBUG
+ //#define QPBOC_DEBUG_ER
 
-//银行存贮空间长度
+ //银行存贮空间长度
 #define qPbocRECORD_LEN 256
 
 #ifdef	_debug_ 
@@ -32,12 +32,12 @@
 #if defined  _debug_stop
 extern unsigned char stop;
 #endif
-typedef	unsigned char U8,INT8U;
-typedef unsigned short U16,INT16U;
-typedef unsigned int U32,INT32U;
-typedef	signed char S8,INT8S;
-typedef signed short S16,INT16S;
-typedef signed int S32,INT32S;
+typedef	unsigned char U8, INT8U;
+typedef unsigned short U16, INT16U;
+typedef unsigned int U32, INT32U;
+typedef	signed char S8, INT8S;
+typedef signed short S16, INT16S;
+typedef signed int S32, INT32S;
 
 #define EXTERN		extern
 
@@ -68,7 +68,7 @@ typedef signed int S32,INT32S;
 #define INFO_9F1C	"\x31\x32\x33\x34\x35\x36\x37\x38"	/*an8 终端标识ASC*/
 #define INFO_9F1D	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 // #define INFO_9F1E	"EFS3000L"		/*an8 接口设备序列号，厂商分配的永久序列号DMWZ-A01*/
- #define INFO_9F1E	"54004318"		/*an8 接口设备序列号，百富pos报文里面*/
+#define INFO_9F1E	"54004318"		/*an8 接口设备序列号，百富pos报文里面*/
 #define INFO_9F21	"\x00\x00\x00"	/*交易时间HHMMSS*/
 #define INFO_5F2A   "\x01\x56"                                 	/* 交易货币代码 */
 #define INFO_5F2D   "\x63\x6ex65\x6ex00\x00x00\x00"           	/* 首选语言*/
@@ -94,24 +94,24 @@ typedef signed int S32,INT32S;
 
 
 //add by zhgfan 2018-1-5
-typedef enum{
+typedef enum {
 	PREPAID_CARD,
-		CREDIT_CARD	
+	CREDIT_CARD
 }EMV_CARDTYPE;
 
-typedef enum{
+typedef enum {
 	E_cash,
-		PAY_Online,
-		ODA,
-		UICS
+	PAY_Online,
+	ODA,
+	UICS
 }PBOC_CHANNEL;
 typedef union
 {
 	INT8U	CharBuff[2];
 	INT16U	IntBuff;
-} TYPE_CHAR_INT ;
+} TYPE_CHAR_INT;
 
-typedef union 
+typedef union
 {
 	INT8U	CharBuff[4];
 	INT16U	IntBuff[2];
@@ -119,94 +119,94 @@ typedef union
 }TYPE_CHAR_LONG;
 
 // PBOC 定义的错误代码
-enum FUN_QPBOC_RETURN_ERRCODE{
-	qPBOC_SUCESS_ECU				=0,			//4 命令执行成功
-	qPBOC_TRADE_ABORT			=1,			//4 交易终止
-	qPBOC_APDU_CMD				=84,			//4 卡操作APDU失败
-	qPBOC_CARD_ACTIVE				=85,			//4 激活卡失败
-	qPBOC_CARD_ANTICOLL			=86,			//4 防冲突失败
-	qPBOC_NO_CARD					=87,			//4 没有检测到卡
-	qPBOC_NOOK_PATH				=88,			//4 没有匹配的交易路径
-	qPBOC_POS_NOFUNCTION			=89,			//4 该终端不支持该功能
-	qPBOC_NO_QPBOC				=90,			//4 不支持QPBOC功能
-	qPBOC_FCI_LOSTDATA			=91,			//4 FCI模块强制数据缺失
-	qPBOC_MUTL_CARD				=92,			//4 检测到多张卡
-	qPBOC_TRADEMEONY_ZERO		=93,			//4 交易金额为0
-	qPBOC_MONEYOVERLIMIT			=94,			//4 交易终止:交易金额超过终端非接触卡交易限额
-	qPBOC_APPFILE_FAILE			=95,			//4 选择文件失败
-	qPBOC_APPFILE_INVALID			=96,			//4 应用文件无效
-	qPBOC_APPFILE_NO_FIND		=97,			//4 应用文件没有找到
-	qPBOC_APPFILE_LOCK			=98,			//4 应用文件已经被锁
-	qPBOC_SELECT_NO_APP			=99,			//4 应用中没有发现应用文件，交易终止
-	qPBOC_PUBLISHKEY_LEN			=100,		//4 发卡行公钥长度与CA KEY长度不相等
-	qPBOC_RSA_ERROR				=101,		//4 计算RSA出错
-	qPBOC_PUBLISHC_FORMAT		=102,		//4 发卡行公钥证书格式不对
-	qPBOC_PUBLISHC_SIGN			=103,		//4 发卡行公钥证书SHA值错
-	qPBOC_PUBLISHC_FLAG			=104,		//4 发卡行公钥证书发卡行标识出错
-	qPBOC_READ_SYSTIME			=105,		//4 读系统时间出错
-	qPBOC_PUBLISHC_EXP			=106,		//4 发卡行公钥证书过期
-	qPBOC_PUBLISHC_PKEYF			=107,		//4 发卡行公钥标识
-	qPBOC_ICC_NOEXIT				=108,		//4 IC卡公钥证书没有找到
-	qPBOC_IKEYSGLENNO				=109,		//4 签名静态数据长度跟发卡行公钥长度不一致 
-	qPBOC_ICC_LEN					=110,		//4 IC卡的公钥证书长度不对
-	qPBOC_ICC_FORMAT				=111,		//4 恢复IC卡公钥证书格式出错
-	qPBOC_ICC_STAG_NO82			=112,		//4 静态应用标签中没有找到82
-	qPBOC_OFFLINEAUTENDATA_INVALID =113,	//4 脱机认证数据非法
-	qPBOC_ICC_SIGN					=114,		//4 IC卡公钥证书SHA值错
-	qPBOC_ICC_PANFLAG				=115,		//4 IC卡的账号与主账号不一致
-	qPBOC_ICC_EXP					=116,		//4 IC卡公钥证书过期
-	qPBOC_ICC_PKEYF				=117,		//4 IC卡公钥标识
-	qPBOC_DDA_DATAFORMAT		=118,		//4 DDA某些数据没有找打
-	qPBOC_DDA_DATAKEYLEN			=119,		//4 DDA数据与IC卡PKEY长度不一致
-	qPBOC_DDA_SIGN				=120,		//4 IC卡公钥证书SHA值错
-	qPBOC_CAINDEX_NOEXIT			=121,		//4 CA公钥索引不存在
-	qPBOC_PUBLISHC_NOEXIT		=122,		//4 发卡行公钥证书不存在
-	qPBOC_PUBLISHE_NOEXIT		=123,		//4 发卡行公钥指数不存在
-	qPBOC_CAKEYRID_NOEXIT		=124,		//4 卡的RID没有找到
-	qPBOC_SIGNSTATIC_NOEXIT		=125,		//4 签名的静态数据
-	qPBOC_AFL_NOEXIT				=126,		//4 AFL 不存在
-	qPBOC_STATICDATA_NOEXIT		=127,		//4 需要认证的静态数据不存在
-	qPBOC_CAPKEY_NOEXIT			=128,		//4 CA公钥不存在
-	qPBOC_NOFIND_AUTEN			=129,		//4 没有合适的认证方法
-	qPBOC_ICCE_NOEXIT				=130,		//4 IC卡公钥指数没有找到
-	qPBOC_ICSIGNDYDATA_NOEXIT	=131,		//4 签名的动态数据没有知道
-	qPBOC_NOUNDOWNDATA_NOEXIT	=132,		//4 不可预见数据不存在
-	qPBOC_NO_CDA					=134,		//4 QPBOC 不支持CDA
-	qPBOC_RESUL_AAC				=135,		//4 脱机拒绝
-	qPBOC_RESUL_TC				=136,		//4 脱机批准
-	qPBOC_RESUL_ARQC				=137,		//4 联机批准
-	qPBOC_RESUL_RFU				=138,		//4 未知行为
-	qPBOC_NOFIND_9F10				=139,		//4 没有找到9F10卡片交易属性
-	qPBOC_AACARQC_NOM			=140,		//4 脱机拒绝或联机缺少必需数据
-	qPBOC_TC_NOM					=141,		//4 脱机批准缺少必需数据
-	qPBOC_9F38_NOEXIT				=142,		//4 PDOL不存在
-	qPBOC_9F66_NOEXIT				=143,		//4 终端交易属性不存在
-	qPBOC_SHA_FLAG				=144,		//4 哈希算法标识错误
-	qPBOC_AFL_SFI_ERROR			=145,		//4 AFL 中SFI出错
-	qPBOC_OFFMONEY0				=146,		//4 脱机交易金额为0
-	qPBOC_OFFNOLINE				=147,		//4 脱机设备不能联机
-	qPBOC_LINERESUL_AAC			=148,		//4 设备不能联机拒绝
-	qPBOC_VER_NO_SAME			=149,		//4 终端和卡应用版本不一致
-	qPBOC_CONTRY_OUTTRADE		=150,		//4 国家代码不同，不能进行国际交易
-	qPBOC_CONTRY_INTRADE			=151,		//4 国家代码相同,不能进行国内交易
-	qPBOC_NOATM_INVALID			=152,		//4 非ATM终端上无效
-	qPBOC_ATM_INVALID				=153,		//4 ATM终端上无效
-	qPBOC_STARTTIME_INVLAID		=154,		//4 卡没有生效
-	qPBOC_ENDTIME_INVLIAD		=155,		//4 卡已失效
-	qPBOC_BLACK_CARD				=156,		//4 黑名单卡 
-	qPBOC_REPEAT_TAG				=157,		//4 重复标签出现
-	qPBOC_TVL_INVALID				=158,		//4 TVL 格式非法
-	qPBOC_DATA_NO70				=159,		//4 数据模块错误
-	qPBOC_DATA_SIGAN_NO70		=160,
-	qPBOC_QpboC_SIGAN_NO		=161,	//卡信息没找到
-	qPBOC_QpboC_tryAgain		=162,	//需要重刷
-	qPBOC_CARD_forbid		=163,	//卡禁止刷
+enum FUN_QPBOC_RETURN_ERRCODE {
+	qPBOC_SUCESS_ECU = 0,			//4 命令执行成功
+	qPBOC_TRADE_ABORT = 1,			//4 交易终止
+	qPBOC_APDU_CMD = 84,			//4 卡操作APDU失败
+	qPBOC_CARD_ACTIVE = 85,			//4 激活卡失败
+	qPBOC_CARD_ANTICOLL = 86,			//4 防冲突失败
+	qPBOC_NO_CARD = 87,			//4 没有检测到卡
+	qPBOC_NOOK_PATH = 88,			//4 没有匹配的交易路径
+	qPBOC_POS_NOFUNCTION = 89,			//4 该终端不支持该功能
+	qPBOC_NO_QPBOC = 90,			//4 不支持QPBOC功能
+	qPBOC_FCI_LOSTDATA = 91,			//4 FCI模块强制数据缺失
+	qPBOC_MUTL_CARD = 92,			//4 检测到多张卡
+	qPBOC_TRADEMEONY_ZERO = 93,			//4 交易金额为0
+	qPBOC_MONEYOVERLIMIT = 94,			//4 交易终止:交易金额超过终端非接触卡交易限额
+	qPBOC_APPFILE_FAILE = 95,			//4 选择文件失败
+	qPBOC_APPFILE_INVALID = 96,			//4 应用文件无效
+	qPBOC_APPFILE_NO_FIND = 97,			//4 应用文件没有找到
+	qPBOC_APPFILE_LOCK = 98,			//4 应用文件已经被锁
+	qPBOC_SELECT_NO_APP = 99,			//4 应用中没有发现应用文件，交易终止
+	qPBOC_PUBLISHKEY_LEN = 100,		//4 发卡行公钥长度与CA KEY长度不相等
+	qPBOC_RSA_ERROR = 101,		//4 计算RSA出错
+	qPBOC_PUBLISHC_FORMAT = 102,		//4 发卡行公钥证书格式不对
+	qPBOC_PUBLISHC_SIGN = 103,		//4 发卡行公钥证书SHA值错
+	qPBOC_PUBLISHC_FLAG = 104,		//4 发卡行公钥证书发卡行标识出错
+	qPBOC_READ_SYSTIME = 105,		//4 读系统时间出错
+	qPBOC_PUBLISHC_EXP = 106,		//4 发卡行公钥证书过期
+	qPBOC_PUBLISHC_PKEYF = 107,		//4 发卡行公钥标识
+	qPBOC_ICC_NOEXIT = 108,		//4 IC卡公钥证书没有找到
+	qPBOC_IKEYSGLENNO = 109,		//4 签名静态数据长度跟发卡行公钥长度不一致 
+	qPBOC_ICC_LEN = 110,		//4 IC卡的公钥证书长度不对
+	qPBOC_ICC_FORMAT = 111,		//4 恢复IC卡公钥证书格式出错
+	qPBOC_ICC_STAG_NO82 = 112,		//4 静态应用标签中没有找到82
+	qPBOC_OFFLINEAUTENDATA_INVALID = 113,	//4 脱机认证数据非法
+	qPBOC_ICC_SIGN = 114,		//4 IC卡公钥证书SHA值错
+	qPBOC_ICC_PANFLAG = 115,		//4 IC卡的账号与主账号不一致
+	qPBOC_ICC_EXP = 116,		//4 IC卡公钥证书过期
+	qPBOC_ICC_PKEYF = 117,		//4 IC卡公钥标识
+	qPBOC_DDA_DATAFORMAT = 118,		//4 DDA某些数据没有找打
+	qPBOC_DDA_DATAKEYLEN = 119,		//4 DDA数据与IC卡PKEY长度不一致
+	qPBOC_DDA_SIGN = 120,		//4 IC卡公钥证书SHA值错
+	qPBOC_CAINDEX_NOEXIT = 121,		//4 CA公钥索引不存在
+	qPBOC_PUBLISHC_NOEXIT = 122,		//4 发卡行公钥证书不存在
+	qPBOC_PUBLISHE_NOEXIT = 123,		//4 发卡行公钥指数不存在
+	qPBOC_CAKEYRID_NOEXIT = 124,		//4 卡的RID没有找到
+	qPBOC_SIGNSTATIC_NOEXIT = 125,		//4 签名的静态数据
+	qPBOC_AFL_NOEXIT = 126,		//4 AFL 不存在
+	qPBOC_STATICDATA_NOEXIT = 127,		//4 需要认证的静态数据不存在
+	qPBOC_CAPKEY_NOEXIT = 128,		//4 CA公钥不存在
+	qPBOC_NOFIND_AUTEN = 129,		//4 没有合适的认证方法
+	qPBOC_ICCE_NOEXIT = 130,		//4 IC卡公钥指数没有找到
+	qPBOC_ICSIGNDYDATA_NOEXIT = 131,		//4 签名的动态数据没有知道
+	qPBOC_NOUNDOWNDATA_NOEXIT = 132,		//4 不可预见数据不存在
+	qPBOC_NO_CDA = 134,		//4 QPBOC 不支持CDA
+	qPBOC_RESUL_AAC = 135,		//4 脱机拒绝
+	qPBOC_RESUL_TC = 136,		//4 脱机批准
+	qPBOC_RESUL_ARQC = 137,		//4 联机批准
+	qPBOC_RESUL_RFU = 138,		//4 未知行为
+	qPBOC_NOFIND_9F10 = 139,		//4 没有找到9F10卡片交易属性
+	qPBOC_AACARQC_NOM = 140,		//4 脱机拒绝或联机缺少必需数据
+	qPBOC_TC_NOM = 141,		//4 脱机批准缺少必需数据
+	qPBOC_9F38_NOEXIT = 142,		//4 PDOL不存在
+	qPBOC_9F66_NOEXIT = 143,		//4 终端交易属性不存在
+	qPBOC_SHA_FLAG = 144,		//4 哈希算法标识错误
+	qPBOC_AFL_SFI_ERROR = 145,		//4 AFL 中SFI出错
+	qPBOC_OFFMONEY0 = 146,		//4 脱机交易金额为0
+	qPBOC_OFFNOLINE = 147,		//4 脱机设备不能联机
+	qPBOC_LINERESUL_AAC = 148,		//4 设备不能联机拒绝
+	qPBOC_VER_NO_SAME = 149,		//4 终端和卡应用版本不一致
+	qPBOC_CONTRY_OUTTRADE = 150,		//4 国家代码不同，不能进行国际交易
+	qPBOC_CONTRY_INTRADE = 151,		//4 国家代码相同,不能进行国内交易
+	qPBOC_NOATM_INVALID = 152,		//4 非ATM终端上无效
+	qPBOC_ATM_INVALID = 153,		//4 ATM终端上无效
+	qPBOC_STARTTIME_INVLAID = 154,		//4 卡没有生效
+	qPBOC_ENDTIME_INVLIAD = 155,		//4 卡已失效
+	qPBOC_BLACK_CARD = 156,		//4 黑名单卡 
+	qPBOC_REPEAT_TAG = 157,		//4 重复标签出现
+	qPBOC_TVL_INVALID = 158,		//4 TVL 格式非法
+	qPBOC_DATA_NO70 = 159,		//4 数据模块错误
+	qPBOC_DATA_SIGAN_NO70 = 160,
+	qPBOC_QpboC_SIGAN_NO = 161,	//卡信息没找到
+	qPBOC_QpboC_tryAgain = 162,	//需要重刷
+	qPBOC_CARD_forbid = 163,	//卡禁止刷
 	qPBOC_SDA_DATAFORMAT = 164,		//4 SDA某些数据没有找打
 	qPBOC_SDA_DATAKEYLEN = 165,		//4 SDA数据与IC卡PKEY长度不一致
 	qPBOC_SDA_SIGN = 166,		//4 SDA SHA值错
 	qPBOC_lostData = 167,		//4 数据缺失
 	qPBOC_CARD_forbid_oda = 168,		//4 0da
-	qPBOC_DEFAULT					=0xFFF
+	qPBOC_DEFAULT = 0xFFF
 };
 
 #define RSA_NO_PADDING		3
@@ -430,18 +430,18 @@ typedef struct
 {
 	INT8U 	Organization_[8];		//
 //	INT8U	up_time[8];		//
-	INT8U 	card_no[10];		
-			
+	INT8U 	card_no[10];
+
 }QPBOC_TYPE_63;
 
 
-typedef struct{
+typedef struct {
 	INT16U    T;
 	INT32U 	L;
 	INT8U	V[248];
 }BER_TVL;
 
-typedef struct{
+typedef struct {
 	INT32U 	TagValue;
 	INT32U 	SizeOff;
 }TAG_OFFSTU;
@@ -521,11 +521,11 @@ typedef struct
 #define	 SUM_APP_LIST_AID			5
 typedef struct {
 	INT8U 	LenAID;
-	INT8U 	DF_AID[20];		
+	INT8U 	DF_AID[20];
 	INT8U 	LenTag;
-	INT8U 	AppTag[12];		
+	INT8U 	AppTag[12];
 	INT8U 	LenPro;
-	INT8U 	AppPrio[2];		
+	INT8U 	AppPrio[2];
 }FCI_MODULE;
 typedef struct
 {
@@ -566,9 +566,9 @@ typedef struct
 }stPbocRec;
 typedef struct
 {
-	INT32U	e_Key;	
-	INT32U	n_KeyLen;	
-	INT8U	n_Key[256];	
+	INT32U	e_Key;
+	INT32U	n_KeyLen;
+	INT8U	n_Key[256];
 }KEY_PUBLICMSG;
 
 

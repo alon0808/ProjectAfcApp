@@ -9,7 +9,7 @@ QMAKE_CC = arm-linux-gnueabi-g++
 TARGET = HandanCore
 TEMPLATE = lib
 DEFINES += _linux_
-QMAKE_CFLAGS = -fvisibility=hidden -Dhi3536 -Wall -std=c++0x -D_THREAD_SAFE -MMD  -Wno-strict-aliasing
+QMAKE_CFLAGS = -fvisibility=hidden -Dhi3536 -Wall -std=c++0x -D_THREAD_SAFE -MMD  -Wno-strict-aliasing -fpermissive
 QMAKE_CXXFLAGS = $$QMAKE_CFLAGS
 
 INCLUDEPATH += ../../code/public
@@ -19,6 +19,7 @@ INCLUDEPATH += ../../code/AfcCore/include
 INCLUDEPATH += ../../code/AfcCore/SlDemo
 INCLUDEPATH += ../../code/AfcCore/UnionPay
 INCLUDEPATH += ../../code/AfcCore/Crypto
+INCLUDEPATH += ../../code/AfcCore/fathead
 
 LIBS = -lpthread -L./ltyp2/lib
 
@@ -47,7 +48,8 @@ SOURCES += handancore.cpp \
     ../../code/AfcCore/Crypto/MD5.c \
     ../../code/AfcCore/Crypto/MYDES.c \
     ../../code/AfcCore/UnionPay/add_2.c \
-    ../../code/AfcCore/UnionPay/add.c
+    ../../code/AfcCore/UnionPay/add.c \
+    ../../code/AfcCore/citydifferent.c
 
 HEADERS += handancore.h\
         handancore_global.h \
@@ -174,7 +176,8 @@ HEADERS += handancore.h\
     ../../code/AfcCore/Crypto/MYDES.h \
     ../../code/AfcCore/UnionPay/qPBOC.h \
     ../../code/AfcCore/UnionPay/add_2.h \
-    ../../code/AfcCore/UnionPay/add.h
+    ../../code/AfcCore/UnionPay/add.h \
+    ../../code/AfcCore/citydifferent.h
 
 unix {
     target.path = /usr/lib

@@ -456,6 +456,15 @@
     <ClInclude Include="..\..\code\AfcCore\include\STProLib.h">
       <Filter>关注文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\citydifferent.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\DataStorage\RamStorage.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\UiAccess.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\code\AfcCore\CPUCard.c">
@@ -546,6 +555,18 @@
       <Filter>关注文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\inputmisc\PsamCard.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\citydifferent.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\DataStorage\RamStorage.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\UiAccess.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\EC20Lx_HTTPS.c">
       <Filter>关注文件</Filter>
     </ClCompile>
   </ItemGroup>

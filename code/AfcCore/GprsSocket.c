@@ -940,7 +940,7 @@ void mainGprs(void)
 {
 	unsigned char ret;
 	
-	if(Netrecvline[0].dataFlag == 0xAA) 
+	if(Netrecvline[LINK_GJ].dataFlag == 0xAA) 
 	{
 		//应用层数据帧
 #ifdef	_debug_gprs 
@@ -948,12 +948,12 @@ void mainGprs(void)
 		debugdata(Netrecvline[0].Revbuf, Netrecvline[0].bufLen, 1);
 #endif
 
-		ret = GJDataDeal((unsigned char*)&Netrecvline[0].dataFlag);//公交数据处理			
+		ret = GJDataDeal((unsigned char*)&Netrecvline[LINK_GJ].dataFlag);//公交数据处理			
 		if(ret == 0){
-			memset((unsigned char*)&Netrecvline[0].dataFlag,0,50);
+			memset((unsigned char*)&Netrecvline[LINK_GJ].dataFlag,0,50);
 		}
 		else{
-			Netrecvline[0].dataFlag = 0xAA;
+			Netrecvline[LINK_GJ].dataFlag = 0xAA;
 #ifdef _debug_gprs
 			debugstring("MAIN:");
 			debugdata((unsigned char*)&Netrecvline[0].dataFlag, 20, 1);

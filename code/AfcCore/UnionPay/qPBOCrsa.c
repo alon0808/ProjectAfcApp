@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include "szct.h"
 #include "Font.h"
-
+#include "Macro_Proj.h"
 #include "qPBOC.h"
 #include "qpboc_head.h"
 #include "add.h"
@@ -3172,7 +3172,6 @@ void Pboc_delay_card(void)
 }
 extern unsigned char SYSgetbussinessNO(unsigned char *dat);
 extern void addStatMoney(unsigned char mode, unsigned int moneyv,unsigned char type);
-extern unsigned char DriveCardNo[4];
 extern void INT2BCD(unsigned int ii, unsigned char *bcdbuf, unsigned char bcdbuflen);
 unsigned char get_rcardMainNO(unsigned char *outdata)
 {

@@ -12,6 +12,7 @@ CONFIG += staticlib
 DEFINES += _linux_
 
 INCLUDEPATH += ../../code/public
+INCLUDEPATH += ../../code/UtilProc
 
 SOURCES += utilprostaic.cpp \
     ../../code/UtilProc/UtilityProc.c \

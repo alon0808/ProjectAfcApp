@@ -803,7 +803,10 @@ typedef struct
 #define BIT_TMS_FILE_DOWNLOAD (BIT_BAK_ADDR_add+BIT_BAK_ADDR_add_LEN)     //  0x1A29,
 #define BIT_TMS_FILE_DOWNLOAD_LEN      216
 
-#define BIT_END_ADDR		(BIT_TMS_FILE_DOWNLOAD+BIT_TMS_FILE_DOWNLOAD_LEN)
+//192   保存银行临时记录
+#define BIT_qPBOC_Rec_Temp (BIT_TMS_FILE_DOWNLOAD+BIT_TMS_FILE_DOWNLOAD_LEN)
+
+#define BIT_END_ADDR		(BIT_qPBOC_Rec_Temp+192)
 
 //----------------------------------
 //28(24) 调度命令信息  调度数据存在7168开始的地址，7K，铁电共8K能用1024字节

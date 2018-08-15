@@ -5,9 +5,10 @@
 * √Ë ˆ   :
 * Ω®¡¢   :
 **************************************************/
+#include "Macro_Proj.h"
 #include "string.h"
 #include "stdio.h"
-#include "..\include\include.h"
+#include "include.h"
 #include "szct.h"
 
 #include "citydifferent.h"
@@ -15,6 +16,7 @@
 #ifdef qPBOC_BUS
 #include "qpboc_head.h"
 #endif
+#include "qPBOC.h"
 #include "qpboc_8583.h"
 #include "add.h"
 #include "add_2.h"
