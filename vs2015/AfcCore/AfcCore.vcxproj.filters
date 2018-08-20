@@ -174,9 +174,6 @@
     <ClInclude Include="..\..\code\AfcCore\PSAMLib.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\code\AfcCore\RecordFile.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\code\AfcCore\SL8583.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -411,9 +408,6 @@
     <ClInclude Include="..\..\code\AfcCore\include\szct.h">
       <Filter>关注文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\code\AfcCore\debugInfor.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\code\AfcCore\include\libHandanCore.h">
       <Filter>关注文件</Filter>
     </ClInclude>
@@ -463,6 +457,12 @@
       <Filter>关注文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\code\AfcCore\UiAccess.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\public\debugInfor.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\RecordFile.h">
       <Filter>关注文件</Filter>
     </ClInclude>
   </ItemGroup>

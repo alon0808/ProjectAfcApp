@@ -27,6 +27,9 @@
     <ClCompile Include="..\..\code\UtilProc\ProcTlv.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\code\UtilProc\cJSON.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\code\UtilProc\ConvertData.h">
@@ -36,6 +39,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\code\UtilProc\UtilityProc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\UtilProc\cJSON.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -10,8 +10,9 @@
 #include <fcntl.h>
 #include <sys/time.h>
 
+#include "RecordFile.h"
 
-
+unsigned char DEBUG_COM = 1;
 
 
 void debugstring(const char *str)

@@ -3,6 +3,7 @@
 
 #include "TypeDef.h"
 #include "ConvertData.h"
+#include "cJSON.h"
 
 
 #ifndef BitMaskMatch

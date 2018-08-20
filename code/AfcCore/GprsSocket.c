@@ -252,8 +252,8 @@ int SocketLink(void)
 
 
 
-extern int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int *pOLen);
-extern int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, int *pOLen);
+extern int https_performSsl(void *pData, int len, unsigned char *pOutput, int *pOLen);
+extern int socket_performNSsl(void *pData, int len, unsigned char *pOutput, int *pOLen);
 int SendDataTOserver(void)	//发送相关的数据到服务器
 {
 	int i, ret;
@@ -817,9 +817,10 @@ load_cs:
 }
 
 //把数据 放到发送缓冲中，linkNum取值1-4
-void gprs_send_data(unsigned char linkNum, unsigned int len, unsigned char *dat)
+void gprs_send_data(unsigned char linkNum, unsigned int len, void *pData)
 {
 	int si;
+	unsigned char *dat = (unsigned char *)pData;
 	
 	if ((linkNum == 0) || (linkNum > 4))//链接号只能从1到4,其它的默认0号链接
 		return;

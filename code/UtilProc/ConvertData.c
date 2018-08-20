@@ -870,3 +870,134 @@ unsigned char ZBcod2ASCII(unsigned char *ZBbuf, unsigned char ZBlen, char *strin
 	return pos;
 }
 
+
+int String2Bytes(char *pInput, int ilen, unsigned char *pOut, int *pOlen) {
+	int i = 0, j = 0;
+	int limit;
+	unsigned char tmpBy;
+	unsigned char bakBy;
+
+	if (pInput == NULL || pOut == NULL || pOlen == NULL) {
+		return Ret_Err_Param;
+	}
+	//MSG_LOG("String2Bytes1(%d):%s", ilen, pInput);
+	limit = *pOlen;
+	*pOlen == 0;
+
+	j = 0;
+	for (i = 0; i < ilen; ++i) {
+		tmpBy = (unsigned char)pInput[i];
+		if (tmpBy >= '0' && tmpBy <= '9') {
+			tmpBy -= '0';
+		}
+		else if (tmpBy >= 'a' && tmpBy <= 'f') {
+			tmpBy -= 'a' - 10;
+		}
+		else if (tmpBy >= 'A' && tmpBy <= 'F') {
+			tmpBy -= 'A' - 10;
+		}
+		else {
+			//MSG_LOG("String2Bytes2:%02X,%c\n", tmpBy, tmpBy);
+			return Ret_Err_Format;
+		}
+
+		if ((i & 0x01) != 0) {
+			if (j >= limit) {
+				//BCD_LOG(pOut, j, 1);
+				return Ret_Err_Overflow;
+			}
+			pOut[j] = bakBy | tmpBy;
+			++j;
+		}
+		else {
+			bakBy = tmpBy << 4;
+		}
+	}
+	*pOlen = j;
+
+	return Ret_OK;
+}
+
+
+int StringDecimal2UInt32(char *pInput, int ilen, unsigned int *pOlen) {
+	int i = 0, j = 0;
+	int limit;
+	unsigned char tmpBy;
+	unsigned char bakBy;
+	unsigned int valInt = 0;
+
+	if (pInput == NULL || pOlen == NULL) {
+		return Ret_Err_Param;
+	}
+	if (ilen < 10) {
+
+	}
+	else if (ilen > 10 || (ilen == 10) && memcmp(pInput, "4294967295", 10) > 0) {
+		return Ret_Err_Overflow;
+	}
+	//MSG_LOG("StringDecimal2UInt32(%d):%s\n", ilen, pInput);
+	limit = *pOlen;
+	*pOlen == 0;
+
+	j = 0;
+	for (i = 0; i < ilen; ++i) {
+		valInt *= 10;
+		tmpBy = (unsigned char)pInput[i];
+		if (tmpBy >= '0' && tmpBy <= '9') {
+			tmpBy -= '0';
+		}
+		else {
+			//MSG_LOG("String2Bytes2:%02X,%c\n", tmpBy, tmpBy);
+			return Ret_Err_Format;
+		}
+
+		valInt += tmpBy;
+	}
+	*pOlen = valInt;
+
+	return Ret_OK;
+}
+
+
+int StringHex2UInt32(char *pInput, int ilen, unsigned int *pOlen) {
+	int i = 0, j = 0;
+	int limit;
+	unsigned char tmpBy;
+	unsigned char bakBy;
+	unsigned int valInt = 0;
+
+	if (pInput == NULL || pOlen == NULL) {
+		return Ret_Err_Param;
+	}
+	if (ilen > 8) {
+		return Ret_Err_Overflow;
+	}
+	MSG_LOG("StringHex2UInt32(%d):%s", ilen, pInput);
+	limit = *pOlen;
+	*pOlen == 0;
+
+	j = 0;
+	for (i = 0; i < ilen; ++i) {
+		valInt <<= 8;
+		tmpBy = (unsigned char)pInput[i];
+		if (tmpBy >= '0' && tmpBy <= '9') {
+			tmpBy -= '0';
+		}
+		else if (tmpBy >= 'a' && tmpBy <= 'f') {
+			tmpBy -= 'a' - 10;
+		}
+		else if (tmpBy >= 'A' && tmpBy <= 'F') {
+			tmpBy -= 'A' - 10;
+		}
+		else {
+			//MSG_LOG("String2Bytes2:%02X,%c\n", tmpBy, tmpBy);
+			return Ret_Err_Format;
+		}
+
+		valInt += tmpBy;
+	}
+	*pOlen = valInt;
+
+	return Ret_OK;
+}
+

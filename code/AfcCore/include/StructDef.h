@@ -311,6 +311,10 @@ typedef struct{
 	unsigned char ucSendstyle; //GPRS数据状态 0xE1=需要发送数据内容 0xE2=需要发送取数据命令
 	unsigned char ucReadStyle;
 	unsigned int uiNum;	//需要发送的长度
+	unsigned char link;	//
+	unsigned char readlink[4];	//
+	unsigned char sendLink;	//
+	unsigned char openLink;
 }stGPrsDataStyle;
 
 #define LINEINFO_ROW_LEN	32	//线路信息每条长度

@@ -3,6 +3,7 @@
 	audio,card type
 	2012.5.15 by KSLi
   */
+#include "Macro_Proj.h"
 #include "string.h"
 #include "stdio.h"
 #include "szct.h"
@@ -417,7 +418,7 @@ void CS456_ASDisplay(void)
 
 	MifareAuthKey(PICC_AUTHENT1A,(unsigned char *)&c_serial,buffer, 4);
 
-	Delay(1);
+	delayxms(2);
 	if(MifareRead(4, buffer) ==0) 
 	{
 		debugstring("read 4 error\r\n ");
@@ -539,7 +540,7 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 		debugstring("card type proce2:");
 		debugdata((unsigned char*)&pos, 1, 1);
 #endif
-		Delay(1);
+		delayxms(2);
 		if(MifareRead(pos, buffer) ==0) 
 		{
 			debugstring("read 1 error\r\n ");

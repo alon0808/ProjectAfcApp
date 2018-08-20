@@ -134,11 +134,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\code\UtilProc\cJSON.c" />
     <ClCompile Include="..\..\code\UtilProc\ConvertData.c" />
     <ClCompile Include="..\..\code\UtilProc\ProcTlv.c" />
     <ClCompile Include="..\..\code\UtilProc\UtilityProc.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\code\UtilProc\cJSON.h" />
     <ClInclude Include="..\..\code\UtilProc\ConvertData.h" />
     <ClInclude Include="..\..\code\UtilProc\UtilityDef.h" />
     <ClInclude Include="..\..\code\UtilProc\UtilityProc.h" />

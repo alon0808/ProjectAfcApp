@@ -1780,7 +1780,7 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 }
 
 //把数据 放到发送缓冲中，linkNum取值1-4
-extern void gprs_send_data(unsigned char linkNum, unsigned int len, unsigned char *dat);
+extern void gprs_send_data(unsigned char linkNum, unsigned int len, void *dat);
 unsigned char GJDataDeal(unsigned char *pakege)
 {
 	struct ISO_8583 iso8583[128] = 

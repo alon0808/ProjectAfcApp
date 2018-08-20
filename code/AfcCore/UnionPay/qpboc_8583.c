@@ -130,7 +130,7 @@ extern pFistVary_1 pFistVary;
 extern stBusVerIfo gBusVerInfo;
 extern unsigned char GprsCardList[16];
 extern stBusTicketV gBusTicketV;
-extern unsigned char GPRSLinkProcess;
+//extern unsigned char gGprsinfo.GPRSLinkProcess;
 extern unsigned int gSendGLogin;//登陆命令
 extern unsigned short gErrorFlag;//错误标识,高字节表示错误编号，低字节表示错次数据 详见"*错误编码标识定义"
 extern unsigned int gErrortimes[MAX_RCV_PACKET_NUM];//错误次数据,主要是用于GPRS连接
@@ -166,7 +166,7 @@ extern void sysSaveDevice(unsigned char *dbuf);
 extern void getCpuInfo(stCpuInfo *inP);
 extern void saveCpuInfo(unsigned char mode, unsigned char *dat);
 extern void savesysbupara(void);
-extern void gprs_send_data(unsigned char linkNum, unsigned int len, unsigned char *dat);
+extern void gprs_send_data(unsigned char linkNum, unsigned int len, void *dat);
 extern void SoundMessage(unsigned char cmd);
 extern void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsigned char cMOde);
 extern unsigned char SetupClientIP(unsigned char mode);
@@ -262,7 +262,7 @@ unsigned char qpoc_flag_or(void)
 				restore_flag=3;
 				gmissflag=0x4f;
 				debugstring("超过10次\r\n");
-				GPRSLinkProcess= TCPSTARTSTAT;
+				gGprsinfo.GPRSLinkProcess= TCPSTARTSTAT;
 				
 		}
 		Sign_Infor.ISOK =0;
@@ -3533,7 +3533,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		debugstring("GPRS error msg:");
 		BCD_LOG((unsigned char *)pakege, 2, 1);
 		ACK_flag = 0xAA;
-		GPRSLinkProcess = GPRS_FREE;
+		gGprsinfo.GPRSLinkProcess = GPRS_FREE;
 		gmissflag = MISS_G_FREE;
 		//return 1;
 		return 1;
@@ -3543,7 +3543,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 	if (s_isAuthOk == 0) {
 		i = 0;
-		GPRSLinkProcess = GPRS_FREE;
+		gGprsinfo.GPRSLinkProcess = GPRS_FREE;
 		if (memcmp(pakege + i, "\x00\x22", 2) != 0) {
 			debugdata(pakege + 3, Alen, 1);
 			return 1;
@@ -4015,8 +4015,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		else
 			gmissflag = MISS_G_FREE;
 
-		if (GPRSLinkProcess == GPRS_SENDING_CMD)
-			GPRSLinkProcess = TCPSTARTSTAT;
+		if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
+			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		break;
 
 		// 	case 0x0830://终端签退回应	
@@ -4041,8 +4041,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 				ACK_flag_oda = 0xff;
 				restore_flag = 3;
 
-				if (GPRSLinkProcess == GPRS_SENDING_CMD)
-					GPRSLinkProcess = TCPSTARTSTAT;
+				if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
+					gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 				break;
 			}
 
@@ -4064,8 +4064,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 			save_ODA_infor(FeRC_Dlelt, NULL);
 			restore_flag = 3;
 
-			if (GPRSLinkProcess == GPRS_SENDING_CMD)
-				GPRSLinkProcess = TCPSTARTSTAT;
+			if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
+				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		}
 		//add hbg
 		else if (ACK_flag == 0)
@@ -4074,11 +4074,11 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 			restore_flag = 3;
 
-			if (GPRSLinkProcess == GPRS_SENDING_CMD)
-				GPRSLinkProcess = TCPSTARTSTAT;
+			if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
+				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		}
-		if (GPRSLinkProcess == GPRS_SENDING_CMD)
-			GPRSLinkProcess = TCPSTARTSTAT;
+		if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
+			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		MSG_LOG("gmissflag 2==%x", gmissflag);
 		break;
 
@@ -4100,8 +4100,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 #endif
 		restore_flag = 3;
 
-		if (GPRSLinkProcess == GPRS_SENDING_CMD)
-			GPRSLinkProcess = TCPSTARTSTAT;
+		if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
+			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		break;
 
 
@@ -4118,8 +4118,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		}
 		restore_flag = 3;
 
-		if (GPRSLinkProcess == GPRS_SENDING_CMD)
-			GPRSLinkProcess = TCPSTARTSTAT;
+		if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
+			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		break;
 	default:
 
@@ -4176,12 +4176,12 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 
 	gErrorFlag &= (~ERROR_BUS_CONNECT);// 清除错误标识
 
-
+	/*
 	frameIndex = PeekFrame();
 	if (frameIndex != 0xff) {	// 先处理GPRS数据
 		MSG_LOG("GPRS有数据银联后台,先处理数据:%d\n", frameIndex);
 		return;
-	}
+	}*/
 #ifndef QPBOC_only
 	if ((gmissflag) != MISS_G_FREE)
 	{
@@ -4204,8 +4204,8 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 		//#endif
 	//	s_isAuthOk = 0;
 		gmissflag = MISS_PBOC_LOGIN;
-		if (GPRSLinkProcess == GPRS_SENDING_CMD)
-			GPRSLinkProcess = TCPSTARTSTAT;
+		if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
+			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		return;
 	}
 
@@ -4311,7 +4311,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 #ifdef WIFI_TLH_
 		wifiTlh_main();
 #else
-		main_GpsRs();
+		main_GPRS(NULL);
 #endif
 
 
@@ -4322,16 +4322,16 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 		}
 		ret = getkey(1);
 		if (ret == KEY_ESC) {
-			if (GPRSLinkProcess == 0xA0)
-				GPRSLinkProcess = TCPSTARTSTAT;
+			if (gGprsinfo.GPRSLinkProcess == 0xA0)
+				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 			gmissflag = 0;
 			return -1;
 		}
 		if (isNetOK[LINK_PBOC] == 3)
 		{
-			GPRSLinkProcess = TCPSTARTSTAT;
+			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		}
-		if (GPRSLinkProcess < 21) {//已经连接
+		if (gGprsinfo.GPRSLinkProcess < 21) {//已经连接
 			if (flag != 1) {
 				flag = 1;
 				display(6, 0, "正在拔号", DIS_ClsLine | DIS_CENTER);
@@ -4340,7 +4340,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 
 			continue;
 		}
-		else if (GPRSLinkProcess == 0x2F) {
+		else if (gGprsinfo.GPRSLinkProcess == 0x2F) {
 			if (flag != 1) {
 				flag = 1;
 				display(6, 0, "正在重新连接", DIS_ClsLine | DIS_CENTER);
@@ -4477,15 +4477,15 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 #ifdef WIFI_TLH_
 			wifiTlh_main();
 #else
-			main_GpsRs();
+			main_GPRS(NULL);
 #endif
 
 			if (outdly == 0)
 			{
 				MSG_LOG("time out-3-\r\n");
 				tcpipClose(LINK_PBOC);
-				if (GPRSLinkProcess == 0xA0)
-					GPRSLinkProcess = TCPSTARTSTAT;
+				if (gGprsinfo.GPRSLinkProcess == 0xA0)
+					gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 				gmissflag = 0;
 				#if defined QK && !defined switch_RE 
 				set_pos_infor_1(0xad);  //超时标志，限双通道
@@ -4512,8 +4512,8 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 				else {
 					MSG_LOG("%s,应答:%02X\r\n", __FUNCTION__, ACK_flag);
 					MSG_LOG("444bit:%d,ACK_flag:%02x   ", msgf[field_ack].bitf, ACK_flag);
-					if (GPRSLinkProcess == 0xA0)
-						GPRSLinkProcess = TCPSTARTSTAT;
+					if (gGprsinfo.GPRSLinkProcess == 0xA0)
+						gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 					gmissflag = 0x4f;
 				//	gSendOverTime = 0;
 
@@ -4552,8 +4552,8 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 
 
 		if (flag == 0xA5 && gMCardCand != CARDSTYLE_UNPAY_ODA) {	// 收到正确数据 
-			if (GPRSLinkProcess == 0xA0)
-				GPRSLinkProcess = TCPSTARTSTAT;
+			if (gGprsinfo.GPRSLinkProcess == 0xA0)
+				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 			//gmissflag = 0;
 			gSendOverTime = 0;
 

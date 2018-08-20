@@ -488,9 +488,9 @@ extern void debugstringCOM(unsigned char com, char *str);
 extern void debugdataCOM(unsigned char com, unsigned char *value, unsigned int uclen, unsigned char mode);
 //下面是固定串口发送
 extern void debugstring4(char *str);
-extern void debugstring(char *str);
+//extern void debugstring(char *str);
 //mode最高位为1时为串口4输出,否则串口1输出
-extern void debugdata(unsigned char *value, unsigned int uclen, unsigned char mode);
+//extern void debugdata(unsigned char *value, unsigned int uclen, unsigned char mode);
 //mode最高位为1时为串口4输出,否则串口1输出
 extern void debugstringC(char *str, unsigned char mode);
 /***************************************************

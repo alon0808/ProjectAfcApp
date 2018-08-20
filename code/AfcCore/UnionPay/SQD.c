@@ -3,14 +3,16 @@
 * 描述   :
 * 建立   :
 **************************************************/
+#include "Macro_Proj.h"
 #include "string.h"
 #include "stdio.h"
-#include "..\include\include.h"
+#include "include.h"
 #include "szct.h"
 #include "Gszct.h"
 #include "citydifferent.h"
 #include "SL8583.h"
 #include	"tms.h"
+#include "qPBOC.h"
 #ifdef qPBOC_BUS
 #include "qpboc_head.h"
 #endif
@@ -18,6 +20,8 @@
 #include "add.h"
 #include "add_2.h"
 #include "SQD.h"
+
+#include "GprsSocket.h"
 
 extern unsigned int c_serial;
 extern stcomtime SysTime;
@@ -38,7 +42,7 @@ extern unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff);
 extern unsigned char qPbocWriteRecord(unsigned char *rec);
 extern int Build_qpboc_8583_64(unsigned char *iDat, unsigned int iDatLen, unsigned char *oDat);
 extern int build8583_qpboc_Auth(unsigned char *oDat, unsigned inout);
-extern void gprs_send_data(unsigned char linkNum, unsigned int len, unsigned char *dat);
+extern void gprs_send_data(unsigned char linkNum, unsigned int len, void *dat);
 //冲正报文
 int build8583_qpboc_re_Purse_0400_sq(unsigned char *oDat ,unsigned char  mode)
 {
@@ -425,7 +429,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 #ifdef WIFI_TLH_
 		wifiTlh_main();
 #else
-		main_GpsRs();
+		main_GPRS(NULL);
 #endif
 
 
@@ -436,13 +440,13 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 		}
 		ret = getkey(1);
 		if (ret == KEY_ESC) {
-			if (GPRSLinkProcess == 0xA0)
-				GPRSLinkProcess = TCPSTARTSTAT;
+			if (gGprsinfo.GPRSLinkProcess == 0xA0)
+				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 			gmissflag = 0;
 			return -1;
 		}
 	
-		if (GPRSLinkProcess < 21) {//已经连接
+		if (gGprsinfo.GPRSLinkProcess < 21) {//已经连接
 			if (flag != 1) {
 				flag = 1;
 				display(6, 0, "正在拔号", DIS_ClsLine | DIS_CENTER);
@@ -451,7 +455,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 
 			continue;
 		}
-		else if (GPRSLinkProcess == 0x2F) {
+		else if (gGprsinfo.GPRSLinkProcess == 0x2F) {
 			if (flag != 1) {
 				flag = 1;
 				display(6, 0, "正在重新连接", DIS_ClsLine | DIS_CENTER);
@@ -472,7 +476,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 		{
 			if(gmissflag!=MISS_PBOC_UPREC_ODA /*&&gmissflag!=MISS_PBOC_RE_PURSE*/) //有其他任务的时候，先不发联机，防止同时收到多个应答	
 			{
-				GPRSLinkProcess = TCPSTARTSTAT;
+				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 			MSG_LOG("链路链接上\r\n");
 				break;//
 			}
@@ -538,7 +542,7 @@ if(over_GPRStR_add2()!=ST_OK)
 			}
 
 			clr_wdt();
-			main_GpsRs();
+			main_GPRS(NULL);
 
 			//#if SWITCH_PBOC
 // 			if (switch_both)
@@ -556,8 +560,8 @@ if(over_GPRStR_add2()!=ST_OK)
 			{
 				MSG_LOG("time out-3-\r\n");
 				tcpipClose(LINK_PBOC);
-				if (GPRSLinkProcess == 0xA0)
-					GPRSLinkProcess = TCPSTARTSTAT;
+				if (gGprsinfo.GPRSLinkProcess == 0xA0)
+					gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 				gmissflag = 0;
 				if (switch_both)
 				{
@@ -596,8 +600,8 @@ if(over_GPRStR_add2()!=ST_OK)
 				else {
 					MSG_LOG("%s,应答:%02X\r\n", __FUNCTION__, ACK_flag);
 					MSG_LOG("444bit:%d,ACK_flag:%02x   ",msgf[field_ack].bitf,ACK_flag);
-					if (GPRSLinkProcess == 0xA0)
-						GPRSLinkProcess = TCPSTARTSTAT;
+					if (gGprsinfo.GPRSLinkProcess == 0xA0)
+						gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 					gmissflag = 0;
 				#ifdef switch_RE
 				Switch_sign(Switch_sign_OVER);
@@ -618,8 +622,8 @@ if(over_GPRStR_add2()!=ST_OK)
 				ret = getkey(1);
 				if (ret == KEY_ESC) {
 					gmissflag = MISS_G_FREE;
-				if (GPRSLinkProcess == 0xA0)
-				GPRSLinkProcess = TCPSTARTSTAT;
+				if (gGprsinfo.GPRSLinkProcess == 0xA0)
+				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 				#ifdef switch_RE
 				Switch_sign(Switch_sign_OVER);
 				#endif
@@ -631,8 +635,8 @@ if(over_GPRStR_add2()!=ST_OK)
 	}  //for
 //最后判断
 	if (flag == 0xA5 && gMCardCand != CARDSTYLE_UNPAY_ODA) {	// 收到正确数据 
-			if (GPRSLinkProcess == 0xA0)
-				GPRSLinkProcess = TCPSTARTSTAT;
+			if (gGprsinfo.GPRSLinkProcess == 0xA0)
+				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 			gmissflag = MISS_G_FREE;
 //			gSendOverTime = 0;
 
@@ -665,8 +669,8 @@ if(over_GPRStR_add2()!=ST_OK)
 				shuangmian = 0;
 				
 			}
-			if (GPRSLinkProcess == 0xA0)
-				GPRSLinkProcess = TCPSTARTSTAT;
+			if (gGprsinfo.GPRSLinkProcess == 0xA0)
+				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 			gmissflag = MISS_G_FREE;
 		return -1;	
 	}

@@ -82,6 +82,10 @@ extern "C"
 	extern unsigned int str2int(unsigned char *pstr, unsigned char len);
 	extern unsigned int BCD2int(unsigned char *pstr, unsigned char len);
 
+	extern int String2Bytes(char *pInput, int ilen, unsigned char *pOut, int *pOlen);
+	extern int StringDecimal2UInt32(char *pInput, int ilen, unsigned int *pOlen);
+	extern int StringHex2UInt32(char *pInput, int ilen, unsigned int *pOlen);
+
 #ifdef __cplusplus
 };
 #endif

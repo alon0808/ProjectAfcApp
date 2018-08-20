@@ -4207,7 +4207,7 @@ void cpuPBOCmain(void)
 			save_ODA_infor(ODA_FeRC_Write, repurse_infor);
 			delayxms(3);
 			write_linux_re(MISS_PBOC_UPREC_ODA);//±¸·Ý0DA
-			}
+		}
 // 		if (gMCardCand == CARDSTYLE_UNPAY_ODA) {
 // 			ret = SQDataFromSVT(MISS_PBOC_UPREC_ODA_first, 6000);
 // 		}

@@ -13,6 +13,8 @@
 #include <errno.h>
 #include <pthread.h>
 
+#include "GprsSocket.h"
+
 
 #if (HTTP_SSL != 0)
 #ifndef FALSE
@@ -39,7 +41,7 @@ typedef struct {
 
 //extern void debugdata(unsigned char *buff, int len, unsigned int mode);
 
-static stServerInfo s_stServerInfo;
+static stServerInfo s_stServerInfo = { 0 };
 
 //static CURL *s_hnd = NULL;
 static unsigned char s_isConnectOk[4] = { 0 ,0,0,0 };
@@ -127,7 +129,7 @@ int https_setServerInfor(stServerInfo *pStServerInfo) {
 	//s_stServerInfo = pStServerInfo;
 	memcpy(&s_stServerInfo, pStServerInfo, sizeof(stServerInfo));
 
-	return Ret_Ok;
+	return Ret_OK;
 }
 
 /* Auxiliary function that waits on the socket. */
@@ -165,8 +167,8 @@ void https_closeHandle(void) {
 
 	CURL *curl = s_hnd[linkNo];
 
-	if (s_stServerInfo != NULL) {
-		linkNo = s_stServerInfo->linkNo;
+	if (s_stServerInfo.port != 0) {
+		linkNo = s_stServerInfo.linkNo;
 		MSG_LOG("https_closeHandle:\n");
 		if (s_hnd[linkNo] != NULL) {
 			buildComSendStyle_09_01(linkNo);
@@ -220,7 +222,7 @@ static int sockopt_callback(void *clientp, curl_socket_t curlfd,
  *
  * @Return RetCode
  */
-int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int *pOLen) {
+int https_performSsl(void *pData, int len, unsigned char *pOutput, int *pOLen) {
 
 	unsigned char response[16240];
 	unsigned short rcv_len;
@@ -234,11 +236,12 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 	unsigned char *pHead = NULL;
 	unsigned char *pInterface = NULL;
 	int i;
-	int retCode = Ret_Ok;
+	int retCode = Ret_OK;
 	int nsent_total;
 	int errTime = 0;
 	int tmpI = 0;
 	int limitLen = 0;
+	char *pInput = (char *)pData;
 
 	unsigned char isHasNHttpH = 0;
 
@@ -246,17 +249,17 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 	if (pInput == NULL || pOutput == NULL || pOLen == NULL)
 	{
 		*pOLen = 0;
-		PRINTF_ERR("param error:%d, %d, %d\n", pInput, pOutput, pOLen);
+		PRINT_ERROR("param error:%d, %d, %d\n", pInput, pOutput, pOLen);
 		return Ret_Err_Param;
 	}
 	limitLen = *pOLen;
 	*pOLen = 0;
 
-	if (s_stServerInfo->linkPort == 0) {
-		PRINTF_ERR("param error1:%s:%d\n", s_stServerInfo->linkIp, s_stServerInfo->linkPort);
+	if (s_stServerInfo.port == 0) {
+		PRINT_ERROR("param error1:%s:%d\n", s_stServerInfo.IPaddr, s_stServerInfo.port);
 		return Ret_Err_Param;
 	}
-	linkNo = s_stServerInfo->linkNo;
+	linkNo = s_stServerInfo.linkNo;
 	curl = s_hnd[linkNo];
 
 	chunk.memory = response;
@@ -265,7 +268,7 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 	if (pInput != NULL) {
 		pInput[len] = '\0';	// 确保字符串结束
 	}
-	isHasNHttpH = s_stServerInfo->linkAttr.bits.bit2;
+	isHasNHttpH = s_stServerInfo.linkAttr.bits.bit2;
 	MSG_LOG("isHasNHttpH:%d\n", isHasNHttpH);
 	if (curl == NULL)
 	{
@@ -318,9 +321,9 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 			}
 		}//for (i = 0; pInput[i] != '\n'; ++i)
 
-		pContent = strstr(pHead, "\r\n\r\n");
+		pContent = strstr((char *)pHead, "\r\n\r\n");
 		if (pContent == NULL) {
-			pContent = strstr(pHead, "\n\n");
+			pContent = strstr((char *)pHead, "\n\n");
 			if (pContent == NULL) {
 				return Ret_Err_Format;
 			}
@@ -332,7 +335,7 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 			pContent[0] = '\0';
 			pContent += 4;
 		}
-		len = pInput + len - pContent;
+		len = pInput + len - (char*)pContent;
 
 
 #if _debug_Socket
@@ -347,7 +350,7 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 		headers = curl_slist_append(headers, "Accept:");
 		headers = curl_slist_append(headers, "Content-Type:");
 #endif
-		//sprintf(response, "HOST: %s:%d", s_stServerInfo->IPaddr, s_stServerInfo->port);
+		//sprintf(response, "HOST: %s:%d", s_stServerInfo.IPaddr, s_stServerInfo.port);
 		//headers = curl_slist_append(headers, response);
 
 
@@ -371,7 +374,7 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 		}
 #endif
 		//curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "PO");
-		sprintf(response, "https://%s:%d%s", s_stServerInfo->linkIp, s_stServerInfo->linkPort, pInterface);
+		sprintf(response, "https://%s:%d%s", s_stServerInfo.IPaddr, s_stServerInfo.port, pInterface);
 		//sprintf(response, "https://%s%s", "qr-test1.chinaums.com", pInterface);
 
 		MSG_LOG("response:%s\n", response);
@@ -435,7 +438,7 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 
 				//设置post请求的url地址
 
-				sprintf(response, "https://%s:%d%s", "qr-test1.chinaums.com", s_stServerInfo->linkPort, pInterface);
+				sprintf(response, "https://%s:%d%s", "qr-test1.chinaums.com", s_stServerInfo.port, pInterface);
 				//sprintf(response, "https://%s%s", "qr-test1.chinaums.com", pInterface);
 
 				MSG_LOG("response1212:%s\n", response);
@@ -479,8 +482,8 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);//不验证主机证书// 
 		curl_easy_setopt(curl, CURLOPT_CAINFO, CACERT_FILEPATH);
 
-		sprintf(response, "https://%s:%d", s_stServerInfo->linkIp, s_stServerInfo->linkPort);
-		//sprintf(response, "%s:%d", s_stServerInfo->IPaddr, s_stServerInfo->port);
+		sprintf(response, "https://%s:%d", s_stServerInfo.IPaddr, s_stServerInfo.port);
+		//sprintf(response, "%s:%d", s_stServerInfo.IPaddr, s_stServerInfo.port);
 		curl_easy_setopt(curl, CURLOPT_URL, response);// "https://202.101.25.188:20141/mjc/webtrans/VPB_lb");
 		MSG_LOG(response);
 #if 1
@@ -497,21 +500,21 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 #endif
 	}	// if (isHasHttpH == 0)
 
-	MSG_LOG("\ns_isConnectOk[s_stServerInfo->linkNo]:%d\n", s_isConnectOk[linkNo]);
+	MSG_LOG("\ns_isConnectOk[s_stServerInfo.linkNo]:%d\n", s_isConnectOk[linkNo]);
 	if (s_isConnectOk[linkNo] == 0) {
 
 		res = curl_easy_perform(curl);
 
 		if (res != CURLE_OK) {
 			https_closeHandle();
-			PRINTF_ERR("curl_wasy_perform error = %s\n", curl_easy_strerror(res));
+			PRINT_ERROR("curl_wasy_perform error = %s\n", curl_easy_strerror(res));
 			retCode = Ret_Err_Function;
 			goto https_performSsl_OVER;
 		}
 		/* Extract the socket from the curl handle - we'll need it for waiting. */
 		res = curl_easy_getinfo(curl, CURLINFO_ACTIVESOCKET, &s_sockfd);
 		s_isConnectOk[linkNo] = 1;
-	}	// if (s_isConnectOk[s_stServerInfo->linkNo] == 0)
+	}	// if (s_isConnectOk[s_stServerInfo.linkNo] == 0)
 
 	if (pInput == NULL) {
 		goto https_performSsl_OVER;
@@ -534,7 +537,7 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 				nsent_total += nsent;
 
 				if (res == CURLE_AGAIN && !wait_on_socket(s_sockfd, 0, 6000L)) {
-					PRINTF_ERR("Error: timeout curl_easy_send.\n");
+					PRINT_ERROR("Error: timeout curl_easy_send.\n");
 					//return Ret_Error;
 				}
 				++errTime;
@@ -545,7 +548,7 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 			} while (res == CURLE_AGAIN);
 
 			if (res != CURLE_OK) {
-				PRINTF_ERR("Error: %s\n", curl_easy_strerror(res));
+				PRINT_ERROR("Error: %s\n", curl_easy_strerror(res));
 				https_closeHandle();
 				return Ret_Error;
 			}
@@ -562,7 +565,7 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 		res = CURLE_AGAIN;
 		do {
 			if (res == CURLE_AGAIN && !wait_on_socket(s_sockfd, 1, 6000L)) {
-				PRINTF_ERR("Error: timeout curl_easy_recv.\n");
+				PRINT_ERROR("Error: timeout curl_easy_recv.\n");
 				//return Ret_Error;
 			}
 
@@ -577,7 +580,7 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 		} while (res == CURLE_AGAIN || nsent <= 0);
 
 		if (res != CURLE_OK) {
-			PRINTF_ERR("Error2222(%d): %s\n", errTime, curl_easy_strerror(res));
+			PRINT_ERROR("Error2222(%d): %s\n", errTime, curl_easy_strerror(res));
 			https_closeHandle();
 			return Ret_Error;
 		}
@@ -593,9 +596,9 @@ int https_performSsl(unsigned char *pInput, int len, unsigned char *pOutput, int
 
 	MSG_LOG("len:%d\n", rcv_len);
 	if (rcv_len > limitLen) {
-		PRINTF_ERR("no sufficient buffer error:%d, %d", rcv_len, limitLen);
+		PRINT_ERROR("no sufficient buffer error:%d, %d", rcv_len, limitLen);
 		MSG_LOG("response:%s\n", response);
-		retCode = Ret_Err_OverFlow;
+		retCode = Ret_Err_Overflow;
 		goto https_performSsl_OVER;
 	}
 	else {
@@ -657,7 +660,7 @@ https_performSsl_OVER:
 *
 * @Return RetCode
 */
-int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, int *pOLen) {
+int socket_performNSsl(void *pData, int len, unsigned char *pOutput, int *pOLen) {
 
 	unsigned char response[16240];
 	unsigned short rcv_len;
@@ -671,29 +674,29 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 	unsigned char *pHead = NULL;
 	unsigned char *pInterface = NULL;
 	int i;
-	int retCode = Ret_Ok;
+	int retCode = Ret_OK;
 	int nsent_total;
 	int errTime = 0;
 	int tmpI = 0;
 	int limitLen = 0;
 	int totoleRecv = 0;
-
+	char *pInput = (char *)pData;
 	unsigned char isHasNHttpH = 0;
 
 	MSG_LOG("socket_performNSsl:%d\n", len);
 	if (pInput == NULL || pOutput == NULL || pOLen == NULL)
 	{
 		*pOLen = 0;
-		PRINTF_ERR("param error:%d, %d, %d\n", pInput, pOutput, pOLen);
+		PRINT_ERROR("param error:%d, %d, %d\n", pInput, pOutput, pOLen);
 		return Ret_Err_Param;
 	}
 	limitLen = *pOLen;
 	*pOLen = 0;
-	if (s_stServerInfo->linkPort == 0) {
-		PRINTF_ERR("param error1:%s:%d\n", s_stServerInfo->linkIp, s_stServerInfo->linkPort);
+	if (s_stServerInfo.port == 0) {
+		PRINT_ERROR("param error1:%s:%d\n", s_stServerInfo.IPaddr, s_stServerInfo.port);
 		return Ret_Err_Param;
 	}
-	linkNo = s_stServerInfo->linkNo;
+	linkNo = s_stServerInfo.linkNo;
 	curl = s_hnd[linkNo];
 
 	chunk.memory = response;
@@ -701,7 +704,7 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 
 	pInput[len] = '\0';	// 确保字符串结束
 
-	isHasNHttpH = s_stServerInfo->linkAttr.bits.bit2;
+	isHasNHttpH = s_stServerInfo.linkAttr.bits.bit2;
 	MSG_LOG("isHasNHttpH:%d\n", isHasNHttpH);
 	if (curl == NULL) {
 		curl = curl_easy_init();
@@ -751,9 +754,9 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 			}
 		}//for (i = 0; pInput[i] != '\n'; ++i)
 
-		pContent = strstr(pHead, "\r\n\r\n");
+		pContent = strstr((char *)pHead, "\r\n\r\n");
 		if (pContent == NULL) {
-			pContent = strstr(pHead, "\n\n");
+			pContent = strstr((char *)pHead, "\n\n");
 			if (pContent == NULL) {
 				return Ret_Err_Format;
 			}
@@ -765,7 +768,7 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 			pContent[0] = '\0';
 			pContent += 4;
 		}
-		len = pInput + len - pContent;
+		len = pInput + len - (char*)pContent;
 
 
 #if 0 && _debug_Socket
@@ -776,7 +779,7 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 		headers = curl_slist_append(headers, "Content-Length:");
 		headers = curl_slist_append(headers, "Accept:");
 		headers = curl_slist_append(headers, "Content-Type:");
-		//sprintf(response, "HOST: %s:%d", s_stServerInfo->IPaddr, s_stServerInfo->port);
+		//sprintf(response, "HOST: %s:%d", s_stServerInfo.IPaddr, s_stServerInfo.port);
 		//headers = curl_slist_append(headers, response);
 
 
@@ -794,7 +797,7 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 		}
 #endif
 		//curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "PO");
-		sprintf(response, "http://%s:%d%s", s_stServerInfo->linkIp, s_stServerInfo->linkPort, pInterface);
+		sprintf(response, "http://%s:%d%s", s_stServerInfo.IPaddr, s_stServerInfo.port, pInterface);
 		MSG_LOG("response:%s\n", response);
 		curl_easy_setopt(curl, CURLOPT_URL, response);// "https://202.101.25.188:20141/mjc/webtrans/VPB_lb");
 
@@ -811,17 +814,17 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 	}	// if (isHasHttpH == 0)
 	else if (s_isConnectOk[linkNo] == 0) {	// 仅连接ssl后台
 
-		s_sockfd = unblock_connect(s_stServerInfo->linkIp, s_stServerInfo->linkPort, 10);
+		s_sockfd = unblock_connect(s_stServerInfo.IPaddr, s_stServerInfo.port, 10);
 		if (s_sockfd < 0)
 		{
-			printf("connect error %s,%s:%d, errno: %d\n", strerror(errno), s_stServerInfo->linkIp, s_stServerInfo->linkPort, errno);
+			printf("connect error %s,%s:%d, errno: %d\n", strerror(errno), s_stServerInfo.IPaddr, s_stServerInfo.port, errno);
 			// sendbuffer[0]=(unsigned char*)&i; 
 			memcpy(response, (unsigned char*)&i, 4);
 			len += 4;
 			memcpy(response, (unsigned char*)&s_sockfd, 4);
 			len += 4;
-			com_send_data_OTHER_CMD(0xF2, 0x21, len, response);
-			sleep(1);
+			//com_send_data_OTHER_CMD(0xF2, 0x21, len, response);
+			//sleep(1);
 		}
 		else {
 #ifdef _debug_
@@ -831,21 +834,21 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 		}
 	}	// if (isHasHttpH == 0)
 
-	MSG_LOG("\nsocket  s_isConnectOk[s_stServerInfo->linkNo]:%d\n", s_isConnectOk[linkNo]);
+	MSG_LOG("\nsocket  s_isConnectOk[s_stServerInfo.linkNo]:%d\n", s_isConnectOk[linkNo]);
 	if (s_isConnectOk[linkNo] == 0) {
 
 		res = curl_easy_perform(curl);
 
 		if (res != CURLE_OK) {
 			https_closeHandle();
-			PRINTF_ERR("curl_wasy_perform error = %s\n", curl_easy_strerror(res));
+			PRINT_ERROR("curl_wasy_perform error = %s\n", curl_easy_strerror(res));
 			retCode = Ret_Err_Function;
 			goto socket_performSsl_OVER;
 		}
 		/* Extract the socket from the curl handle - we'll need it for waiting. */
 		//res = curl_easy_getinfo(curl, CURLINFO_ACTIVESOCKET, &s_sockfd);
 		s_isConnectOk[linkNo] = 1;
-	}	// if (s_isConnectOk[s_stServerInfo->linkNo] == 0)
+	}	// if (s_isConnectOk[s_stServerInfo.linkNo] == 0)
 
 	if (isHasNHttpH != 0) {	// 没有http头
 		size_t nsent;
@@ -857,7 +860,7 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 		nsent = 0;
 		do {
 			if (!wait_on_socket(s_sockfd, 0, 6000L)) {
-				PRINTF_ERR("send Error: timeout _on_socket(s_sockfd, 0, 600.\n");
+				PRINT_ERROR("send Error: timeout _on_socket(s_sockfd, 0, 600.\n");
 				//return Ret_Error;
 			}
 
@@ -873,7 +876,7 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 		nsent_total += len;
 
 		if (res == -1) {
-			PRINTF_ERR("Fail to send data:%d\n", errTime);
+			PRINT_ERROR("Fail to send data:%d\n", errTime);
 			//https_closeHandle();
 			goto socket_performSsl_OVER;
 		}
@@ -886,7 +889,7 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 		errTime = 0;
 		do {
 			if (!wait_on_socket(s_sockfd, 1, 6000L)) {
-				PRINTF_ERR("Error: timeout n_socket(s_sockfd, 1, 600.\n");
+				PRINT_ERROR("Error: timeout n_socket(s_sockfd, 1, 600.\n");
 				//return Ret_Error;
 			}
 
@@ -917,7 +920,7 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 #endif
 
 		if (res != CURLE_OK) {
-			PRINTF_ERR("Error2222(%d): %s\n", errTime, curl_easy_strerror(res));
+			PRINT_ERROR("Error2222(%d): %s\n", errTime, curl_easy_strerror(res));
 			//https_closeHandle();
 			goto socket_performSsl_OVER;
 		}
@@ -933,9 +936,9 @@ int socket_performNSsl(unsigned char *pInput, int len, unsigned char *pOutput, i
 
 	MSG_LOG("len:%d\n", rcv_len);
 	if (rcv_len > limitLen) {
-		PRINTF_ERR("no sufficient buffer error:%d, %d", rcv_len, limitLen);
+		PRINT_ERROR("no sufficient buffer error:%d, %d", rcv_len, limitLen);
 		MSG_LOG("response:%s\n", response);
-		retCode = Ret_Err_OverFlow;
+		retCode = Ret_Err_Overflow;
 		goto socket_performSsl_OVER;
 	}
 	else {
@@ -1008,7 +1011,7 @@ int https_OpenSsl(int *fd) {
 	unsigned char *pHead = NULL;
 	unsigned char *pInterface = NULL;
 	int i;
-	int retCode = Ret_Ok;
+	int retCode = Ret_OK;
 	int nsent_total;
 	int errTime = 0;
 	int tmpI = 0;
@@ -1018,21 +1021,21 @@ int https_OpenSsl(int *fd) {
 
 	MSG_LOG("https_OpenSsl:%d\n", 123479);
 	if (fd == NULL) {
-		PRINTF_ERR("param error:%d, %d, %d\n", fd);
+		PRINT_ERROR("param error:%d, %d, %d\n", fd);
 		retCode = Ret_Err_Param;
 		goto https_OpenSsl_OVER;
 	}
 	*fd = 0;
 
-	if (s_stServerInfo->linkPort == 0) {
-		PRINTF_ERR("param error1:%s:%d\n", s_stServerInfo->linkIp, s_stServerInfo->linkPort);
+	if (s_stServerInfo.port == 0) {
+		PRINT_ERROR("param error1:%s:%d\n", s_stServerInfo.IPaddr, s_stServerInfo.port);
 		retCode = Ret_Err_Param;
 		goto https_OpenSsl_OVER;
 	}
-	linkNo = s_stServerInfo->linkNo;
+	linkNo = s_stServerInfo.linkNo;
 	curl = s_hnd[linkNo];
 
-	isHasNHttpH = s_stServerInfo->linkAttr.bits.bit2;
+	isHasNHttpH = s_stServerInfo.linkAttr.bits.bit2;
 	MSG_LOG("isHasNHttpH:%d\n", isHasNHttpH);
 	if (curl == NULL)
 	{
@@ -1046,12 +1049,12 @@ int https_OpenSsl(int *fd) {
 	else if (s_isConnectOk[linkNo] == 0) {	// 仅连接ssl后台
 											// tls certification
 											// 两种连接方式
-		if (s_stServerInfo->linkAttr.bits.bit3 != 0) {	// socket连接
-			s_sockfd = unblock_connect(s_stServerInfo->linkIp, s_stServerInfo->linkPort, 10);
+		if (s_stServerInfo.linkAttr.bits.bit3 != 0) {	// socket连接
+			s_sockfd = unblock_connect(s_stServerInfo.IPaddr, s_stServerInfo.port, 10);
 			if (s_sockfd < 0)
 			{
 				retCode = Ret_Err_Function;
-				printf("connect error %s,%s:%d, errno: %d\n", strerror(errno), s_stServerInfo->linkIp, s_stServerInfo->linkPort, errno);
+				printf("connect error %s,%s:%d, errno: %d\n", strerror(errno), s_stServerInfo.IPaddr, s_stServerInfo.port, errno);
 			}
 			else {
 #ifdef _debug_
@@ -1067,8 +1070,8 @@ int https_OpenSsl(int *fd) {
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);//不验证主机证书// 
 		curl_easy_setopt(curl, CURLOPT_CAINFO, CACERT_FILEPATH);
 
-		sprintf(response, "https://%s:%d", s_stServerInfo->linkIp, s_stServerInfo->linkPort);
-		//sprintf(response, "%s:%d", s_stServerInfo->IPaddr, s_stServerInfo->port);
+		sprintf(response, "https://%s:%d", s_stServerInfo.IPaddr, s_stServerInfo.port);
+		//sprintf(response, "%s:%d", s_stServerInfo.IPaddr, s_stServerInfo.port);
 		curl_easy_setopt(curl, CURLOPT_URL, response);// "https://202.101.25.188:20141/mjc/webtrans/VPB_lb");
 		MSG_LOG(response);
 #if 1
@@ -1085,14 +1088,14 @@ int https_OpenSsl(int *fd) {
 #endif
 	}	// if (isHasHttpH == 0)
 
-	MSG_LOG("\ns_isConnectOk[s_stServerInfo->linkNo]:%d\n", s_isConnectOk[linkNo]);
+	MSG_LOG("\ns_isConnectOk[s_stServerInfo.linkNo]:%d\n", s_isConnectOk[linkNo]);
 	if (s_isConnectOk[linkNo] == 0) {
 
 		res = curl_easy_perform(curl);
 
 		if (res != CURLE_OK) {
 			https_closeHandle();
-			PRINTF_ERR("curl_wasy_perform error = %s\n", curl_easy_strerror(res));
+			PRINT_ERROR("curl_wasy_perform error = %s\n", curl_easy_strerror(res));
 			retCode = Ret_Err_Function;
 			goto https_OpenSsl_OVER;
 		}
@@ -1100,7 +1103,7 @@ int https_OpenSsl(int *fd) {
 		res = curl_easy_getinfo(curl, CURLINFO_ACTIVESOCKET, &s_sockfd);
 		//*fd = s_sockfd;
 		s_isConnectOk[linkNo] = 1;
-	}	// if (s_isConnectOk[s_stServerInfo->linkNo] == 0)
+	}	// if (s_isConnectOk[s_stServerInfo.linkNo] == 0)
 
 https_OpenSsl_OVER:
 	*fd = s_sockfd;
@@ -1194,9 +1197,9 @@ int https_performSsl_Test(const char* ip, int port, int time) {
 
 	strcpy(tmpbuff1, "003c600601000061010001020108000020000000c00012000253343030313333303838323133343031363035313430363100110000000000300003303031");
 	printf(" send package2>%d [%s] \n", strlen(tmpbuff1), tmpbuff1);
-	res = str2Hex(tmpbuff1, strlen(tmpbuff1), tmpbuff, 1024);
+	res = CharsToBytes(tmpbuff1, strlen(tmpbuff1), tmpbuff, 1024);
 	printf(" send package>%d [%2X,%2X,%2X] \n", res, tmpbuff[0], tmpbuff[1], tmpbuff[61]);
-	res = hex2Str(tmpbuff, 62, tmpbuff1, 1024);
+	res = BytesToChars(tmpbuff, 62, tmpbuff1, 1024);
 	printf(" send package1>%d [%s] \n", res, tmpbuff1);
 
 	hnd = curl_easy_init();
@@ -1235,7 +1238,7 @@ int https_performSsl_Test(const char* ip, int port, int time) {
 	memset(response1, 0, sizeof(response1));
 	rcv_len = response[0] << 8 | response[1];
 	printf("response len<%d>\n", rcv_len);
-	hex2Str((unsigned char*)response + 2, rcv_len, (unsigned char*)response1, rcv_len * 2);
+	BytesToChars((unsigned char*)response + 2, rcv_len, (unsigned char*)response1, rcv_len * 2);
 
 	printf("response<%s>\n", response1);
 

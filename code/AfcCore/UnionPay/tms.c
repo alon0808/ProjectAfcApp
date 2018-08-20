@@ -3,9 +3,10 @@
 * 描述   :
 * 建立   :
 **************************************************/
+#include "Macro_Proj.h"
 #include "string.h"
 #include "stdio.h"
-#include "..\include\include.h"
+#include "include.h"
 #include "szct.h"
 
 #include "Gszct.h"
@@ -14,17 +15,20 @@
 #include "SL8583.h"
 #include "MD5.h"
 #include "libsm.h"
-#include "Mydes.h"
-#include "..\Lib\RSA.h"
+#include "MYDES.h"
+#include "RSA.h"
+#include "qPBOC.h"
 #ifdef qPBOC_BUS
 #include "qpboc_head.h"
 #endif
 #include "qpboc_8583.h"
 #include "add.h"
-#include "ProcCharacter.h"
 #include "StructDef.h"
 #include "tms.h"
 #include "cJSON.h"
+#include "City-handan.h"
+#include "GprsSocket.h"
+
 extern void savesysbupara(void);
 extern void saveCpuInfo(unsigned char mode, unsigned char *dat);
 extern void tcpipClose(unsigned char mode);
@@ -72,7 +76,7 @@ extern unsigned char isNetOK[MAX_RCV_PACKET_NUM];
 extern unsigned char gprsErrorTimes;
 extern volatile stGPrsDataStyle gGPRS_data_style;
 extern unsigned char DEBUG_COM;
-extern char  const  MachineCode[64];
+//extern char  const  MachineCode[64];
 
 //key:密钥,initdat:初始值默认全00,Sdat加解密数据,len:加解密数据长度,outdat:输出的数据
 extern void DES3_decrypt_CBC(unsigned char *key, unsigned char *initdat, unsigned char *Sdat, unsigned int len, unsigned char *outdat);
@@ -640,9 +644,9 @@ int  build_HTTP_qpboc_HEAD_DOWN(unsigned char mode, char *oDat, unsigned int len
 
 
 extern void main_card(void);
-extern int buildSeverInfo_06tlstims(char cmd, char link, char *ip, int port);
+//extern int buildSeverInfo_06tlstims(char cmd, char link, char *ip, int port);
 extern int buildSeverInfo_06(char cmd);
-extern int buildSeverInfo_06tls_TMS(char cmd, char link) ;
+//extern int buildSeverInfo_06tls_TMS(char cmd, char link) ;
 static unsigned char s_isDownloadSend = 0;
 static unsigned char s_errTime = 0;
 unsigned char show_para_tms(void);
@@ -723,9 +727,9 @@ int ProcessTmsData(void) {
 			//com_snd(COM4,len,buff);
 		}
 		gmissflag = MISS_G_TMS;
-		main_GpsRs();
+		main_GPRS(NULL);
 		
-		if (GPRSLinkProcess == 20) {
+		if (gGprsinfo.GPRSLinkProcess == 20) {
 
 			while (1)
 			{
@@ -758,7 +762,7 @@ int ProcessTmsData(void) {
 					gGPRS_data_style.openLink = link;
 					//GPRSLinkProcess = 19;	//
 					tcpipClose(link);
-					GPRSLinkProcess = 19;
+					gGprsinfo.GPRSLinkProcess = 19;
 					break;
 					//return -1;
 				}
@@ -766,7 +770,7 @@ int ProcessTmsData(void) {
 			}
 
 		}
-		if (GPRSLinkProcess < 21) {//已经连接
+		if (gGprsinfo.GPRSLinkProcess < 21) {//已经连接
 			if (flag != 1) {
 				flag = 1;
 				display(6, 0, "TMS正在拔号", DIS_ClsLine | DIS_CENTER);
@@ -775,7 +779,7 @@ int ProcessTmsData(void) {
 			clr_wdt();
 			continue;
 		}
-		else if (GPRSLinkProcess == 0x2F) {
+		else if (gGprsinfo.GPRSLinkProcess == 0x2F) {
 			if (flag != 1) {
 				flag = 1;
 				display(6, 0, "TMS正在重新连接", DIS_ClsLine | DIS_CENTER);
@@ -784,12 +788,12 @@ int ProcessTmsData(void) {
 				clr_wdt();
 			continue;
 		}
-		else if (GPRSLinkProcess == TCPSTARTSTAT) {
+		else if (gGprsinfo.GPRSLinkProcess == TCPSTARTSTAT) {
 
 		}
 		if (gprsErrorTimes > 20) {
 
-			GPRSLinkProcess = GPRS_HWPOWER_RESET;
+			gGprsinfo.GPRSLinkProcess = GPRS_HWPOWER_RESET;
 		}
 
 		if (isNetOK[LINK_PBOC_TMS] == 0)
@@ -867,8 +871,8 @@ int ProcessTmsData(void) {
 			delayxms(200);
 #if 1
 			//"Guilin v1.0.1"
-			jasonLen = sprintf(buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\"", DEV_TYPE, SYS_HEAD_STREN);//SYS_HEAD_STREN
-			jasonLen += sprintf(buff + jasonLen, ",\"APPVer\":\"1.0.%03X\",\"APPIndex\":\"%s\",\"APPState\":\"1\"", SOFT_VER_bASE_LOG, APPIndex);
+			jasonLen = sprintf(buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\"", DEV_TYPE, SYS_HEAD_STREn);//SYS_HEAD_STREn
+			jasonLen += sprintf(buff + jasonLen, ",\"APPVer\":\"1.0.%03X\",\"APPIndex\":\"%s\",\"APPState\":\"1\"", SOFT_VER_TIME_LOG, APPIndex);
 			jasonLen += sprintf(buff + jasonLen, ",\"ParameterUp\":{\"04000001\":\"1\"}");
 		//	jasonLen += sprintf(buff + jasonLen, ",\"ParameterUp\":{\"04000001\":\"2\",\"04000022\":\"L123\",\"04000023\":\"11223344\"}");
 		//	jasonLen += sprintf(buff + jasonLen, ",\"Parameter\":[\"01000001\",\"04000030\",\"03000005\",\"04000001\",\"04000022\",\"04000023\",\"04000029\",\"04000031\",\"deptcode\"]}}");
@@ -876,12 +880,12 @@ int ProcessTmsData(void) {
 			jasonLen += sprintf(buff + jasonLen, ",\"Parameter\":[\"04000055\",\"04000054\",\"04000008\",\"deptcode\",\"04000056\",\"04000051\",\"04000039\",\"04000038\",\"04000031\",\"04000030\",\"03000005\",\"04000030\",\"04000029\",\"04000028\",\"04000026\",\"04000023\",\"04000022\",\"04000017\",\"04000016\",\"04000015\",\"04000014\",\"04000013\",\"04000012\",\"04000007\",\"04000006\",\"04000003\",\"04000002\",\"04000001\",\"03000012\",\"02000002\",\"01000005\",\"01000002\",\"01000001\"]}}");
 
 // 			jasonLen += sprintf(buff+ jasonLen, "\"APP2\":{\"APPID\":\"SLZR_%s_%s\"", DEV_TYPE, "Guilin");//"Guilin"
-// 			jasonLen += sprintf(buff + jasonLen, ",\"APPVer\":\"1.0.%03X\",\"APPIndex\":\"%s\",\"APPState\":\"1\"", SOFT_VER_bASE_LOG, APPIndex);
+// 			jasonLen += sprintf(buff + jasonLen, ",\"APPVer\":\"1.0.%03X\",\"APPIndex\":\"%s\",\"APPState\":\"1\"", SOFT_VER_TIME_LOG, APPIndex);
 // 			jasonLen += sprintf(buff + jasonLen, ",\"ParameterUp\":{\"04000001\":\"2\"}");
 // 			jasonLen += sprintf(buff + jasonLen, ",\"Parameter\":[\"deptcode\",\"04000056\",\"04000051\",\"04000039\",\"04000038\",\"04000031\",\"04000030\",\"03000005\",\"04000030\",\"04000029\",\"04000028\",\"04000026\",\"04000023\",\"04000022\",\"04000017\",\"04000016\",\"04000015\",\"04000014\",\"04000013\",\"04000012\",\"04000007\",\"04000006\",\"04000003\",\"04000002\",\"04000001\",\"03000012\",\"02000002\",\"01000005\",\"01000002\",\"01000001\"]}}");
 // //
 // 			//"Guilin v1.0.1"
-// 			jasonLen = sprintf(buff, "{\"APPCount\":\"2\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\"", DEV_TYPE, SYS_HEAD_STREN);
+// 			jasonLen = sprintf(buff, "{\"APPCount\":\"2\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\"", DEV_TYPE, SYS_HEAD_STREn);
 // 			jasonLen += sprintf(buff + jasonLen, ",\"APPVer\":\"1.0.%03X\",\"APPIndex\":\"%s\",\"APPState\":\"1\"", SOFT_VER_bASE_LOG, APPIndex);
 // 			jasonLen += sprintf(buff + jasonLen, ",\"ParameterUp\":{\"04000001\":\"1\"}");
 // 		//	jasonLen += sprintf(buff + jasonLen, ",\"ParameterUp\":{\"04000001\":\"2\",\"04000022\":\"L123\",\"04000023\":\"11223344\"}");
@@ -923,8 +927,8 @@ int ProcessTmsData(void) {
 					break;
 			}
 		
-		jasonLen = sprintf((char *)buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}", DEV_TYPE, SYS_HEAD_STREN, APPIndex, s_serverVer);
-	//	jasonLen = sprintf((char *)buff+jasonLen, ",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}  ", DEV_TYPE, SYS_HEAD_STREN, APPIndex, s_serverVer);
+		jasonLen = sprintf((char *)buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}", DEV_TYPE, SYS_HEAD_STREn, APPIndex, s_serverVer);
+	//	jasonLen = sprintf((char *)buff+jasonLen, ",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}  ", DEV_TYPE, SYS_HEAD_STREn, APPIndex, s_serverVer);
 			
 			ret = build_HTTP_qpboc_HEAD_2(s_tmsStatus, buff, jasonLen);
 			//s_tmsStatus = Key_activation;
@@ -940,9 +944,9 @@ int ProcessTmsData(void) {
 			delayxms(400);
 			cls();
 		
-			//jasonLen = sprintf(buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}", DEV_TYPE, SYS_HEAD_STREN, APPIndex, s_serverVer);
+			//jasonLen = sprintf(buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}", DEV_TYPE, SYS_HEAD_STREn, APPIndex, s_serverVer);
 
-			buildSeverInfo_06tlstims(0x26, 5, s_tmsFileDown.ipPortPath, s_tmsFileDown.tmsport);
+			//buildSeverInfo_06tlstims(0x26, 5, s_tmsFileDown.ipPortPath, s_tmsFileDown.tmsport);
 
 			delayxms(1000);
 			++exeStatus;
@@ -1067,9 +1071,9 @@ int ProcessTmsData_2(void) {
 		}
 
 		gmissflag = MISS_G_TMS;
-		main_GpsRs();
+		main_GPRS(NULL);
 	//	main_card();
-		if (GPRSLinkProcess == 20) {
+		if (gGprsinfo.GPRSLinkProcess == 20) {
 
 			while (1)
 			{
@@ -1103,7 +1107,7 @@ int ProcessTmsData_2(void) {
 					gGPRS_data_style.openLink = link;
 					//GPRSLinkProcess = 19;	//
 					tcpipClose(link);
-					GPRSLinkProcess = 19;
+					gGprsinfo.GPRSLinkProcess = 19;
 					break;
 					//return -1;
 				}
@@ -1111,7 +1115,7 @@ int ProcessTmsData_2(void) {
 			}
 
 		}
-		if (GPRSLinkProcess < 21) {//已经连接
+		if (gGprsinfo.GPRSLinkProcess < 21) {//已经连接
 			if (flag != 1) {
 				flag = 1;
 				display(6, 0, "TMS正在拔号", DIS_ClsLine | DIS_CENTER);
@@ -1120,7 +1124,7 @@ int ProcessTmsData_2(void) {
 			clr_wdt();
 			continue;
 		}
-		else if (GPRSLinkProcess == 0x2F) {
+		else if (gGprsinfo.GPRSLinkProcess == 0x2F) {
 			if (flag != 1) {
 				flag = 1;
 				display(6, 0, "TMS正在重新连接", DIS_ClsLine | DIS_CENTER);
@@ -1129,12 +1133,12 @@ int ProcessTmsData_2(void) {
 				clr_wdt();
 			continue;
 		}
-		else if (GPRSLinkProcess == TCPSTARTSTAT) {
+		else if (gGprsinfo.GPRSLinkProcess == TCPSTARTSTAT) {
 
 		}
 		if (gprsErrorTimes > 20) {
 
-			GPRSLinkProcess = GPRS_HWPOWER_RESET;
+			gGprsinfo.GPRSLinkProcess = GPRS_HWPOWER_RESET;
 		}
 
 		if (isNetOK[LINK_PBOC_TMS] == 0)
@@ -1162,8 +1166,8 @@ int ProcessTmsData_2(void) {
 
 #if 1
 			//"Guilin v1.0.1"
-			jasonLen = sprintf(buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\"", DEV_TYPE, SYS_HEAD_STREN);//SYS_HEAD_STREN
-			jasonLen += sprintf(buff + jasonLen, ",\"APPVer\":\"1.0.%03X\",\"APPIndex\":\"%s\",\"APPState\":\"1\"", SOFT_VER_bASE_LOG, APPIndex);
+			jasonLen = sprintf(buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\"", DEV_TYPE, SYS_HEAD_STREn);//SYS_HEAD_STREn
+			jasonLen += sprintf(buff + jasonLen, ",\"APPVer\":\"1.0.%03X\",\"APPIndex\":\"%s\",\"APPState\":\"1\"", SOFT_VER_TIME_LOG, APPIndex);
 			jasonLen += sprintf(buff + jasonLen, ",\"ParameterUp\":{\"04000001\":\"1\"}");
 		//	jasonLen += sprintf(buff + jasonLen, ",\"ParameterUp\":{\"04000001\":\"2\",\"04000022\":\"L123\",\"04000023\":\"11223344\"}");
 		//	jasonLen += sprintf(buff + jasonLen, ",\"Parameter\":[\"01000001\",\"04000030\",\"03000005\",\"04000001\",\"04000022\",\"04000023\",\"04000029\",\"04000031\",\"deptcode\"]}}");
@@ -1176,7 +1180,7 @@ int ProcessTmsData_2(void) {
 // 			jasonLen += sprintf(buff + jasonLen, ",\"Parameter\":[\"deptcode\",\"04000056\",\"04000051\",\"04000039\",\"04000038\",\"04000031\",\"04000030\",\"03000005\",\"04000030\",\"04000029\",\"04000028\",\"04000026\",\"04000023\",\"04000022\",\"04000017\",\"04000016\",\"04000015\",\"04000014\",\"04000013\",\"04000012\",\"04000007\",\"04000006\",\"04000003\",\"04000002\",\"04000001\",\"03000012\",\"02000002\",\"01000005\",\"01000002\",\"01000001\"]}}");
 // //
 // 			//"Guilin v1.0.1"
-// 			jasonLen = sprintf(buff, "{\"APPCount\":\"2\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\"", DEV_TYPE, SYS_HEAD_STREN);
+// 			jasonLen = sprintf(buff, "{\"APPCount\":\"2\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\"", DEV_TYPE, SYS_HEAD_STREn);
 // 			jasonLen += sprintf(buff + jasonLen, ",\"APPVer\":\"1.0.%03X\",\"APPIndex\":\"%s\",\"APPState\":\"1\"", SOFT_VER_bASE_LOG, APPIndex);
 // 			jasonLen += sprintf(buff + jasonLen, ",\"ParameterUp\":{\"04000001\":\"1\"}");
 // 		//	jasonLen += sprintf(buff + jasonLen, ",\"ParameterUp\":{\"04000001\":\"2\",\"04000022\":\"L123\",\"04000023\":\"11223344\"}");
@@ -1218,8 +1222,8 @@ int ProcessTmsData_2(void) {
 				break;
 			}
 
-		jasonLen = sprintf((char *)buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}", DEV_TYPE, SYS_HEAD_STREN, APPIndex, s_serverVer);
-	//	jasonLen = sprintf((char *)buff+jasonLen, ",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}  ", DEV_TYPE, SYS_HEAD_STREN, APPIndex, s_serverVer);
+		jasonLen = sprintf((char *)buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}", DEV_TYPE, SYS_HEAD_STREn, APPIndex, s_serverVer);
+	//	jasonLen = sprintf((char *)buff+jasonLen, ",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}  ", DEV_TYPE, SYS_HEAD_STREn, APPIndex, s_serverVer);
 			
 			ret = build_HTTP_qpboc_HEAD_2(s_tmsStatus, buff, jasonLen);
 			//s_tmsStatus = Key_activation;
@@ -1235,9 +1239,9 @@ int ProcessTmsData_2(void) {
 			delayxms(300);
 			cls();
 		
-			//jasonLen = sprintf(buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}", DEV_TYPE, SYS_HEAD_STREN, APPIndex, s_serverVer);
+			//jasonLen = sprintf(buff, "{\"APPCount\":\"1\",\"APP1\":{\"APPID\":\"SLZR_%s_%s\",\"APPIndex\":\"%s\",\"APPVer\":\"%s\"}}", DEV_TYPE, SYS_HEAD_STREn, APPIndex, s_serverVer);
 
-			buildSeverInfo_06tlstims(0x26, 5, s_tmsFileDown.ipPortPath, s_tmsFileDown.tmsport);
+			//buildSeverInfo_06tlstims(0x26, 5, s_tmsFileDown.ipPortPath, s_tmsFileDown.tmsport);
 
 			delayxms(1000);
 			++exeStatus;
@@ -1479,7 +1483,7 @@ unsigned char switch_IP2INT(unsigned char mode, unsigned char *dataip)
 	p2=strstr(p1+1,".");
 	p3=strstr(p2+1,".");
 
-	buffer[0]=Ascii2INT(dataip,(unsigned char)(p1-dataip));
+	buffer[0]=Ascii2INT(dataip,(unsigned char)(p1-(char *)dataip));
 	buffer[1] = Ascii2INT((unsigned char *)p1+1,(p2-p1-1));
 	buffer[2] = Ascii2INT((unsigned char *)p2+1,(p3-p2-1));
 	buffer[3] = Ascii2INT((unsigned char *)p3+1,strlen((const char *)(p3+1)));
@@ -2087,14 +2091,14 @@ unsigned char updata_need(void)
 	memset(disbuf,0,sizeof(disbuf));
 	cls();
 	
-	sprintf((char *)buff_up , "1.0.%03x", SOFT_VER_bASE_LOG);
+	sprintf((char *)buff_up , "1.0.%03x", SOFT_VER_TIME_LOG);
 	len=strlen((const char *)&buff_up);
 	if(len>10)len=10;
 	
 	cls();
 	sprintf((char *)disbuf , "后台版本: %s", s_serverVer);
 	display(3, 0, (char *)disbuf, DIS_CENTER);
-	sprintf((char *)disbuf , "终端版本: 1.0.%03x", SOFT_VER_bASE_LOG);
+	sprintf((char *)disbuf , "终端版本: 1.0.%03x", SOFT_VER_TIME_LOG);
 	display(6, 0, (char *)disbuf, DIS_CENTER);
 	delayxs(2);
 	if(memcmp(buff_up,s_serverVer,len)==0)
@@ -2515,7 +2519,7 @@ int QPBOC_TMS_DataDeal(char *pData, int datlen) {
 #endif
 
 		tmpI = sizeof(kek1);
-		ret = String2Bytes(pTmpJson->pmValue, pTmpJson->len, jsonChs + datlen, &tmpI);
+		ret = CharsToBytes(pTmpJson->pmValue, pTmpJson->len, jsonChs + datlen, &tmpI);
 		if (ret != Ret_OK) {
 			MSG_LOG("String2Bytes:%d\n", ret);
 			return ret;
@@ -2707,7 +2711,7 @@ int QPBOC_TMS_DataDeal(char *pData, int datlen) {
 			}
 		}
 #if 0
-		tmpI = sprintf(jsonChs, "1.0.%03X", SOFT_VER_bASE_LOG);
+		tmpI = sprintf(jsonChs, "1.0.%03X", SOFT_VER_TIME_LOG);
 		if (memcmp(s_serverVer, jsonChs, pTmpJson->len) <= 0) {
 			s_tmsStatus = Tms_Over;
 			break;
@@ -2942,6 +2946,7 @@ int QPBOC_TMS_DataDeal(char *pData, int datlen) {
 
 			MSG_LOG("file len:%d\r\n", pTmsFileDown->tfd_downLen);
 
+#if 0
 			flashread(FLASH_PRO_START + 0x1000, buftemp, 64);	//读出标识
 			buftemp[63] = 0;
 			if (memcmp(MachineCode, buftemp, strlen(MachineCode)) != 0) {//不是这个车载机的程序
@@ -2951,10 +2956,12 @@ int QPBOC_TMS_DataDeal(char *pData, int datlen) {
 				beep(5, 50, 50);
 				delayxms(1);
 			}
+#endif
 
 			memset(buftemp, 0, 64);
 			memcpy(buftemp, "程序需要更新", 12);
-			memcpy(buftemp + 12, gsl8583FileDownPara.Miss_ver, 2);
+#warning ("py(buftemp + 12, gsl8583FileDownPara.Miss_v")
+			//memcpy(buftemp + 12, gsl8583FileDownPara.Miss_ver, 2);
 			memcpy(buftemp + 14, (unsigned char*)&SysTime, 7);
 #ifdef debug_GJ_TLVDeal_
 			debugstring("程序下载完成:");
@@ -3012,13 +3019,13 @@ int QPBOC_TMS_DataDeal(char *pData, int datlen) {
 
 void one_updata(void)
 {
-		buildSeverInfo_06tls_TMS(0x26, 5);
+		//buildSeverInfo_06tls_TMS(0x26, 5);
 		ProcessTmsData();
 		buildSeverInfo_06tls(0x26, 5,Get_QPBOC_IP_MODE(IP_MODE_shift));//tms走完 轮训ip
 }
 void two_updata(void)
 {
-		buildSeverInfo_06tls_TMS(0x26, 5);
+		//buildSeverInfo_06tls_TMS(0x26, 5);
 		ProcessTmsData_2();
 		buildSeverInfo_06tls(0x26, 5,Get_QPBOC_IP_MODE(IP_MODE_shift));//tms走完 轮训ip
 }
@@ -3100,8 +3107,8 @@ void SET_Other(void)
 // 	function[ucMENU_NUM++] = Showcard;
 	strcpy(menu[ucMENU_NUM], "时间设置    ");
 	function[ucMENU_NUM++] = setdatetime;
-	strcpy(menu[ucMENU_NUM], "序列号设置  ");
-	function[ucMENU_NUM++] = set_device;
+	//strcpy(menu[ucMENU_NUM], "序列号设置  ");
+	//function[ucMENU_NUM++] = set_device;
 
 	MenuFrame(menu, function, "  --厂商设置--  ", ucMENU_NUM, (100));
 

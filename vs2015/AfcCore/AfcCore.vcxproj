@@ -140,7 +140,6 @@
     <ClInclude Include="..\..\code\AfcCore\Crypto\MD5.h" />
     <ClInclude Include="..\..\code\AfcCore\Crypto\MYDES.h" />
     <ClInclude Include="..\..\code\AfcCore\DataStorage\RamStorage.h" />
-    <ClInclude Include="..\..\code\AfcCore\debugInfor.h" />
     <ClInclude Include="..\..\code\AfcCore\DEF8583.h" />
     <ClInclude Include="..\..\code\AfcCore\Fatfiles.h" />
     <ClInclude Include="..\..\code\AfcCore\GPRSdatatype.h" />
@@ -278,6 +277,7 @@
     <ClInclude Include="..\..\code\AfcCore\UnionPay\SQD.h" />
     <ClInclude Include="..\..\code\AfcCore\UnionPay\tms.h" />
     <ClInclude Include="..\..\code\AfcCore\xSys_Lantaiyuan.h" />
+    <ClInclude Include="..\..\code\public\debugInfor.h" />
     <ClInclude Include="..\..\code\public\debugOut.h" />
     <ClInclude Include="..\..\code\public\Macro_Proj.h" />
     <ClInclude Include="..\..\code\public\ManageThread.h" />

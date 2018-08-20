@@ -597,7 +597,7 @@ int Get_Record_point_O(unsigned char *headp, unsigned char mode)
 		for(uit=0; uit<FLASH_SIZE; uit++){//320KÎª5¿é
 			flasherase(ERASE64KBYTESECTOR, temp);
 			temp+=0x10000;
-			Delay(2);
+			delayxms(2);
 			//delayxms(2);
 		}
 		memset(buff, 0xEE, 64);
