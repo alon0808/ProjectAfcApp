@@ -82,9 +82,9 @@ extern unsigned char DEBUG_COM;
 extern void DES3_decrypt_CBC(unsigned char *key, unsigned char *initdat, unsigned char *Sdat, unsigned int len, unsigned char *outdat);
 extern void DES3_encrypt_CBC(unsigned char *key, unsigned char *initdat, unsigned char *Sdat, unsigned int len, unsigned char *outdat);
 //BASE64加密，输出在base64
-extern char *base64_encode(const unsigned char * bindata, char * base64, int binlength);
+extern char *base64_encodesl(const unsigned char * bindata, char * base64, int binlength);
 //BASE64解密，输入base64为字符串\0结束,返回输出的长度
-extern int base64_decode(const char * base64, unsigned char * bindata);
+extern int base64_decodesl(const char * base64, unsigned char * bindata);
 extern void gprs_send_data(unsigned char linkNum, unsigned int len, void *dat);
 extern pFistVary_1 pFistVary;
 extern stcomtime SysTime;
@@ -481,7 +481,7 @@ unsigned char  get_infor_aut(unsigned char *rands, unsigned char *keyMain, unsig
 		memcpy(inbuff, inbuff + 8, 8);
 	}
 	memset(infor_aut, 0, sizeof(infor_aut));
-	base64_encode(inbuff, (char *)infor_aut, 8);
+	base64_encodesl(inbuff, (char *)infor_aut, 8);
 	//	DES3_encrypt_CBC(autkey, inbuff, buff, len, infor_aut);
 	len = strlen((const char *)infor_aut);
 	MSG_LOG("认证信息:%s\r\n", infor_aut);
@@ -3086,7 +3086,7 @@ void TMS_QU_RECODE(void)
 	MenuFrame(menu, function, "  --交易查询--  ", ucMENU_NUM, (100));
 
 }
-extern void setdatetime(void);
+//extern void setdatetime(void);
 extern void set_device(void);
 void SET_Other(void)
 {
@@ -3105,8 +3105,8 @@ void SET_Other(void)
 	ucMENU_NUM = 0;
 // 	strcpy(menu[ucMENU_NUM], "音量调节    ");
 // 	function[ucMENU_NUM++] = Showcard;
-	strcpy(menu[ucMENU_NUM], "时间设置    ");
-	function[ucMENU_NUM++] = setdatetime;
+	//strcpy(menu[ucMENU_NUM], "时间设置    ");
+	//function[ucMENU_NUM++] = setdatetime;
 	//strcpy(menu[ucMENU_NUM], "序列号设置  ");
 	//function[ucMENU_NUM++] = set_device;
 

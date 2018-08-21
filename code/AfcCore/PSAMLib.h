@@ -12,11 +12,10 @@ extern void set_timer0(unsigned int tick, unsigned char tID);
 //最多4组,返回还有多少ms
 extern unsigned int get_timer0(unsigned char tID);
 //输入7个字节的BCD码
-extern void timewrite(unsigned char *bcdDateTime);
-extern int get_datatime(char *odt);
+//extern void timewrite(unsigned char *bcdDateTime);
 
 extern unsigned char time_invalid(unsigned char *time_buff);
-extern void MessageBox(unsigned char mode, const char *dStr);
+//extern void MessageBox(unsigned char mode, const char *dStr);
 extern void keyBoardStart(void);
 extern unsigned char KeyDeal(void);
 extern void KeyBoardDeal(unsigned char vdat);

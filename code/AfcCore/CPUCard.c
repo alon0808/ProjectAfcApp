@@ -23,6 +23,7 @@
 #include "MYDES.h"
 #include "szct.h"
 #include "ICCardLib.h"
+#include "RamStorage.h"
 
 #define _debug_CPU_
 

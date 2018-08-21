@@ -32,6 +32,7 @@
 #include "szct.h"
 #include "qpboc_head.h"
 #include "UtilityProc.h"
+#include "RamStorage.h"
 
 #define _debug_ICcard_
 

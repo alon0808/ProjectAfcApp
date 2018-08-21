@@ -15,7 +15,7 @@ DEFINES += _linux_
 
 #/////////////////////////////////////////////config start
 
- LIBS += -L. -linputpanel_p2
+ LIBS += -L. -linputpanel_p2 -lssl
 
 #DEFINES += APPLICATION_TYPE_D2
 DEFINES += APPLICATION_TYPE_P2

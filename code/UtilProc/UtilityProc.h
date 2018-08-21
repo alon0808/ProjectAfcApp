@@ -83,6 +83,23 @@ extern "C"
 	//输出BCD时间：outBCDTime
 	extern void TimeAdd(unsigned char*outBCDTime, unsigned char*bcdTime, unsigned int addSec);
 
+	/********************************************
+	* 功能：检测时间是否有效
+	* 输入：time-时间数据指针 7字节 BCD码
+	* 输出：0-无效   1-有效
+	****************************************************/
+	extern unsigned char time_invalid(unsigned char *time_buff);
+	/********************************************
+	* 功能：检测时间是否有效字符
+	* 输入：time-时间数据指针  14字节 ASC码
+	* 输出：0-无效   1-有效
+	****************************************************/
+	extern unsigned char time_invalid_str(unsigned char *time_buff);
+
+	extern int get_datatime(char *odt);
+
+	extern void timewrite(unsigned char *bcdDateTime);
+
 	////////////////////////////////////
 
 #ifdef __cplusplus

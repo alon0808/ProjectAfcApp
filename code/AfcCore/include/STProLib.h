@@ -102,7 +102,7 @@ extern void crc_cu(unsigned char *string_cu,unsigned char length);
 /****************PUBLIC**********************/
 extern unsigned char checkIP(char *IPb);
 
-extern void MessageBox(unsigned char ucIsError, char *pDispBuf);
+//extern void MessageBox(unsigned char ucIsError, char *pDispBuf);
 
 //len-要比较的个数（以uL为单位）  dat-数据  ul-每个单位的长度（int为4 short为2）
 extern unsigned int BinSCH(unsigned int len, unsigned char *dat, unsigned char *sdat, unsigned char uL);
@@ -194,4 +194,7 @@ extern unsigned char getbussinessNO(unsigned char *dat);
 extern unsigned char getWifiInfo(unsigned char *SSID, unsigned char *KEYE);
 
 extern void wifiTlh_main(void);
+
+#include "RamStorage.h"
+
 #endif

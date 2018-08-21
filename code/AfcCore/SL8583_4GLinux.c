@@ -30,7 +30,7 @@
 #include "RecordFile.h"
 
 #include "xSys_Lantaiyuan.h"
-
+#include "STProLib.h"
 
 #define _debug_SL8583
 

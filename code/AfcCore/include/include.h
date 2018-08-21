@@ -19,9 +19,9 @@ extern int getlibVer(void);
 //mode = 1 程序标识
 extern void getposSN(unsigned char *possn, unsigned char mode);
 //读CPU序列号，只返回最低8位 压缩BCD码
-extern void Get_SerialNum(unsigned char *ser);
+//extern void Get_SerialNum(unsigned char *ser);
 //读F4机器CPU序列号，只返回最低8位 压缩BCD码
-extern void Get_SerialNumF4(unsigned char *ser);
+//extern void Get_SerialNumF4(unsigned char *ser);
 /*****************************************
 * 功能: 延时
 * 输入: 延时的时长（用软件延时,1大约=1ms）
@@ -227,7 +227,7 @@ extern void flashwritefont(unsigned int addr, unsigned char *writebuf, unsigned 
 * 输入：addr－地址; length-长度; rec_data-数据指针
 * 输出：NULL
 ****************************************************/
-extern int flashread(unsigned int addr,unsigned char *rec_data,unsigned int length);
+//extern int flashread(unsigned int addr,unsigned char *rec_data,unsigned int length);
 // read status register
 extern void flashRDSR(unsigned char chips, unsigned char *rec_data);
 extern void flashReadID(unsigned char chips, unsigned char *rec_data);
@@ -525,20 +525,20 @@ extern int timeread(unsigned char *time);
 * 输入：time-时间数据指针 ssmmhh ddmmyyyy
 * 输出：0
 ****************************************************/
-extern int timewrite(unsigned char *time);
+//extern int timewrite(unsigned char *time);
 
 /********************************************
 * 功能：检测时间是否有效
 * 输入：time-时间数据指针 7字节 BCD码
 * 输出：0-无效   1-有效
 ****************************************************/
-extern unsigned char time_invalid(unsigned char *time_buff);
+//extern unsigned char time_invalid(unsigned char *time_buff);
 /********************************************
 * 功能：检测时间是否有效字符
 * 输入：time-时间数据指针  14字节 ASC码
 * 输出：0-无效   1-有效
 ****************************************************/
-extern unsigned char time_invalid_str(unsigned char *time_buff);
+//extern unsigned char time_invalid_str(unsigned char *time_buff);
 extern void setdatetime(void);
 //14字节日期时间 是否合法 0不合法  1合法
 extern unsigned char time_long_invalid(unsigned char *time_long_buff);

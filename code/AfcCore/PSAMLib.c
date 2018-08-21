@@ -89,12 +89,6 @@ void *onemsSecondDly(void *arg)
 }
 
 
-void MessageBox(unsigned char mode, const char *dStr)
-{
-#warning "need MessageBox code"
-
-	printf("mode:%d, %s\r\n", mode, dStr);
-}
 
 /*      LED        */					  
 #define LED_RED        ((unsigned char)1)

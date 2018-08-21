@@ -77,7 +77,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\code\AfcCore\;$(SolutionDir)..\code\AfcCore\include\;$(SolutionDir)..\code\AfcCore\Crypto\;$(SolutionDir)..\code\public\;$(SolutionDir)..\code\AfcCore\SlDemo\;$(SolutionDir)..\..\linuxsystem_include\;$(SolutionDir)..\code\AfcCore\UnionPay\;$(SolutionDir)..\code\UtilProc\;$(SolutionDir)..\code\AfcCore\lib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\code\AfcCore\;$(SolutionDir)..\code\AfcCore\include\;$(SolutionDir)..\code\AfcCore\Crypto\;$(SolutionDir)..\code\public\;$(SolutionDir)..\code\AfcCore\SlDemo\;$(SolutionDir)..\..\linuxsystem_include\;$(SolutionDir)..\code\AfcCore\UnionPay\;$(SolutionDir)..\code\UtilProc\;$(SolutionDir)..\code\AfcCore\lib\;$(SolutionDir)..\code\AfcCore\fathead\;$(SolutionDir)..\code\xStorage\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -107,7 +107,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\code\AfcCore\;$(SolutionDir)..\code\AfcCore\include\;$(SolutionDir)..\code\AfcCore\Crypto\;$(SolutionDir)..\code\public\;$(SolutionDir)..\code\AfcCore\SlDemo\;$(SolutionDir)..\..\linuxsystem_include\;$(SolutionDir)..\code\AfcCore\UnionPay\;$(SolutionDir)..\code\UtilProc\;$(SolutionDir)..\code\AfcCore\lib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\code\AfcCore\;$(SolutionDir)..\code\AfcCore\include\;$(SolutionDir)..\code\AfcCore\Crypto\;$(SolutionDir)..\code\public\;$(SolutionDir)..\code\AfcCore\SlDemo\;$(SolutionDir)..\..\linuxsystem_include\;$(SolutionDir)..\code\AfcCore\UnionPay\;$(SolutionDir)..\code\UtilProc\;$(SolutionDir)..\code\AfcCore\lib\;$(SolutionDir)..\code\AfcCore\fathead\;$(SolutionDir)..\code\xStorage\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -139,7 +139,10 @@
     <ClInclude Include="..\..\code\AfcCore\CPUCard.h" />
     <ClInclude Include="..\..\code\AfcCore\Crypto\MD5.h" />
     <ClInclude Include="..\..\code\AfcCore\Crypto\MYDES.h" />
-    <ClInclude Include="..\..\code\AfcCore\DataStorage\RamStorage.h" />
+    <ClInclude Include="..\..\code\AfcCore\Crypto\RSA.h" />
+    <ClInclude Include="..\..\code\AfcCore\Crypto\RSALib.h" />
+    <ClInclude Include="..\..\code\AfcCore\Crypto\RSAREF.H" />
+    <ClInclude Include="..\..\code\AfcCore\Crypto\sha1.h" />
     <ClInclude Include="..\..\code\AfcCore\DEF8583.h" />
     <ClInclude Include="..\..\code\AfcCore\Fatfiles.h" />
     <ClInclude Include="..\..\code\AfcCore\GPRSdatatype.h" />
@@ -283,14 +286,19 @@
     <ClInclude Include="..\..\code\public\ManageThread.h" />
     <ClInclude Include="..\..\code\public\TransmitData.h" />
     <ClInclude Include="..\..\code\public\TypeDef.h" />
+    <ClInclude Include="..\..\code\xStorage\RamStorage.h" />
+    <ClInclude Include="..\..\code\xStorage\xStorage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\code\AfcCore\citydifferent.c" />
     <ClCompile Include="..\..\code\AfcCore\CPUCard.c" />
     <ClCompile Include="..\..\code\AfcCore\CPUCARJTB.c" />
+    <ClCompile Include="..\..\code\AfcCore\Crypto\Base64.c" />
+    <ClCompile Include="..\..\code\AfcCore\Crypto\CRC.C" />
     <ClCompile Include="..\..\code\AfcCore\Crypto\MD5.c" />
     <ClCompile Include="..\..\code\AfcCore\Crypto\MYDES.c" />
-    <ClCompile Include="..\..\code\AfcCore\DataStorage\RamStorage.c" />
+    <ClCompile Include="..\..\code\AfcCore\Crypto\rsalib.c" />
+    <ClCompile Include="..\..\code\AfcCore\Crypto\sha1.c" />
     <ClCompile Include="..\..\code\AfcCore\debugInfor.c" />
     <ClCompile Include="..\..\code\AfcCore\EC20Lx_HTTPS.c" />
     <ClCompile Include="..\..\code\AfcCore\GprsSocket.c" />
@@ -319,6 +327,9 @@
     <ClCompile Include="..\..\code\AfcCore\UnionPay\SQD.c" />
     <ClCompile Include="..\..\code\AfcCore\UnionPay\tms.c" />
     <ClCompile Include="..\..\code\AfcCore\xSys_Lantaiyuan.c" />
+    <ClCompile Include="..\..\code\debug\debugOut.c" />
+    <ClCompile Include="..\..\code\xStorage\RamStorage.c" />
+    <ClCompile Include="..\..\code\xStorage\xStorage.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

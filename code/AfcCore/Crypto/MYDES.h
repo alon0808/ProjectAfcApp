@@ -1,6 +1,5 @@
-
-
-extern unsigned int GenerateCRC32(unsigned char *DataBuf,unsigned int len);
+#ifndef _INCLUDE_MYDES_H_
+#define _INCLUDE_MYDES_H_
 
 /*
 Key     ：计算SESLK的3DES的密钥，比如在圈存时计算SESLK时，3DES的密钥为“圈存子密钥”(详见个人化信息)；
@@ -10,7 +9,7 @@ data2len：pInData2的长度；
 initData：8 bytes的0x00 数组；
 mac     ：需要计算出来的MAC值结果。
 */
-extern void Mac(unsigned char *Key,unsigned char *pInData1,unsigned char *pInData2,int data2len,unsigned char *initData,unsigned char *mac);
+extern void Mac(unsigned char *Key, unsigned char *pInData1, unsigned char *pInData2, int data2len, unsigned char *initData, unsigned char *mac);
 //8字节密钥
 /************************************************************************/
 /* key : 密钥 8字节
@@ -18,9 +17,9 @@ extern void Mac(unsigned char *Key,unsigned char *pInData1,unsigned char *pInDat
    Source : 需加密的数据
    le : 加密数据的长度
    destin : 加密后的结果 4字节
-                                                                     */
-/************************************************************************/
-extern void SCountMac(unsigned char *key,unsigned char *inittext,unsigned char *Sdat,unsigned int le ,unsigned char *destin);
+																	 */
+																	 /************************************************************************/
+extern void SCountMac(unsigned char *key, unsigned char *inittext, unsigned char *Sdat, unsigned int le, unsigned char *destin);
 //16字节密钥
 /************************************************************************/
 /* key : 密钥 16字节
@@ -28,11 +27,12 @@ extern void SCountMac(unsigned char *key,unsigned char *inittext,unsigned char *
    Source : 需加密的数据
    le : 加密数据的长度
    destin : 加密后的结果 4字节
-                                                                     */
-/************************************************************************/
-extern void CountMac(const char *key,unsigned char *inittext,unsigned char *Sdat,unsigned int le ,unsigned char *destin);
+																	 */
+																	 /************************************************************************/
+extern void CountMac(const char *key, unsigned char *inittext, unsigned char *Sdat, unsigned int le, unsigned char *destin);
 extern unsigned char getJiuJiang_CPUKey(unsigned char *Sdata, unsigned char *Rkey);
-extern void getCPUMAC(unsigned char mode, unsigned char *inittext,unsigned char *Source, unsigned int le ,unsigned char *destin);
+extern void getCPUMAC(unsigned char mode, unsigned char *inittext, unsigned char *Source, unsigned int le, unsigned char *destin);
 
-extern void CountMac1(unsigned char *Key,unsigned char *random,unsigned char *Sdat,unsigned int len ,unsigned char *Result);
+extern void CountMac1(unsigned char *Key, unsigned char *random, unsigned char *Sdat, unsigned int len, unsigned char *Result);
 
+#endif

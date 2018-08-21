@@ -375,7 +375,7 @@ void SHA1PadMessage(SHA1Context *context)
     SHA1ProcessMessageBlock(context);
 }
 
-int DigestInfo(unsigned char* pData, unsigned long ulDataLen, unsigned char *pDigest)
+int DigestInfo(unsigned char* pData, unsigned int ulDataLen, unsigned char *pDigest)
 {
 	int i;
 	unsigned char tt;

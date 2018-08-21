@@ -55,8 +55,6 @@ void SHA1Input( SHA1Context *,
                 unsigned);
 
 
-int DigestInfo(unsigned char* pData,
-		   unsigned long ulDataLen,
-		   unsigned char *pDigest);
+extern int DigestInfo(unsigned char* pData, unsigned int ulDataLen, unsigned char *pDigest);
 
 #endif

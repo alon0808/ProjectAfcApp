@@ -43,6 +43,7 @@
 #include "RecordFile.h"
 #include "GprsSocket.h"
 #include "UtilityProc.h"
+#include "STProLib.h"
 
 #define _debug_gprs
 

@@ -160,7 +160,7 @@ int wait_on_socket(curl_socket_t sockfd, int for_recv, long timeout_ms)
 	return res;
 }
 
-extern void buildComSendStyle_09_01(unsigned char errLink);
+//extern void buildComSendStyle_09_01(unsigned char errLink);
 void https_closeHandle(void) {
 
 	int linkNo = 0;
@@ -171,7 +171,7 @@ void https_closeHandle(void) {
 		linkNo = s_stServerInfo.linkNo;
 		MSG_LOG("https_closeHandle:\n");
 		if (s_hnd[linkNo] != NULL) {
-			buildComSendStyle_09_01(linkNo);
+			//buildComSendStyle_09_01(linkNo);
 
 			s_isConnectOk[linkNo] = 0;
 			/* call this function to close sockets */

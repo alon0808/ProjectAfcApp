@@ -755,12 +755,18 @@ unsigned char bcdDEC(unsigned char bcd1, unsigned char bcd2)
 	return b2;
 }
 
+unsigned int __atol(char *strASC) {
+	return str2int(strASC, strlen(strASC));
+}
 
 unsigned int str2int(unsigned char *pstr, unsigned char len)
 {
 	unsigned int ii;
 	unsigned char index = 0;
 
+	if (len > 8) {
+		//return 0;
+	}
 	ii = 0;
 	while (index < len) {
 		ii *= 10;

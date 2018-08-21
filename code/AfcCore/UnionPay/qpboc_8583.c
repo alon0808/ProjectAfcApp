@@ -25,6 +25,7 @@
 #include "HTTP.h"
 #include "GprsSocket.h"
 #include "ff.h"
+#include "RamStorage.h"
 
 unsigned char g_supportQR = qr_aliPay | qr_weiXin | qr_unPay|car_;
 extern void dis_time_mini(unsigned char x, stcomtime *time);
@@ -148,7 +149,7 @@ extern unsigned char gTcpIpbusy;//模块是正正在发数据，模块工作是发命令，然后回应
 extern unsigned int c_serial;
 extern unsigned char isNetOK[MAX_RCV_PACKET_NUM];//两路链接是否成功;
 extern Parameter5 cardMessage;
-
+unsigned int gErrortimes[MAX_RCV_PACKET_NUM];
 
 
 extern unsigned char pakege[1024];
@@ -195,6 +196,7 @@ unsigned char  CountPointRead(void);
 void CountPoint(unsigned char mode);
 void BLK_63_int_first(void)
 {
+
 	memset((unsigned char *)&TYPE_63, 0x30, sizeof(QPBOC_TYPE_63));
 	memcpy((unsigned char *)TYPE_63.Organization_, "0000PZGZ", 8);
 
@@ -4572,9 +4574,9 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 }
 
 //BASE64加密，输出在base64
-extern char *base64_encode(const unsigned char * bindata, char * base64, int binlength);
+extern char *base64_encodesl(const unsigned char * bindata, char * base64, int binlength);
 //BASE64解密，输入base64为字符串\0结束,返回输出的长度
-extern int base64_decode(const char * base64, unsigned char * bindata);
+extern int base64_decodesl(const char * base64, unsigned char * bindata);
 //银联钱包二维码
 int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 {
@@ -6372,7 +6374,7 @@ int usb_load_pboc_infor(void)
 	char *lineinfor = NULL;
 	FILINFO finf;
 	FIL rf1;
-	int ret = 0;
+	int ret = 1;
 	//	unsigned int count=0;
 
 
@@ -6395,14 +6397,14 @@ int usb_load_pboc_infor(void)
 	cls();
 	display(2, 0, "更新主密钥参数", DIS_CENTER);
 
-	res = f_open(&rf1, "0:/pra/GZPBOCINFOR.txt", FA_READ);
+	//res = f_open(&rf1, "0:/pra/GZPBOCINFOR.txt", FA_READ);
 	if (res != FR_OK)//if(access("0:/current/Rindex.txt",0)!=0)
 	{
 		dis_messgebox("密钥文件错", res, 12);
 		return 0;
 	}
 
-	res = f_stat("0:/pra/GZPBOCINFOR.txt", &finf);
+	//res = f_stat("0:/pra/GZPBOCINFOR.txt", &finf);
 	if (res != FR_OK) {
 		dis_messgebox("密钥文件信息错", res, 12);
 		return -1;
@@ -6661,7 +6663,7 @@ int usb_loadlineinfor(void)
 	char *lineinfor = NULL;
 	FILINFO finf;
 	FIL rf1;
-	int ret = 0;
+	int ret = 1;
 	//unsigned int count=0;
 
 
@@ -6684,14 +6686,14 @@ int usb_loadlineinfor(void)
 	cls();
 	display(2, 0, "更新线路参数", DIS_CENTER);
 
-	res = f_open(&rf1, "0:/pra/LINEINFOR.txt", FA_READ);
+	//res = f_open(&rf1, "0:/pra/LINEINFOR.txt", FA_READ);
 	if (res != FR_OK)//if(access("0:/current/Rindex.txt",0)!=0)
 	{
 		dis_messgebox("线路文件错", res, 12);
 		return 0;
 	}
 
-	res = f_stat("0:/pra/LINEINFOR.txt", &finf);
+	//res = f_stat("0:/pra/LINEINFOR.txt", &finf);
 	if (res != FR_OK) {
 		dis_messgebox("线路文件信息错", res, 12);
 		return -1;
@@ -6777,7 +6779,7 @@ int cp_cacert(void)
 //	char *lineinfor=NULL;
 	FILINFO finf;
 	FIL rf1;
-	int ret = 0;
+	int ret = 1;
 	unsigned int count = 0;
 	unsigned int addr = 0;
 
@@ -6805,14 +6807,14 @@ int cp_cacert(void)
 	cls();
 	display(2, 0, "更新证书", DIS_CENTER);
 
-	res = f_open(&rf1, "0:/pra/cacert.pem", FA_READ);
+	//res = f_open(&rf1, "0:/pra/cacert.pem", FA_READ);
 	if (res != FR_OK)//if(access("0:/current/Rindex.txt",0)!=0)
 	{
 		dis_messgebox("证书文件错", res, 12);
 		return 0;
 	}
 
-	res = f_stat("0:/pra/cacert.pem", &finf);
+	//res = f_stat("0:/pra/cacert.pem", &finf);
 	if (res != FR_OK) {
 		dis_messgebox("线路文件信息错", res, 12);
 		return -1;

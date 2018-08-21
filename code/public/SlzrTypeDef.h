@@ -1087,6 +1087,15 @@ typedef struct {
 }stNetRevList;
 
 
+//黑名单63域说明
+typedef struct
+{
+	unsigned char 	Organization_[8];		//
+									//	INT8U	up_time[8];		//
+	unsigned char 	card_no[10];
+
+}QPBOC_TYPE_63;
+
 typedef struct{
 	unsigned char citycode[2];
 	unsigned char hanye[2];
@@ -1128,6 +1137,8 @@ typedef struct{
 	unsigned char SN[4];		//设备序列号
 
 	stServerInfo gServerInfo[_SOCKET_MAXNUM];
+
+	QPBOC_TYPE_63 TYPE_63;
 
 	unsigned char Null[1024];		
 	

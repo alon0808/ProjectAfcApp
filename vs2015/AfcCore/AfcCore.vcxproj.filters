@@ -453,9 +453,6 @@
     <ClInclude Include="..\..\code\AfcCore\citydifferent.h">
       <Filter>关注文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\code\AfcCore\DataStorage\RamStorage.h">
-      <Filter>关注文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\code\AfcCore\UiAccess.h">
       <Filter>关注文件</Filter>
     </ClInclude>
@@ -463,6 +460,24 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\code\AfcCore\RecordFile.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Crypto\RSA.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Crypto\RSALib.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Crypto\RSAREF.H">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\Crypto\sha1.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\xStorage\RamStorage.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\xStorage\xStorage.h">
       <Filter>关注文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -560,13 +575,31 @@
     <ClCompile Include="..\..\code\AfcCore\citydifferent.c">
       <Filter>关注文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\code\AfcCore\DataStorage\RamStorage.c">
-      <Filter>关注文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\UiAccess.c">
       <Filter>关注文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\AfcCore\EC20Lx_HTTPS.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\Crypto\Base64.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\Crypto\rsalib.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\Crypto\sha1.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\Crypto\CRC.C">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\xStorage\RamStorage.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\xStorage\xStorage.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\debug\debugOut.c">
       <Filter>关注文件</Filter>
     </ClCompile>
   </ItemGroup>

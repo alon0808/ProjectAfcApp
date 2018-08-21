@@ -91,7 +91,7 @@ void ComTest_hand(unsigned char value)
 	case 5://长底低位
 		irda_rxBuf[ComTest_index++] = ii;
 		memcpy((unsigned char*)&plen, irda_rxBuf+4, 2);
-		over_turn(2, (unsigned char*)&plen);
+		RevertTurn(2, (unsigned char*)&plen);
 		if(plen > 2048){//长度错误
 			ComTest_index = 0;
 			memset(irda_rxBuf,0,10);
@@ -101,7 +101,7 @@ void ComTest_hand(unsigned char value)
 	default:
 		irda_rxBuf[ComTest_index++] = ii;
 		memcpy((unsigned char*)&plen, irda_rxBuf+4, 2);
-		over_turn(2, (unsigned char*)&plen);
+		RevertTurn(2, (unsigned char*)&plen);
 		if(plen > 2048){//长度错误
 			ComTest_index = 0;
 			memset(irda_rxBuf,0,10);
@@ -822,10 +822,10 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 	debugdata((unsigned char*)&endTime, 4, 1);
 	debugdata((unsigned char*)&endTimeEn, 4, 1);
 #endif
-	over_turn(4, (unsigned char*)&nowTime);
-	over_turn(4, (unsigned char*)&startTime);
-	over_turn(4, (unsigned char*)&endTime);
-	over_turn(4, (unsigned char*)&endTimeEn);
+	RevertTurn(4, (unsigned char*)&nowTime);
+	RevertTurn(4, (unsigned char*)&startTime);
+	RevertTurn(4, (unsigned char*)&endTime);
+	RevertTurn(4, (unsigned char*)&endTimeEn);
 
 #ifdef _debug_
 	debugstring("cardMessage.card_catalog:");

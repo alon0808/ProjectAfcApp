@@ -17,7 +17,8 @@ INCLUDEPATH += ../../code/UtilProc
 SOURCES += utilprostaic.cpp \
     ../../code/UtilProc/UtilityProc.c \
     ../../code/UtilProc/ProcTlv.c \
-    ../../code/UtilProc/ConvertData.c
+    ../../code/UtilProc/ConvertData.c \
+    ../../code/UtilProc/cJSON.c
 
 HEADERS += utilprostaic.h \
     ../../code/UtilProc/UtilityProc.h \
@@ -27,7 +28,8 @@ HEADERS += utilprostaic.h \
     ../../code/public/TransmitData.h \
     ../../code/public/ManageThread.h \
     ../../code/public/Macro_Proj.h \
-    ../../code/public/debugOut.h
+    ../../code/public/debugOut.h \
+    ../../code/UtilProc/cJSON.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

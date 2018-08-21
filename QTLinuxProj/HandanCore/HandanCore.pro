@@ -14,12 +14,16 @@ QMAKE_CXXFLAGS = $$QMAKE_CFLAGS
 
 INCLUDEPATH += ../../code/public
 INCLUDEPATH += ../../code/UtilProc
+INCLUDEPATH += ../../code/xSys
+INCLUDEPATH += ../../code/xStorage
 INCLUDEPATH += ../../code/AfcCore
 INCLUDEPATH += ../../code/AfcCore/include
 INCLUDEPATH += ../../code/AfcCore/SlDemo
 INCLUDEPATH += ../../code/AfcCore/UnionPay
 INCLUDEPATH += ../../code/AfcCore/Crypto
 INCLUDEPATH += ../../code/AfcCore/fathead
+INCLUDEPATH += ../../code/AfcCore/lib
+
 
 LIBS = -lpthread -L./ltyp2/lib
 
@@ -49,11 +53,21 @@ SOURCES += handancore.cpp \
     ../../code/AfcCore/Crypto/MYDES.c \
     ../../code/AfcCore/UnionPay/add_2.c \
     ../../code/AfcCore/UnionPay/add.c \
-    ../../code/AfcCore/citydifferent.c
+    ../../code/AfcCore/citydifferent.c \
+    ../../code/AfcCore/UiAccess.c \
+    ../../code/AfcCore/EC20Lx_HTTPS.c \
+    ../../code/AfcCore/UnionPay/tms.c \
+    ../../code/AfcCore/UnionPay/SQD.c \
+    ../../code/AfcCore/Crypto/sha1.c \
+    ../../code/AfcCore/Crypto/rsalib.c \
+    ../../code/AfcCore/Crypto/Base64.c \
+    ../../code/AfcCore/Crypto/CRC.C \
+    ../../code/debug/debugOut.c \
+    ../../code/xStorage/xStorage.c \
+    ../../code/xStorage/RamStorage.c
 
 HEADERS += handancore.h\
         handancore_global.h \
-    ../../code/AfcCore/libsm.h \
     ../../code/AfcCore/ICCardLib.h \
     ../../code/AfcCore/GprsSocket.h \
     ../../code/AfcCore/GPRSdatatype.h \
@@ -177,7 +191,16 @@ HEADERS += handancore.h\
     ../../code/AfcCore/UnionPay/qPBOC.h \
     ../../code/AfcCore/UnionPay/add_2.h \
     ../../code/AfcCore/UnionPay/add.h \
-    ../../code/AfcCore/citydifferent.h
+    ../../code/AfcCore/citydifferent.h \
+    ../../code/AfcCore/UiAccess.h \
+    ../../code/AfcCore/UnionPay/tms.h \
+    ../../code/AfcCore/UnionPay/SQD.h \
+    ../../code/AfcCore/UnionPay/HTTP.h \
+    ../../code/AfcCore/Crypto/sha1.h \
+    ../../code/AfcCore/Crypto/RSAREF.H \
+    ../../code/AfcCore/Crypto/RSALib.h \
+    ../../code/AfcCore/Crypto/RSA.h \
+    ../../code/xStorage/xStorage.h
 
 unix {
     target.path = /usr/lib
@@ -187,3 +210,17 @@ unix {
 DISTFILES += \
     ../../code/AfcCore/Makefile.bak \
     ../../code/AfcCore/Makefile
+
+unix:!macx: LIBS += -L$$PWD/../../code/AfcCore/lib/ -lcurl
+
+INCLUDEPATH += $$PWD/../../code/AfcCore/include
+DEPENDPATH += $$PWD/../../code/AfcCore/include
+
+unix:!macx: PRE_TARGETDEPS += $$PWD/../../code/AfcCore/lib/libcurl.a
+
+unix:!macx: LIBS += -L$$PWD/../Bin/ -lUtilPro
+
+INCLUDEPATH += $$PWD/../Bin
+DEPENDPATH += $$PWD/../Bin
+
+unix:!macx: PRE_TARGETDEPS += $$PWD/../Bin/libUtilPro.a

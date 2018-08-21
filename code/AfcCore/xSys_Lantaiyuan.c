@@ -129,5 +129,9 @@ void Get_SerialNumF4(unsigned char *ser)
 	Get_SerialNum(ser);
 }
 
+void delayxms(unsigned int xms) {
+	usleep(xms);
+}
+
 
 

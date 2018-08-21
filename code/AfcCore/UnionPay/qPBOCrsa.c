@@ -13,13 +13,13 @@
  *  HISTORY  :
  *
  *==========================================================================*/
+#include "Macro_Proj.h"
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include "szct.h"
 #include "Font.h"
-#include "Macro_Proj.h"
 #include "qPBOC.h"
 #include "qpboc_head.h"
 #include "add.h"
@@ -32,6 +32,8 @@
 #include "Gszct.h"
 #include "TxnRecord.h"
 #include "SQD.h"
+
+
  //#define PBOC_loan  //交易开关借贷记
 
  //如果定义了就说明需要判断是否和此行一致
@@ -68,7 +70,7 @@ extern Parameter5 cardMessage;
 extern unsigned int g24GDisFlash;//24G卡界面刷新
 extern pFistVary_1 pFistVary;
 extern stBusVerIfo gBusVerInfo;
-extern unsigned int get_s_sum1(void);
+extern unsigned int get_s_sum1(unsigned char mode);
 extern void dis_time_mini(unsigned char x, stcomtime *time);
 extern unsigned char CheckSno(unsigned char mode, unsigned char ID, unsigned char *ptr);
 extern void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsigned char cMOde);
@@ -3996,7 +3998,7 @@ void cpuPBOCmain(void)
 #elif defined BUS_GZDK_ZLS_
 	price = 1;
 #else
-	price = get_s_sum1();//0;//
+	price = get_s_sum1(0);//0;//
 #endif
 
 // #ifdef _debug_

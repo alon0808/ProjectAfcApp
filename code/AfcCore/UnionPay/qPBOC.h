@@ -16,6 +16,7 @@
 #ifndef _H_QPBOC_H
 #define _H_QPBOC_H
 #include "../include/include.h"
+#include "xSys_Lantaiyuan.h"
 
  //需要打开  _debug_
  //#define QPBOC_DEBUG
@@ -425,16 +426,6 @@ typedef struct
 	INT8U 	TVR[5];				//4 交易结果	19
 }QPBOC_RESULT_TYPE;
 
-//黑名单63域说明
-typedef struct
-{
-	INT8U 	Organization_[8];		//
-//	INT8U	up_time[8];		//
-	INT8U 	card_no[10];
-
-}QPBOC_TYPE_63;
-
-
 typedef struct {
 	INT16U    T;
 	INT32U 	L;
@@ -583,5 +574,11 @@ extern void getMobileParameter_test(void);
 extern unsigned char qrDisp_history(unsigned char mode, unsigned int Index);
 extern EMV_CARDTYPE emv_get_card_type(void);
 extern void emv_set_card_type(EMV_CARDTYPE type);
+
+
+
+#include "RamStorage.h"
+
+
 #endif
 

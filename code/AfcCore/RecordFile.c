@@ -22,6 +22,7 @@
 #include "MYDES.h"
 
 #include "ICCardLib.h"
+#include "STProLib.h"
 
 #define _debug_recordFile
 
@@ -551,7 +552,9 @@ int FR_flashread(unsigned int addr,unsigned char *rec_data,unsigned int length)
 	return ret;
 }
 
+void Showcard(void) {
 
+}
 
 
 

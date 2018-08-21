@@ -86,6 +86,8 @@ extern "C"
 	extern int StringDecimal2UInt32(char *pInput, int ilen, unsigned int *pOlen);
 	extern int StringHex2UInt32(char *pInput, int ilen, unsigned int *pOlen);
 
+	extern unsigned int __atol(char *strASC);
+
 #ifdef __cplusplus
 };
 #endif
