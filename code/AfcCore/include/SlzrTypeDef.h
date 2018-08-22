@@ -1,23 +1,19 @@
-#ifndef SLZR_TYPE_DEF_H
-#define SLZR_TYPE_DEF_H
+#ifndef SLZR_TYPE_DEF_H_
+#define SLZR_TYPE_DEF_H_
 
 //modify by lks
 
 #define _debug_
 
 #ifdef _debug_
-	#define MSG_LOG(...) printf(__VA_ARGS__)
-	#define BCD_LOG(b, l, m) debugdata(b, l, m)
+#define MSG_LOG(...) printf(__VA_ARGS__)
+#define BCD_LOG(b, l, m) debugdata(b, l, m)
 #else
-	#define MSG_LOG(...)
-	#define BCD_LOG(...)
+#define MSG_LOG(...)
+#define BCD_LOG(...)
 #endif
 
 
-//#define SOFT_VER_TIME_LOG 0x100
-
-#define POS_Cand_FLAG "PLT"
-#define POS_EC20_FLAG "EC2"
 
 //记录空间2M
 #define RECORD_SPACE_LENGH 0x200000
@@ -38,21 +34,23 @@ typedef signed long long int   SLZR_S64;
 
 typedef enum
 {
-    SLZR_FALSE = 0,
-    SLZR_TRUE  = 1
+	SLZR_FALSE = 0,
+	SLZR_TRUE = 1
 }SLZR_BOOL;
 
 typedef struct slzr_buf_s
 {
-    SLZR_LPVOID pBuf;
-    SLZR_U32 u32Size;
+	SLZR_LPVOID pBuf;
+	SLZR_U32 u32Size;
 
 }slzr_buf_t;
 
 typedef SLZR_S32 SLZR_CHN;
 
 
-typedef struct  {
+
+
+typedef struct {
 	unsigned char year_h;
 	unsigned char year_l;
 	unsigned char month;
@@ -74,7 +72,7 @@ typedef struct  {
 #define PSAM_TRUE  1
 #define PSAM_FALSE 0
 
-typedef struct{
+typedef struct {
 	unsigned char SLot;			//此卡所在的卡座号
 	unsigned char Flag;			//标识PSAM状态，是否正常。0正常，其它不正常。
 	unsigned char CardNO[6];	//PSAM卡号
@@ -98,7 +96,7 @@ typedef struct{
 #define shift_blk 10
 #define NUM_blk  10      //黑名单文件每条所占的字节数
 
-typedef int boolean ;
+typedef int boolean;
 
 #ifndef NULL
 #define NULL (void *)0
@@ -388,7 +386,7 @@ typedef int boolean ;
 //4 单位,部门编号
 #define BIT_UNIT BIT_Center_Ctrl_BU_Data+8		
 // 136灰记录存储，暂用128字节，“有效”4 + 128 data+4CRC = 136
- #define BIT_UNKNOW_RECORD	BIT_UNIT + 4
+#define BIT_UNKNOW_RECORD	BIT_UNIT + 4
 
 //----------------------------------
 //28(24) 调度命令信息  调度数据存在7168开始的地址，7K，铁电共8K能用1024字节
@@ -447,6 +445,9 @@ typedef int boolean ;
 #define CARD_LIANGTONG_STUF 14              //手机员工卡
 
 
+#define CARD_QRC_LTY 15              //蓝泰源二维码
+
+
 #define  CARD_FENDUAN_Line	33		//分段线路票价卡
 
 
@@ -455,34 +456,45 @@ typedef int boolean ;
 
 typedef enum
 {
+	CARDSTYLE_NULL = 0,
 	//通用M1卡
- CARDSTYLE_NORM1 = 1,
+	CARDSTYLE_NORM1,
 	//CPU卡
- CARDSTYLE_CPU ,
+	CARDSTYLE_CPU,
 	//2.4G CPU卡
- CARDSTYLE_24CPU ,
+	CARDSTYLE_24CPU,
 	//艺达M1卡
- CARDSTYLE_YIDAM1 ,
+	CARDSTYLE_YIDAM1,
 	//2.4G移动卡
- CARDSTYLE_24Mobile ,	// 5
-	//2.4G电信卡
- CARDSTYLE_24CT ,
-	//中科讯联2.4G 联通
- CARDSTYLE_24ZKXL ,
-	//厦门盛华2.4G 联通、电信
- CARDSTYLE_24XMSH ,
-	//安龙老卡
- CARDSTYLE_ANLONG ,
-	
- SEND_FILE_ERROR_ ,	// 10
-  CARDSTYLE_JTB  ,
-	QPBOC_JTB   ,   //交通电子现金
-	CARDSTYLE_QR_PBOC,
-	CARDSTYLE_PBOC,
-	CARDSTYLE_QPBOC,
-	CARDSTYLE_UNPAY_ODA,	// 15
-	CARDSTYLE_QR_UNPAY_BUS,
+	CARDSTYLE_24Mobile,	// 5
+	   //2.4G电信卡
+	   CARDSTYLE_24CT,
+	   //中科讯联2.4G 联通
+	   CARDSTYLE_24ZKXL,
+	   //厦门盛华2.4G 联通、电信
+	   CARDSTYLE_24XMSH,
+	   //安龙老卡
+	   CARDSTYLE_ANLONG,
+
+	   SEND_FILE_ERROR_,	// 10
+	   CARDSTYLE_JTB,
+	   QPBOC_JTB,   //交通电子现金
+	   CARDQR_CODE,	//二维码
+	   CARDSTYLE_QR_PBOC,
+	   CARDSTYLE_PBOC,
+	   CARDSTYLE_QPBOC,
+	   CARDSTYLE_UNPAY_ODA,	// 15
+	   CARDSTYLE_QR_UNPAY_BUS,
 }CardCand_enum;
+
+
+#define ID_REC_QRC_GZT		0xA6		//贵州通二维码记录
+#define CARDSTYLE_QR_TX			0xA4		//腾讯二维码记录
+#define ID_REC_QRC_TX		0xA4		//腾讯二维码记录
+#define ID_REC_QRC_ZFB		0xA5		//支付宝二维码记录
+#define ID_REC_QRC_PBOC		0xA7		//银联二维码S
+// A8是可充二维码
+#define ID_REC_QRC_UNPAY_BUS	0xA9		//银联乘车码
 
 //mifare
 
@@ -528,7 +540,7 @@ typedef enum
 #define Public_monthdealsum 4
 #define Public_blackflag 6
 #define Public_fileflag 7
-typedef struct 
+typedef struct
 {
 	unsigned char DealPo;		//卡交易指针	0
 	unsigned char MoneyDealSum[2];	//钱包交易次数  1
@@ -550,7 +562,7 @@ typedef struct
 
 #define ERROR_DETAIL_SUM			3
 #define ERROR_DETAIL_LEN			32
-typedef struct 
+typedef struct
 {
 	unsigned char effFlag;		//错误类型，月票错，还是钱包错
 	unsigned char Cardno[4];	//错误的卡号
@@ -637,14 +649,14 @@ typedef struct
 
 struct pMonthTime_1	//保存不能连刷卡信息。
 {
-	unsigned char endptr;				
+	unsigned char endptr;
 	unsigned char startptr;
 	unsigned char LastList[LAST_LIST_LEN][7];              //月票保存时间表
 };
 
 #define LEN_CARD_RECORD 16
 
-typedef struct{
+typedef struct {
 	int headp;	//头指针
 	int endp;	//尾指针
 	unsigned int crc;	//校验
@@ -762,8 +774,8 @@ typedef struct//有数值大小区分的 一律为小端模式
 	unsigned char reasea[5];			//保留
 	unsigned char rProVer[2];			//程序版本号
 	unsigned char rTTTT[4];				//CRC校验四个字节AA
-	
-	
+
+
 }DEALRECODE_JTB;
 
 typedef struct
@@ -780,7 +792,7 @@ typedef struct
 	unsigned char rPublishNumb_a;		//发行卡流水号最高位 
 	//	unsigned char rTradCode[2];			//行业代码 用于区分相同密钥的不同城市或应用-------
 	unsigned char rDriverNo[4];			//司机号
-	
+
 	unsigned char rCardDealNumb[4];		//设备交易流水
 	unsigned char rLineNo[2];			//线路号
 	unsigned char rResever1[4];			//设备唯一序列号 42  邯郸的 部门编号
@@ -795,7 +807,46 @@ typedef struct
 	unsigned char rTAC[4];				//校验码
 }DEALRECODE;
 
-typedef struct{
+typedef struct
+{
+	unsigned char rFlag[8];
+	unsigned char rCardDealNumb[4];		//设备交易流水
+	unsigned char rDeviceNo[4];			//设备号(序列号)
+	unsigned char rCardType;			//卡类
+	unsigned char rDealType;			//交易类型
+	unsigned char rPublishNumb_a;		//发行卡流水号最高位  
+	unsigned char rRemain;				//保留   //司机卡高位
+
+
+//	unsigned char ruserTimes[2];		//使用次数 司机号高位  [分段 全程时间] 如果是中控的记录和下面共18字节为卡片的身份证号
+	unsigned char rAfterMoney[4];		//原额
+	unsigned char rDealMoney[3];		//交易金额
+	unsigned char rDealTime[7];			//交易时间YYYY/MM/DD/HH/MM/SS
+	unsigned char rDriverNo[4];			//司机号
+	unsigned char rDeiceSleNo[4];		//设备自编号 //校验码
+	unsigned char rLineNo[2];			//线路号
+	unsigned char rProVer[2];			//程序版本号
+	unsigned char rPrice_NA[2];			//票价
+	unsigned char QRC_record[204];		//*二维码记录（明文） 字符串，BASE64格式，以0x00为结束符。（此字段为二维码交易记录，需要直接传给腾讯服务器）。
+//	unsigned char QRC_record[212];		//*二维码记录（明文） 字符串，BASE64格式，以0x00为结束符。（此字段为二维码交易记录，需要直接传给腾讯服务器）。
+	unsigned char rTAC[4];				// 校验码
+}DEALRECODE_OTHQRC;	//二维码记录
+
+typedef struct
+{
+	unsigned char flag;			//标识（1字节）
+	unsigned char citycode[6];	// 6字节城市代码）
+	unsigned char ZCcode[9];	//注册唯一码（9字节）
+	unsigned char datetime[10];	//日期时间（10字节）
+	unsigned char checkdata[10];	//验证码（10字节校验））
+	unsigned char longitude[4];		//经度（4字节）
+	unsigned char latitude[4];		///维度 4字节 
+	unsigned char direction[4];		//方向4字节
+	unsigned char speed[4];			//速度4字节
+
+}stltyQRCandGPS;
+
+typedef struct {
 	unsigned char falg[4];//有效标识
 	unsigned char RCE[128];//记录
 	unsigned char CRC[4];	//CRC
@@ -815,8 +866,8 @@ typedef struct
 typedef struct
 {
 	unsigned char cCardType;			/* 卡类型标识 */
-	unsigned char cStuffcode	;		/*本行职工标识*/
-	unsigned char cName[20]	;			//持卡人姓名
+	unsigned char cStuffcode;		/*本行职工标识*/
+	unsigned char cName[20];			//持卡人姓名
 	unsigned char cCredent[32];			/* 证件号 */
 	unsigned char cCretype;				//证件类型
 }stJTB16;		//交通部96文件结构     55byte
@@ -824,7 +875,7 @@ typedef struct
 {
 	unsigned char intercode[4];			/* 国际代码 */
 	unsigned char provcode[2];			/*省级代码*/
-	unsigned char Citycode[2]	;		/*城市代码*/
+	unsigned char Citycode[2];		/*城市代码*/
 	unsigned char car_type[2];			//互通卡种  00非互通卡 01 互通卡
 	unsigned char card_catalog;			//卡种类型
 	unsigned char reser[49];			//预留
@@ -835,13 +886,13 @@ typedef struct
 	unsigned char rEPsearl[2];			/* EP联机或者脱机交易序列号 */
 	unsigned char rOverdraft[3];		/*透支限额*/
 	unsigned char rPursPrice[4];		//交易金额
-	unsigned char rPursType	;			/*交易类型标识*/
+	unsigned char rPursType;			/*交易类型标识*/
 	unsigned char rPSAMnum[6];			//终端机编号	
 	unsigned char rPursTime[7];			//交易时间
 }stJTB18;		//交通部98文件:  23
 
 typedef struct//w文件号 2702   128字节
-{	
+{
 	unsigned char rID[2];				//1-2交易标识  2702  公共汽车应用信息
 	unsigned char rlen;					//3记录长度
 	unsigned char rOk;					//4有效标识  固定01
@@ -880,7 +931,7 @@ typedef struct//w文件号 2702   128字节
 	unsigned char rTimeMax[2];			//116-117最长时间,单位 分钟
 	unsigned char rName[10];			//119-128站点名称Ascii  五个汉字
 	unsigned char rCH[4];				//118 预留
-	
+
 //	unsigned char rResear[8];			//预留信息内容
 }stJTB1A;		//交通部1A变长记录文件结构     55byte
 typedef struct//1E   48字节
@@ -927,28 +978,25 @@ typedef struct
 	unsigned char White_Ver[2];//住建部城市白名单信息版本  低位在后
 	unsigned char White_Ver_JTB[2];//交通部城市白名单信息版本  低位在后
 	unsigned char Linux4GVer[2];//Linux模块版本号
-	
+
 	unsigned char busticketVer[2];//票价版本
 	unsigned char busTXTPKVer[2];//腾讯公钥版本
 
-	unsigned int BlackListNum;		//黑名单长度 
+	unsigned int BlackListNum;		//黑名单长度,条数
 	unsigned int TXPublicKeyLen;	//腾讯公钥长度 
 	unsigned int WHTBusListNum;		//住建部白名单长度 
 	unsigned int WHTJTBListNum;		//交通部白名单长度 
 }stBusVerIfo;
 
 
-typedef struct
-{
-	unsigned char busticketVer[2];
-	unsigned char newbusticketVer[2];
-}stBusTicketV;
-
 #define MAXList 3
 #define MAXLINE 2048
 #define _SOCKET_MAXNUM 4
 
-typedef struct{
+typedef struct {
+	unsigned char netwwwOk;	//网络已经接通
+	unsigned char PPPtimes;	//连续拔号次数
+
 	unsigned char gmissflag;				//任务标识，指示当前的通讯任务状态
 	unsigned char GPRSLinkProcess;			//网络通讯连接进程
 	unsigned char isNetOK[_SOCKET_MAXNUM];	//各链接是否连接成功
@@ -969,7 +1017,7 @@ typedef struct{
 }stGPRSinfo;
 
 
-typedef struct  
+typedef struct
 {
 	unsigned int colStyle;			//采集类型,0为按日期，1按流水号,,,当前只处理了日期采集
 	unsigned char startdate[4];		//类型为0时，下发下来的日期4 YYYYMMDD ;类型为1时为起始流水号，低位在前
@@ -978,7 +1026,7 @@ typedef struct
 	unsigned int filelen;			//获取文件后文件总大小，防止超过这个，
 	unsigned int offset;			//当前文件发送位置
 	unsigned int scrc32;
-	
+
 }stFAT_hisRec;		//历史记录文件 在fat文件系统里 20字节
 #define BIT_REORD_HIS_LEN (sizeof(stFAT_hisRec))
 
@@ -987,38 +1035,38 @@ typedef struct {
 	unsigned int c_serial;			//卡序列号。
 	CardCand_enum gMCardCand;		//卡类型
 
-	
-	unsigned char listSector;			
-	unsigned char publishSector;		
-	unsigned char publicMoneySector;	
+
+	unsigned char listSector;
+	unsigned char publishSector;
+	unsigned char publicMoneySector;
 	unsigned char publicMessageSector;
 	unsigned char dealRecordSector[3];	 //!@	
-	unsigned char oddMonthSector;		
-	unsigned char dodMonthSector;	
-	
-	unsigned char PublishKEYA[6];		
-	unsigned char PublichKEYA[6];		
-	unsigned char MonthKEYA[6];		
+	unsigned char oddMonthSector;
+	unsigned char dodMonthSector;
+
+	unsigned char PublishKEYA[6];
+	unsigned char PublichKEYA[6];
+	unsigned char MonthKEYA[6];
 	unsigned char MoneyKEYA[6];
 	unsigned char RecodeKEYA[6];
-	
-	unsigned char CityCode[2];			
-	unsigned char TradeCode[2];	
+
+	unsigned char CityCode[2];
+	unsigned char TradeCode[2];
 	unsigned char PublishBicker[10];
 	unsigned char PublishBickerH[4];
-	unsigned char CardCheckCode[4];			
+	unsigned char CardCheckCode[4];
 	unsigned char card_catalog;
 	unsigned char JTBcard_catalog;
 	unsigned char Zicard_catalog;
-	unsigned char MoneySectorType;	
-	
+	unsigned char MoneySectorType;
+
 	unsigned char nnAudioflag;	//声音提示标识
-	
+
 	unsigned char catalogPOST;//目录所在扇区，云平台中使用
-	
-	unsigned char PbocTac[4];	
+
+	unsigned char PbocTac[4];
 	unsigned char stuffNO[4];//发行区的发行日期，司机卡中用于员工编号
-	
+
 	unsigned char getdata_w;
 	unsigned char getdata_flag;
 	unsigned char WriteRecord_dis;
@@ -1053,7 +1101,7 @@ typedef union {
 
 //同一个连接重连时间延时30秒
 #define CONNECT_DLYTIME 30
-typedef struct{
+typedef struct {
 	char linkNo;
 	char APN[40];
 	char IPaddr[16];
@@ -1075,7 +1123,16 @@ typedef struct {
 }stNetRevList;
 
 
-typedef struct{
+//黑名单63域说明,银联的
+typedef struct
+{
+	unsigned char 	Organization_[8];		//
+									//	INT8U	up_time[8];		//
+	unsigned char 	card_no[10];
+
+}QPBOC_TYPE_63;
+
+typedef struct {
 	unsigned char citycode[2];
 	unsigned char hanye[2];
 	unsigned char startDateTime[7];//启用时间
@@ -1091,11 +1148,11 @@ typedef struct{
 	unsigned char ChangeType;	//换乘标识AA
 	unsigned char ChangeRate;	//换乘折扣
 	unsigned char ChangeTime;	//换乘时间 单位 分钟
-	
-	
+
+
 	unsigned char DeviceNo[9];		//设备号
-	
-	
+
+
 	unsigned char LineNo[3];
 	unsigned char stopflag;					//是否要暂停刷卡 POS
 	unsigned char ManagePassWord[3];//6位密码 3 字节 POS
@@ -1104,7 +1161,7 @@ typedef struct{
 	unsigned char UserKeyACrc32[4];//kEY CRC
 	unsigned char UserKeyB[16];//存密钥卡的密钥
 	unsigned char UserKeyBCrc32[4];//kEY CRC  -----100
-	
+
 	unsigned char BussinessNo[6];//商户编号2字节+CRC32 4字节 ＝6字节 
 	unsigned char ReseverAPN[17];//POS机中是APN
 	unsigned char catalogPOST;//目录区所在位置
@@ -1112,18 +1169,20 @@ typedef struct{
 	unsigned char wifi_KEK[20];		//WIFI KEY
 	unsigned char wifi_CrC32[4];	//WIFI KEY 和 WIFI SSID 的校验码 
 	unsigned char Reserver[18];//
-	
+
 	unsigned char SN[4];		//设备序列号
 
 	stServerInfo gServerInfo[_SOCKET_MAXNUM];
 
-	unsigned char Null[1024];		
-	
+	unsigned char Null[1024];
+
+	QPBOC_TYPE_63 TYPE_63;
+
 	unsigned char Crc32[4];
-	
+
 }stDeviceParatable;//新的票价
 
-typedef struct 
+typedef struct
 {
 	unsigned char stop_flag;			//停车状态	1(停)0(运行)
 	unsigned char PlusSta;				//是否收取附加费		
@@ -1134,31 +1193,31 @@ typedef struct
 	unsigned char verrrr;
 	unsigned char restore_flag;		//不为0，则需要刷新界面到主界面
 	unsigned char g24GDisFlash;		//用于延时刷新界面
-	
+
 	unsigned char DriverNO[4];		//司机号
 	unsigned char StufferNO[4];		//乘务员号
-	
+
 	unsigned short SumTi;			//当前消费次数	0
 	unsigned short SumMti;			//当前月票卡刷卡次数 2
 	unsigned int SumMoney;			//当前消费总额  4
-	
-	
+
+
 	unsigned short PackSerial;			//GPRS发送包的序列号
 	unsigned int MoneyDealPointer;		//设备流水号，钱包  
 	unsigned int MonthDealPointer;		//设备流水号，月票
 	unsigned int ControlDealPointer;	//设备流水号，控制
-	
-	
-	
+
+
+
 }fFlagVary_1;	//车辆状态标识
 
 #ifndef _ProtocolErrCode_
 #define _ProtocolErrCode_
 typedef enum {
 	PECUnkown = 0x1000,
-		PECParam,
-		PECFunction,
-		PECSucess = 0x9000
+	PECParam,
+	PECFunction,
+	PECSucess = 0x9000
 }ProtocolErrCode;
 #endif // !_ProtocolErrCode_
 
@@ -1182,6 +1241,28 @@ typedef enum {
 #define GET_INT16_B(buf) (((buf)[0]<<8)|((buf)[1]&0x0FF))	// 大端存储
 //#define GET_INT16(buf) (((buf)[1]<<8)|((buf)[0]&0x0FF))	// 小端存储
 
+
+#define voice_invalid		"/mnt/qrdata/wav/invalidcard.wav"		//非法卡
+#define voice_studentcard	"/mnt/qrdata/wav/studentcard.wav"		//学生卡
+#define voice_jianhangcard	"/mnt/qrdata/wav/jianhangcard.wav"	//建行卡
+#define voice_stuffcard		"/mnt/qrdata/wav/stuffcard.wav"		//员工卡
+#define voice_jiaotongcard	"/mnt/qrdata/wav/jiaotongcard.wav"	//交通卡
+#define voice_jinglaocard	"/mnt/qrdata/wav/jinglaocard.wav"		//敬老卡
+#define voice_liantongcard	"/mnt/qrdata/wav/liantongcard.wav"	//联通卡
+#define voice_youfucard		"/mnt/qrdata/wav/youfucard.wav"		//优扶卡
+#define voice_monthcard		"/mnt/qrdata/wav/monthcard.wav"		//月票卡
+#define voice_youhuicard	"/mnt/qrdata/wav/youhuicard.wav"		//优惠卡
+#define voice_normalcard	"/mnt/qrdata/wav/normalcard.wav"		//普通卡
+#define voice_zhuanxiancard "/mnt/qrdata/wav/zhuanxiancard.wav"	//专线卡
+#define voice_plsgeton		"/mnt/qrdata/wav/plsgeton.wav"		//请上车
+#define voice_drivercard	"/mnt/qrdata/wav/drivercard.wav"		//司机卡
+#define voice_showagain		"/mnt/qrdata/wav/showagain.wav"		//请重刷
+#define voice_shuamashangche "/mnt/qrdata/wav/shuamashangche.wav"	//刷码成功,请上车
+#define voice_WelCome		"/mnt/qrdata/wav/success.wav"			//欢迎乘车
+#define voice_chargemonty	"/mnt/qrdata/wav/chargemonty.wav"		//请充值
+#define voice_flingmoney	"/mnt/qrdata/wav/flingmoney.wav"		//请投币
+#define voice_refleshRQC	"/mnt/qrdata/wav/refleshRQC.wav"		//请刷新二维码*
+#define voice_invalidRQC	"/mnt/qrdata/wav/invalidRQC.wav"		//无效二维码*
 
 //文件相关定义
 #define WorkDir "/mnt/posdata"

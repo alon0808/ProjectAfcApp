@@ -24,8 +24,11 @@
 
 //同一张卡连刷延时秒数。
 #define NORM_DLY_TIME 0
-//卡不能连刷时间。
-//#define WAIT_TIME 5
+//卡不能连刷时间。300秒
+#define WAIT_TIME 300
+
+//蓝泰源的二维码有效期，单位：秒
+#define limitTime_LTYQRC 180
 
 //定义后是小额收费。用于邯郸食堂
 //	#define _HD_XIAOER_

@@ -768,7 +768,7 @@ unsigned char libWriteRecord_O( unsigned char *buffer)
 #ifdef _debug_
 		debugstring("-------------------\r\ncur:");
 		debugdata((unsigned char*)&temp, 4, 1);
-		debugstring("WriteRecord : \r\n");		
+		debugstring("WrilibWriteRecord_OteRecord : \r\n");		
 		debugdata(buffer,RECORDLEN,1);
 #endif
 		

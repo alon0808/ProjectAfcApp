@@ -11,7 +11,6 @@
 
 
 #include "gpsd.h"
-#include "DemoMain.h"
 
 #define GPS_LEN 1024
 

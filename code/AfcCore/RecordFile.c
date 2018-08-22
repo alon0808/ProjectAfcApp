@@ -40,30 +40,6 @@ typedef struct{
 stTTFile ghisfile;
 stTTFile recordFile_fd;
 
-unsigned char WriteRecord(unsigned char *buffer, unsigned char mode)
-{
-	unsigned char ret;
-	unsigned char charbuf[RECORD_LEN];
-	//	unsigned int temp;
-
-	MSG_LOG("write REC:");
-	BCD_LOG(buffer, RECORD_LEN, 1);
-
-	ret = FR_flashwrite(BIT_COMSUME_FILE, buffer, RECORD_LEN);
-
-#ifdef YYLinux4G
-	BCD2Ascii((unsigned char*)&SysTime, charbuf, 7);
-	buildDataSend_0B(1, 0, RECORD_LEN, RECORD_LEN, buffer, charbuf, charbuf);//把记录发送给Linux模块
-#endif
-
-#ifdef _FASH_FATs_SYS_
-																			 // 	clr_wdt();
-																			 // 	WriteRecordFAT(buffer, 0);//记录写入到FAT文件中
-																			 // 	clr_wdt();
-#endif
-	return ret;
-}
-
 //打开一个文件，如果不存在则新建。
 int file_open_creat(char *filename)
 {

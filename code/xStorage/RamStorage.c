@@ -41,6 +41,7 @@ pFistVary_1 pFistVary;
 unsigned char restore_flag = 0;
 unsigned char gMCardCand = 0;
 stPricetable NewPriceTab;
+int gOverTimes = 0;
 
 
 void COM_it_enable(unsigned char com) {
@@ -196,10 +197,6 @@ void tcpipClose(unsigned char mode) {
 
 unsigned int __cpuCrc32(unsigned char *val, unsigned int len) {
 	return 0;
-}
-
-void over_turn(unsigned char length, unsigned char *ptr) {
-
 }
 
 void ReStartCPU(void) {

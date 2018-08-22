@@ -147,6 +147,7 @@
     <ClInclude Include="..\..\code\AfcCore\Fatfiles.h" />
     <ClInclude Include="..\..\code\AfcCore\GPRSdatatype.h" />
     <ClInclude Include="..\..\code\AfcCore\GprsSocket.h" />
+    <ClInclude Include="..\..\code\AfcCore\gps.h" />
     <ClInclude Include="..\..\code\AfcCore\GPS\gpsd.h" />
     <ClInclude Include="..\..\code\AfcCore\ICCardLib.h" />
     <ClInclude Include="..\..\code\AfcCore\include\apparel.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="..\..\code\AfcCore\include\Debug_ .h" />
     <ClInclude Include="..\..\code\AfcCore\include\debug_.h" />
     <ClInclude Include="..\..\code\AfcCore\include\ev.h" />
+    <ClInclude Include="..\..\code\AfcCore\include\include.h" />
     <ClInclude Include="..\..\code\AfcCore\include\InitSystem.h" />
     <ClInclude Include="..\..\code\AfcCore\include\kfifo.h" />
     <ClInclude Include="..\..\code\AfcCore\include\libHandanCore.h" />
@@ -263,6 +265,8 @@
     <ClInclude Include="..\..\code\AfcCore\Other\Uart.h" />
     <ClInclude Include="..\..\code\AfcCore\Other\WatchDog.h" />
     <ClInclude Include="..\..\code\AfcCore\PSAMLib.h" />
+    <ClInclude Include="..\..\code\AfcCore\QRCodeMain.h" />
+    <ClInclude Include="..\..\code\AfcCore\QRScan.h" />
     <ClInclude Include="..\..\code\AfcCore\RecordFile.h" />
     <ClInclude Include="..\..\code\AfcCore\SL8583.h" />
     <ClInclude Include="..\..\code\AfcCore\SlDemo\DemoMain.h" />
@@ -302,6 +306,7 @@
     <ClCompile Include="..\..\code\AfcCore\debugInfor.c" />
     <ClCompile Include="..\..\code\AfcCore\EC20Lx_HTTPS.c" />
     <ClCompile Include="..\..\code\AfcCore\GprsSocket.c" />
+    <ClCompile Include="..\..\code\AfcCore\gps.c" />
     <ClCompile Include="..\..\code\AfcCore\GPS\gps_setttyS2.c" />
     <ClCompile Include="..\..\code\AfcCore\ICCardLib.c" />
     <ClCompile Include="..\..\code\AfcCore\inputmisc\GPIOCtrl.c" />
@@ -313,6 +318,7 @@
     <ClCompile Include="..\..\code\AfcCore\Other\Uart.cpp" />
     <ClCompile Include="..\..\code\AfcCore\Other\WatchDog.cpp" />
     <ClCompile Include="..\..\code\AfcCore\PSAMLib.c" />
+    <ClCompile Include="..\..\code\AfcCore\QRCodeMain.c" />
     <ClCompile Include="..\..\code\AfcCore\RecordFile.c" />
     <ClCompile Include="..\..\code\AfcCore\SL8583_4GLinux.c" />
     <ClCompile Include="..\..\code\AfcCore\SlDemo\DemoMain.c" />

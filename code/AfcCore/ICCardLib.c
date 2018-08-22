@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <sys/time.h>
 
+#include "qPBOC.h"
 #include "inputmisc/PsamCard.h"
 
 #include "inputmisc/GPIOCtrl.h"
@@ -143,6 +145,11 @@ int File_read(unsigned char mode)
 			memcpy(gDeviceParaTab.LineNo, "\x00\x01\x00", 3);
 			memcpy(gDeviceParaTab.BussinessNo, CLOUD_BUSSINESSNO, 2);
 			gDeviceParaTab.catalogPOST = 0;
+
+			memset((unsigned char*)&gDeviceParaTab.gServerInfo, 0, sizeof(gDeviceParaTab.gServerInfo));
+			strcpy(gDeviceParaTab.gServerInfo[0].APN, "CMNET");
+			strcpy(gDeviceParaTab.gServerInfo[0].IPaddr, "139.199.213.63");			////139.199.213.63:2020 测试。
+			gDeviceParaTab.gServerInfo[0].port = 2020;
 		}
 		else if (mode == _File_BuInfo_mode) {
 			gBuInfo.stop_flag = 1;
@@ -550,159 +557,64 @@ void restore_disp(void)
 			LED_Dis3((char*)buffer);
 #endif
 		}
+
+#ifdef _debug_
+		printf("设备号DeviceNo:%s\r\n", (char*)gDeviceParaTab.DeviceNo);
+#endif
+
+
 	}
 }
 
 void error(unsigned char code1, unsigned char Index)
 {
-	//   	unsigned char pos=0;
-	// 	char disp[40];
-	// 
-	// 	Index = Index;
-	// 	pos = pos;
+	char disp[40];
 
-	// 	memset(disp, 0, 32);
-	// 	switch(code1)
-	// 	{
-	// 	case ERR_NO_PSAM:
-	// 		cls();
-	// 		if(gchn_eng == 'E')
-	// 			display(0,0,"hint:",1);
-	// 		else
-	// 			display(0,0,"提示:",1);
-	// 		
-	// 		if(gchn_eng == 'E')
-	// 			memcpy(disp,(unsigned char *)"PSAM no exist!",13);
-	// 		else
-	// 			memcpy(disp,(unsigned char *)"PSAM卡不存在!",13);
-	// 		SoundMessage(code1);
-	// 		//DisplayString(1,2,disp,0,0);
-	// 		display(2,2,disp,0);
-	// 		restore_flag=1;
-	// 		for(;;);
-	// 	case ERR_INIT_PSAM:
-	// 		SoundMessage(code1);
-	// 		cls();
-	// 		if(gchn_eng == 'E'){
-	// 			display(0,0,"hint:",1);
-	// 			display(2,0,"PSAM init error!",0);
-	// 		}
-	// 		else{
-	// 			display(0,0,"提示:",1);   
-	// 			display(2,2,"初始化PSAM卡出错!",0);
-	// 		}
-	// 		for(;;);
-	// 	  //	break;
-	// 	case ERR_READ_TIME:
-	// 		cls();
-	// 		if(gchn_eng == 'E'){
-	// 			display(0,0,"hint:",1);
-	// 			display(2,0,"sys time error!", 0);
-	// 		}
-	// 		else{
-	// 			display(0,0,"提示:",1);
-	// 			display(2,0,"系统时间不正确!",0);
-	// 		}
-	// 		restore_flag=1;
-	// 		break;
-	// 	case ERR_CARD_STOP_WORK:
-	// 		cls();
-	// 		if(gchn_eng == 'E'){
-	// 			display(0,0,"hint:",1);
-	// 			display(2,0,"card was halted!", 0);
-	// 		}
-	// 		else{
-	// 			display(0,0,"提示:",1);
-	// 			memcpy(disp,"该卡已经被停用!",15);
-	// 		}
-	// 		//DisplayString(1,2,disp,0,0);
-	// 		display(2,2,disp,0);
-	// 		restore_flag=1;
-	// 		break;
-	// 	case ERR_CARD_NO_SYSTEM:
-	// 		cls();
-	// 		if(gchn_eng == 'E'){
-	// 			display(0,0,"hint:",1);
-	// 			display(2,0,"no system card!", 0);
-	// 		}
-	// 		else{
-	// 			display(0,0,"提示:",1);
-	// 			memcpy(disp,"该卡不是本系统所发的卡!",23);
-	// 		}
-	// 		//DisplayString(1,2,disp,0,0);
-	// 		display(2,2,disp,0);
-	// 		restore_flag=1;
-	// 		break;
-	// 	case ERR_CARD_WHITE_BUS:
-	// 		cls();
-	// 		display(0,0,"提示:",1);
-	// 		strcpy(disp,"该卡卡类50，是未出售卡!");
-	// 		display(2,2,disp,0);
-	// 		restore_flag=1;
-	// 		break;
-	// 	case ERR_CARD_NO_USE:
-	// 		cls();
-	// 		if(gchn_eng == 'E'){
-	// 			display(0,0,"hint:",1);
-	// 			display(2,0,"card was halted!", 0);
-	// 		}
-	// 		else{
-	// 			display(2,0,"该卡没有启用,",0);
-	// 			display(4,0,"请与发行商联系!",0);
-	// 		}
-	// 		restore_flag=1;
-	// 		break;
-	// 	case ERR_MONEY_SN:
-	// 		cls();
-	// 		if(gchn_eng == 'E'){
-	// 			display(0,0,"hint:",1);
-	// 			display(2,0,"Ticket amount error!", 0);
-	// 		}
-	// 		else{
-	// 			display(0,0,"提示:",1);
-	// 			display(2,1,"票卡金额非法,",0);
-	// 			display(4,1,"不能进行消费!",0);
-	// 		}
-	// 		restore_flag=1;
-	// 		break;
-	// 	case ERR_CHARGE_MEONY:
-	// 		cls();
-	// 		if(gchn_eng == 'E'){
-	// 			display(0,0,"hint:",1);
-	// 			display(2,0,"ticket balance is lack!", 0);
-	// 		}
-	// 		else{
-	// 			display(0,0,"提示:",1);
-	// 			memcpy(disp,"余额不足！   ",13);
-	// 		}
-	// 		//DisplayString(1,2,disp,0,0);
-	// 		display(2,2,disp,0);
-	// 		restore_flag=1;
-	// 		break;
-	// 	case ERR_CARD_PUBLIC:
-	// 		if(gchn_eng == 'E'){
-	// 			display(0,0,"hint:",1);
-	// 			display(2,0,"card error!", 0);
-	// 		}
-	// 		else{
-	// 			display(2,1,"公共扇区有问题,", 0);
-	// 			display(4,0,"请到充值点处恢复",0);
-	// 		}
-	// 		restore_flag=1;
-	// 		break;
-	// 	case ERR_MONTH_BAD:
-	// 		if(gchn_eng == 'E'){
-	// 			display(0,0,"hint:",1);
-	// 			display(2,0,"month ticket error!", 0);
-	// 		}
-	// 		else{
-	// 			display(2,2,"月票区的钱包格式出错!",0);
-	// 		}
-	// 		restore_flag=1;
-	// 		break;
-	// 	default:
-	// 		return;
-	// 	}
+	memset(disp, 0, 32);
+
+	switch (code1)
+	{
+	case ERR_NO_PSAM:
+		strcpy(disp, "PSAM卡不存在!");
+		break;
+	case ERR_INIT_PSAM:
+		strcpy(disp, "初始化PSAM卡出错!");
+		break;
+	case ERR_READ_TIME:
+		strcpy(disp, "系统时间不正确!");
+		break;
+	case ERR_CARD_STOP_WORK:
+		strcpy(disp, "该卡已经被停用!");
+		break;
+	case ERR_CARD_NO_SYSTEM:
+		strcpy(disp, "该卡不是本系统所发的卡!");
+		break;
+	case ERR_CARD_WHITE_BUS:
+		strcpy(disp, "该卡卡类50，是未出售卡!");
+		break;
+	case ERR_CARD_NO_USE:
+		strcpy(disp, "该卡未启用!");
+		break;
+	case ERR_MONEY_SN:
+		strcpy(disp, "票卡金额非法!");
+		break;
+	case ERR_CHARGE_MEONY:
+		strcpy(disp, "余额不足!");
+		break;
+	case ERR_CARD_PUBLIC:
+		strcpy(disp, "公共扇区有问题!");
+		break;
+	case ERR_MONTH_BAD:
+		strcpy(disp, "月票区的钱包格式出错!");
+		break;
+	default:
+		sprintf(disp, "代码:%d ", code1);
+		return;
+	}
+
+	if (strlen(disp) > 0) {
+		MessageBox(1, disp);
+	}
 	gBuInfo.restore_flag = 1;
 	end_card();
 }
@@ -827,8 +739,8 @@ void end_card(void)
 	//	unsigned char key;
 
 	//	debugstring("int-------------\r\n");
-// 	PcdRfReset(5);
-// 	delayxms(10);
+	// 	PcdRfReset(5);
+	// 	delayxms(10);
 	// 	debugstring("444");
 
 
@@ -841,7 +753,7 @@ void end_card(void)
 
 		usleep(10000);//delayxms(10);
 
-		//delayxms(5);
+					  //delayxms(5);
 		if (GetTypeAUID(buffer) != 0)
 		{
 			// 			debugstring("#");
@@ -866,7 +778,7 @@ void end_card(void)
 	// 	debugstring("end i:");
 	// 	debugdata((unsigned char *)&i,1,1);
 
-//	printf("[%s] END :%04X\r\n", __FUNCTION__, i);
+	//	printf("[%s] END :%04X\r\n", __FUNCTION__, i);
 	MifareHalt();
 	return;
 }
@@ -1138,15 +1050,15 @@ unsigned char CheckSno(unsigned char mode, unsigned char ID, unsigned char *ptr)
 		gErrorCard.error_pointer = temp;
 
 	//写错误描述到FE2PROM中
-// 	for(i=0;i<ERROR_DETAIL_SUM;i++)
-// 	{
-// 		memset(buffer,0,32);
-// 		memcpy(buffer,(unsigned char *)&gErrorCard.ErrorDetail[i],ERROR_DETAIL_LEN);
-// 		sysfewrite(BIT_ERROR_DETAIL+i*ERROR_DETAIL_LEN,ERROR_DETAIL_LEN,buffer);
-// 	}
-// 	memset(buffer,0,2);
-// 	buffer[0]=gErrorCard.error_pointer;
-// 	sysfewrite(BIT_ERROR_POINT,1,buffer);
+	// 	for(i=0;i<ERROR_DETAIL_SUM;i++)
+	// 	{
+	// 		memset(buffer,0,32);
+	// 		memcpy(buffer,(unsigned char *)&gErrorCard.ErrorDetail[i],ERROR_DETAIL_LEN);
+	// 		sysfewrite(BIT_ERROR_DETAIL+i*ERROR_DETAIL_LEN,ERROR_DETAIL_LEN,buffer);
+	// 	}
+	// 	memset(buffer,0,2);
+	// 	buffer[0]=gErrorCard.error_pointer;
+	// 	sysfewrite(BIT_ERROR_POINT,1,buffer);
 	return pos;
 }
 
@@ -1154,7 +1066,7 @@ void ErrorOper(unsigned char flag)
 {
 	unsigned char i = 0, ii = 0;
 	//	unsigned char buffer[32];
-		//clr_dog();
+	//clr_dog();
 	for (i = 0; i < gErrorCard.error_pointer; i++)
 	{
 		if (gErrorCard.ErrorDetail[i].effFlag != flag) continue;
@@ -1170,16 +1082,16 @@ void ErrorOper(unsigned char flag)
 		}
 	}
 	//写错误描述到FE2PROM中
-// 	for(i=0;i<ERROR_DETAIL_SUM;i++)
-// 	{
-// 		memset(buffer,0,32);
-// 		memcpy(buffer,(unsigned char *)&gErrorCard.ErrorDetail[i],ERROR_DETAIL_LEN);
-// 		sysfewrite(BIT_ERROR_DETAIL+i*ERROR_DETAIL_LEN,ERROR_DETAIL_LEN,buffer);
-// 	}
-// 	
-// 	memset(buffer,0,2);
-// 	buffer[0]=gErrorCard.error_pointer;
-// 	sysfewrite(BIT_ERROR_POINT,1,buffer);
+	// 	for(i=0;i<ERROR_DETAIL_SUM;i++)
+	// 	{
+	// 		memset(buffer,0,32);
+	// 		memcpy(buffer,(unsigned char *)&gErrorCard.ErrorDetail[i],ERROR_DETAIL_LEN);
+	// 		sysfewrite(BIT_ERROR_DETAIL+i*ERROR_DETAIL_LEN,ERROR_DETAIL_LEN,buffer);
+	// 	}
+	// 	
+	// 	memset(buffer,0,2);
+	// 	buffer[0]=gErrorCard.error_pointer;
+	// 	sysfewrite(BIT_ERROR_POINT,1,buffer);
 }
 
 
@@ -1260,9 +1172,9 @@ void save_h_month(void)
 
 	memcpy(MothDelayTime.LastList[MothDelayTime.endptr], (unsigned char *)&gCardinfo.c_serial, 4);
 
-	MothDelayTime.LastList[MothDelayTime.endptr][4] = SysTime.day;
-	MothDelayTime.LastList[MothDelayTime.endptr][5] = SysTime.hours;
-	MothDelayTime.LastList[MothDelayTime.endptr][6] = SysTime.minutes;
+	MothDelayTime.LastList[MothDelayTime.endptr][4] = SysTime.hours;
+	MothDelayTime.LastList[MothDelayTime.endptr][5] = SysTime.minutes;
+	MothDelayTime.LastList[MothDelayTime.endptr][6] = SysTime.seconds;
 
 	MothDelayTime.endptr++;
 
@@ -1277,41 +1189,49 @@ void save_h_month(void)
 	save_file_MothDelayTime();
 }
 
-unsigned char month_decide(void)
+int month_decide(void)
 {
 	unsigned char i = 0;
 	unsigned char buffer[3];
-	unsigned char temp = 0;
+	//	unsigned char temp=0;
 	int summin = 0;
 	int sT1, sT2;
-	unsigned char MWTime;
+	int MWTime;
 	//clr_dog();
 	//get_date(buffer);
-	temp = SysTime.day;
+	//	temp=SysTime.day;
 
 	//get_time(buffer);
 	memcpy(buffer, &SysTime.hours, 3);
-	buffer[2] = temp;
+
+	// 	return 1;
 
 	MWTime = WAIT_TIME;
+
+	// 	if (gCardinfo.gMCardCand == CARDQR_CODE)
+	// 	{
+	// 		MWTime = WAIT_TIME;
+	// 	}
 	if (MWTime == 0)
 		return 0;
 
-#ifdef _debug_ICcard_
-	debugstring("month_decide::c_serial:");
-	debugdata((unsigned char*)&gCardinfo.c_serial, 4, 1);
-#endif
 
-	sT1 = (((buffer[0] >> 4) * 10 + (buffer[0] & 0x0f)) * 60 + (buffer[1] >> 4) * 10 + (buffer[1] & 0x0f));
+	MSG_LOG("month_decide::c_serial:%08X\r\n", gCardinfo.c_serial);
+
+	//	sT1 = (((buffer[0]>>4)*10+(buffer[0]&0x0f))*60+(buffer[1]>>4)*10+(buffer[1]&0x0f));
+	sT1 = ((buffer[1] >> 4) * 10 + (buffer[1] & 0x0f)) * 60 + \
+		(buffer[2] >> 4) * 10 + (buffer[2] & 0x0f);
+
+	MSG_LOG("wait:%d,sT1:%d\r\n", MWTime, sT1);
+	buffer[2] = SysTime.hours;
 
 	if (MothDelayTime.endptr >= MothDelayTime.startptr)
 	{
 		for (i = MothDelayTime.startptr; i < MothDelayTime.endptr; i++)
 		{
-#ifdef _debug_ICcard_
-			debugstring("M111othDelayTime.LastList:");
-			debugdata(MothDelayTime.LastList[i], 7, 1);
-#endif
+			MSG_LOG("M111othDelayTime.LastList:");
+			BCD_LOG(MothDelayTime.LastList[i], 7, 1);
+
 			if (!memcmp(MothDelayTime.LastList[i], (unsigned char *)&gCardinfo.c_serial, 4))
 			{
 				if (buffer[2] != MothDelayTime.LastList[i][4])
@@ -1322,7 +1242,7 @@ unsigned char month_decide(void)
 						(MothDelayTime.LastList[i][6] >> 4) * 10 + (MothDelayTime.LastList[i][6] & 0x0f));
 					summin = sT1 - sT2;
 					if (summin < MWTime)
-						return 1;
+						return summin;
 				}
 			}
 		}
@@ -1331,10 +1251,9 @@ unsigned char month_decide(void)
 	{
 		for (i = MothDelayTime.startptr; i < 50; i++)
 		{
-#ifdef _debug_ICcard_
-			debugstring("M222othDelayTime.LastList:");
-			debugdata(MothDelayTime.LastList[i], 7, 1);
-#endif
+			MSG_LOG("M222othDelayTime.LastList:");
+			BCD_LOG(MothDelayTime.LastList[i], 7, 1);
+
 			if (!memcmp(MothDelayTime.LastList[i], (unsigned char *)&gCardinfo.c_serial, 4))
 			{
 				if (buffer[2] != MothDelayTime.LastList[i][4])
@@ -1345,17 +1264,16 @@ unsigned char month_decide(void)
 						(MothDelayTime.LastList[i][6] >> 4) * 10 + (MothDelayTime.LastList[i][6] & 0x0f));
 					summin = sT1 - sT2;
 					if (summin < MWTime)
-						return 1;
+						return summin;
 				}
 			}
 
 		}
 		for (i = 0; i < MothDelayTime.endptr; i++)
 		{
-#ifdef _debug_ICcard_
-			debugstring("M333othDelayTime.LastList:");
-			debugdata(MothDelayTime.LastList[i], 7, 1);
-#endif
+			MSG_LOG("M333othDelayTime.LastList:");
+			BCD_LOG(MothDelayTime.LastList[i], 7, 1);
+
 			if (!memcmp(MothDelayTime.LastList[i], (unsigned char *)&gCardinfo.c_serial, 4))
 			{
 				if (buffer[2] != MothDelayTime.LastList[i][4])
@@ -1366,7 +1284,7 @@ unsigned char month_decide(void)
 						(MothDelayTime.LastList[i][6] >> 4) * 10 + (MothDelayTime.LastList[i][6] & 0x0f));
 					summin = sT1 - sT2;
 					if (summin < MWTime)
-						return 1;
+						return summin;
 				}
 			}
 
@@ -1559,7 +1477,7 @@ unsigned char PsamInitialize(void)
 		return ST_ERROR;
 	}
 	if (Read_Binary(psamZJB.SLot, 0x17, 0, 25, buffer) == 0)		//读0x17文件25字节
-		//if(Read_Binary(SAM1, 0x19, 0, 25, buffer)==0) 
+																	//if(Read_Binary(SAM1, 0x19, 0, 25, buffer)==0) 
 	{
 		debugstring("GJ_Read_Binary17 error\r\n");
 		debugdata(buffer, 8, 1);
@@ -2508,8 +2426,11 @@ void BuildRecorde(unsigned char delType, unsigned char *recBuf)
 //检查设备参数是否正确。如设备是否正确，票价、线路编号及各卡的折扣率是否正确。
 unsigned char checkBusInfo(void)
 {
-	#warning "check BusInfo need code";
-	return 0;
+	if ((memcmp(gDeviceParaTab.DeviceNo, "\x00\x00\x00\x00\x00\x00\x00\x00", 8) == 0) ||
+		memcmp(gDeviceParaTab.LineNo, "\x00\x00", 2) == 0)
+		return ST_ERROR;
+	else
+		return ST_OK;
 
 }
 
@@ -3071,7 +2992,7 @@ void set_line(void)
 		buffer1[2] = 1;
 	sprintf((char*)buffer1 + 60, "%2d", buffer1[2]);
 	gDeviceParaTab.LineNo[2] = (((buffer1[60] - '0') & 0x0f) << 4) + ((buffer1[61] - '0') & 0x0f);//线路分号
-//	pFistVary.LineNo[2] = 0; 
+																								  //	pFistVary.LineNo[2] = 0; 
 
 	memset(gDeviceParaTab.busPrice, 0, 4);
 	memcpy(gDeviceParaTab.busPrice, buffer1 + 3, 2);//票价
@@ -3291,7 +3212,7 @@ void ControlMagane(void)
 
 		if (gBuInfo.stop_flag)
 		{	//发车
-//		debugstring("bb3");
+			//		debugstring("bb3");
 			SoundMessage(SOUND_DI_BUS);
 			memcpy(gBuInfo.DriverNO, gCardinfo.PublishBicker, 4);
 			save_file_BuInfo();
@@ -3303,7 +3224,7 @@ void ControlMagane(void)
 		}
 		else
 		{//到站
-//		debugstring("bb4");
+		 //		debugstring("bb4");
 			SoundMessage(SOUND_DI_BUS);
 			ControlDis(gCardinfo.card_catalog);
 			SwitchBusClose(1);
@@ -3364,7 +3285,7 @@ unsigned char FreeConsume(void)
 	mothFlag = gCardinfo.card_catalog;
 	if (mothFlag >= 0x40)
 		mothFlag -= 0x40;
-	if (month_decide()) // 第二次去扣钱包(次数不能连刷)
+	if (month_decide() != 0) // 第二次去扣钱包(次数不能连刷)
 	{
 		disp_no_swipe();
 		return ST_OK;
@@ -3938,11 +3859,11 @@ again:
 mey_step9:
 
 	//有可能扣成功了还会扣 重复扣 返回的不对  
-//	for(i=0;i<1;i++)
-//	{
-//		if(MifareTransfer(b1))
-//			break;
-//	}
+	//	for(i=0;i<1;i++)
+	//	{
+	//		if(MifareTransfer(b1))
+	//			break;
+	//	}
 	MifareTransfer(b1);
 	for (i = 0; i < 1; i++)//循环两次就够了
 	{
@@ -3982,16 +3903,16 @@ mey_step90:
 
 	//	for(i=0;i<1;i++)//不要循环，M1卡返回值不可靠会出现多扣
 	//	{
-		//	if(MifareTransfer(b2))
-		//		break;
+	//	if(MifareTransfer(b2))
+	//		break;
 	//	}
 	MifareTransfer(b2);
 	//错了就错了 不要管
-// 	if(i>1)
-// 	{
-// 		CheckSno(ERROR_MONEY,OPER_TRANSFER_NO,buffer);
-// 		return 4;
-// 	}
+	// 	if(i>1)
+	// 	{
+	// 		CheckSno(ERROR_MONEY,OPER_TRANSFER_NO,buffer);
+	// 		return 4;
+	// 	}
 
 #ifdef _debug_ICcard_
 	debugstring("Purse over!\r\n");
@@ -4025,7 +3946,7 @@ unsigned char MoneyResultManage(unsigned char mode)
 	if (gCardinfo.card_catalog >= 0x40)
 		mothFlag -= 0x40;
 
-	if (month_decide()) // (不能连刷)
+	if (month_decide() != 0) // (不能连刷)
 	{
 		disp_no_swipe();
 		return ST_OK;
@@ -4235,14 +4156,14 @@ unsigned char MonthManage(void)
 	return 100;
 #endif
 	/*	if((gCardinfo.card_catalog==CARD_OLDMAN_BUS)||(gCardinfo.card_catalog==CARD_STUFF_BUS))
-		{
-			a_sum2.longbuffer=0l;		//免费消费
-			s_sum2.longbuffer=0l;
+	{
+	a_sum2.longbuffer=0l;		//免费消费
+	s_sum2.longbuffer=0l;
 
-			CARD_RECORD.CardRecord.dealOldMoney=a_sum2.longbuffer;
-			memcpy(CARD_RECORD.CardRecord.dealMoney,s_sum2.charbuffer,3);
-			goto month_step10;
-		}
+	CARD_RECORD.CardRecord.dealOldMoney=a_sum2.longbuffer;
+	memcpy(CARD_RECORD.CardRecord.dealMoney,s_sum2.charbuffer,3);
+	goto month_step10;
+	}
 	*/
 
 	memcpy(date, &SysTime.year_l, 3);          //年月日
@@ -4267,9 +4188,6 @@ unsigned char MonthManage(void)
 	//读钱包信息块
 	if (MifareRead(gCardinfo.oddMonthSector * 4 + 1, buffer) == 0)
 	{
-#ifdef _DEBUG
-		error(ERR_MIFARE_READ, gCardinfo.publicMoneySector * 4 + 1);
-#endif
 		return ST_ERROR;
 	}
 	memcpy(buffer_29, buffer, 16);
@@ -4280,16 +4198,10 @@ unsigned char MonthManage(void)
 #endif
 	if (MiBlockInvalid(1, 15, buffer_29) == ST_ERROR)
 	{
-#ifdef _DEBUG
-		error(ERR_CARD_GESHI, gCardinfo.oddMonthSector * 4 + 1);
-#endif
 		return ST_ERROR;
 	}
 	if (MifareRead(gCardinfo.oddMonthSector * 4 + 2, buffer) == 0)
 	{
-#ifdef _DEBUG
-		error(ERR_MIFARE_READ, gCardinfo.oddMonthSector * 4 + 2);
-#endif
 		return ST_ERROR;
 	}
 	memcpy(buffer_30, buffer, 16);
@@ -4300,9 +4212,6 @@ unsigned char MonthManage(void)
 #endif
 	if (MiBlockInvalid(1, 15, buffer_30) == ST_ERROR)
 	{
-#ifdef _DEBUG
-		error(ERR_CARD_GESHI, gCardinfo.oddMonthSector * 4 + 2);
-#endif
 		return ST_ERROR;
 	}
 #ifdef _debug_ICcard_
@@ -4395,9 +4304,6 @@ ReadMoney:
 	//读钱包信息块
 	if (MifareRead(gCardinfo.dodMonthSector * 4 + 2, buffer) == 0)
 	{
-#ifdef _DEBUG
-		error(ERR_MIFARE_READ, gCardinfo.publicMoneySector * 4);
-#endif
 		return ST_ERROR;
 	}
 	memcpy(buffer_34, buffer, 16);
@@ -4407,9 +4313,6 @@ ReadMoney:
 #endif
 	if (MifareRead(gCardinfo.dodMonthSector * 4 + 1, buffer) == 0)
 	{
-#ifdef _DEBUG
-		error(ERR_MIFARE_READ, gCardinfo.dodMonthSector * 4 + 1);
-#endif
 		return ST_ERROR;
 	}
 	memcpy(buffer_33, buffer, 16);
@@ -4561,7 +4464,7 @@ MonthDebit:
 	// 	buffer_33[6]=s_sum2.charbuffer [2];
 	// 	buffer_33[7]=s_sum2.charbuffer [3];
 #ifdef _debug_ICcard_
-//	goto month_step10;
+	//	goto month_step10;
 
 	debugstring("扣次temp10:");
 	debugdata((unsigned char*)&dis_sum2, 4, 1);
@@ -4680,7 +4583,7 @@ unsigned char MonthResultManage(void)
 	//	unsigned int ii;
 	//	unsigned char pabuf[50];
 
-		//clr_dog();
+	//clr_dog();
 	memset(rRecord, 0, 128);
 #ifdef _debug_ICcard_
 	debugstring("MonthResultManage Programer!\r\n");
@@ -4689,7 +4592,7 @@ unsigned char MonthResultManage(void)
 	if (mothFlag >= 0x40)
 		mothFlag -= 0x40;
 
-	if (month_decide()) // 第二次去扣钱包(次数不能连刷)
+	if (month_decide() != 0) // 第二次去扣钱包(次数不能连刷)
 	{
 		for (i = 0; i < gErrorCard.error_pointer; i++)
 		{
@@ -4754,7 +4657,7 @@ kousum_continue:
 		// 				cardSound=0xaa;
 		// #endif
 		// //				SoundMessage(Audio_TRY_AGAIN);
-			// 				return ST_ERROR;
+		// 				return ST_ERROR;
 		// 			}
 		cardSound = 0;
 		if (gCardinfo.card_catalog == CARD_YOUFU_BUS)
@@ -4775,7 +4678,7 @@ kousum_continue:
 		money_msg(ID_REC_MON, dis_sum2, s_sum1, 0);
 		memset(old_Infor.old_Purcs_Time, 0, 16);
 		//if(gCardinfo.card_catalog != CARD_COUPON)
-//			debugstring("WARNING::: NO save_h_month!!!!");
+		//			debugstring("WARNING::: NO save_h_month!!!!");
 
 		if (gCardinfo.card_catalog == CARD_MOTH_CI)
 			save_normal();
@@ -4790,7 +4693,7 @@ kousum_continue:
 		return ST_OK;
 	}
 	case 120:
-		error(ERR_MONTH_BAD, 0);
+		MessageBox(1, "月票钱包错误");
 		return ST_OK;
 	case 121://扣次数错误
 		MessageBox(1, "次数票价错误!");
@@ -5003,7 +4906,7 @@ void main_card(void)
 		end_card();
 		break;
 	case CARD_MONEY:
-		if (checkBusInfo() > 10)
+		if (checkBusInfo() != ST_OK)
 		{
 			MessageBox(0, "设备信息错误");
 		}
@@ -5016,7 +4919,7 @@ void main_card(void)
 		gBuInfo.restore_flag = 1;
 		break;
 	case MONTH_CARD:
-		if (checkBusInfo() > 10)
+		if (checkBusInfo() != ST_OK)
 		{
 			MessageBox(0, "设备信息错误");
 		}

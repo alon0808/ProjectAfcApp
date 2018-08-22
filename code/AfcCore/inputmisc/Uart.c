@@ -297,7 +297,7 @@ SLZR_U32 UartSetParity(SLZR_U32 u32UartFd, SLZR_U32 u32DataBits, SLZR_U32 u32Sto
     if (u32Parity != 'n')
         options.c_iflag |= INPCK;
     tcflush (u32UartFd, TCIFLUSH);
-    options.c_cc[VTIME] = 50;
+    options.c_cc[VTIME] = 10;
     options.c_cc[VMIN] = 0;				/* Update the options and do it NOW */
 
     options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);

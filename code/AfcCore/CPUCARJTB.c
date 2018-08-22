@@ -32,7 +32,6 @@
 #include "ICCardLib.h"
 #include "CPUCard.h"
 #include "RecordFile.h"
-#include "szct.h"
 #include "RamStorage.h"
 
 #define _debug_JTB_
@@ -243,7 +242,7 @@ unsigned char Disp_historyJTB(unsigned char *data,unsigned int Index)
 	//memcpy((unsigned char*)&tembuf, historyCheck.rPublishNumb,8);
 	memset(tembuf,0,22);
 	BCD2Ascii(historyCheck.rPublishNumb,(unsigned char*)tembuf,10);
-	//over_turn(8,(unsigned char*)&tembuf);	
+	//RevertTurn(8,(unsigned char*)&tembuf);	
 //	sprintf((char*)buffer,"%16x",tembuf);
 	strcpy((char*)&buffer,tembuf);
 	miniDispstr(0,1,(char*)buffer,0);
@@ -398,7 +397,7 @@ unsigned char WriRecorJTB(unsigned char *rec,unsigned char mode)
 		
 		FR_flashwrite(temp, buffer, RECORD_JTB_LEN);
 #ifdef _debug_JTB_
-		debugstring("WriteRecord : \r\n");		
+		debugstring("WriRecorJTB : \r\n");		
 		debugdata(buffer,RECORD_JTB_LEN,1);
 #endif
 		
@@ -804,9 +803,9 @@ unsigned char CPUDealCard_JTB(unsigned char mode, unsigned char cool)
 // 			memcpy(sndbuf, "\x02\x80\x5A\x00\x06\x02", 6);//memcpy(sndbuf, "\x02\x80\x5A\x00\x05\x02", 6);
 // 				sndbuf[4]=stuSamInitPurchaseJTB.cType;
 // 			memcpy((unsigned char*)&ii, stuInitPurchaseRet.cSnq, 2);
-// 			over_turn(2, (unsigned char*)&ii);
+// 			RevertTurn(2, (unsigned char*)&ii);
 // 			ii += 1;
-// 			over_turn(2, (unsigned char*)&ii);
+// 			RevertTurn(2, (unsigned char*)&ii);
 // 			memcpy(sndbuf+6, (unsigned char*)&ii, 2);
 // 			sndbuf[9] = 8;
 // #ifdef _debug_CPU_

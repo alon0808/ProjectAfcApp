@@ -101,7 +101,8 @@ typedef struct
 #define SL8583FileFLAG_PRO	"PRO"	//程序文件按照《三联众瑞POS终端接入规范v2.00.docx》 修订通讯格式 
 #define SL8583FileFLAG_BLK "BLK"	//黑名单
 #define SL8583FileFLAG_GPS "GPS"	//定位限速信息
-#define SL8583FileFLAG_CSN "CSN"	//
+#define SL8583FileFLAG_CSN "CSN"	//带的序列号取信息
+#define SL8583FileFLAG_BUS "BUS"	//带设备号取信息和CSN文件内容一致。
 #define SL8583FileFLAG_PRI "PRI"	//票价信息版本,暂时没用
 #define SL8583FileFLAG_PKI "PKI"	//公钥信息
 #define SL8583FileFLAG_WHT	"WHT"	//白名单 包括公交白名单或者银联白名单

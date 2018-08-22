@@ -426,6 +426,7 @@ typedef struct
 	INT8U 	TVR[5];				//4 交易结果	19
 }QPBOC_RESULT_TYPE;
 
+
 typedef struct {
 	INT16U    T;
 	INT32U 	L;

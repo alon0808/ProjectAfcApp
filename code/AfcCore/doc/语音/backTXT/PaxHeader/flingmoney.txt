@@ -1,0 +1,3 @@
+48 path=P2new/doc/语音/backTXT/flingmoney.txt
+26 mtime=1531985321.07517
+27 atime=1534125107.481135

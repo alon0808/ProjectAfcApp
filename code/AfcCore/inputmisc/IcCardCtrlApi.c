@@ -15,6 +15,12 @@
 
 //#define _debug_IcApi_
 
+#define GPIO_PIN_HI		0	/*置 高电平*/
+#define GPIO_PIN_LOW	1	/*置 低电平*/
+
+#define GPIO_DIR_IN		1	/*拉进*/
+#define GPIO_DIR_OUT	2	/*推出*/
+
 
 #define IC_R485_UART "ttyS6"
 #define IC_CARD_UART "ttyS5"
@@ -69,16 +75,22 @@ SLZR_VOID CIcCardCtrlApi(void)
     m_u32UartQRCodeFd = 0;
 }
 
+#define CAMER_POWER 227   
+//PH3
 SLZR_U32 R485_Init(void)
 {
 	m_u485UartFd = 0;	
 
 	InitGPIOPin(235, 0/*GPIO_PIN_HI*/, 2/*GPIO_DIR_OUT*/);
 
+	//这个口软件要拉低
+	InitGPIOPin(CAMER_POWER, 1/*GPIO_PIN_LOW*/,2/*GPIO_DIR_OUT*/);
+
 	Uart_Init(&m_u485UartFd, (SLZR_U8*)IC_R485_UART, 19200);  
 
     return SLZR_SUCCESS;
 }
+
 
 SLZR_U32 Card_Init(void)
 {
@@ -97,6 +109,29 @@ SLZR_U32 Card_QRCodeInit(void)
     Uart_Init(&m_u32UartQRCodeFd, (SLZR_U8*)QR_CODE_UART, 9600); 
 		
     return SLZR_SUCCESS;
+}
+
+#define GPIO_3G2_RESET 81
+
+int GPRS_ping_Hi(void)
+{
+	int ret;
+	
+	ret = InitGPIOPin(GPIO_3G2_RESET, GPIO_PIN_HI,GPIO_DIR_OUT);
+
+//	ret = SetGPIOPin(GPIO_3G2_RESET, GPIO_PIN_HI,GPIO_DIR_OUT);
+
+	return ret;
+}
+
+int GPRS_ping_Lo(void)
+{
+	int ret;
+	
+	ret = InitGPIOPin(GPIO_3G2_RESET, GPIO_PIN_LOW,GPIO_DIR_OUT);
+//	ret = SetGPIOPin(GPIO_3G2_RESET, GPIO_PIN_LOW,GPIO_DIR_OUT);
+	
+	return ret;
 }
 
 /*******************************************************************************
@@ -801,7 +836,7 @@ SLZR_U32 UartRead_QRCodeData(SLZR_U8 *pRecvData, SLZR_U32 *u32SendLen)
 	
     if( (szRcvBuf[0] != 0x7B) || (szRcvBuf[1] != 0x7B) || (szRcvBuf[2] != 0x7B) )
     {
-        _ERR_("Uart Read Data Error!!");
+        printf("Uart Read Data Error!!");
        // return SLZR_FAILURE;
     }	
 	_DBG_("m_u32UartFd:%d\n", m_u32UartQRCodeFd);

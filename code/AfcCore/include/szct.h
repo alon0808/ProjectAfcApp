@@ -5,6 +5,7 @@
 #include "Main_City.h"
 #include "STProLib.h"
 #include "StructDef.h"
+#include "SlzrTypeDef.h"
 #include "BuCtrlFlag.H"
 
 //#define _debug_sys_info_
@@ -63,21 +64,21 @@
 //程序版本号
 #define BasksofVer 100
 #ifdef _debug_
-#define SOFT_VER_TIME_LOG 999
-#define SOFT_VER_TIME "2011.11.11 QUAN"	//
+	#define SOFT_VER_TIME_LOG 999
+	#define SOFT_VER_TIME "2011.11.11 QUAN"	//
 
 #elif defined _HD_XIAOER_OPEN
-#define SOFT_VER_TIME_LOG BasksofVer+102
-#define SOFT_VER_TIME "2016.9.12 ZCZ"	//
+	#define SOFT_VER_TIME_LOG BasksofVer+102
+	#define SOFT_VER_TIME "2016.9.12 ZCZ"	//
 #elif defined _HD_XIAOER_
 //小额消费版本
-#define SOFT_VER_TIME_LOG  BasksofVer+205
-#define SOFT_VER_TIME "2016..12 ZCZ"	//
+	#define SOFT_VER_TIME_LOG  BasksofVer+205
+	#define SOFT_VER_TIME "2016..12 ZCZ"	//
 
 #else
 //这里是程序版本
-#define SOFT_VER_TIME_LOG BasksofVer+58
-#define SOFT_VER_TIME "2017.02.09"	//
+	#define SOFT_VER_TIME_LOG BasksofVer+58
+	#define SOFT_VER_TIME "2017.02.09"	//
 
 #endif
 
@@ -88,7 +89,7 @@
 #define _backLight_on_ 0
 #define _watchdog_open
 
-/*
+
 #ifdef _New_Bu_mode_
 	#define PSAM_GJ SAM4
 	#define PSAM_YD SAM3
@@ -97,14 +98,36 @@
 	#define PSAM_YD SAM1
 #elif defined BUS_PINGXIANG_
 	#define PSAM_GJ SAM2
-	#define PSAM_YD SAM1
+	#define PSAM_YD SAM1 
 #else
 	#define PSAM_GJ SAM1
-	#define PSAM_YD SAM2
+	#define PSAM_YD SAM2 
 #endif
 	#define PSAM_JTB SAM3
-*/
+//刷卡的类型
+//通用M1卡
+#define CARDSTYLE_NORM1 1
+//CPU卡
+#define CARDSTYLE_CPU 2
+//2.4G CPU卡
+#define CARDSTYLE_24CPU 3
+//艺达M1卡
+#define CARDSTYLE_YIDAM1 4
+//2.4G移动卡
+#define CARDSTYLE_24Mobile 5
+//2.4G电信卡
+#define CARDSTYLE_24CT 6
+//中科讯联2.4G 联通
+#define CARDSTYLE_24ZKXL 7
+//厦门盛华2.4G 联通、电信
+#define CARDSTYLE_24XMSH 8
+//安龙老卡
+#define CARDSTYLE_ANLONG 9
 
+#define SEND_FILE_ERROR_ 10
+
+#define  CARDSTYLE_JTB  11
+#define	 QPBOC_JTB      12 //交通电子现金
 //#define LED_DISPLAYNUM 
 #define BLACKSUM 16000
 
@@ -334,6 +357,8 @@
 #define ERR_BUFFER_FULL			201
 #define ERR_CARD_RESTORE		202
 //------------文件标识定义-------------
+#define KEYA				0
+#define KEYB				1
 #define PSAM_HEAD_FLAG		0x3b
 #define MW_CITY_STD			0x86 	//明华PSAM卡标志	
 #define MW_EF15				0x15	//应用公共信息标识
@@ -369,17 +394,17 @@
 #define ADF2_DEAL_COUNT		0x0004
 
 #ifdef _debug_
-#define WAIT_TIME 1
+	#define WAIT_TIME 1
 #else
-#ifdef BUS_SYBAOSHI_
-#define WAIT_TIME 20
-#elif defined ZongKong_CPU_ //中控的CPU单独处理
-#define WAIT_TIME 2
-#elif defined _HD_XIAOER_ //邯郸小额消费等待时间2小时
-#define WAIT_TIME 20
-#else
-#define WAIT_TIME 5
-#endif
+	#ifdef BUS_SYBAOSHI_
+		#define WAIT_TIME 20
+	#elif defined ZongKong_CPU_ //中控的CPU单独处理
+		#define WAIT_TIME 2
+	#elif defined _HD_XIAOER_ //邯郸小额消费等待时间2小时
+		#define WAIT_TIME 20
+	#else
+		#define WAIT_TIME 5
+	#endif
 #endif
 
 ///////////////////////////////固定长度定义/////////////////////////////////

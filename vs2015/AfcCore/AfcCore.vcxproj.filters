@@ -480,6 +480,18 @@
     <ClInclude Include="..\..\code\xStorage\xStorage.h">
       <Filter>关注文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\include\include.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\gps.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\QRCodeMain.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\QRScan.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\code\AfcCore\CPUCard.c">
@@ -600,6 +612,12 @@
       <Filter>关注文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\debug\debugOut.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\gps.c">
+      <Filter>关注文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\QRCodeMain.c">
       <Filter>关注文件</Filter>
     </ClCompile>
   </ItemGroup>

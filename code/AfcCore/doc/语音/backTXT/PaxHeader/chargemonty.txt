@@ -1,0 +1,3 @@
+49 path=P2new/doc/语音/backTXT/chargemonty.txt
+27 mtime=1531985338.143747
+27 atime=1534125108.285135

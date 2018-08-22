@@ -1,0 +1,3 @@
+48 path=P2new/doc/语音/backTXT/drivercard.txt
+27 mtime=1531983149.996916
+27 atime=1534125107.901135

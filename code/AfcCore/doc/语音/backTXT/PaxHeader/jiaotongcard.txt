@@ -1,0 +1,3 @@
+50 path=P2new/doc/语音/backTXT/jiaotongcard.txt
+27 mtime=1531983213.314611
+27 atime=1534125108.137135

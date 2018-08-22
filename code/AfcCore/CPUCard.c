@@ -21,7 +21,7 @@
 #include "SlzrTypeDef.h"
 #include "PSAMLib.h"
 #include "MYDES.h"
-#include "szct.h"
+
 #include "ICCardLib.h"
 #include "RamStorage.h"
 
@@ -144,7 +144,7 @@ unsigned char CPU_month_deal(void)
 		mothFlag = gCardinfo.card_catalog - 0x40;
 	else
 		mothFlag = gCardinfo.card_catalog;
-	if(month_decide()) // 第二次去扣钱包(次数不能连刷)
+	if(month_decide() != 0) // 第二次去扣钱包(次数不能连刷)
 	{
 		disp_no_swipe();
 		return ST_OK;
@@ -713,7 +713,7 @@ unsigned char CPUDealCard(unsigned char mode, unsigned char cool)
 		return ST_ERROR;
 	}
 
-	if(month_decide()) // 第二次去扣钱包(次数不能连刷)
+	if(month_decide() != 0) // 第二次去扣钱包(次数不能连刷)
 	{
 		disp_no_swipe();
 		return ST_OK;	

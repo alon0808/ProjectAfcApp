@@ -32,6 +32,8 @@
 #include "Gszct.h"
 #include "TxnRecord.h"
 #include "SQD.h"
+#include "ICCardLib.h"
+#include "PSAMLib.h"
 
 
  //#define PBOC_loan  //交易开关借贷记
@@ -75,13 +77,14 @@ extern void dis_time_mini(unsigned char x, stcomtime *time);
 extern unsigned char CheckSno(unsigned char mode, unsigned char ID, unsigned char *ptr);
 extern void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsigned char cMOde);
 extern void SetTcpPacketTTLTime(unsigned char val);
-extern unsigned char WriteRecord(unsigned char *buffer, unsigned char mode);
+//extern unsigned char WriteRecord(unsigned char *buffer, unsigned char mode);
+extern unsigned char WriRecorQRC(unsigned char *rec);
 extern void SoundMessage(unsigned char cmd);
 extern unsigned char checkBusInfo(void);
 extern int SQDataFromSVT(unsigned char SQmode, int msecends);
 extern int QpbocOfflineAuten(void);
 extern char *ASC2BCD(char *strASC, int lenASC);
-extern unsigned char month_decide(void);
+//extern unsigned char month_decide(void);
 extern unsigned char gchn_eng;//中英文标志
 extern void disp_no_swipe(void);
 int getqPbocMoney(void);
@@ -3172,7 +3175,7 @@ void Pboc_delay_card(void)
 	} while (i < 3);
 	return;
 }
-extern unsigned char SYSgetbussinessNO(unsigned char *dat);
+//extern unsigned char SYSgetbussinessNO(unsigned char *dat);
 extern void addStatMoney(unsigned char mode, unsigned int moneyv,unsigned char type);
 extern void INT2BCD(unsigned int ii, unsigned char *bcdbuf, unsigned char bcdbuflen);
 unsigned char get_rcardMainNO(unsigned char *outdata)
@@ -3801,7 +3804,7 @@ unsigned char qPbocWriteRecord(unsigned char *rec)
 	MSG_LOG("write QBOC REC:");
 	BCD_LOG(buffer, qPbocRECORD_LEN, 1);
 
-	WriteRecord(buffer, 0);
+	WriRecorQRC(buffer);
 
 	return ST_OK;
 

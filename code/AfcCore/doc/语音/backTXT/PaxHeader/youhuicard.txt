@@ -1,0 +1,3 @@
+48 path=P2new/doc/语音/backTXT/youhuicard.txt
+25 mtime=1531983233.3919
+27 atime=1534125108.445135

@@ -175,6 +175,24 @@ int calFileCRC(unsigned int fileName,unsigned int fileLen)
 	return 0;
 }
 
+//保存下载信息文件
+int saveFileDownPara(void)
+{
+	char filename[128];
+	int fd, ret=-1;
+	
+	strcpy(filename, WorkDir);
+	strcat(filename, _File_FileDownPara);
+	
+	fd = file_open_creat(filename);
+	if(fd >= 0){
+		ret = write(fd, (unsigned char *)&gsl8583FileDownPara, sizeof(st8583filedown));
+	}
+	close(fd);
+	
+	return ret;
+}
+
 
 //清除相应的文件列表参数，下载完后清除，如版本更新了也可以不清楚
 void clrgsl8583filelist(unsigned char *fileflag)
@@ -370,7 +388,7 @@ unsigned int Build8583_44(unsigned char *dat)
 unsigned int Build8583_45(unsigned char *dat)
 {
 	unsigned int pos;
-//	unsigned char buff_cs[4];
+	unsigned char buff_cs[4];
 	pos = 2;//前2个字节是BCD码的LLL
 	
 	memcpy(dat+pos, SL8583FileFLAG_PRO, 3);	pos += 3;//程序文件类型
@@ -405,14 +423,20 @@ unsigned int Build8583_45(unsigned char *dat)
 	RevertTurn(2, dat+pos);
 	pos += 2;
 	
-// 	memcpy(dat+pos , SL8583FileFLAG_CSN, 3); pos += 3;
-// 	memset(dat+pos,0,8); 
-// 	Get_SerialNumF4(buff_cs);
-// 	BCD2Ascii(buff_cs,dat+pos,4);pos += 8;
-// 	memcpy(dat+pos, gBusVerInfo.CSN_BUSVer, 2);//
-// 	over_turn(2, dat+pos);
-// 	pos += 2;
+	memcpy(dat+pos , SL8583FileFLAG_CSN, 3); pos += 3;
+	memset(dat+pos,0,8); 
+	Get_SerialNumF4(buff_cs);
+	BCD2Ascii(buff_cs,dat+pos,4);pos += 8;
+	memcpy(dat+pos, gBusVerInfo.CSN_BUSVer, 2);//
+	RevertTurn(2, dat+pos);
+	pos += 2;
 
+	memcpy(dat+pos , SL8583FileFLAG_BUS, 3); pos += 3;
+	memset(dat+pos,0,8); 
+	memcpy(dat+pos, gDeviceParaTab.DeviceNo, 8); pos += 8;
+	memcpy(dat+pos, gBusVerInfo.CSN_BUSVer, 2);//
+	RevertTurn(2, dat+pos);
+	pos += 2;
 	
 #ifdef QRC_TX
 	memcpy(dat+pos,SL8583FileFLAG_TPK, 3); pos += 3;
@@ -424,17 +448,17 @@ unsigned int Build8583_45(unsigned char *dat)
 	
 
 
-// 	memcpy(dat+pos , SL8583FileFLAG_PRI, 3); pos += 3;
-// 	memset(dat+pos,0,8);
-// 	BCD2Ascii(gDeviceParaTab.LineNo,dat+pos,2); pos += 8;
-// 	memcpy(dat+pos, gBusVerInfo.busticketVer, 2);//票价信息版本2B
-// 	over_turn(2, dat+pos);
-// 	pos += 2;
+	memcpy(dat+pos , SL8583FileFLAG_PRI, 3); pos += 3;
+	memset(dat+pos,0,8);
+	BCD2Ascii(gDeviceParaTab.LineNo,dat+pos,2); pos += 8;
+	memcpy(dat+pos, gBusVerInfo.busticketVer, 2);//票价信息版本2B
+	RevertTurn(2, dat+pos);
+	pos += 2;
 	
 // 	memcpy(dat+pos , SL8583FileFLAG_PKI, 3); pos += 3;
 // 	memset(dat+pos,0,8); pos += 8;
 // 	memcpy(dat+pos, gBusVerInfo.busVoiceVer, 2);//公钥信息版本2B
-// 	over_turn(2, dat+pos);
+// 	RevertTurn(2, dat+pos);
 // 	pos += 2;
 	
 
@@ -959,6 +983,11 @@ int build8583DownFile6003(unsigned char *oDat)
 	
 	if(checkgsl8583FileDownPara(0) != 0){//下载结构没有初始化好，不能生成报文。
 		MSG_LOG("6003 CRCERROR!!\r\n");
+		
+		clrgsl8583filelist(gsl8583FileDownPara.Miss_Fileflag);
+		memset((unsigned char*)&gsl8583FileDownPara, 0, sizeof(st8583filedown));
+		saveFileDownPara();
+
 		return 0;
 	}
 
@@ -1066,16 +1095,7 @@ int build8583UPREC7001(unsigned char *oDat)
 		addr = hismsg.offset;
 		sendlen = 0;
 
-		if(memcmp(recbuf, "银行数据", 8) == 0){//
-			t = 2;
-			addr += RECORD_JTB_LEN;
-			sendlen += RECORD_JTB_LEN;
-			iret = GetFileDatac(hismsg.sfilename, addr, 30, recbuf+sendlen);
-			
-			sendlen += 30;
-			
-		}
-		else if(memcmp(disbuf, "二维码", 6) == 0){// 二维码数据，上传256字节 
+		if((memcmp(recbuf, "二维码", 6) == 0) || (memcmp(recbuf, "银行数据", 8) == 0)){// 二维码数据，上传256字节 
 			t = 2;
 			addr += RECORD_JTB_LEN;
 			sendlen += RECORD_JTB_LEN;
@@ -1097,19 +1117,12 @@ int build8583UPREC7001(unsigned char *oDat)
 		sendlen = 0;
 		addr = headp;
 		//	for(i=0; i<cnum; i++){//只发送一条
-		FR_flashwrite(addr, recbuf, RECORD_JTB_LEN);
-		if(memcmp(recbuf, "银行数据", 8) == 0){//
-			t = 2;
-			addr += RECORD_JTB_LEN;
-			if(addr >= RECORD_SPACE_LENGH){
-				addr = 0;
-			}
-			sendlen += RECORD_JTB_LEN;
-			FR_flashwrite(addr, recbuf+sendlen,30);//128+22=150         需要上传150字节
-			sendlen += 30;
-			
-		}
-		else if(memcmp(recbuf, "二维码", 6) == 0){// 二维码数据，上传256字节 
+		FR_flashread(addr, recbuf, RECORD_JTB_LEN);
+		
+		MSG_LOG("[%s] addr=%08X:", __FUNCTION__, addr);
+		BCD_LOG(recbuf, RECORD_JTB_LEN, 1);
+
+		if((memcmp(recbuf, "二维码", 6) == 0) || (memcmp(recbuf, "银行数据", 8) == 0)){// 二维码数据，上传256字节 
 			t = 2;
 			addr += RECORD_JTB_LEN;
 			if(addr >= RECORD_SPACE_LENGH){
@@ -1125,7 +1138,8 @@ int build8583UPREC7001(unsigned char *oDat)
 			sendlen = RECORD_JTB_LEN;
 		}
 	}
-
+	
+	MSG_LOG("[%s] t=%02d\r\n", __FUNCTION__, t);
 
 	
 	if(sendlen == 0){//没有记录
@@ -1381,24 +1395,6 @@ int sl8583ECHO6002(void)
 	return 0;
 }
 
-//保存下载信息文件
-int saveFileDownPara(void)
-{
-	char filename[128];
-	int fd, ret=-1;
-
-	strcpy(filename, WorkDir);
-	strcat(filename, _File_FileDownPara);
-
-	fd = file_open_creat(filename);
-	if(fd >= 0){
-		ret = write(fd, (unsigned char *)&gsl8583FileDownPara, sizeof(st8583filedown));
-	}
-	close(fd);
-
-	return ret;
-}
-
 //新平台票价处理
 unsigned char checkNewPrice_new(void)
 {
@@ -1633,7 +1629,7 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 
 
 
-// 	over_turn(2, dfileinfo+3);
+// 	RevertTurn(2, dfileinfo+3);
 	if((memcmp(gsl8583FileDownPara.Miss_Fileflag, dfileinfo, 3) != 0)||
 		(memcmp(gsl8583FileDownPara.Miss_ver, dfileinfo+11, 2) != 0)){//版本和文件类型要一致
 		MSG_LOG("%02X%02X\r\n",gsl8583FileDownPara.Miss_ver[0],gsl8583FileDownPara.Miss_ver[1]);
@@ -1666,9 +1662,9 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 		strcat(filename, _File_TempFile);
 		gsl8583FileDownPara.tmpfilehand = file_open_creat(filename);
 		if(gsl8583FileDownPara.tmpfilehand <= 0){
+			clrgsl8583filelist(gsl8583FileDownPara.Miss_Fileflag);
 			memset((unsigned char*)&gsl8583FileDownPara, 0, sizeof(st8583filedown));
 			saveFileDownPara();
-			clrgsl8583filelist(gsl8583FileDownPara.Miss_Fileflag);
 			return 2;
 		}
 
@@ -1680,24 +1676,35 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 	itemp = gsl8583FileDownPara.Miss_ALL_LEn;
 	sprintf((char*)buftemp, "B:%d%% ",  (((Tack+datlen)*100)/itemp));
 	miniDispstr(14, 0, (char*)buftemp, 0);
-	printf("*************************%s**************************\r\n",buftemp);
+	printf("*************************%s**%d************************\r\n",buftemp, gsl8583FileDownPara.tmpfilehand);
 
 //******************************************************************************
+	if(gsl8583FileDownPara.tmpfilehand <= 0){
+		MSG_LOG("[%s] open<%s>\r\n", __FUNCTION__, filename);
+		strcpy(filename, WorkDir);
+		strcat(filename, _File_TempFile);
+		gsl8583FileDownPara.tmpfilehand = file_open_creat(filename);
+	}
 	ret = lseek(gsl8583FileDownPara.tmpfilehand, 0, SEEK_END);
 	ret = write(gsl8583FileDownPara.tmpfilehand, dfiledata, datlen);
-	if(ret < 0){
+	if(ret <= 0){
 		MSG_LOG("写入出错\r\n");
 		beep(1,100,100);
+		clrgsl8583filelist(gsl8583FileDownPara.Miss_Fileflag);	//不再下载此任务
 		memset((unsigned char*)&gsl8583FileDownPara, 0, sizeof(st8583filedown));
 	}
 //******************************************************************************			
 	if(gsl8583FileDownPara.Miss_offset >= gsl8583FileDownPara.Miss_ALL_LEn){//下载完成
 
 #ifdef _debug_SL8583
-		debugstring("完工更改文件名---\r\n");
+		printf("完工更改文件名-%d-%d-\r\n", gsl8583FileDownPara.Miss_offset, gsl8583FileDownPara.Miss_ALL_LEn);
 #endif
 		filename2[0] = 0;
 		close(gsl8583FileDownPara.tmpfilehand);	//关闭临时文件
+		
+		strcpy(filename, WorkDir);
+		strcat(filename, _File_TempFile);
+
 		if(memcmp(gsl8583FileDownPara.Miss_Fileflag, SL8583FileFLAG_BLK, 3) == 0){//是黑名单
 			MSG_LOG("黑名单下载完\r\n");
 			memcpy(gBusVerInfo.busBLKVer, gsl8583FileDownPara.Miss_ver, 2);					//新黑名单版本号替现在的。
@@ -1733,7 +1740,7 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 				strcat(filename2, _File_WiteListJTB);
 			}
 		}
-		else if(memcmp(gsl8583FileDownPara.Miss_Fileflag, SL8583FileFLAG_CSN, 3) == 0){//参数信息版本
+		else if((memcmp(gsl8583FileDownPara.Miss_Fileflag, SL8583FileFLAG_CSN, 3) == 0)||(memcmp(gsl8583FileDownPara.Miss_Fileflag, SL8583FileFLAG_BUS, 3) == 0)){//参数信息版本
 			MSG_LOG("参数文件下载完\r\n");
 			memcpy(gBusVerInfo.CSN_BUSVer, gsl8583FileDownPara.Miss_ver, 2);				
 			gBusVerInfo.WHTJTBListNum = (gsl8583FileDownPara.Miss_ALL_LEn/BLK_SNO_LEN)-1;	
@@ -1751,11 +1758,24 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 
 			checkNewPrice_new();
 		}
-
+		
+#ifdef _debug_SL8583
+		debugstring("文件下载完成:");
+		printf("filename2:%s\r\n", filename2);
+		printf("filename:%s\r\n", filename);
+#endif
 
 		if(strlen(filename2) > 0){
-			remove(filename2);
-			rename(filename, filename2);	//把临时文件改成目标文件名
+			ret = remove(filename2);
+#ifdef _debug_SL8583
+			printf("[%s]remove file ret:%d\r\n", __FUNCTION__, ret);
+			perror("remove");
+#endif
+			ret = rename(filename, filename2);	//把临时文件改成目标文件名
+#ifdef _debug_SL8583
+			printf("[%s]rename file ret:%d\r\n", __FUNCTION__, ret);
+			perror("rename");
+#endif
 		}		
 
 		gGprsinfo.ISOK = 0;	//重新签到
@@ -2000,6 +2020,8 @@ unsigned char GJDataDeal(unsigned char *pakege)
 
 	MSG_LOG("dealType:%02X\r\n",sl8583head->posStatedealType&0x0F);
 
+	gOverTimes = 0;
+
 	if((sl8583head->posStatedealType&0x0F) == 0x03){//处理要求，需要重新签到
 		gGprsinfo.ISOK = 0;			//此命令不再处理。退出重新签到
 		
@@ -2074,7 +2096,7 @@ unsigned char GJDataDeal(unsigned char *pakege)
 			lc = 0;
 			lc = (((msgpoint[0]>>4) * 10)+(msgpoint[0]&0x0f));
 //			memcpy((unsigned char *)&lc, pakege+index, 2);//
-//			over_turn(2, (unsigned char*)&lc);
+//			RevertTurn(2, (unsigned char*)&lc);
 			msgpoint++;
 		}
 		else/*三位变长*/
@@ -2244,6 +2266,7 @@ unsigned char GJDataDeal(unsigned char *pakege)
 		
 		if(gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
 			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
+		MSG_LOG("[%s], GPRSLinkProcess:%d\r\n", __FUNCTION__, gGprsinfo.GPRSLinkProcess);
 		break;
 	case 0x6002://终端签退回应	
 		if(msgCmd != 0x0810){//消息类型不对

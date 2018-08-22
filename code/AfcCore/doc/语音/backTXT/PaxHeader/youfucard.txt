@@ -1,0 +1,3 @@
+47 path=P2new/doc/语音/backTXT/youfucard.txt
+27 mtime=1531983135.859929
+27 atime=1534125107.957135

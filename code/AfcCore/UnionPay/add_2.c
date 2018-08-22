@@ -336,7 +336,7 @@ unsigned char libWriteRecord_add( unsigned char *buffer)
 #ifdef _debug_
 		debugstring("-------------------\r\ncur:");
 		debugdata((unsigned char*)&temp, 4, 1);
-		debugstring("WriteRecord : \r\n");		
+		debugstring("libWriteRecord_add : \r\n");		
 		debugdata(buffer,RECORDLEN,1);
 #endif
 		

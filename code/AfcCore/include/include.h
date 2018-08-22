@@ -623,7 +623,7 @@ extern unsigned char MifareTransfer(unsigned char cBlockNo);
 //
 extern unsigned char MifareValue(unsigned char cSubCommand, unsigned char cBlockNo, unsigned char *pValue);
 
-extern unsigned char MifareHalt(void);
+//extern unsigned char MifareHalt(void);
 
 extern unsigned char RC531Close( void );
 extern unsigned int RfPassthrough( unsigned char *dst, unsigned int iMaxlen, unsigned char *src, unsigned int sendlen);

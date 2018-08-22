@@ -38,14 +38,14 @@ INCFLAGS = -I./ -I./include -I./SlDemo
 	
 
 
-SRC_INPUT_MISC = inputmisc/Uart.c  inputmisc/PsamCard.c  inputmisc/GPIOCtrl.c  inputmisc/IcCardCtrlApi.c  SlDemo/GPRS.c  SlDemo/LightColor.c  SlDemo/DemoMain.c  SlDemo/ProcCharacter.c 
+SRC_INPUT_MISC = inputmisc/Uart.c  inputmisc/PsamCard.c  inputmisc/GPIOCtrl.c  inputmisc/IcCardCtrlApi.c  SlDemo/GPRS.c  SlDemo/LightColor.c  SlDemo/ProcCharacter.c 
 #SRC_INPUT_MISC =   inputmisc/PsamCard.cpp inputmisc/IcCardCtrlApi.cpp	
 
 
 			
 
 SOURCE = $(SRC_INPUT_MISC)\
-		ICCardLib.c PSAMLib.c CPUCard.c CPUCARJTB.c MYDES.c main.c libsm2.a RecordFile.c SL8583_4GLinux.c GprsSocket.c
+		ICCardLib.c PSAMLib.c CPUCard.c CPUCARJTB.c MYDES.c main.c libsm2.a libQrcode.so RecordFile.c SL8583_4GLinux.c GprsSocket.c QRCodeMain.c gps.c
 
 OBJECT = $(SOURCE:.c=.o) 
 DEPEND = $(SOURCE:.c=.d)

@@ -130,7 +130,6 @@ extern stcomtime SysTime;
 extern pFistVary_1 pFistVary;
 extern stBusVerIfo gBusVerInfo;
 extern unsigned char GprsCardList[16];
-extern stBusTicketV gBusTicketV;
 //extern unsigned char gGprsinfo.GPRSLinkProcess;
 extern unsigned int gSendGLogin;//登陆命令
 extern unsigned short gErrorFlag;//错误标识,高字节表示错误编号，低字节表示错次数据 详见"*错误编码标识定义"

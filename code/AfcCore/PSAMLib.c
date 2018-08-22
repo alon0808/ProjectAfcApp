@@ -51,7 +51,6 @@ volatile unsigned int beep_delay=0;
 void *onemsSecondDly(void *arg)
 {	
 	unsigned int t;
-	unsigned char beepflag;
 	
 	while(1){
 		usleep(1000);	//延时1ms
@@ -386,7 +385,7 @@ unsigned char KeyMange(unsigned char kkvv)
 			memcpy(gDeviceParaTab.busPrice, (unsigned char*)&KeyVa, 4);
 //			sysfewrite(BIT_KeyPrice, 4, gDeviceParaTab.busPrice);	////2014.7.17
 //			saveDeviceParaTab(1, gDeviceParaTab.busPrice);	//不保存
-			beep(1,500,25);
+			beep(1,50,25);
 			KeyDis(KeyVa,Keybuffer);
 			LedDisplay(Keybuffer);
 			memset(Keybuffer,0x20,5);
@@ -458,25 +457,24 @@ void keyBoardStart(void)
 #define Audio_TRY_AGAIN		1		//请重刷 
 #define Audio_FLING_MONEY	8		//请投币
 
-#define voice_invalid		"aplay /mnt/qrdata/wav/invalidcard.wav"		//非法卡
-#define voice_studentcard	"aplay /mnt/qrdata/wav/studentcard.wav"		//学生卡
-#define voice_jianhangcard	"aplay /mnt/qrdata/wav/jianhangcard.wav"	//建行卡
-#define voice_stuffcard		"aplay /mnt/qrdata/wav/stuffcard.wav"		//员工卡
-#define voice_jiaotongcard	"aplay /mnt/qrdata/wav/jiaotongcard.wav"	//交通卡
-#define voice_jinglaocard	"aplay /mnt/qrdata/wav/jinglaocard.wav"		//敬老卡
-#define voice_liantongcard	"aplay /mnt/qrdata/wav/liantongcard.wav"	//联通卡
-#define voice_youfucard		"aplay /mnt/qrdata/wav/youfucard.wav"		//优扶卡
-#define voice_monthcard		"aplay /mnt/qrdata/wav/monthcard.wav"		//月票卡
-#define voice_youhuicard	"aplay /mnt/qrdata/wav/youhuicard.wav"		//优惠卡
-#define voice_normalcard	"aplay /mnt/qrdata/wav/normalcard.wav"		//普通卡
-#define voice_zhuanxiancard "aplay /mnt/qrdata/wav/zhuanxiancard.wav"	//专线卡
-#define voice_plsgeton		"aplay /mnt/qrdata/wav/plsgeton.wav"		//请上车
-#define voice_drivercard	"aplay /mnt/qrdata/wav/drivercard.wav"		//司机卡
-#define voice_showagain		"aplay /mnt/qrdata/wav/showagain.wav"		//请重刷
-#define voice_shuamashangche "aplay /mnt/qrdata/wav/shuamashangche.wav"	//刷码成功,请上车
-#define voice_WelCome		"aplay /mnt/qrdata/wav/success.wav"			//欢迎乘车
-#define voice_chargemonty	"aplay /mnt/qrdata/wav/chargemonty.wav"		//请充值
-#define voice_flingmoney	"aplay /mnt/qrdata/wav/flingmoney.wav"		//请投币
+void soundPlay(char * filename)
+{
+	char wavfile[128];
+	int ret, i;
+	
+	i = strlen(filename);
+	if((i <= 0) || (i > 120))
+		return;
+
+	strcpy(wavfile, "aplay ");
+	strcat(wavfile, filename);
+
+	printf("[%s], i=%d:%s\r\n", __FUNCTION__, i, wavfile);
+	
+	ret = system(wavfile);
+	printf("[%s], %s,ret=%d\r\n", __FUNCTION__, wavfile, ret);
+	usleep(10000);
+}
 
 //语音提示
 void audio(unsigned char flag)
@@ -484,36 +482,37 @@ void audio(unsigned char flag)
 	char wavfile[128];
 	int ret, i;
 
+	strcpy(wavfile, "aplay ");
 	switch(flag){
 	case Audio_INVALID:
-		strcpy(wavfile, voice_invalid);
+		strcat(wavfile, voice_invalid);
 		break;
 	case Audio_DONG:
-		strcpy(wavfile, voice_WelCome);
+		strcat(wavfile, voice_WelCome);
 		break;
 	case Audio_STUDENT:
-		strcpy(wavfile, voice_studentcard);
+		strcat(wavfile, voice_studentcard);
 		break;
 	case Audio_BIRTHDAY:
-		strcpy(wavfile, voice_jinglaocard);
+		strcat(wavfile, voice_jinglaocard);
 		break;
 	case Audio_STUFF:
-		strcpy(wavfile, voice_stuffcard);
+		strcat(wavfile, voice_stuffcard);
 		break;
 	case Audio_MONTH:
-		strcpy(wavfile, voice_monthcard);
+		strcat(wavfile, voice_monthcard);
 		break;
 	case Audio_zuanxian:		//邯钢专线卡  //增加专线卡 2014.4.8
-		strcpy(wavfile, voice_zhuanxiancard);
+		strcat(wavfile, voice_zhuanxiancard);
 		break;
 	case Audio_FLING_MONEY:
-		strcpy(wavfile, voice_flingmoney);
+		strcat(wavfile, voice_flingmoney);
 		break;
 	case Audio_PLUS_MONEY:
-		strcpy(wavfile, voice_chargemonty);
+		strcat(wavfile, voice_chargemonty);
 		break;
 	case Audio_TRY_AGAIN:
-		strcpy(wavfile, voice_showagain);
+		strcat(wavfile, voice_showagain);
 		break;
 	default:
 		wavfile[0] = 0;

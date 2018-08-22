@@ -1,0 +1,3 @@
+49 path=P2new/doc/语音/backTXT/invalidcard.txt
+27 mtime=1531982942.489497
+27 atime=1534125107.609135

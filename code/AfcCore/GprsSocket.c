@@ -235,6 +235,7 @@ int SocketLink(void)
 #endif
 				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 				gGprsinfo.isNetOK[i] = TRUE;
+				gGprsinfo.netwwwOk = TRUE;
 			}
 		}
 		else {
@@ -308,15 +309,18 @@ int SendDataTOserver(void)	//发送相关的数据到服务器
 #ifdef _debug_
 					MSG_LOG("Net-send id%d mes error: %s errno : %d\r\n", i, strerror(errno), errno);	//发送错误 
 #endif
+
 //					close(g_socketfd[i]);
 //					gGprsinfo.isNetOK[i] = FALSE;
+
+					usleep(10000);
 				}
 				else {
-					Netsendline[i].dataFlag = 0;
-					Netsendline[i].bufLen = 0;
 #ifdef _debug_
 					MSG_LOG("Net-SendData OK ID:%d, len:%d\r\n", i, Netsendline[i].bufLen);
 #endif
+					Netsendline[i].dataFlag = 0;
+					Netsendline[i].bufLen = 0;
 				}
 			}
 			else {
@@ -422,6 +426,7 @@ int savBusVerInfo(void)
 //获取所有的保存的文件版本号
 int getBusVerInfo(void)
 {
+	unsigned char buff[64];
 	char fullName[100];
 		
 	int fd=-1, ret=-1;
@@ -429,27 +434,29 @@ int getBusVerInfo(void)
 	strcpy(fullName, WorkDir);
 	strcat(fullName, _File_BusVer);
 	
+	memset((unsigned char*)&gBusVerInfo, 0, sizeof(stBusVerIfo));
+
 	fd = open(fullName, O_RDONLY, S_IRWXG | S_IRWXO | S_IRWXU);
 	if (fd < 0)
 	{
 		printf("[%s] %s打开文件误@! fd:%d\r\n", __FUNCTION__, fullName, fd);
-		return -1;
+	}
+	else{
+		ret = read(fd, (unsigned char*)&gBusVerInfo, sizeof(stBusVerIfo));
+		if(ret < 0){
+			printf("[%s] %s读文件误@!ret:%d\r\n", __FUNCTION__, fullName, ret);
+		}
 		
+		close(fd);
 	}
 	
-	ret = read(fd, (unsigned char*)&gBusVerInfo, sizeof(stBusVerIfo));
-	if(ret < 0){
-		printf("[%s] %s读文件误@!ret:%d\r\n", __FUNCTION__, fullName, ret);
-	}
-	
-	close(fd);
+	printf("[%s] busBLKVer:%02X%02X, BlackListNum:%d\r\n", __FUNCTION__, gBusVerInfo.busBLKVer[0], gBusVerInfo.busBLKVer[1], gBusVerInfo.BlackListNum);
 
 #ifdef _debug_gprs
 	printf("[%s] get end:", __FUNCTION__);
 	debugdata((unsigned char *)&gBusVerInfo, sizeof(gBusVerInfo), 1);
 #endif
-
-
+	
 
 	return ret;
 }
@@ -461,6 +468,9 @@ void GPRSSocketParaINIT(void)
 
 	getBusVerInfo();
 
+	i = SOFT_VER_TIME_LOG;
+	memcpy(gBusVerInfo.busProVer, (unsigned char*)&i, 2);
+
 	memcpy(gGprsinfo.MAC_KEY, "sl8583testMACKEY", 16);
 	gGprsinfo.crc_mackey = GenerateCRC32(gGprsinfo.MAC_KEY, 16);
 
@@ -469,16 +479,17 @@ void GPRSSocketParaINIT(void)
 
 	for(i=0;i<_SOCKET_MAXNUM; i++)
 		gGprsinfo.isNetOK[i] = 0;
-	
+	gGprsinfo.netwwwOk = FALSE;
 
 	strcpy(filename, WorkDir);
 	strcat(filename, _File_FileDownPara);
 	GetFileDatac(filename, 0, sizeof(gsl8583FileDownPara), (unsigned char *)&gsl8583FileDownPara); //读出下载的信息用于续传
-	
-	memset((unsigned char*)&gDeviceParaTab.gServerInfo, 0, sizeof(gDeviceParaTab.gServerInfo));
-	strcpy(gDeviceParaTab.gServerInfo[0].APN, "CMNET");
-	strcpy(gDeviceParaTab.gServerInfo[0].IPaddr, "139.199.213.63");			////139.199.213.63:2020 测试。
-	gDeviceParaTab.gServerInfo[0].port = 2020;
+
+	gsl8583FileDownPara.tmpfilehand = 0;
+// 	memset((unsigned char*)&gDeviceParaTab.gServerInfo, 0, sizeof(gDeviceParaTab.gServerInfo));
+// 	strcpy(gDeviceParaTab.gServerInfo[0].APN, "CMNET");
+// 	strcpy(gDeviceParaTab.gServerInfo[0].IPaddr, "139.199.213.63");			////139.199.213.63:2020 测试。
+// 	gDeviceParaTab.gServerInfo[0].port = 2020;
 
 }
 
@@ -511,7 +522,8 @@ int GJRec_Send(void)
 	return sum;
 }
 
-
+extern unsigned int checkgsl8583FileDownPara(unsigned char mode);
+extern int saveFileDownPara(void);
 void find_G_new_mission(void)//此任务一秒进一次
 {
 	unsigned int iver;
@@ -551,18 +563,20 @@ void find_G_new_mission(void)//此任务一秒进一次
 	for(i=0; i<sl8583fileNum; i++){
 		if(memcmp(gsl8583filelist[i].filename, SL8583FileFLAG_CSN, 3) == 0 )
 			break;
+		if(memcmp(gsl8583filelist[i].filename, SL8583FileFLAG_BUS, 3) == 0 )
+			break;
 		
 	}
 //	MSG_LOG("先找CSN文件:i========%d\r\n",i);
 	if (i<sl8583fileNum)
 	{
 		
-		if(memcmp(gsl8583filelist[i].filename, SL8583FileFLAG_CSN, 3) == 0){
+		if((memcmp(gsl8583filelist[i].filename, SL8583FileFLAG_CSN, 3) == 0)||(memcmp(gsl8583filelist[i].filename, SL8583FileFLAG_BUS, 3) == 0)){
 			iver = 0;
-			MSG_LOG("find:%s\r\n",SL8583FileFLAG_CSN);
+			MSG_LOG("find:%s\r\n",gsl8583filelist[i].filename);
 			
 			memcpy((unsigned char*)&iver, gBusVerInfo.CSN_BUSVer, 2);
-			MSG_LOG("find:%s:本地ver:%d,服务器ver:%d\r\n",SL8583FileFLAG_CSN,iver,gsl8583filelist[i].fileVer);
+			MSG_LOG("find:%s:本地ver:%d,服务器ver:%d\r\n",gsl8583filelist[i].filename,iver,gsl8583filelist[i].fileVer);
 			
 			if(gsl8583filelist[i].fileVer == iver){//已经是最新版了
 				memset(gsl8583filelist[i].filename, 0, 4);//清除平台文件参数
@@ -757,6 +771,8 @@ load_cs:
 		MSG_LOG("有文件任务:%s\r\n", (char*)gsl8583FileDownPara.Miss_Fileflag);
 		MSG_LOG("版本:%02X%02X\r\n", gsl8583FileDownPara.Miss_ver[0], gsl8583FileDownPara.Miss_ver[1]);
 		MSG_LOG("版本:0x%04X\r\n", gsl8583filelist[i].fileVer);
+		
+		MSG_LOG("filelen:%d\r\n", gsl8583filelist[i].filelen);
 
    
 
@@ -775,24 +791,19 @@ load_cs:
 			memcpy(gsl8583FileDownPara.Miss_ver, (unsigned char*)&gsl8583filelist[i].fileVer, 2);
 			gsl8583FileDownPara.Miss_ALL_LEn = gsl8583filelist[i].filelen;
 	
-			if(memcmp(gsl8583filelist[i].filename, SL8583FileFLAG_BLK, 3) == 0)
-			{
-				MSG_LOG("BLK注意:Miss_offset+=:%d\r\n",shift_blk);
-				gsl8583FileDownPara.Miss_offset = shift_blk;		//跳过黑名单.blk文件的里面8字节版本和条数
-				
-			}else{
-				gsl8583FileDownPara.Miss_offset = 0;
-				
-			}
-			
+			gsl8583FileDownPara.Miss_offset = 0;
+			gsl8583FileDownPara.tmpfilehand = 0;
 			
 			gsl8583FileDownPara.filecrc = gsl8583filelist[i].crc32;
 
 		}
+		
+		gsl8583FileDownPara.CRC32 = checkgsl8583FileDownPara(1);	//计算CRC32
 
 		MSG_LOG("downfile:%s,VER:0x%02X%02X\r\n",gsl8583FileDownPara.Miss_Fileflag,gsl8583FileDownPara.Miss_ver[0],gsl8583FileDownPara.Miss_ver[1]);
 
 		gGprsinfo.gmissflag = MISS_G_FILES;//都使用同一个命令
+		saveFileDownPara();
 
 		return;
 	}
@@ -845,16 +856,22 @@ void TaskRecWrite(void)
 	}
 
 	if(gGprsinfo.isNetOK[LINK_GJ] == 0){//GPRSLinkProcess = 21,但是已经断开了，需要重新连接
-		gGprsinfo.GPRSLinkProcess = GPRS_NEED_CLOSEIP;//tcpipClose(0);
+//		gGprsinfo.GPRSLinkProcess = 0;//tcpipClose(0);
 		return;
 	}
 
 
 	if(gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD){//正在等待上个命令应答
 		if(gSendOverTime == 0){//接收应签超时
+			if(++gOverTimes >= 2){
 			close(g_socketfd[LINK_GJ]);
 			gGprsinfo.isNetOK[LINK_GJ] = FALSE;
-			gGprsinfo.GPRSLinkProcess = GPRS_NEED_CLOSEIP;
+				gGprsinfo.netwwwOk = FALSE;
+				gGprsinfo.GPRSLinkProcess = GPRS_NEED_CLOSEIP;
+			}
+			else{
+				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
+			}
 		}
 		return;
 	}
@@ -934,6 +951,8 @@ void in_dispGprsProcess(void)
 	
 	sprintf(buff, "%02X", gGprsinfo.gmissflag);
 	miniDispstr(14, 19, buff, DIS_RIGHT|DIS_CONVERT);
+	
+	MSG_LOG("[%s], isNetOK:%d, PPPtimes:%d, netwwwOk:%d\r\n", __FUNCTION__, gGprsinfo.isNetOK[0], gGprsinfo.PPPtimes, gGprsinfo.netwwwOk);
 
 }
 
@@ -961,6 +980,7 @@ void mainGprs(void)
 			debugdata((unsigned char*)&Netrecvline[0].dataFlag, 20, 1);
 #endif
 		}
+		MSG_LOG("[%s], GPRSLinkProcess:%d\r\n", __FUNCTION__, gGprsinfo.GPRSLinkProcess);
 	}
 }
 
@@ -1017,39 +1037,53 @@ void main_Onesec(void)
 
 }
 
-
-
 //激活网络
 void *main_NetConnect(void *arg)
 {
+	//间隔多少次拔一次号（在没有连通网络的情况下。）
+#define RePPPDly 40
+
+	unsigned int t;
 	
-	unsigned int t=0;
+	Init_3Gmode();
 	
 	sleep(1);
 	
 	//先卸载
 	system("rmmod /mnt/app/ltyapp/ko/option.ko");  
-				
+	sleep(1);				
 	//加载驱动
 	system("insmod /mnt/app/ltyapp/ko/option.ko");
 	
 	sleep(5);
-	
+//	gGprsinfo.PPPtimes = 4;	//启动时，复位一下模块。
+	t = RePPPDly-10;
 	
 	while (1) {
 		
-		if(gGprsinfo.isNetOK[LINK_GJ] == 0){
-			if((t++ % 100) == 0){
-				system("pppd file /mnt/app/ltyapp/etc/ppp/3gdial");			//开始执行会出错，如果网络不成功每10秒执行一次。测试时如果网络成功，执行这个也没有影响
-				
-				printf("pppd file /mnt/app/ltyapp/etc/ppp/3gdial\r\n");
+		if(gGprsinfo.netwwwOk == FALSE){
+			if((t++ % RePPPDly) == 0){ 
+				if(gGprsinfo.PPPtimes >= 2){//一直连不上， 复位模块？
+					GPRS_ping_Hi();
+					usleep(300000);
+					GPRS_ping_Lo();
+					gGprsinfo.PPPtimes = 0;
+					printf("PPPd Reset 3G mode\r\n");
+					t = (RePPPDly-10);	//复位模块后间隔10秒钟重新拔号
+				}
+				else{
+					system("pppd file /mnt/app/ltyapp/etc/ppp/3gdial");			//开始执行会出错，如果网络不成功每100秒执行一次。测试时如果网络成功，执行这个也没有影响
+	
+					printf("pppd file /mnt/app/ltyapp/etc/ppp/3gdial\r\n");
+					gGprsinfo.PPPtimes++;
+				}
 			}
 		}
 
-		usleep(100000);		//pppd运行成功后，后面的代码就运行不到了。。所以下面没有加其它任务了
+		sleep(1);		//pppd运行成功后，后面的代码就运行不到了。。所以下面没有加其它任务了
 		
 
-	}
+	} 
 	
 	printf("[thread]:main_NetConnect end\n");
 	
@@ -1063,8 +1097,6 @@ void *main_NetConnect(void *arg)
 void *main_GPRS(void *arg)
 {	
 	unsigned int t=0;
-	
-	Init_3Gmode();
 	
 	while(1){
 		usleep(10000);//10ms

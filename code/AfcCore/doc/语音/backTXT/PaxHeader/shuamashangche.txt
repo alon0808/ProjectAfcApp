@@ -1,0 +1,3 @@
+52 path=P2new/doc/语音/backTXT/shuamashangche.txt
+27 mtime=1531983191.519603
+27 atime=1534125108.813135

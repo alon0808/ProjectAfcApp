@@ -24,7 +24,7 @@ extern Parameter6 ErrorDetail[ERROR_DETAIL_SUM];
 extern unsigned char error_pointer;		  //»º³åÇøµÄÖ¸Õë
 
 extern void restore_disp(void);
-extern unsigned char month_decide(void);
+extern int month_decide(void);
 extern void disp_no_swipe(void);
 extern void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsigned char cMOde);
 extern void SoundMessage(unsigned char cmd);
@@ -36,6 +36,7 @@ extern unsigned char Delay_Normal(void);
 extern unsigned int get_s_sum1(unsigned char mode);
 extern void Sound_cityCMD(unsigned char sMode);
 extern void DisRetry(void);
+extern void DisRetry2(void);
 extern unsigned char profile(unsigned char mode);
 extern void error(unsigned char code1,unsigned char Index);
 extern unsigned char FreeConsume(void);

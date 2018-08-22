@@ -70,6 +70,7 @@ extern void led_off(unsigned char mode);
 extern void dis_time_mini(unsigned char x, stcomtime *time);
 //语音提示
 extern void audio(unsigned char flag);
+extern void soundPlay(char * filename);
 
 //蜂鸣器,次数、响延时、停延时
 extern void beep(unsigned char ucTimes, unsigned int ulBeepms, unsigned int ulNoms);
