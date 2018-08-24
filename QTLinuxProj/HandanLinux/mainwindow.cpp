@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	qDebug() << strMessage;
 
 
-	qDebug() << "UTF8±à";
+	//qDebug() << "UTF8±à";
 
     // hide the max and min button of window
     this->setWindowFlags(this->windowFlags() &~ Qt::WindowMinMaxButtonsHint);

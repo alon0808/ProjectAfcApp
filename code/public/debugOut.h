@@ -13,6 +13,8 @@ typedef enum {
 	PL_DEBUG
 }EPrintLevel;
 
+
+#define PRINT_INFOR_LOCATION(str, str1)		printf("[%s-%d]%s %s\r\n", __FUNCTION__, __LINE__, str, str1)
 #define PRINT_INFOR(...)		print2debug(PL_INFOR, 1, __VA_ARGS__)
 #define PRINT_ERROR(...)		print2debug(PL_ERROR, 1, __VA_ARGS__)
 #define PRINT_WARNING(...)		print2debug(PL_WARNING, 1, __VA_ARGS__)
@@ -25,9 +27,11 @@ typedef enum {
 #if SWITCH_DEBUG_PRJ
 #define PRINT_DEBUG(...)		print2debug(PL_DEBUG, 1, __VA_ARGS__)
 #define PRINT_DEBUGBYS(...)		print2debugBys(PL_DEBUG, 1, __VA_ARGS__)
+#define PRINT_DEBUG_LOCATION(str, str1)		printf("[%s-%d]%s %s\r\n", __FUNCTION__, __LINE__, str, str1)
 #else
 #define PRINT_DEBUG(...)		//printf(__VA_ARGS__)
 #define PRINT_DEBUGBYS(...)		//print2debug(PL_DEBUG, 1, __VA_ARGS__)
+#define PRINT_DEBUG_LOCATION(str, str1)		//printf("[%s-%d]%s %s\r\n", __FUNCTION__, __LINE__, str, str1)
 #endif
 
 
@@ -45,8 +49,8 @@ extern "C"
 	 *
 	 * @Return
 	 */
-    extern void print2debug(TINT32 printLevel, TINT32 line, void *pMsg, ...);
-    extern void print2debugBys(TINT32 printLevel, TINT32 line, void *pMsg, void *pBuf, int bLen);
+	extern void print2debug(TINT32 printLevel, TINT32 line, void *pMsg, ...);
+	extern void print2debugBys(TINT32 printLevel, TINT32 line, void *pMsg, void *pBuf, int bLen);
 
 
 #ifdef __cplusplus

@@ -681,6 +681,7 @@ typedef struct
 
 #define NO_CITY_UNION	0x63
 #define APP_LOCK		0x64
+#define NO_JTB_UNTION	0x65
 
 #define NO_WriteNUM		0x80//不在白名单内
 #define NO_START		0x81//未启用
@@ -1099,17 +1100,6 @@ typedef union {
 }unBits8;
 #endif
 
-//同一个连接重连时间延时30秒
-#define CONNECT_DLYTIME 30
-typedef struct {
-	char linkNo;
-	char APN[40];
-	char IPaddr[16];
-	int port;
-	long pcTime;	//上次连接时间
-	// // HEX，共8位，每位为1控制有效。0位：HTTPS，1位为0用APN1，1位为1用APN2.
-	unBits8 linkAttr;	// 链接属性
-}stServerInfo;
 
 typedef struct {
 	char dataFlag;
@@ -1131,6 +1121,19 @@ typedef struct
 	unsigned char 	card_no[10];
 
 }QPBOC_TYPE_63;
+
+
+//同一个连接重连时间延时30秒
+#define CONNECT_DLYTIME 30
+typedef struct {
+	char linkNo;
+	char APN[40];
+	char IPaddr[16];
+	int port;
+	long pcTime;	//上次连接时间
+					// // HEX，共8位，每位为1控制有效。0位：HTTPS，1位为0用APN1，1位为1用APN2.
+	unBits8 linkAttr;	// 链接属性
+}stServerInfo;
 
 typedef struct {
 	unsigned char citycode[2];
@@ -1176,9 +1179,9 @@ typedef struct {
 
 	unsigned char Null[1024];
 
-	QPBOC_TYPE_63 TYPE_63;
-
 	unsigned char Crc32[4];
+
+	QPBOC_TYPE_63 TYPE_63;
 
 }stDeviceParatable;//新的票价
 

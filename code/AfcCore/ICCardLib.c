@@ -95,6 +95,7 @@ int File_read(unsigned char mode)
 		strcat(fullName, _File_DevicePara);
 	}
 	else if (mode == _File_BuInfo_mode) {
+		PRINT_DEBUG("size of fFlagVary_1\n", sizeof(fFlagVary_1));
 		dp = (unsigned char *)&gBuInfo;
 		dLen = sizeof(fFlagVary_1);
 		strcpy(fullName, WorkDir);
@@ -105,14 +106,23 @@ int File_read(unsigned char mode)
 	}
 	ret = access(fullName, F_OK);
 
-	printf("[%s]access file %s ret:%d\n", __FUNCTION__, fullName, ret);
+	printf("[%s]access file %s ret:%d dLen:%d\n", __FUNCTION__, fullName, ret, dLen);
 
 	if (ret >= 0) {
 		fd = open(fullName, O_RDONLY);
 		if (fd >= 0) {
 			ret = read(fd, dp, dLen);
 			if (ret >= 0) {
-				printf("[%s]read file %s ret:%d\n", __FUNCTION__, fullName, ret);
+				printf("[%s]read file %s ret:%d dLen:%d\n", __FUNCTION__, fullName, ret, dLen);
+				if (ret != dLen) {
+					PRINT_INFOR_LOCATION("文件长度不匹配", fullName);
+					if (ret < dLen) {
+						if (fd >= 0)
+							close(fd);
+						fd = open(fullName, O_WRONLY);
+						memset(dp + ret, 0, dLen - ret);
+					}
+				}
 			}
 			else {
 				printf("read %s fail!\n", fullName);
@@ -128,11 +138,11 @@ int File_read(unsigned char mode)
 		}
 
 	}
-	else {	//文件不存在 当前新建一个
-		printf("[%s] %s不存在,新建...\r\n", __FUNCTION__, fullName);
-
+	else {
+		PRINT_INFOR_LOCATION("文件不存在,新建...", fullName);
 		memset(dp, 0, dLen);
-
+	}
+	if (ret < 0) {
 		if (mode == _File_DevicePara_mode) {
 			//测试，直接给初始值
 			memcpy(gDeviceParaTab.busPrice, "\x64\x00\x00\x00", 4);
@@ -154,13 +164,18 @@ int File_read(unsigned char mode)
 		else if (mode == _File_BuInfo_mode) {
 			gBuInfo.stop_flag = 1;
 		}
-
-		int fd = open(fullName, O_CREAT | O_WRONLY, S_IRWXG | S_IRWXO | S_IRWXU);	//写黑名单索引文件
+		if (fd >= 0)
+			close(fd);
+		fd = open(fullName, O_CREAT | O_WRONLY, S_IRWXG | S_IRWXO | S_IRWXU);	//写黑名单索引文件
+	}
+	
+	if (ret < dLen) {	//文件不存在 当前新建一个
+		PRINT_DEBUG("创建或者修改文件:%d, %d", ret, dLen);
 		if (fd >= 0)
 		{
 			ret = write(fd, dp, dLen);//写入原始文件名，文件名=3字节标识_4字节版本号
 			if (ret < 0) {
-				printf("[%s] %s写入文件误@!\r\n", __FUNCTION__, fullName);
+				printf("[%s] %s写入文件误:%d@!\r\n", __FUNCTION__, fullName, ret);
 
 				flag = 3;
 			}
@@ -173,8 +188,20 @@ int File_read(unsigned char mode)
 
 	}
 
-	if (fd >= 0)
+	if (fd >= 0) {
 		close(fd);
+	}
+
+#if SWITCH_TEST_SHUAKA
+	if (mode == _File_DevicePara_mode) {
+		PRINT_DEBUG("IP:%s,port:%d", gDeviceParaTab.gServerInfo[0].IPaddr, gDeviceParaTab.gServerInfo[0].port);
+	}
+	else if (mode == _File_BuInfo_mode) {
+		PRINT_DEBUG_LOCATION("调试强制为允许刷卡", "");
+		gBuInfo.stop_flag = 0;
+	}
+	
+#endif
 
 	return flag;
 }
@@ -1427,7 +1454,7 @@ unsigned char PsamInitialize(void)
 	// 	display(2,1,"请等待......",0);
 
 #ifdef _debug_ICcard_
-    MSG_LOG("PSAM init9999:%d\r\n", psamZJB.SLot);
+	MSG_LOG("PSAM init9999:%d\r\n", psamZJB.SLot);
 #endif
 
 #ifdef BUS_PRO_JSB
@@ -3936,9 +3963,7 @@ unsigned char MoneyResultManage(unsigned char mode)
 	}
 
 	if (gBuInfo.stop_flag) {
-#ifdef _debug_ICcard_
-		printf("[%s]停车状态哦\r\n", __FUNCTION__);
-#endif
+		PRINT_DEBUG_LOCATION("停车状态哦", "");
 		return ST_OK;
 	}
 

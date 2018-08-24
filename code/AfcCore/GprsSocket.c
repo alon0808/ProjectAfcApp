@@ -486,10 +486,11 @@ void GPRSSocketParaINIT(void)
 	GetFileDatac(filename, 0, sizeof(gsl8583FileDownPara), (unsigned char *)&gsl8583FileDownPara); //读出下载的信息用于续传
 
 	gsl8583FileDownPara.tmpfilehand = 0;
-// 	memset((unsigned char*)&gDeviceParaTab.gServerInfo, 0, sizeof(gDeviceParaTab.gServerInfo));
-// 	strcpy(gDeviceParaTab.gServerInfo[0].APN, "CMNET");
-// 	strcpy(gDeviceParaTab.gServerInfo[0].IPaddr, "139.199.213.63");			////139.199.213.63:2020 测试。
-// 	gDeviceParaTab.gServerInfo[0].port = 2020;
+
+ 	memset((unsigned char*)&gDeviceParaTab.gServerInfo, 0, sizeof(gDeviceParaTab.gServerInfo));
+ 	strcpy(gDeviceParaTab.gServerInfo[0].APN, "CMNET");
+ 	strcpy(gDeviceParaTab.gServerInfo[0].IPaddr, "139.199.213.63");			////139.199.213.63:2020 测试。
+ 	gDeviceParaTab.gServerInfo[0].port = 2020;
 
 }
 

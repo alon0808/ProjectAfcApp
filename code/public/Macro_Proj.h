@@ -43,10 +43,12 @@
 #define SWITCH_DEBUG_UI	0
 #define SWITCH_DEBUG_DATA	1
 #define SWITCH_DEBUG_APDU	1
+#define SWITCH_TEST_SHUAKA	1
 #else
 #define SWITCH_DEBUG_UI	0
 #define SWITCH_DEBUG_DATA	0
 #define SWITCH_DEBUG_APDU	0
+#define SWITCH_TEST_SHUAKA	0
 #endif
 
 #define CALL_CONVERT_STD	__stdcall

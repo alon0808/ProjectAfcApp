@@ -1388,17 +1388,17 @@ void CMainPage2::slot_head_widget_notify(int _msg, int _event, void *_param)
 
 			if (pData->m_str_data == CCommonData::getInstance()->m_sd_info.m_first_station)
 			{
-				qDebug() << "station_type : 起始站";
+				qDebug() << QString::fromLocal8Bit("station_type : 起始站");
 				slot_head_widget_notify(kEnumMainPageStationStatus, kEnumStationStart, 0);
 			}
 			else if (pData->m_str_data == CCommonData::getInstance()->m_sd_info.m_last_station)
 			{
-				qDebug() << "station_type : 终点站";
+				qDebug() << QString::fromLocal8Bit("station_type : 终点站");
 				slot_head_widget_notify(kEnumMainPageStationStatus, kEnumStationEnd, 0);
 			}
 			else
 			{
-				qDebug() << "station_type : 本站";
+				qDebug() << QString::fromLocal8Bit("station_type : 本站");
 			}
 
 

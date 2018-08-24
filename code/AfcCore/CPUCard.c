@@ -24,6 +24,7 @@
 
 #include "ICCardLib.h"
 #include "RamStorage.h"
+#include "qpboc_head.h"
 
 #define _debug_CPU_
 
@@ -444,7 +445,9 @@ unsigned char CPUcardType(void)
 	
 #ifdef _debug_CPU_
 	printf("CPU start!ret=%d\r\n", ret);
-	debugdata(revbuf, ret, 1);
+	if (ret > 100) {
+		debugdata(revbuf, ret, 1);
+	}
 #endif
 
 	////Select PSE 00A404000E315041592E5359532E4444463033
@@ -1098,6 +1101,7 @@ unsigned char OperCPUBlackCard(void)
 void CPUMainCard(void)
 {
 	unsigned char ret;
+	int itemp;
 	char disbuf[20];
 
 	if(gBuInfo.stop_flag){
@@ -1118,17 +1122,7 @@ void CPUMainCard(void)
 	debugstring("询卡成功:CSNO:");
 	debugdata((unsigned char*)&gCardinfo.c_serial, 4, 1);
 #endif
-	
-	if(psamZJB.Flag){
-		cls();
-		display(0,0,"错误:",1);
-		display(3,0,"CPUPSAM错误!",0);
-		gBuInfo.restore_flag = 3;
-		sleep(1);
-		return;
-	}
-
-	
+		
 	if(GetDateTime()==ST_ERROR) 
 	{
 		error(ERR_READ_TIME,0);
@@ -1136,8 +1130,19 @@ void CPUMainCard(void)
 	}	
 
 	ret = CPUcardType();
-	if(ret==ST_ERROR)
-		ret=CPUcardType_JTB(0);
+	if (ret == ST_ERROR) {
+		ret = CPUcardType_JTB(0);
+		if (ret == MONTH_CARD || ret == MONEY_CARD) {
+			if (psamZJB.Flag) {
+				cls();
+				display(0, 0, "错误:", 1);
+				display(3, 0, "CPUPSAM错误!", 0);
+				gBuInfo.restore_flag = 3;
+				sleep(1);
+				return;
+			}
+		}
+	}
 
 #ifdef _debug_CPU_
 	printf("CPUcardType ret:%d\r\n",ret);
@@ -1147,6 +1152,22 @@ void CPUMainCard(void)
 
 	switch(ret)
 	{
+	case APP_LOCK:
+	case NO_JTB_UNTION:
+#if 1
+#ifdef qPBOC_BUS
+		MSG_LOG("走银联流程试试\r\n");
+		cpuPBOCmain();
+#endif
+#else
+		cls();
+		display(0, 0, "警告：应用锁定!", 0);
+		display(2, 4, "请投币!!", 0);
+		SoundMessage(INVALID_CARD);
+		restore_flag = 3;
+#endif
+		break;
+		break;
 	case NO_WriteNUM:
 		MessageBox(0,"不是本地卡");
 		end_close_card(1);

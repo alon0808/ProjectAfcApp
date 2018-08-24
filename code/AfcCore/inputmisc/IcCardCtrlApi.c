@@ -13,7 +13,7 @@
 
 #include <string.h>
 
-//#define _debug_IcApi_
+#define _debug_IcApi_
 
 #define GPIO_PIN_HI		0	/*置 高电平*/
 #define GPIO_PIN_LOW	1	/*置 低电平*/
@@ -178,7 +178,7 @@ SLZR_U32 RunCmd(SLZR_U32 u32CmdId, SLZR_U8 *pSndData, SLZR_U32 u32SndDataLen, SL
      	
     szDataBuf[u32SndDataLen + 5] = VerifyCount(szDataBuf, u32SndDataLen + 5);
     memcpy(szDataBuf + (u32SndDataLen + 6), "\x7B\x7B\x7B", 3);
-	
+#if 0	
 #ifdef _debug_IcApi_
 	{	
         SLZR_U32 i = 0;
@@ -188,12 +188,15 @@ SLZR_U32 RunCmd(SLZR_U32 u32CmdId, SLZR_U8 *pSndData, SLZR_U32 u32SndDataLen, SL
         ///_DBG_("\n");
     }/**/
 #endif
+#endif
     u32Ret = UartSendAndRecv(szDataBuf, u32SndDataLen + 9, szRecvBuf, &u32RecvLen, &u8Status);
     if( u32Ret == SLZR_FAILURE)
         return SLZR_FAILURE;
+#if 0
 #ifdef _debug_IcApi_
 	printf("RunCmd u32RecvLen:%d\n", u32RecvLen);
-#endif		
+#endif
+#endif
     if ( u32RecvLen > 0 )
     {
         memcpy(pRcvData, szRecvBuf, u32RecvLen);
@@ -747,7 +750,7 @@ SLZR_U32 UartReadData(SLZR_U8 *pRecvData, SLZR_U32 *pRcvLen)
             u32RcvLen = szRcvBuf[4] + 10;
             memcpy(pRecvData, szRcvBuf, u32RcvLen);
             *pRcvLen = u32RcvLen;
-			
+#if 0		
 #ifdef _debug_IcApi_
             {
                 SLZR_U32 i = 0;
@@ -757,6 +760,7 @@ SLZR_U32 UartReadData(SLZR_U8 *pRecvData, SLZR_U32 *pRcvLen)
 				printf("\r\n");
                 ///_DBG_("END");
             }
+#endif
 #endif
             return SLZR_SUCCESS;
         }
@@ -779,21 +783,27 @@ revagain:
 
 	// ///_DBG_("UartWriteData!!");
     u32Ret = UartWriteData(pSendData, u32SendLen);
+#if 0
 #ifdef _debug_IcApi_
 	printf("\n****\n");	
 #endif
+#endif
     if ( u32Ret == SLZR_FAILURE )
         return SLZR_FAILURE;
+#if 0
 #ifdef _debug_IcApi_
 	printf("Send End start Rev\r\n");
+#endif
 #endif
 
 	// ///_DBG_("UartReadData!!");
     u32Ret = UartReadData(szDataBuf, &u32Len);
+#if 0
 #ifdef _debug_IcApi_
 	printf("\nRcv:");
 	for(SLZR_U32 i=0; i< u32Len; i++)	printf("%02X", szDataBuf[i]);
 	printf("\n");    
+#endif
 #endif
     if ( u32Ret == SLZR_FAILURE )
         return SLZR_FAILURE;
