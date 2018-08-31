@@ -445,7 +445,7 @@ unsigned char CPUcardType(void)
 	
 #ifdef _debug_CPU_
 	printf("CPU start!ret=%d\r\n", ret);
-	if (ret > 100) {
+	if (ret < 100) {
 		debugdata(revbuf, ret, 1);
 	}
 #endif

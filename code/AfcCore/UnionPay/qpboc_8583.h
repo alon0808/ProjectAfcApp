@@ -4,6 +4,9 @@
 #define _qppoc_8583__H_
 
 #include "SL8583.h"
+
+#define HTTP_HEAD	1
+
 #define SHOP_ID "402641041310003"							//默认商户号		
 #define DEVICE_ID "64630000"								//默认 设备号
 #define PHONE_NO_DEFAULT "\x00\x00\x02\x22\x22\x22\x22\x22"	//默认电话号
@@ -188,6 +191,7 @@ extern stMobilStyle Sign_Infor;
 extern volatile  unsigned char ACK_flag;	//后台应答39域的值  bcd
 extern unsigned int POS_8583_COUNT;	//受卡方系统跟踪号 在8583 11域
 
+
 unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen);
 
 
@@ -220,7 +224,7 @@ mode=2: KEK[48];//KEK 16字节
 unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf);
 unsigned int Build_http_pack(char *outhttppack, unsigned int ip, unsigned int port, unsigned int Senddatlen);
 unsigned int Build_qpboc_8583Packge(unsigned char *revBuf, unsigned char mode);
-void find_qpboc_new_mission(void);//此任务一秒进一次
+extern void find_qpboc_new_mission(void);//此任务一秒进一次
 
 
 //----签到信息---stMobilStyle--------------------

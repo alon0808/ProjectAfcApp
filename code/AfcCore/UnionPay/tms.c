@@ -726,7 +726,7 @@ int ProcessTmsData(void) {
 			display(0, 0, (const char *)buff, 0);
 			//com_snd(COM4,len,buff);
 		}
-		gmissflag = MISS_G_TMS;
+		gGprsinfo.gmissflag = MISS_G_TMS;
 		main_GPRS(NULL);
 		
 		if (gGprsinfo.GPRSLinkProcess == 20) {
@@ -1070,7 +1070,7 @@ int ProcessTmsData_2(void) {
 			//com_snd(COM4,len,buff);
 		}
 
-		gmissflag = MISS_G_TMS;
+		gGprsinfo.gmissflag = MISS_G_TMS;
 		main_GPRS(NULL);
 	//	main_card();
 		if (gGprsinfo.GPRSLinkProcess == 20) {
@@ -2921,7 +2921,7 @@ int QPBOC_TMS_DataDeal(char *pData, int datlen) {
 				else {
 #ifdef debug_GJ_TLVDeal_
 					debugstring("Êý¾ÝÐ´Èë´íÎó\r\n");
-					debugdata(dfiledata, datlen, 1);
+//					debugdata(dfiledata, datlen, 1);
 					debugdata(buftemp, datlen, 1);
 #endif
 					continue;

@@ -91,6 +91,7 @@ extern unsigned int Getcrc16(unsigned char *r_data,unsigned int length, unsigned
 extern unsigned int GetCrcWord(unsigned char* ptr,int length);
 extern unsigned short cal_crc16(unsigned char *ptr, unsigned char len);
 extern unsigned int GenerateCRC32(unsigned char *DataBuf,unsigned int len);
+extern unsigned int cal_crc32(unsigned char *ptr, int len);
 extern void crc_cu_16(unsigned char *SerBuffer, unsigned int n,unsigned int length);
 extern unsigned char crc_ck_16(unsigned char *SerBuffer,unsigned int length);
 extern unsigned char crc_c(unsigned char x,unsigned char temp);

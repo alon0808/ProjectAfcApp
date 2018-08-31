@@ -196,7 +196,8 @@ void tcpipClose(unsigned char mode) {
 }
 
 unsigned int __cpuCrc32(unsigned char *val, unsigned int len) {
-	return 0;
+
+	return cal_crc32(val, len);
 }
 
 void ReStartCPU(void) {

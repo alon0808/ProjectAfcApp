@@ -33,6 +33,7 @@
 #include "CPUCard.h"
 #include "RecordFile.h"
 #include "RamStorage.h"
+#include "szct.h"
 
 #define _debug_JTB_
 

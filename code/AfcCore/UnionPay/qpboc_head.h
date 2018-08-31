@@ -6,10 +6,10 @@ Head file of qPBOC.c extern file
 #define _Qpboc_head_file_
 typedef enum {
 	qr_invalid = 0,
-		qr_aliPay,
-		qr_weiXin = 2,
-		qr_unPay = 4,
-		car_=8
+	qr_aliPay,
+	qr_weiXin = 2,
+	qr_unPay = 4,
+	car_ = 8
 }emSupportQr;
 
 extern unsigned char g_supportQR;
@@ -18,6 +18,8 @@ extern int qPBOC_INIT(void);
 extern void showqPbochis(void);
 extern void qPboc_clr_rec_point(void);
 extern int clrSamPkey(void);
+#if SWITCH_CODE_USED
 extern void qPbocDealPkey(void);
 extern int checkSamKey(unsigned char mode);
+#endif
 #endif

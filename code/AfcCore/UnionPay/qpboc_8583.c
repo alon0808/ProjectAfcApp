@@ -27,14 +27,16 @@
 #include "ff.h"
 #include "RamStorage.h"
 
-unsigned char g_supportQR = qr_aliPay | qr_weiXin | qr_unPay|car_;
+#include <string.h>
+
+unsigned char g_supportQR = qr_aliPay | qr_weiXin | qr_unPay | car_;
 extern void dis_time_mini(unsigned char x, stcomtime *time);
 #if 0	// use for test valid ram
 
 unsigned char ACK_flag = 0xFF;	//后台应答39域的值  bcd
 unsigned int POS_8583_COUNT = 0;	//受卡方系统跟踪号 在8583 11域
 unsigned char temp[1000];
- extern unsigned int BCDTime2Long(unsigned char*timee);
+extern unsigned int BCDTime2Long(unsigned char*timee);
 
 unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 {
@@ -72,13 +74,13 @@ typedef enum {
 
 // TMS 通讯命令解释
 typedef enum {
-		mpc_stx_TMS = 0,
-		mpc_ln_TMS = 1,
-		mpc_RANDOM_TMS=2,
-		mpc_cmd_TMS = 10,
-		
-		mpc_data_TMS = 11,
-	
+	mpc_stx_TMS = 0,
+	mpc_ln_TMS = 1,
+	mpc_RANDOM_TMS = 2,
+	mpc_cmd_TMS = 10,
+
+	mpc_data_TMS = 11,
+
 }emMPosCom_TMS;
 
 // typedef enum {
@@ -232,58 +234,58 @@ typedef struct
 	unsigned char POBC_time_flag;		//
 	unsigned char res[10];		//
 }QPOC_FLGE;
-QPOC_FLGE qpoc_flag={0};
+QPOC_FLGE qpoc_flag = { 0 };
 void qpoc_init_singe(void)
 {
 	MSG_LOG("清次数-\r\n");
-	memset((unsigned char *)&qpoc_flag,0,sizeof(QPOC_FLGE));
+	memset((unsigned char *)&qpoc_flag, 0, sizeof(QPOC_FLGE));
 }
 void add_qpoc_flag(void)
 {
-//	MSG_LOG("次数加-\r\n");
-// 	// 	if ((gmissflag&MISS_PBOC_LOGIN) == MISS_PBOC_LOGIN)
-// // 	{
-// // 		return;
-// // 	}
-	if((gmissflag&MISS_PBOC_LOGIN) == MISS_PBOC_LOGIN)
+	//	MSG_LOG("次数加-\r\n");
+	// 	// 	if ((gmissflag&MISS_PBOC_LOGIN) == MISS_PBOC_LOGIN)
+	// // 	{
+	// // 		return;
+	// // 	}
+	if ((gGprsinfo.gmissflag&MISS_PBOC_LOGIN) == MISS_PBOC_LOGIN)
 	{
 		//	s_isAuthOk = 1;
 		MSG_LOG("次数加-2-\r\n");
 		qpoc_flag.POBC_time++;
-		restore_flag=3;
+		restore_flag = 3;
 	}
 }
 unsigned char qpoc_flag_or(void)
 {
-	if(qpoc_flag.POBC_time>=5) //登录超过10次，就不再登录银联
+	if (qpoc_flag.POBC_time >= 5) //登录超过10次，就不再登录银联
 	{
 
-		if ((gmissflag&MISS_PBOC_LOGIN)==MISS_PBOC_LOGIN)  //银联超时重新签到
+		if ((gGprsinfo.gmissflag&MISS_PBOC_LOGIN) == MISS_PBOC_LOGIN)  //银联超时重新签到
 		{
-				restore_flag=3;
-				gmissflag=0x4f;
-				debugstring("超过10次\r\n");
-				gGprsinfo.GPRSLinkProcess= TCPSTARTSTAT;
-				
+			restore_flag = 3;
+			gGprsinfo.gmissflag = 0x4f;
+			debugstring("超过10次\r\n");
+			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
+
 		}
-		Sign_Infor.ISOK =0;
+		Sign_Infor.ISOK = 0;
 		return 0xad;
 	}
 
-return ST_OK;
-	
+	return ST_OK;
+
 }
 
 void show_err(void)
 {
-	if(qpoc_flag.POBC_time>=20)
+	if (qpoc_flag.POBC_time >= 20)
 	{
-	//	cls();
-	//	display(3,3,"请检查银联参数!",DIS_CENTER);
+		//	cls();
+		//	display(3,3,"请检查银联参数!",DIS_CENTER);
 		MessageBox(1, "请检查银联参数!");
-		beep(3,100,100);
-	//	delayxms(3);
-	//			restore_flag=3;
+		beep(3, 100, 100);
+		//	delayxms(3);
+		//			restore_flag=3;
 	}
 
 }
@@ -291,55 +293,55 @@ void show_err(void)
 void sercel(void)
 {
 	unsigned char buff[50];
-		BER_TVL TempTVL;
-		if(QpbocTVLFCI.t_57.SizeOff)
-		{
-	 	
-	 	get_BER_TVL(QpbocTVLFCI.t_57.SizeOff,&TempTVL);
-		MSG_LOG("二磁长度%d\r\n",TempTVL.L);
+	BER_TVL TempTVL;
+	if (QpbocTVLFCI.t_57.SizeOff)
+	{
 
-	 	memset(buff, 0, 19);
-	 	if (TempTVL.L>19)
-	 	{
-	 		TempTVL.L=19;
-	 	}
-	 	memcpy(buff, TempTVL.V, TempTVL.L);//2磁道数据
-		debugstring("==2磁道数据:");
-	 	debugdata(buff,19, 1);
-	    memcpy((unsigned char*)&c_serial, buff+(TempTVL.L-4),4 );
-		}
-	 	else{
-	debugstring("==没有2磁道数据:");
-	}
-	
-}
-int qpoc_nfc_(unsigned char mode )
-{
-		BER_TVL TempTVL;
-		if(QpbocTVLFCI.t_9F10.SizeOff == 0)
-		return qPBOC_NOFIND_9F10;
-		get_BER_TVL(QpbocTVLFCI.t_9F10.SizeOff,&TempTVL);
-		MSG_LOG("t_9F10-5:%02X\r\n", TempTVL.V[9]);
-		if(mode==0)
+		get_BER_TVL(QpbocTVLFCI.t_57.SizeOff, &TempTVL);
+		MSG_LOG("二磁长度%d\r\n", TempTVL.L);
+
+		memset(buff, 0, 19);
+		if (TempTVL.L > 19)
 		{
-			if (TempTVL.V[9] != 0x07 && CREDIT_CARD != emv_get_card_type())
+			TempTVL.L = 19;
+		}
+		memcpy(buff, TempTVL.V, TempTVL.L);//2磁道数据
+		debugstring("==2磁道数据:");
+		debugdata(buff, 19, 1);
+		memcpy((unsigned char*)&c_serial, buff + (TempTVL.L - 4), 4);
+	}
+	else {
+		debugstring("==没有2磁道数据:");
+	}
+
+}
+int qpoc_nfc_(unsigned char mode)
+{
+	BER_TVL TempTVL;
+	if (QpbocTVLFCI.t_9F10.SizeOff == 0)
+		return qPBOC_NOFIND_9F10;
+	get_BER_TVL(QpbocTVLFCI.t_9F10.SizeOff, &TempTVL);
+	MSG_LOG("t_9F10-5:%02X\r\n", TempTVL.V[9]);
+	if (mode == 0)
+	{
+		if (TempTVL.V[9] != 0x07 && CREDIT_CARD != emv_get_card_type())
 		{
 			MSG_LOG("NFC手机卡\r\n");
 			//return qPBOC_CARD_NOT_ACTIVE;
 		}
-			return qPBOC_RESUL_TC;
+		return qPBOC_RESUL_TC;
+	}
+	else
+	{
+		if (TempTVL.V[9] == 0x07)
+		{
+			return ST_OK;
 		}
 		else
 		{
-			if(TempTVL.V[9] == 0x07)
-			{
-				return ST_OK;
-			}
-			else
-			{
-				return ST_ERROR;
-			}
+			return ST_ERROR;
 		}
+	}
 }
 //设置ODA机构号
 void set_oda_para(void)
@@ -349,72 +351,72 @@ void set_oda_para(void)
 	unsigned char ret;
 	unsigned char ODA_BUFF[9];
 	unsigned char ODA_BUFF_1[9];
-	memset(ODA_BUFF,0,sizeof(ODA_BUFF));
-	getMobileParameter(11,ODA_BUFF);
+	memset(ODA_BUFF, 0, sizeof(ODA_BUFF));
+	getMobileParameter(11, ODA_BUFF);
 	memcpy(ODA_BUFF_1, ODA_BUFF, 8);
 
-//Startt:
-	i=0;
-	memset(buffer,0,10);
+	//Startt:
+	i = 0;
+	memset(buffer, 0, 10);
 
-	memcpy(buffer,ODA_BUFF,8);
-	if(ValidDevNo(ODA_BUFF) == 1){
+	memcpy(buffer, ODA_BUFF, 8);
+	if (ValidDevNo(ODA_BUFF) == 1) {
 		memset(ODA_BUFF, '0', 9);
 	}
 	cls();
 
-		display(0,2,"设置ODA机构号",DIS_CENTER);
-	display(2,4,(char*)buffer,0);
-	while(1)
+	display(0, 2, "设置ODA机构号", DIS_CENTER);
+	display(2, 4, (char*)buffer, 0);
+	while (1)
 	{
 		delayxms(10);
-		memset(buffer,0,10);
-		buffer[0]=ODA_BUFF[i];
-		display(2,4+i,(char*)buffer,DIS_CONVERT);
-		ret =getkey(1);
-		switch(ret)
+		memset(buffer, 0, 10);
+		buffer[0] = ODA_BUFF[i];
+		display(2, 4 + i, (char*)buffer, DIS_CONVERT);
+		ret = getkey(1);
+		switch (ret)
 		{
 #ifndef _New_Bu_mode_
 		case UP:
-			if((pFistVary.DeviceNo[i]<='0')||(pFistVary.DeviceNo[i]>'9'))
-				pFistVary.DeviceNo[i]='9';
-			else if((pFistVary.DeviceNo[i]<='9')&&(pFistVary.DeviceNo[i]>'0'))
+			if ((pFistVary.DeviceNo[i] <= '0') || (pFistVary.DeviceNo[i] > '9'))
+				pFistVary.DeviceNo[i] = '9';
+			else if ((pFistVary.DeviceNo[i] <= '9') && (pFistVary.DeviceNo[i] > '0'))
 				pFistVary.DeviceNo[i]--;
 
 			break;
-		case F2:  
+		case F2:
 			i++;
-			if(i==8)
+			if (i == 8)
 				i = 0;
-			memset(buffer,0,10);
-			memcpy(buffer,pFistVary.DeviceNo,8);
-			display(2,4,(char*)buffer,0);
+			memset(buffer, 0, 10);
+			memcpy(buffer, pFistVary.DeviceNo, 8);
+			display(2, 4, (char*)buffer, 0);
 			break;
 		case F1:
-			if(i>0)
+			if (i > 0)
 				i--;
 			else
 				i = 7;
-			memset(buffer,0,10);
-			memcpy(buffer,pFistVary.DeviceNo,8);
-			display(2,4,(char*)buffer,0);
+			memset(buffer, 0, 10);
+			memcpy(buffer, pFistVary.DeviceNo, 8);
+			display(2, 4, (char*)buffer, 0);
 			break;
-		case DOWN: 
+		case DOWN:
 #else
 		case UP:
 #endif  
-			if((ODA_BUFF[i]<'9')&&(ODA_BUFF[i]>='0'))
+			if ((ODA_BUFF[i] < '9') && (ODA_BUFF[i] >= '0'))
 				ODA_BUFF[i]++;
-			else if(ODA_BUFF[i] == '9'){
+			else if (ODA_BUFF[i] == '9') {
 				ODA_BUFF[i] = 'A';
 			}
-			else if((ODA_BUFF[i]>='A')&&(ODA_BUFF[i]<'Z'))
+			else if ((ODA_BUFF[i] >= 'A') && (ODA_BUFF[i] < 'Z'))
 				ODA_BUFF[i]++;
-			else if(ODA_BUFF[i] == 'Z'){
+			else if (ODA_BUFF[i] == 'Z') {
 				ODA_BUFF[i] = '0';
 			}
-			else 
-				ODA_BUFF[i]='0';
+			else
+				ODA_BUFF[i] = '0';
 			break;
 		case ESC:
 			//memcpy(pFistVary.DeviceNo, pFistVary.DeviceNo_1, 8);
@@ -422,18 +424,18 @@ void set_oda_para(void)
 		case ENTER:
 #ifdef _New_Bu_mode_
 			i++;
-			memset(buffer,0,10);
-			memcpy(buffer,ODA_BUFF,8);
-			display(2,4,(char*)buffer,0);
+			memset(buffer, 0, 10);
+			memcpy(buffer, ODA_BUFF, 8);
+			display(2, 4, (char*)buffer, 0);
 #else
 			i = 8;
 #endif
-			if(i >= 8){
-			
-       saveMobileParameter(11,buffer);
-	   display(3,3,"设置成功",DIS_CENTER);
-	   delayxms(1500);
-	   MSG_LOG("保存oda机构号\r\n");
+			if (i >= 8) {
+
+				saveMobileParameter(11, buffer);
+				display(3, 3, "设置成功", DIS_CENTER);
+				delayxms(1500);
+				MSG_LOG("保存oda机构号\r\n");
 
 				//	gsl8583Style.ISOK=
 
@@ -446,153 +448,153 @@ void set_oda_para(void)
 		}
 	}
 SetupDevi_exit:
-		;
+	;
 }
 
 //设置ODA机构号
 void set_dns_para(void)
 {
 	unsigned char buff[24];
-	memset(buff,0,sizeof(buff));
-	memcpy(buff,"upos.chinaxxums.com",strlen("upos.chinaxxums.com"));
-	saveMobileParameter(12,buff);
-	
-	memset(buff,0,sizeof(buff));
-	memcpy(buff,"ipos.chinaxxeums.com",strlen("ipos.chinaxxeums.com"));
-	saveMobileParameter(13,buff);
-		memset(buff,0,sizeof(buff));
-	memcpy(buff,"upos.chinaums.com",strlen("upos.chinaums.com"));
-	saveMobileParameter(20,buff);
+	memset(buff, 0, sizeof(buff));
+	memcpy(buff, "upos.chinaxxums.com", strlen("upos.chinaxxums.com"));
+	saveMobileParameter(12, buff);
+
+	memset(buff, 0, sizeof(buff));
+	memcpy(buff, "ipos.chinaxxeums.com", strlen("ipos.chinaxxeums.com"));
+	saveMobileParameter(13, buff);
+	memset(buff, 0, sizeof(buff));
+	memcpy(buff, "upos.chinaums.com", strlen("upos.chinaums.com"));
+	saveMobileParameter(20, buff);
 	cls();
-	display(3,3,"设置成功",DIS_CENTER);
+	display(3, 3, "设置成功", DIS_CENTER);
 	delayxms(1500);
 }
 
 void oda_and_dns_first(void)
 {
 	set_dns_para();
-	saveMobileParameter(11,"0000GZPZ");
+	saveMobileParameter(11, "0000GZPZ");
 }
 //设置专网 公网
 
-void set__para(unsigned char len ,unsigned char mode )
+void set__para(unsigned char len, unsigned char mode)
 {
 	unsigned char i;
 	unsigned char buffer[64];
 	unsigned char ret;
 	unsigned char BUFF[64];
-//	unsigned char BUFF_1[64];
-	memset(BUFF,0,sizeof(BUFF));
-	if(mode==0)
+	//	unsigned char BUFF_1[64];
+	memset(BUFF, 0, sizeof(BUFF));
+	if (mode == 0)
 	{
-		getMobileParameter(19,BUFF);
+		getMobileParameter(19, BUFF);
 	}
 
-//Startt:
-	i=0;
-	memset(buffer,0,sizeof(buffer));
+	//Startt:
+	i = 0;
+	memset(buffer, 0, sizeof(buffer));
 
-	memcpy(buffer,BUFF,len);
-// 	if(ValidDevNo(BUFF) == 1){
-// 		memset(BUFF, '0', len);
-// 	}
+	memcpy(buffer, BUFF, len);
+	// 	if(ValidDevNo(BUFF) == 1){
+	// 		memset(BUFF, '0', len);
+	// 	}
 	cls();
 
-		display(0,2,"设置",DIS_CENTER);
-	display(2,4,(char*)buffer,0);
-	while(1)
+	display(0, 2, "设置", DIS_CENTER);
+	display(2, 4, (char*)buffer, 0);
+	while (1)
 	{
 		delayxms(10);
-		memset(buffer,0,len);
-		buffer[0]=BUFF[i];
-		display(2,4+i,(char*)buffer,DIS_CONVERT);
-		ret =getkey(1);
-		switch(ret)
+		memset(buffer, 0, len);
+		buffer[0] = BUFF[i];
+		display(2, 4 + i, (char*)buffer, DIS_CONVERT);
+		ret = getkey(1);
+		switch (ret)
 		{
 #ifndef _New_Bu_mode_
 		case UP:
-			if((pFistVary.DeviceNo[i]<='0')||(pFistVary.DeviceNo[i]>'9'))
-				pFistVary.DeviceNo[i]='9';
-			else if((pFistVary.DeviceNo[i]<='9')&&(pFistVary.DeviceNo[i]>'0'))
+			if ((pFistVary.DeviceNo[i] <= '0') || (pFistVary.DeviceNo[i] > '9'))
+				pFistVary.DeviceNo[i] = '9';
+			else if ((pFistVary.DeviceNo[i] <= '9') && (pFistVary.DeviceNo[i] > '0'))
 				pFistVary.DeviceNo[i]--;
 
 			break;
-		case F2:  
+		case F2:
 			i++;
-			if(i==8)
+			if (i == 8)
 				i = 0;
-			memset(buffer,0,10);
-			memcpy(buffer,pFistVary.DeviceNo,8);
-			display(2,4,(char*)buffer,0);
+			memset(buffer, 0, 10);
+			memcpy(buffer, pFistVary.DeviceNo, 8);
+			display(2, 4, (char*)buffer, 0);
 			break;
 		case F1:
-			if(i>0)
+			if (i > 0)
 				i--;
 			else
 				i = 7;
-			memset(buffer,0,10);
-			memcpy(buffer,pFistVary.DeviceNo,8);
-			display(2,4,(char*)buffer,0);
+			memset(buffer, 0, 10);
+			memcpy(buffer, pFistVary.DeviceNo, 8);
+			display(2, 4, (char*)buffer, 0);
 			break;
-		case DOWN: 
+		case DOWN:
 #else
 		case UP:
 #endif  
-			if((BUFF[i]<'9')&&(BUFF[i]>='0'))
+			if ((BUFF[i] < '9') && (BUFF[i] >= '0'))
 				BUFF[i]++;
-			else if(BUFF[i] == '9'){
+			else if (BUFF[i] == '9') {
 				BUFF[i] = 'A';
 			}
-			else if((BUFF[i]>='A')&&(BUFF[i]<'Z'))
+			else if ((BUFF[i] >= 'A') && (BUFF[i] < 'Z'))
 				BUFF[i]++;
-			else if(BUFF[i] == 'Z'){
+			else if (BUFF[i] == 'Z') {
 				BUFF[i] = '.';
 			}
-			else if(BUFF[i] == '.'){
+			else if (BUFF[i] == '.') {
 				BUFF[i] = '0';
 			}
-			else 
-				BUFF[i]='0';
+			else
+				BUFF[i] = '0';
 			break;
 		case ESC:
-	
-			memset(buffer,0,len+2);
-			memcpy(buffer,BUFF,i);
-			display(2,4,(char*)buffer,0);
-		if(mode==0)//保存APN
-		{
-			saveMobileParameter(19,buffer);
-		}
-				// saveMobileParameter(11,buffer);
-	   display(3,3,"设置成功",DIS_CENTER);
-	   delayxms(1500);
+
+			memset(buffer, 0, len + 2);
+			memcpy(buffer, BUFF, i);
+			display(2, 4, (char*)buffer, 0);
+			if (mode == 0)//保存APN
+			{
+				saveMobileParameter(19, buffer);
+			}
+			// saveMobileParameter(11,buffer);
+			display(3, 3, "设置成功", DIS_CENTER);
+			delayxms(1500);
 
 
-				goto SetupDevi_exit;
+			goto SetupDevi_exit;
 
 
-//			break;
+			//			break;
 		case ENTER:
-//#ifdef _New_Bu_mode_
+			//#ifdef _New_Bu_mode_
 			i++;
-			memset(buffer,0,len+2);
-			memcpy(buffer,BUFF,len);
-			display(2,4,(char*)buffer,0);
-// #else
-// 			i = 8;
-// #endif
-		if(i >= len){
-			
-		if(mode==0)//保存APN
-		{
-			saveMobileParameter(19,buffer);
-		}
-				// saveMobileParameter(11,buffer);
-	   display(3,3,"设置成功",DIS_CENTER);
-	   delayxms(1500);
-	  // MSG_LOG("保存oda机构号\r\n");
+			memset(buffer, 0, len + 2);
+			memcpy(buffer, BUFF, len);
+			display(2, 4, (char*)buffer, 0);
+			// #else
+			// 			i = 8;
+			// #endif
+			if (i >= len) {
 
-				//	gsl8583Style.ISOK=
+				if (mode == 0)//保存APN
+				{
+					saveMobileParameter(19, buffer);
+				}
+				// saveMobileParameter(11,buffer);
+				display(3, 3, "设置成功", DIS_CENTER);
+				delayxms(1500);
+				// MSG_LOG("保存oda机构号\r\n");
+
+						  //	gsl8583Style.ISOK=
 
 				goto SetupDevi_exit;
 			}
@@ -603,11 +605,11 @@ void set__para(unsigned char len ,unsigned char mode )
 		}
 	}
 SetupDevi_exit:
-		;
+	;
 }
 void set_para_w(void)
 {
-	set__para(16,0 );
+	set__para(16, 0);
 }
 
 //统计
@@ -1015,14 +1017,14 @@ unsigned int get_deal_count(unsigned int addr)
 //	feread(BIT_PBOC_NS, 4, (unsigned char*)&uiTemp);
 	feread(addr, 4, (unsigned char*)&uiTemp);
 	MSG_LOG("get_deal_count%d:%d\n", addr, uiTemp);
-	if(addr==BIT_PBOC_NS_BIG)  //发现oda取登陆的批次号会出现报文格式出错
+	if (addr == BIT_PBOC_NS_BIG)  //发现oda取登陆的批次号会出现报文格式出错
 	{
-		if (gMCardCand == CARDSTYLE_UNPAY_ODA) 
-			uiTemp+=300000;
+		if (gMCardCand == CARDSTYLE_UNPAY_ODA)
+			uiTemp += 300000;
 		MSG_LOG("取批次号:%d\n", uiTemp);
-			return uiTemp;
+		return uiTemp;
 	}
-	if (uiTemp < 300000 || uiTemp > 999999 ) {
+	if (uiTemp < 300000 || uiTemp > 999999) {
 		//MSG_LOG("get_deal_count%d:%d\n", addr, uiTemp);
 		uiTemp = 300000 + SysTime.seconds + SysTime.minutes * 60;
 	}
@@ -1100,7 +1102,7 @@ unsigned int Build_qpboc_8583_11(unsigned char *dat)
 // 	memcpy(Q_pos_infor.c_serial_qpoc,(unsigned char*)&c_serial, 4);
 // 
 // 	save_over_infor(uiTemp); //冲正延时发送参数
-	
+
 	sprintf((char*)buffer, "%06ui", uiTemp);
 
 	memcpy(dat, ASC2BCD((char*)buffer, 6), 3);
@@ -1247,9 +1249,6 @@ unsigned int Build_qpboc_8583_41(unsigned char *dat)
 
 	getMobileParameter(6, dat);
 
-#if SWITCH_PBOC_GUILIN_DEBUG
-	memcpy(dat, "22213478", 9);
-#endif
 	setBitmapBits(41, gpboc_8583bitmapaddr);
 	dat[8] = 0;
 	MSG_LOG("%s:len:%d dat:%s(ASCII)\r\n", __FUNCTION__, 8, dat);
@@ -1266,9 +1265,6 @@ unsigned int Build_qpboc_8583_42(unsigned char *dat)
 
 	//memcpy(dat, BUSS_ID, sizeof(BUSS_ID));
 	getMobileParameter(1, dat);
-#if SWITCH_PBOC_GUILIN_DEBUG
-	memcpy(dat, "898450341110121", 15);
-#endif
 
 	setBitmapBits(42, gpboc_8583bitmapaddr);
 	dat[15] = 0;
@@ -1284,7 +1280,7 @@ unsigned int Build_qpboc_8583_42(unsigned char *dat)
 unsigned int Build_qpboc_8583_48(unsigned char *dat)
 {
 	int len = 0;
-//	unsigned char tmpChs[20];
+	//	unsigned char tmpChs[20];
 	int tmpI = 0;
 
 
@@ -1360,7 +1356,7 @@ unsigned int Build_qpboc_8583_48(unsigned char *dat)
 	//sysferead(BIT_DRICE_CARD, 4, tmpChs);
 	//	sysferead(BIT_car_num, BIT_car_num_LEN, tmpChs);
 	//BCD2Ascii(tmpChs, dat + len, 4);
-	memcpy(dat + len,pFistVary.DeviceNo,8); //车牌号
+	memcpy(dat + len, pFistVary.DeviceNo, 8); //车牌号
 	len += 8;
 	memcpy(dat + len, "\xFF\x64\x08", 3);
 	len += 3;
@@ -1370,43 +1366,43 @@ unsigned int Build_qpboc_8583_48(unsigned char *dat)
 	if (gMCardCand == CARDSTYLE_UNPAY_ODA) {
 		memcpy(dat + len, "\xFF\x43\x08", 3);
 		len += 3;
-			getMobileParameter(11, dat + len);
-	//	memcpy(dat + len, "0000FSGJ", 8);
-	//		memcpy(dat + len, "0000XHGJ", 8);
+		getMobileParameter(11, dat + len);
+		//	memcpy(dat + len, "0000FSGJ", 8);
+		//		memcpy(dat + len, "0000XHGJ", 8);
 		len += 8;
 	}
 
 #if defined  QK && ! defined switch_RE
-	if(switch_both==1 && shuangmian==0 &&Q_pos_infor.flge==0xad)  //模式处于双通道模式，处于oda流程加这几个域
+	if (switch_both == 1 && shuangmian == 0 && Q_pos_infor.flge == 0xad)  //模式处于双通道模式，处于oda流程加这几个域
 	{
 		MSG_LOG("没有有缓存\n");
 		memcpy(dat + len, "\xFF\x65\x01", 3);
 		len += 3;
-		dat[len++] =0x31;
+		dat[len++] = 0x31;
 
 		memcpy(dat + len, "\xFF\x66\x06", 3);
 		len += 3;
-		SWITCH_(Q_pos_infor.NS,6, dat + len);
-		len +=6;
+		SWITCH_(Q_pos_infor.NS, 6, dat + len);
+		len += 6;
 
 	}
 
 #elif defined switch_RE && defined QK
-		if(switch_both==1 && shuangmian==0 &&timeout_infor.flge==Switch_sign_OVER)  //模式处于双通道模式，处于oda流程加这几个域
+	if (switch_both == 1 && shuangmian == 0 && timeout_infor.flge == Switch_sign_OVER)  //模式处于双通道模式，处于oda流程加这几个域
 	{
-			MSG_LOG("有缓存\n");
+		MSG_LOG("有缓存\n");
 		memcpy(dat + len, "\xFF\x65\x01", 3);
 		len += 3;
-		dat[len++] =0x31;
+		dat[len++] = 0x31;
 
 		memcpy(dat + len, "\xFF\x66\x06", 3);
 		len += 3;
-		SWITCH_(timeout_infor.NS,6, dat + len);
-		len +=6;
+		SWITCH_(timeout_infor.NS, 6, dat + len);
+		len += 6;
 
 	}
 #endif 
-	
+
 	dat[len] = '#';
 	//memcpy(dat + len, "#", 1);
 	++len;
@@ -1967,11 +1963,7 @@ unsigned int tag_A2(unsigned char *dat)
 	memcpy(dat + pos, "02016", 5);//终端硬件序列号	02	最长50字节	ANS…50
 	A2_pos += 5;
 	pos += 5;
-#ifdef PBOC_TEST1
-	memcpy(dat + pos, "LF28517121111111", 16);
-	A2_pos += 16;
-	pos += 16;
-#elif SWITCH_PBOC_GUILIN_DEBUG
+#if SWITCH_DEBUG_UNIONPAY == 1
 	memcpy(dat + pos, "ESF3000LB6C6BF92", 16);
 	A2_pos += 16;
 	pos += 16;
@@ -2324,7 +2316,7 @@ int Build_qpboc_8583_64(unsigned char *iDat, unsigned int iDatLen, unsigned char
 		//stMobilStyle
 	MSG_LOG("解密的MAC\r\n:");
 	BCD_LOG(Sign_Infor.MAC_KEY, 16, 1);
-		
+
 	setBitmapBits(64, gpboc_8583bitmapaddr);	//因为MAC计算加上了位元表，所以要先把第64域的位加上，再计算MAC
 
 	ProcessAlgorithmCreatMacEcb(Sign_Infor.MAC_KEY, iDat, iDatLen, omac);
@@ -2364,8 +2356,8 @@ int build8583_qpboc_re_Purse_0400(unsigned char *oDat)
 	int i = 0;
 
 	MSG_LOG("build8583_qpboc_re_Purse_0400:\n");
-	if (gmissflag == MISS_PBOC_RE_PURSE) {
-	#ifdef switch_RE
+	if (gGprsinfo.gmissflag == MISS_PBOC_RE_PURSE) {
+#ifdef switch_RE
 		//	iret = read_re_infor(infor_temp, &inforLen);
 		iret = save_infor_add(ODA_FeRC_READ, infor_temp);
 
@@ -2376,18 +2368,18 @@ int build8583_qpboc_re_Purse_0400(unsigned char *oDat)
 			return 0;
 		}
 		inforLen = GET_INT16(infor_temp + 2);
-	
+
 		MSG_LOG("infor_temp2:");
-		MSG_LOG("infor_temp长度%d\r\n",inforLen);
-		BCD_LOG(infor_temp+4, inforLen, 1);
+		MSG_LOG("infor_temp长度%d\r\n", inforLen);
+		BCD_LOG(infor_temp + 4, inforLen, 1);
 
 		ilen = 0;
 		msg6001A = (DEF8583MSG_BIP*)oDat;
 
 
-		iret = PareseT1L2V_8583(infor_temp+4, inforLen, tlv8583);
-	#else
-	
+		iret = PareseT1L2V_8583(infor_temp + 4, inforLen, tlv8583);
+#else
+
 		iret = read_re_infor(infor_temp, &inforLen);
 		if (iret != Ret_OK)
 		{
@@ -2403,8 +2395,8 @@ int build8583_qpboc_re_Purse_0400(unsigned char *oDat)
 
 
 		iret = PareseT1L2V_8583(infor_temp, inforLen, tlv8583);
-	#endif
-	
+#endif
+
 		if (iret != Ret_OK) {
 			MSG_LOG("冲正记录错误:%d\n", iret);
 			return 0;
@@ -2700,17 +2692,17 @@ int build8583_qpboc_Purse_0200(unsigned char *oDat)
 	BCD_LOG(repurse_infor, tmpI + 4, 1);
 
 
-	tmpI=0;
+	tmpI = 0;
 	tmpI = get_deal_count(BIT_PBOC_NS_8583);
-		MSG_LOG("上一笔流水(%d):\n", tmpI);
-	tmpI = tmpI-1;
+	MSG_LOG("上一笔流水(%d):\n", tmpI);
+	tmpI = tmpI - 1;
 #ifdef switch_RE
-		save_over_infor(tmpI); //冲正延时发送参数
+	save_over_infor(tmpI); //冲正延时发送参数
 #else
 	//填充
-	memcpy(Q_pos_infor.NS,(unsigned char *)&tmpI,4);
-	memcpy(Q_pos_infor.time_last,(unsigned char*)&SysTime, 7);
-	memcpy(Q_pos_infor.c_serial_qpoc,(unsigned char*)&c_serial, 4);
+	memcpy(Q_pos_infor.NS, (unsigned char *)&tmpI, 4);
+	memcpy(Q_pos_infor.time_last, (unsigned char*)&SysTime, 7);
+	memcpy(Q_pos_infor.c_serial_qpoc, (unsigned char*)&c_serial, 4);
 
 
 #endif
@@ -2746,7 +2738,7 @@ int build8583_qpboc_Auth(unsigned char *oDat, unsigned inout) {
 
 	// session key
 	getMobileParameter(7, keyMain);
-#if SWITCH_PBOC_GUILIN_DEBUG
+#if SWITCH_DEBUG_UNIONPAY == 1
 
 	// 1123A61AE36305A75CC8B91F2A486999
 	memcpy(keyMain, "\x11\x23\xA6\x1A\xE3\x63\x05\xA7\x5C\xC8\xB9\x1F\x2A\x48\x69\x99", 16);
@@ -2765,10 +2757,7 @@ int build8583_qpboc_Auth(unsigned char *oDat, unsigned inout) {
 	}
 	DES3_encrypt(oDat, keySession, oDat + 58);
 	// ANS38
-#ifdef PBOC_TEST1
-	memcpy(oDat + ilen, "LF28517121111111", 16);
-	ilen += 16;
-#elif SWITCH_PBOC_GUILIN_DEBUG
+#if SWITCH_DEBUG_UNIONPAY == 1
 	memcpy(oDat + ilen, "ESF3000LB6C6BF92", 16);
 	ilen += 16;
 #else
@@ -3133,8 +3122,8 @@ unsigned int Build_qpboc_8583Packge(unsigned char *revBuf, unsigned char mode)
 
 	blen = Build_qpboc_8583_HD(revBuf + len, mode != MISS_PBOC_LOGIN);
 	len += blen;
-		if(Q_QPBOC_para.switch_control_SP!=0x31)
-		s_isAuthOk=1;
+	if (Q_QPBOC_para.switch_control_SP != 0x31)
+		s_isAuthOk = 1;
 
 	if (s_isAuthOk == 0)
 	{
@@ -3168,18 +3157,18 @@ unsigned int Build_qpboc_8583Packge(unsigned char *revBuf, unsigned char mode)
 		break;
 	case MISS_PBOC_UPREC_ODA_first:
 	case MISS_PBOC_PURSE:	//1.4.1　消费记录上传-7001
-	
-			len = 0;
+
+		len = 0;
 		break;
-// 		//blen = build8583UPREC7001(revBuf+len);
-// 		blen = build8583_qpboc_Purse_0200(revBuf + len);
-// 		//		MSG_LOG("blen:%d\r\n",blen);
-// 		if (blen == 0)
-// 			return 0;
-// 		len += blen;
-// 		revBuf[0] = (len - 2) / 256;
-// 		revBuf[1] = (len - 2) % 256;//最前面添加总长度
-// 		break;
+		// 		//blen = build8583UPREC7001(revBuf+len);
+		// 		blen = build8583_qpboc_Purse_0200(revBuf + len);
+		// 		//		MSG_LOG("blen:%d\r\n",blen);
+		// 		if (blen == 0)
+		// 			return 0;
+		// 		len += blen;
+		// 		revBuf[0] = (len - 2) / 256;
+		// 		revBuf[1] = (len - 2) % 256;//最前面添加总长度
+		// 		break;
 	case MISS_PBOC_UPREC_ODA:
 	case MISS_PBOC_RE_PURSE:	//1.4.1　消费记录上传-7001
 		//blen = build8583UPREC7001(revBuf+len);
@@ -3266,7 +3255,7 @@ unsigned char deal_qpoc_blk(unsigned char * data, unsigned int len)
 		return 1;//
 	}
 	memcpy(TYPE_63.card_no, data + 1, 10);
-//	BCD2Ascii((unsigned char *)&SysTime, TYPE_63.up_time, 4);
+	//	BCD2Ascii((unsigned char *)&SysTime, TYPE_63.up_time, 4);
 	sysfewrite(BIS_BLK_63, sizeof(QPBOC_TYPE_63), (unsigned char *)&TYPE_63);
 	BCD_LOG((unsigned char *)&TYPE_63, sizeof(QPBOC_TYPE_63), 1);
 	//存黑名单
@@ -3448,7 +3437,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 	clr_wdt();
 
 	MSG_LOG("QPBOC_DataDeal:%d\n", packLen);
-//	gSendOverTime = 0;
+	//	gSendOverTime = 0;
 	memcpy((unsigned char*)&Alen, pakege + 1, 2);//数据域总长度
 	//	unsigned char msgtype;
 	memcpy((unsigned char*)&sAlen, pakege + 3, 2);//8583包从第3字节开始，帧总长度，//前三个字节是 帧类型和帧长度，和数据无关
@@ -3513,7 +3502,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 
 	start_p = NULL;
-	start_p = strstr(pakege, "\r\n\r\n");		//之后就是数据了
+	start_p = strstr((char *)pakege, (char *)"\r\n\r\n");		//之后就是数据了
 
 	start_p += 4;
 
@@ -3535,7 +3524,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		BCD_LOG((unsigned char *)pakege, 2, 1);
 		ACK_flag = 0xAA;
 		gGprsinfo.GPRSLinkProcess = GPRS_FREE;
-		gmissflag = MISS_G_FREE;
+		gGprsinfo.gmissflag = MISS_G_FREE;
 		//return 1;
 		return 1;
 	}
@@ -3554,8 +3543,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		if (memcmp(pakege + i, "\x30\x30", 2) != 0) {
 			debugstring("auth error msg:");
 			debugstring((char *)pakege + i + 2);
-		if(Q_QPBOC_para.switch_control_SP==0x31)
-			s_isAuthOk =0;
+			if (Q_QPBOC_para.switch_control_SP == 0x31)
+				s_isAuthOk = 0;
 			add_qpoc_flag();
 			return 1;
 		}
@@ -3567,7 +3556,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		ACK_flag = 0xff;
 		set_flag_aut(0xad);
 		//Sign_Infor.ISOK = 0;
-		set_QPBOC_IP_MODE(4,0xAB);
+		set_QPBOC_IP_MODE(4, 0xAB);
 		return ST_OK;
 	}
 
@@ -3584,8 +3573,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 	if (sl8583head->ID != 0x60) {
 		MSG_LOG("TPDU ID error:%02X\r\n", sl8583head->ID);
-			i = 0;
-			if (memcmp(pakege + i, "\x00\x22", 2) != 0) {
+		i = 0;
+		if (memcmp(pakege + i, "\x00\x22", 2) != 0) {
 			debugdata(pakege + 3, Alen, 1);
 			return 0;
 		}
@@ -3594,8 +3583,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		if (memcmp(pakege + i, "\x30\x30", 2) != 0) {
 			debugstring("auth error msg:");
 			debugstring((char *)pakege + i + 2);
-			if(Q_QPBOC_para.switch_control_SP==0x31)
-			s_isAuthOk =0;
+			if (Q_QPBOC_para.switch_control_SP == 0x31)
+				s_isAuthOk = 0;
 			return 0;
 		}
 
@@ -3731,11 +3720,11 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 			{
 				MSG_LOG("校时---\r\n");
 				timewrite(getbuff);
-// #ifdef _FASH_FATs_SYS_
-// 				//如果时间不是今天，这个要重新打开或者新建一个文件，这里都打开一次
-// 				close_rfile_Wrecord();
-// 				open_rfile_Wrecord();
-// #endif
+				// #ifdef _FASH_FATs_SYS_
+				// 				//如果时间不是今天，这个要重新打开或者新建一个文件，这里都打开一次
+				// 				close_rfile_Wrecord();
+				// 				open_rfile_Wrecord();
+				// #endif
 			}
 			// 			if (ret >86400 || ret <-86400)		//跨天了
 			// 			{
@@ -3799,13 +3788,13 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		break;
 	case 0x22:
 
-		if(	gmissflag == MISS_PBOC_UPREC_ODA )
+		if (gGprsinfo.gmissflag == MISS_PBOC_UPREC_ODA)
 		{
-				MSG_LOG("再情况交易\r\n");
-				ACK_flag = 0;	//再情况，返回22，属于上一次成功胃，可以删掉
+			MSG_LOG("再情况交易\r\n");
+			ACK_flag = 0;	//再情况，返回22，属于上一次成功胃，可以删掉
 		}
-	
-			break;
+
+		break;
 	default:
 		ACK_flag = 0xAA;
 		// 		memset(getbuff,0,sizeof(getbuff));
@@ -3877,15 +3866,15 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 		if (msgf[62].bitf)
 		{
-				getMobileParameter(2, KEK);
-	// 				Ascii2BCD("44444444444444444444444444444444", KEK, 32);
-	// 			 #if SWITCH_PBOC_GUILIN_DEBUG
-	// 				 			// DAB3CDCBE03DB394D3928304CE588ABA
-	// 				 			memcpy(KEK, "\xDA\xB3\xCD\xCB\xE0\x3D\xB3\x94\xD3\x92\x83\x04\xCE\x58\x8A\xBA", 16);
-	// 			#endif
-	
+			getMobileParameter(2, KEK);
+			// 				Ascii2BCD("44444444444444444444444444444444", KEK, 32);
+			// 			 #if SWITCH_PBOC_GUILIN_DEBUG
+			// 				 			// DAB3CDCBE03DB394D3928304CE588ABA
+			// 				 			memcpy(KEK, "\xDA\xB3\xCD\xCB\xE0\x3D\xB3\x94\xD3\x92\x83\x04\xCE\x58\x8A\xBA", 16);
+			// 			#endif
 
-#if SWITCH_PBOC_GUILIN_DEBUG
+
+#if SWITCH_DEBUG_UNIONPAY == 1
 			// DAB3CDCBE03DB394D3928304CE588ABA
 			memcpy(KEK, "\xDA\xB3\xCD\xCB\xE0\x3D\xB3\x94\xD3\x92\x83\x04\xCE\x58\x8A\xBA", 16);
 #endif
@@ -3913,7 +3902,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 			MSG_LOG("解密:scr:");
 			BCD_LOG(keytemp, 16, 1);
-				ACK_flag=0xFF;
+			ACK_flag = 0xFF;
 #if 1
 			memset(getbuff, 0, sizeof(getbuff));
 			DES3_encrypt(getbuff, keytemp, getbuff);
@@ -3950,7 +3939,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 			if (memcmp(getbuff, mackeycheck, 4) != 0)
 			{
-					add_qpoc_flag();
+				add_qpoc_flag();
 				MSG_LOG("mak mac error!!!!!!!\r\n");
 				break;
 			}
@@ -3997,24 +3986,24 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 			saveSingInInfo();
 			// 上海银联只要求到60域就签到成功了
-				qpoc_init_singe();//成功，请标志
+			qpoc_init_singe();//成功，请标志
 			Sign_Infor.ISOK = 'O';	//置签到成功标识
-			gmissflag = MISS_G_FREE;
+			gGprsinfo.gmissflag = MISS_G_FREE;
 			restore_flag = 3;
 			ACK_flag = 0xFF;
 			// 下载黑名单
 			if (s_isDownOdaBlkList == 1) {
-				gmissflag = MISS_PBOC_DOWN_ODA_BLK;
+				gGprsinfo.gmissflag = MISS_PBOC_DOWN_ODA_BLK;
 			}
 		}
 
 		// 下载黑名单   hbg
 		restore_flag = 3;
 		if (s_isDownOdaBlkList == 1) {
-			gmissflag = MISS_PBOC_DOWN_ODA_BLK;
+			gGprsinfo.gmissflag = MISS_PBOC_DOWN_ODA_BLK;
 		}
 		else
-			gmissflag = MISS_G_FREE;
+			gGprsinfo.gmissflag = MISS_G_FREE;
 
 		if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
 			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
@@ -4030,15 +4019,15 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 	case 0x0210:
 		MSG_LOG("交易返回=0x0210=\r\n");
-		MSG_LOG("gmissflag==%x", gmissflag);
+		MSG_LOG("gmissflag==%x", gGprsinfo.gmissflag);
 		MSG_LOG("ACK_flag==%x", ACK_flag);
 
 		qpoc_init_singe();
-		if (gmissflag == MISS_PBOC_UPREC_ODA && (ACK_flag == 0)) {
+		if (gGprsinfo.gmissflag == MISS_PBOC_UPREC_ODA && (ACK_flag == 0)) {
 			if (msgf[14].bitf == 1 && ACK_flag_oda != 0)//ODA加个判断保险
 			{
 				MSG_LOG("ODA加个判断保险\r\n");
-				gmissflag = MISS_G_FREE;
+				gGprsinfo.gmissflag = MISS_G_FREE;
 				ACK_flag_oda = 0xff;
 				restore_flag = 3;
 
@@ -4047,20 +4036,20 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 				break;
 			}
 
-			#ifdef switch_oda
-				if (switch_both)
+#ifdef switch_oda
+			if (switch_both)
+			{
+				ODA_time++;
+				if (ODA_time >= 1)
 				{
-					ODA_time++;
-					if (ODA_time>=1)
-					{
-						ODA_time=0;
-						PAY_MODE_SWITCH(shuangmian, switch_both);//双通道切换
-					}
+					ODA_time = 0;
+					PAY_MODE_SWITCH(shuangmian, switch_both);//双通道切换
 				}
-			#endif
-		//	PAY_MODE_SWITCH(shuangmian, switch_both);//双通道切换
+			}
+#endif
+			//	PAY_MODE_SWITCH(shuangmian, switch_both);//双通道切换
 			MSG_LOG("上传ODA交易记录返离开的\r\n");
-			gmissflag = MISS_G_FREE;
+			gGprsinfo.gmissflag = MISS_G_FREE;
 
 			save_ODA_infor(FeRC_Dlelt, NULL);
 			restore_flag = 3;
@@ -4071,7 +4060,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		//add hbg
 		else if (ACK_flag == 0)
 		{
-			gmissflag = MISS_G_FREE;
+			gGprsinfo.gmissflag = MISS_G_FREE;
 
 			restore_flag = 3;
 
@@ -4080,24 +4069,24 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		}
 		if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
 			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-		MSG_LOG("gmissflag 2==%x", gmissflag);
+		MSG_LOG("gmissflag 2==%x", gGprsinfo.gmissflag);
 		break;
 
 	case 0x0410:	//冲正返回
 		qpoc_init_singe();
 		MSG_LOG("冲正返\r\n");
-		gmissflag = MISS_G_FREE;
+		gGprsinfo.gmissflag = MISS_G_FREE;
 		// 		del_repurse(pakege+ msgf[11].dbuf_addr);
 
 #ifdef switch_RE
-		ACK_flag=0xFF;
+		ACK_flag = 0xFF;
 		memset(repurse_infor, 0, sizeof(repurse_infor));
 		save_infor_add(FeRC_Dlelt, NULL);
 #else
-		ACK_flag=0xFF;
+		ACK_flag = 0xFF;
 		memset(repurse_infor, 0, sizeof(repurse_infor));
 		save_repurse_infor(FeRC_Dlelt, NULL);
-		
+
 #endif
 		restore_flag = 3;
 
@@ -4109,7 +4098,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 	case 0x0830:	//返回
 
 		MSG_LOG("查询\r\n");
-		gmissflag = MISS_G_FREE;
+		gGprsinfo.gmissflag = MISS_G_FREE;
 
 		if (msgf[63].bitf)
 		{
@@ -4148,7 +4137,9 @@ pboc_8583dataDealEnd:
 
 unsigned int gSendGLogin_qpoc = 0;
 unsigned  char keep_qpoc = 0;
+unsigned int POBC_time = 0;
 void find_qpboc_new_mission(void)//此任务一秒进一次
+
 {
 	unsigned char frameIndex = 0xFF;
 	//	unsigned int iver;
@@ -4169,14 +4160,17 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 		MSG_LOG("E");
 
 		if (gErrortimes[1] > 0) {
-			if ((gmissflag & MISS_GJ) != 0)
-				gmissflag = 0;
+			if ((gGprsinfo.gmissflag & MISS_GJ) != 0)
+				gGprsinfo.gmissflag = 0;
 			return;//上次连接错误,时间没到不给任务.
 		}
 	}
 
 	gErrorFlag &= (~ERROR_BUS_CONNECT);// 清除错误标识
 
+	if (gGprsinfo.isNetOK[LINK_PBOC] == 0) {
+		return;
+	}
 	/*
 	frameIndex = PeekFrame();
 	if (frameIndex != 0xff) {	// 先处理GPRS数据
@@ -4184,9 +4178,9 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 		return;
 	}*/
 #ifndef QPBOC_only
-	if ((gmissflag) != MISS_G_FREE)
+	if ((gGprsinfo.gmissflag) != MISS_G_FREE)
 	{
-		MSG_LOG("公交有任务\r\n");
+		//MSG_LOG("公交有任务\r\n");
 		return;
 	}
 #endif
@@ -4197,14 +4191,14 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 	// 		return ;
 	// 	}
 //add hbg
-	if (Sign_Infor.ISOK == 0  ) {//还没有签过到
-		if (gmissflag == MISS_PBOC_LOGIN)
+	if (Sign_Infor.ISOK == 0) {//还没有签过到
+		if (gGprsinfo.gmissflag == MISS_PBOC_LOGIN)
 			return;	//已经是签到状态了。
 //#ifdef debug_GJ_TLVDeal_
 		debugstring("银联没有签到！:");
 		//#endif
 	//	s_isAuthOk = 0;
-		gmissflag = MISS_PBOC_LOGIN;
+		gGprsinfo.gmissflag = MISS_PBOC_LOGIN;
 		if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
 			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		return;
@@ -4213,34 +4207,34 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 #ifdef switch_RE
 	if (save_infor_add(ODA_FeRC_Check, NULL) != Ret_NO) {
 		MSG_LOG("要上传冲正交易---\r\n");
-		gmissflag = MISS_PBOC_RE_PURSE;
+		gGprsinfo.gmissflag = MISS_PBOC_RE_PURSE;
 	}
 #else
 	//	MSG_LOG("Q_pos_infor.flge=%x--get_repurse_num()=%d-\r\n",Q_pos_infor.flge,get_repurse_num());
-	if (get_repurse_num() == ST_OK  && Q_pos_infor.flge!=0xad)  //再请款Q_pos_infor.flge!=0xea
+	if (get_repurse_num() == ST_OK  && Q_pos_infor.flge != 0xad)  //再请款Q_pos_infor.flge!=0xea
 	{
 		MSG_LOG("要冲正---\r\n");
-		gmissflag = MISS_PBOC_RE_PURSE;
+		gGprsinfo.gmissflag = MISS_PBOC_RE_PURSE;
 		return;//add hbg
 	}
 #endif
-	
+
 	if (save_ODA_infor(ODA_FeRC_Check, NULL) != Ret_NO) {
 		MSG_LOG("要上传ODA交易---\r\n");
-		gmissflag = MISS_PBOC_UPREC_ODA;
+		gGprsinfo.gmissflag = MISS_PBOC_UPREC_ODA;
 	}
-// 	 	gSendGLogin_qpoc++;
-// 		if(gSendGLogin_qpoc > 12000){ //40分钟  40 *60 *5 
-// 			 		gSendGLogin_qpoc = 0;
-// 			 		//			gsl8583Style.ISOK = 0;	//重签到
-// 			 	//	gmissflag = MISS_PBOC_LOGIN_aut;
-// 			 		GPRSLinkProcess =TCPSTARTSTAT;
-// 				//	s_isAuthOk=0;
-// 					Sign_Infor.ISOK = 0 ;
-// 				//	keep_qpoc=0x35;
-// 			//		beep(1,200,200);
-// 			 	}
-				
+	// 	 	gSendGLogin_qpoc++;
+	// 		if(gSendGLogin_qpoc > 12000){ //40分钟  40 *60 *5 
+	// 			 		gSendGLogin_qpoc = 0;
+	// 			 		//			gsl8583Style.ISOK = 0;	//重签到
+	// 			 	//	gmissflag = MISS_PBOC_LOGIN_aut;
+	// 			 		GPRSLinkProcess =TCPSTARTSTAT;
+	// 				//	s_isAuthOk=0;
+	// 					Sign_Infor.ISOK = 0 ;
+	// 				//	keep_qpoc=0x35;
+	// 			//		beep(1,200,200);
+	// 			 	}
+
 
 
 }
@@ -4291,7 +4285,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 	if (Sign_Infor.ISOK == 0)
 	{
 		MSG_LOG("没签到--return--\r\n");
-		gmissflag = MISS_PBOC_LOGIN;
+		gGprsinfo.gmissflag = MISS_PBOC_LOGIN;
 		ACK_flag = 0;
 		MessageBox(1, "设备未签到,请稍后");
 		delayxms(500);
@@ -4325,7 +4319,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 		if (ret == KEY_ESC) {
 			if (gGprsinfo.GPRSLinkProcess == 0xA0)
 				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-			gmissflag = 0;
+			gGprsinfo.gmissflag = 0;
 			return -1;
 		}
 		if (isNetOK[LINK_PBOC] == 3)
@@ -4386,22 +4380,22 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 
 
 
-	//	if (flag == 0xA5 && gMCardCand != CARDSTYLE_UNPAY_ODA) {	// 收到正确数据   
-	//		if (GPRSLinkProcess == 0xA0)
-	//			GPRSLinkProcess = TCPSTARTSTAT;
-	//		//gmissflag = 0;
-	//		gSendOverTime = 0;
+		//	if (flag == 0xA5 && gMCardCand != CARDSTYLE_UNPAY_ODA) {	// 收到正确数据   
+		//		if (GPRSLinkProcess == 0xA0)
+		//			GPRSLinkProcess = TCPSTARTSTAT;
+		//		//gmissflag = 0;
+		//		gSendOverTime = 0;
 
-		//	MSG_LOG("删冲正-xxxxxxxxx-\r\n");
-			//memset(repurse_infor, 0, sizeof(repurse_infor));
-		//	save_repurse_infor(FeRC_Dlelt, NULL);
+			//	MSG_LOG("删冲正-xxxxxxxxx-\r\n");
+				//memset(repurse_infor, 0, sizeof(repurse_infor));
+			//	save_repurse_infor(FeRC_Dlelt, NULL);
 
-//pboc_free_cnt = PBOC_FREE_CNT;
-//
-	//		MSG_LOG("返回正常:%02x\r\n", flag);
+	//pboc_free_cnt = PBOC_FREE_CNT;
+	//
+		//		MSG_LOG("返回正常:%02x\r\n", flag);
 
-	//		return 0;
-	//	}
+		//		return 0;
+		//	}
 
 		if (get_repurse_num() == ST_OK &&shuangmian == 1)
 		{
@@ -4410,11 +4404,11 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 			ACK_flag = 0xFE;
 			return -2;
 		}
-		gmissflag = SQmode;
+		gGprsinfo.gmissflag = SQmode;
 
 
 #ifdef _debug_
-		MSG_LOG("赶紧发--overtime=0--:0x%02X-\r\n", gmissflag);
+		MSG_LOG("赶紧发--overtime=0--:0x%02X-\r\n", gGprsinfo.gmissflag);
 #endif
 
 		// 		GPRSLinkProcess = TCPSTARTSTAT;
@@ -4471,8 +4465,8 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 
 
 
-			if (gmissflag != SQmode) {
-				gmissflag = SQmode;
+			if (gGprsinfo.gmissflag != SQmode) {
+				gGprsinfo.gmissflag = SQmode;
 			}
 
 #ifdef WIFI_TLH_
@@ -4487,10 +4481,10 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 				tcpipClose(LINK_PBOC);
 				if (gGprsinfo.GPRSLinkProcess == 0xA0)
 					gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-				gmissflag = 0;
-				#if defined QK && !defined switch_RE 
+				gGprsinfo.gmissflag = 0;
+#if defined QK && !defined switch_RE 
 				set_pos_infor_1(0xad);  //超时标志，限双通道
-				#endif
+#endif
 				return -1;
 			}
 
@@ -4515,8 +4509,8 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 					MSG_LOG("444bit:%d,ACK_flag:%02x   ", msgf[field_ack].bitf, ACK_flag);
 					if (gGprsinfo.GPRSLinkProcess == 0xA0)
 						gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-					gmissflag = 0x4f;
-				//	gSendOverTime = 0;
+					gGprsinfo.gmissflag = 0x4f;
+					//	gSendOverTime = 0;
 
 					return -1;	//
 				}
@@ -4539,12 +4533,12 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 			else {
 				ret = getkey(1);
 				if (ret == KEY_ESC) {
-					gmissflag = 0;
+					gGprsinfo.gmissflag = 0;
 
 					return -1;
 				}
 			}
-		}
+			}
 
 		// 		if(outdly++ > 200)
 		// 			return;
@@ -4568,8 +4562,8 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 
 			return 0;
 		}
-	}
-//	return 0;
+		}
+	//	return 0;
 }
 
 //BASE64加密，输出在base64
@@ -4597,20 +4591,20 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 	s_sum1 = get_s_sum1(0);
 
 
-	#ifndef _debug_
-	if((s_sum1 == 0) || (s_sum1 > 2000))
+#ifndef _debug_
+	if ((s_sum1 == 0) || (s_sum1 > 2000))
 	{
 
-			display(0,0,"提示:", DIS_Cls);
-			display(2,0,"票价>20元",DIS_CENTER);
-		
-	delayxms(1000);
-	//	g24GDisFlash = 1;
+		display(0, 0, "提示:", DIS_Cls);
+		display(2, 0, "票价>20元", DIS_CENTER);
+
+		delayxms(1000);
+		//	g24GDisFlash = 1;
 		restore_flag = 3;
-	//	card_ser = 0;
-		//cardSound=0;
+		//	card_ser = 0;
+			//cardSound=0;
 		return -8;
-	}
+}
 
 #endif
 	cardlen = strlen((const char *)qr_pboc_AccountNo);
@@ -4622,13 +4616,13 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 		disp_no_swipe();
 		return ST_OK;
 	}
-	
+
 	MSG_LOG("交易码:%s\r\n", qr_pboc_AccountNo);
 
 	//miniDispstr(0,0,(char *)qrcodeRevBuf+2,0);
 	display(2, 0, (char *)qr_pboc_AccountNo, 0);
 	emv_set_pay_channel(PAY_Online);
-//	ret = SQDataFromSVT(MISS_PBOC_PURSE, 6000);
+	//	ret = SQDataFromSVT(MISS_PBOC_PURSE, 6000);
 	ret = Send_WaitRecvData(MISS_PBOC_PURSE, 6000);
 	MSG_LOG("SQDataFromSVT:ret=%d\r\n", ret);
 	if (ret == 0)
@@ -4704,7 +4698,7 @@ unsigned char qrDisp_history(unsigned char mode, unsigned int Index)
 	debugdata((unsigned char*)&Index, 4, 1);
 #endif
 
-	#ifdef _debug_
+#ifdef _debug_
 	debugstring("qFIND:Index:");
 	debugdata((unsigned char*)&Index, 4, 1);
 #endif
@@ -4712,7 +4706,7 @@ unsigned char qrDisp_history(unsigned char mode, unsigned int Index)
 		writeBackRec(buffer, 0, 0xA5);
 	}
 	curp = ghisCur;
-	addr = (Index /*+ 1*/) * RECORD_LEN;
+	addr = (Index /*+ 1*/)* RECORD_LEN;
 #ifdef _debug_
 	debugstring("qFIND:curp:");
 	debugdata((unsigned char*)&curp, 4, 1);
@@ -4736,7 +4730,7 @@ unsigned char qrDisp_history(unsigned char mode, unsigned int Index)
 	if (memcmp(buffer, "二维码", 6) != 0)
 		return ST_ERROR;//不是银行数据
 
-	flashread(addr , (unsigned char *)&historyCheck, 256);
+	flashread(addr, (unsigned char *)&historyCheck, 256);
 
 #ifdef _debug_
 	debugstring("find:");
@@ -4752,26 +4746,26 @@ unsigned char qrDisp_history(unsigned char mode, unsigned int Index)
 	switch ((historyCheck.rDealType))
 	{
 	case ID_REC_QRC_TX:				//腾讯二维码记录
-	case ID_REC_QRC_ZFB	:			//支付宝二维码记录:
+	case ID_REC_QRC_ZFB:			//支付宝二维码记录:
 	case ID_REC_QRC_PBOC:
 		cls();
 		memset(buffer, 0, 20);
 		temp = 0;
 		memcpy((unsigned char*)&temp, historyCheck.rDealMoney, 3);
-	//	over_turn(4, (unsigned char*)&temp);
+		//	over_turn(4, (unsigned char*)&temp);
 		sprintf((char*)buffer, _Font_KouKuandian, temp / 100, temp % 100);
 		display(2, 0, (char*)buffer, 0);
 		memset(buffer, 0, 20);
 		temp = 0;
-// 		memcpy((unsigned char*)&temp, historyCheck.rAferMoney, 4);
-// 		over_turn(4, (unsigned char*)&temp);
-// 
-// 		// 		memcpy((unsigned char*)&temp1, historyCheck.rDealMoney, 3);
-// 		// 		temp -= temp1;
- 		sprintf((char*)buffer, _Font_Balancedian, temp / 100, temp % 100);
- 		display(4, 0, (char*)buffer, 0);
+		// 		memcpy((unsigned char*)&temp, historyCheck.rAferMoney, 4);
+		// 		over_turn(4, (unsigned char*)&temp);
+		// 
+		// 		// 		memcpy((unsigned char*)&temp1, historyCheck.rDealMoney, 3);
+		// 		// 		temp -= temp1;
+		sprintf((char*)buffer, _Font_Balancedian, temp / 100, temp % 100);
+		display(4, 0, (char*)buffer, 0);
 		dis_time_mini(6, (stcomtime*)&historyCheck.rDealTime);
-		display(6, 0,"时间:",0);
+		display(6, 0, "时间:", 0);
 		break;
 	case ID_REC_BLKLIST:
 		cls();
@@ -4780,15 +4774,15 @@ unsigned char qrDisp_history(unsigned char mode, unsigned int Index)
 	default:
 		return ST_ERROR;
 	}
-		sprintf((char*)buffer, "%d ", Index + 1);
+	sprintf((char*)buffer, "%d ", Index + 1);
 	miniDispstr(9, (21 - strlen((char*)buffer)), (char*)buffer, DIS_RIGHT);
 	temp = 0;
- 
+
 	memset(buffer, 0, 40);
-	strcat((char *)buffer,"付款码:");
-     
-	memcpy(buffer+strlen("付款码:"),historyCheck.rQRCdat+1,historyCheck.rQRCdat[0]);
-//	BCD2Ascii(historyCheck.rQRCdat, buffer, 10);
+	strcat((char *)buffer, "付款码:");
+
+	memcpy(buffer + strlen("付款码:"), historyCheck.rQRCdat + 1, historyCheck.rQRCdat[0]);
+	//	BCD2Ascii(historyCheck.rQRCdat, buffer, 10);
 	display(0, 0, (char*)buffer, 0);
 	return ST_OK;
 }
@@ -4864,39 +4858,44 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 
 	stMobileParameter smpPara;
 	unsigned int itemp;
-// 	MSG_LOG("使用铁电的大小=%d=\r\n",BIT_END_ADDR);
-// 	MSG_LOG("使用银联参数铁电的位置=%d=\r\n",BIT_qpbpc_para);
-// 	MSG_LOG("使用银联参数结构体的大小=%d=\r\n",sizeof(stMobileParameter));
-	//MSG_LOG("===1===\r\n");
+	// 	MSG_LOG("使用铁电的大小=%d=\r\n",BIT_END_ADDR);
+	// 	MSG_LOG("使用银联参数铁电的位置=%d=\r\n",BIT_qpbpc_para);
+	// 	MSG_LOG("使用银联参数结构体的大小=%d=\r\n",sizeof(stMobileParameter));
+		//MSG_LOG("===1===\r\n");
 	clr_wdt();
 	sysferead(BIT_qpbpc_para, sizeof(stMobileParameter), (unsigned char *)&smpPara);
 	//MSG_LOG("===2===\r\n");
-	 	itemp = __cpuCrc32((unsigned char*)&smpPara, (sizeof(stMobileParameter) - 4));
+	itemp = __cpuCrc32((unsigned char*)&smpPara, (sizeof(stMobileParameter) - 4));
 	// //MSG_LOG("===3===\r\n");
+	if (memcmp((unsigned char*)&itemp, smpPara.CrcCheck, 4) != 0) {//校验错
+		printf("getMobileParameter R:-1\n");
+		flashread(FLASH_PBOC_PARA, (unsigned char *)&smpPara, sizeof(stMobileParameter));
+
+		itemp = __cpuCrc32((unsigned char*)&smpPara, (sizeof(stMobileParameter) - 4));
+
 		if (memcmp((unsigned char*)&itemp, smpPara.CrcCheck, 4) != 0) {//校验错
-	 	printf("getMobileParameter R:-1\n");
-	 		flashread(FLASH_PBOC_PARA, (unsigned char *)&smpPara, sizeof(stMobileParameter));
-
-	 		itemp = __cpuCrc32((unsigned char*)&smpPara, (sizeof(stMobileParameter) - 4));
-
-	 		if (memcmp((unsigned char*)&itemp, smpPara.CrcCheck, 4) != 0) {//校验错
-	 			return ST_ERROR;
-	 		}
-	 		MSG_LOG("覆盖flash 2 fe\r\n");
-	 		sysfewrite(BIT_qpbpc_para, sizeof(stMobileParameter), (unsigned char *)&smpPara);
-	 	return ST_ERROR;
-	 	}
+			return ST_ERROR;
+		}
+		MSG_LOG("覆盖flash 2 fe\r\n");
+		sysfewrite(BIT_qpbpc_para, sizeof(stMobileParameter), (unsigned char *)&smpPara);
+		return ST_ERROR;
+	}
 
 	switch (mode) {
 	case 1:
+#if SWITCH_DEBUG_UNIONPAY == 1
+		memcpy(smpPara.shopNo, "898131141110001", 15);
+#elif SWITCH_DEBUG_UNIONPAY == 2
+		memcpy(smpPara.shopNo, "898131141110001", 15);
+#else
 		memcpy(obuf, smpPara.shopNo, 15);
+#endif
 		break;
 	case 2:
 		memcpy(obuf, smpPara.KEK, 16);
 
 		break;
 	case 3:
-	
 		memcpy(obuf, smpPara.ip, 4);
 		break;
 	case 4:
@@ -4906,6 +4905,7 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 		memcpy(obuf, smpPara.tpdu, 5);
 		break;
 	case 6:
+		memcpy(smpPara.device, "1163727", 8);
 		memcpy(obuf, smpPara.device, 8);
 		break;
 
@@ -4919,7 +4919,7 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 		break;
 	case 9:
 		memcpy(obuf, smpPara.KEK_1, 16);
-		
+
 		break;
 	case 10:
 		memcpy(obuf, smpPara.KEK_2, 16);
@@ -4931,92 +4931,92 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 		break;
 
 	case 12:
-		
-		memcpy( obuf, smpPara.domain_name_1,sizeof(smpPara.domain_name_1)-1);
-		
-		MSG_LOG("域名_1=%s:",obuf);
-		
+
+		memcpy(obuf, smpPara.domain_name_1, sizeof(smpPara.domain_name_1) - 1);
+
+		MSG_LOG("域名_1=%s:", obuf);
+
 		break;
 	case 13:
-		memcpy( obuf, smpPara.domain_name_2,sizeof(smpPara.domain_name_2)-1);
-		MSG_LOG("域名_2=%s:",obuf);
+		memcpy(obuf, smpPara.domain_name_2, sizeof(smpPara.domain_name_2) - 1);
+		MSG_LOG("域名_2=%s:", obuf);
 		break;
 	case 14:
 		obuf[0] = smpPara.shuangmian_OVER_TIME;
-		MSG_LOG("参数-14--:%d:",obuf[0]);
+		MSG_LOG("参数-14--:%d:", obuf[0]);
 		break;
 	case 15:
 		obuf[0] = smpPara.chongzheng_OVER_TIME;
-		MSG_LOG("参数-15--:%d:",obuf[0]);
+		MSG_LOG("参数-15--:%d:", obuf[0]);
 		break;
 	case 16: //分量一下载成功标志 \x33\x88
 		//memcpy( obuf, (unsigned char *)&smpPara.TMS_START_FLAGE,2);
-		obuf[0] = smpPara.TMS_START_FLAGE; 
+		obuf[0] = smpPara.TMS_START_FLAGE;
 		MSG_LOG("分量标志1:");
 		BCD_LOG(obuf, 2, 1);
 		break;
 	case 17:
 		obuf[0] = smpPara.TMS_KEY_FLAGE;  //
-		MSG_LOG("参数-17--:%d:",obuf[0]);
+		MSG_LOG("参数-17--:%d:", obuf[0]);
 		break;
 	case 18:
 		obuf[0] = smpPara.TMS_FLAGE_FIRST;  //
-		MSG_LOG("参数-18--:%d:",obuf[0]);
+		MSG_LOG("参数-18--:%d:", obuf[0]);
 		break;
 	case 19:
 		MSG_LOG("APN:");
-		memcpy( obuf, smpPara.domain_APN,sizeof(smpPara.domain_APN));
+		memcpy(obuf, smpPara.domain_APN, sizeof(smpPara.domain_APN));
 		BCD_LOG(obuf, strlen((const char *)obuf), 1);
-		
+
 		break;
 	case 20:
-		memcpy( obuf, smpPara.domain_name_3,sizeof(smpPara.domain_name_3));
-		
-		MSG_LOG("域名_1=%s:",obuf);
+		memcpy(obuf, smpPara.domain_name_3, sizeof(smpPara.domain_name_3));
+
+		MSG_LOG("域名_1=%s:", obuf);
 		break;
 
 	case 21:
-		
+
 		obuf[0] = smpPara.SOCKET_OVER_TIME;
-		MSG_LOG("轮询超时时间--:%d:",obuf[0]);
+		MSG_LOG("轮询超时时间--:%d:", obuf[0]);
 		break;
 
 
 
 	case 22:
 		obuf[0] = smpPara.switch_control_DNS;
-		MSG_LOG("DNS开关--:%d:",obuf[0]);
+		MSG_LOG("DNS开关--:%d:", obuf[0]);
 		break;
 	case 23:
 		memcpy(obuf, smpPara.Ip_P_BAK, 4);
-	
+
 		MSG_LOG("公网备用ip");
 		break;
 	case 24:
-			memcpy(obuf, smpPara.Special_IP, 4);
-	
+		memcpy(obuf, smpPara.Special_IP, 4);
+
 		MSG_LOG("专网ip");
 		break;
 	case 25:
-			memcpy(obuf, smpPara.Special_PORT, 4);
-	
+		memcpy(obuf, smpPara.Special_PORT, 4);
+
 		MSG_LOG("专网port");
 		break;
 	case 26:
-	memcpy(obuf, smpPara.Special_BAK, 4);
-	
+		memcpy(obuf, smpPara.Special_BAK, 4);
+
 		MSG_LOG("专网ip备份");
 		break;
 	case 27:
 		obuf[0] = smpPara.switch_control_SP;
-		MSG_LOG("专网开关--:%d:",obuf[0]);
+		MSG_LOG("专网开关--:%d:", obuf[0]);
 		break;
 	case 0xff:
-		memcpy(obuf,(unsigned char *)&smpPara.shopNo,sizeof(stMobileParameter));
+		memcpy(obuf, (unsigned char *)&smpPara.shopNo, sizeof(stMobileParameter));
 		MSG_LOG("更新全部参数\r\n");
 		break;
 	default:
-	
+
 		MSG_LOG("参数不对\r\n");
 		return ST_ERROR;
 	}
@@ -5084,52 +5084,52 @@ void saveMobileParameter(unsigned char mode, const void *pParam)
 	case 11:
 		MSG_LOG("ODA机构号:");
 		BCD_LOG(buf, 9, 1);
-		memcpy(smpPara.ODA_FLAGE,"OK",2); //暂时没用
+		memcpy(smpPara.ODA_FLAGE, "OK", 2); //暂时没用
 		memcpy(smpPara.ODA_NO, buf, 9);
 		break;
 	case 12:
 		MSG_LOG("域名_1:");
 		BCD_LOG(buf, strlen((const char *)buf), 1);
-		
-		smpPara.domain_LEN_1=strlen((const char *)buf);
-		if(smpPara.domain_LEN_1>24)
+
+		smpPara.domain_LEN_1 = strlen((const char *)buf);
+		if (smpPara.domain_LEN_1 > 24)
 		{
-			smpPara.domain_LEN_1=23;
+			smpPara.domain_LEN_1 = 23;
 		}
 		memcpy((char *)smpPara.domain_name_1, (char *)buf, 24);
 		break;
 	case 13:
 		MSG_LOG("域名_2:");
 		BCD_LOG(buf, strlen((const char *)buf), 1);
-		smpPara.domain_LEN_2=strlen((const char *)buf);
-		if(smpPara.domain_LEN_2>24)
+		smpPara.domain_LEN_2 = strlen((const char *)buf);
+		if (smpPara.domain_LEN_2 > 24)
 		{
-			smpPara.domain_LEN_2=23;
+			smpPara.domain_LEN_2 = 23;
 		}
 		memcpy((char *)smpPara.domain_name_2, (char *)buf, 24);
 		break;
 	case 14:
-		smpPara.shuangmian_OVER_TIME=buf[0];
-		MSG_LOG("参数-14--:%d:",buf[0]);
+		smpPara.shuangmian_OVER_TIME = buf[0];
+		MSG_LOG("参数-14--:%d:", buf[0]);
 		break;
 	case 15:
-		smpPara.chongzheng_OVER_TIME =buf[0];
-		MSG_LOG("参数-15--:%d:",buf[0]);
+		smpPara.chongzheng_OVER_TIME = buf[0];
+		MSG_LOG("参数-15--:%d:", buf[0]);
 		break;
 	case 16: //分量一下载成功标志 \x33\x88
 	//	memcpy((char *)smpPara.TMS_START_FLAGE, (char *)buf, 2);
-		smpPara.TMS_START_FLAGE=buf[0];
+		smpPara.TMS_START_FLAGE = buf[0];
 		MSG_LOG("保存 分量标志1:\r\n");
 		BCD_LOG(buf, 1, 1);
 		break;
 	case 17:
-		smpPara.TMS_KEY_FLAGE=buf[0];
-		MSG_LOG("参数-17--:%d:",buf[0]);
+		smpPara.TMS_KEY_FLAGE = buf[0];
+		MSG_LOG("参数-17--:%d:", buf[0]);
 
 		break;
 	case 18:
-		smpPara.TMS_FLAGE_FIRST=buf[0];
-		MSG_LOG("参数-18--:%d:",buf[0]);
+		smpPara.TMS_FLAGE_FIRST = buf[0];
+		MSG_LOG("参数-18--:%d:", buf[0]);
 		break;
 
 	case 19:
@@ -5141,12 +5141,12 @@ void saveMobileParameter(unsigned char mode, const void *pParam)
 		memcpy((char *)smpPara.domain_name_3, (char *)buf, 24);
 		break;
 	case 21:
-		smpPara.SOCKET_OVER_TIME=buf[0];
-		MSG_LOG("轮询超时时间--:%d:",buf[0]);
+		smpPara.SOCKET_OVER_TIME = buf[0];
+		MSG_LOG("轮询超时时间--:%d:", buf[0]);
 		break;
 	case 22:
-		smpPara.switch_control_DNS=buf[0];
-		MSG_LOG("DNS开关--:%d:",buf[0]);
+		smpPara.switch_control_DNS = buf[0];
+		MSG_LOG("DNS开关--:%d:", buf[0]);
 		break;
 	case 23:
 		memcpy(smpPara.Ip_P_BAK, buf, 4);
@@ -5165,8 +5165,8 @@ void saveMobileParameter(unsigned char mode, const void *pParam)
 		MSG_LOG("专网ip备份");
 		break;
 	case 27:
-		smpPara.switch_control_SP=buf[0];
-		MSG_LOG("专网开关--:%d:",buf[0]);
+		smpPara.switch_control_SP = buf[0];
+		MSG_LOG("专网开关--:%d:", buf[0]);
 		break;
 	default:
 		return;
@@ -5188,108 +5188,108 @@ extern unsigned char get_over_time_shuang(void);
 void Q_QPBOC_para_INIT(void)
 {
 
-	MSG_LOG("使用铁电的大小=%d=\r\n",BIT_END_ADDR);
-	MSG_LOG("使用银联参数铁电的位置=%d=\r\n",BIT_qpbpc_para);
-	MSG_LOG("使用银联参数结构体的大小=%d=\r\n",sizeof(stMobileParameter));
+	MSG_LOG("使用铁电的大小=%d=\r\n", BIT_END_ADDR);
+	MSG_LOG("使用银联参数铁电的位置=%d=\r\n", BIT_qpbpc_para);
+	MSG_LOG("使用银联参数结构体的大小=%d=\r\n", sizeof(stMobileParameter));
 
-// 	memset((unsigned char *)&Q_QPBOC_para,0,sizeof(stMobileParameter));
-// 	getMobileParameter(1, Q_QPBOC_para.shopNo);
-// 	delayxms(1);
-// 	getMobileParameter(6,Q_QPBOC_para.device);
-// 	delayxms(1);
-// 	getMobileParameter(3,Q_QPBOC_para.ip );
-// 	delayxms(1);
-// 	getMobileParameter(4, Q_QPBOC_para.port);
-// 	delayxms(1);
-// 	getMobileParameter(7, Q_QPBOC_para.AUTHKEY);
-// 	delayxms(1);
-// 	getMobileParameter(2, Q_QPBOC_para.KEK);
-// 	delayxms(1);
-// 	getMobileParameter(11, Q_QPBOC_para.ODA_NO);
-// 	delayxms(1);
-// 	getMobileParameter(12, Q_QPBOC_para.domain_name_1);
-// 	delayxms(1);
-// 	getMobileParameter(13, Q_QPBOC_para.domain_name_2);
-// 	delayxms(1);
-// 
-// // 	getMobileParameter(14, (unsigned char*)Q_QPBOC_para.shuangmian_OVER_TIME);	
-// // 	delayxms(1);
-// // 	getMobileParameter(15, (unsigned char*)Q_QPBOC_para.chongzheng_OVER_TIME);
-// 
-// 	Q_QPBOC_para.shuangmian_OVER_TIME=get_over_time_shuang();
-// 	Q_QPBOC_para.chongzheng_OVER_TIME=get_over_time_re();
-// 	getMobileParameter(16,(unsigned char *)&Q_QPBOC_para.TMS_START_FLAGE);
-// 	getMobileParameter(17, (unsigned char *)&Q_QPBOC_para.TMS_KEY_FLAGE);
-// 	delayxms(1);
-// 	getMobileParameter(18, (unsigned char *)&Q_QPBOC_para.TMS_FLAGE_FIRST);
-// 	delayxms(1);
-// 	getMobileParameter(19, (unsigned char *)&Q_QPBOC_para.domain_APN);
-// 	delayxms(1);
-// 
-// 
-// 	
-// 
-// 	MSG_LOG("银联-IP:\r\n");
-// 	BCD_LOG(Q_QPBOC_para.ip, 4, 1);
-// 	MSG_LOG("银联-PORT:\r\n");
-// 	BCD_LOG(Q_QPBOC_para.port, 4, 1);
-// 	MSG_LOG("银联-shopNo:\r\n");
-// 	BCD_LOG(Q_QPBOC_para.shopNo, 15, 1);
-// 	MSG_LOG("银联-device:\r\n");
-// 	BCD_LOG(Q_QPBOC_para.device, 8, 1);
-// 	MSG_LOG("银联-KEK:\r\n");
-// 	BCD_LOG(Q_QPBOC_para.KEK, 16, 1);
-// 	MSG_LOG("银联-AUTHKEY:\r\n");
-// 	BCD_LOG(Q_QPBOC_para.AUTHKEY, 16, 1);
-// 	MSG_LOG("ODA机构号:");
-// 	BCD_LOG(Q_QPBOC_para.ODA_NO, 8, 1);
-// 	MSG_LOG("域名_1=%s:\r\n",Q_QPBOC_para.domain_name_1);
-// 	MSG_LOG("域名_2=%s:\r\n",Q_QPBOC_para.domain_name_2);
-// 	MSG_LOG("参数-15--:%d:\r\n",Q_QPBOC_para.shuangmian_OVER_TIME);
-// 	MSG_LOG("参数-14--:%d:\r\n",Q_QPBOC_para.chongzheng_OVER_TIME);
-// 	MSG_LOG("TMS分量1标志:%x\r\n:",Q_QPBOC_para.TMS_START_FLAGE);
-// 	MSG_LOG("TMS密钥激活标志:%x\r\n:",Q_QPBOC_para.TMS_KEY_FLAGE);
-// 	MSG_LOG("TMS初装机标志:%x\r\n:",Q_QPBOC_para.TMS_FLAGE_FIRST);
-// 	MSG_LOG("QPBOC-APN:%s\r\n:",	Q_QPBOC_para.domain_APN);
+	// 	memset((unsigned char *)&Q_QPBOC_para,0,sizeof(stMobileParameter));
+	// 	getMobileParameter(1, Q_QPBOC_para.shopNo);
+	// 	delayxms(1);
+	// 	getMobileParameter(6,Q_QPBOC_para.device);
+	// 	delayxms(1);
+	// 	getMobileParameter(3,Q_QPBOC_para.ip );
+	// 	delayxms(1);
+	// 	getMobileParameter(4, Q_QPBOC_para.port);
+	// 	delayxms(1);
+	// 	getMobileParameter(7, Q_QPBOC_para.AUTHKEY);
+	// 	delayxms(1);
+	// 	getMobileParameter(2, Q_QPBOC_para.KEK);
+	// 	delayxms(1);
+	// 	getMobileParameter(11, Q_QPBOC_para.ODA_NO);
+	// 	delayxms(1);
+	// 	getMobileParameter(12, Q_QPBOC_para.domain_name_1);
+	// 	delayxms(1);
+	// 	getMobileParameter(13, Q_QPBOC_para.domain_name_2);
+	// 	delayxms(1);
+	// 
+	// // 	getMobileParameter(14, (unsigned char*)Q_QPBOC_para.shuangmian_OVER_TIME);	
+	// // 	delayxms(1);
+	// // 	getMobileParameter(15, (unsigned char*)Q_QPBOC_para.chongzheng_OVER_TIME);
+	// 
+	// 	Q_QPBOC_para.shuangmian_OVER_TIME=get_over_time_shuang();
+	// 	Q_QPBOC_para.chongzheng_OVER_TIME=get_over_time_re();
+	// 	getMobileParameter(16,(unsigned char *)&Q_QPBOC_para.TMS_START_FLAGE);
+	// 	getMobileParameter(17, (unsigned char *)&Q_QPBOC_para.TMS_KEY_FLAGE);
+	// 	delayxms(1);
+	// 	getMobileParameter(18, (unsigned char *)&Q_QPBOC_para.TMS_FLAGE_FIRST);
+	// 	delayxms(1);
+	// 	getMobileParameter(19, (unsigned char *)&Q_QPBOC_para.domain_APN);
+	// 	delayxms(1);
+	// 
+	// 
+	// 	
+	// 
+	// 	MSG_LOG("银联-IP:\r\n");
+	// 	BCD_LOG(Q_QPBOC_para.ip, 4, 1);
+	// 	MSG_LOG("银联-PORT:\r\n");
+	// 	BCD_LOG(Q_QPBOC_para.port, 4, 1);
+	// 	MSG_LOG("银联-shopNo:\r\n");
+	// 	BCD_LOG(Q_QPBOC_para.shopNo, 15, 1);
+	// 	MSG_LOG("银联-device:\r\n");
+	// 	BCD_LOG(Q_QPBOC_para.device, 8, 1);
+	// 	MSG_LOG("银联-KEK:\r\n");
+	// 	BCD_LOG(Q_QPBOC_para.KEK, 16, 1);
+	// 	MSG_LOG("银联-AUTHKEY:\r\n");
+	// 	BCD_LOG(Q_QPBOC_para.AUTHKEY, 16, 1);
+	// 	MSG_LOG("ODA机构号:");
+	// 	BCD_LOG(Q_QPBOC_para.ODA_NO, 8, 1);
+	// 	MSG_LOG("域名_1=%s:\r\n",Q_QPBOC_para.domain_name_1);
+	// 	MSG_LOG("域名_2=%s:\r\n",Q_QPBOC_para.domain_name_2);
+	// 	MSG_LOG("参数-15--:%d:\r\n",Q_QPBOC_para.shuangmian_OVER_TIME);
+	// 	MSG_LOG("参数-14--:%d:\r\n",Q_QPBOC_para.chongzheng_OVER_TIME);
+	// 	MSG_LOG("TMS分量1标志:%x\r\n:",Q_QPBOC_para.TMS_START_FLAGE);
+	// 	MSG_LOG("TMS密钥激活标志:%x\r\n:",Q_QPBOC_para.TMS_KEY_FLAGE);
+	// 	MSG_LOG("TMS初装机标志:%x\r\n:",Q_QPBOC_para.TMS_FLAGE_FIRST);
+	// 	MSG_LOG("QPBOC-APN:%s\r\n:",	Q_QPBOC_para.domain_APN);
 
 	getMobileParameter(0xff, Q_QPBOC_para.shopNo);
-	
-//	
-//	Q_QPBOC_para.switch_control_SP=0x31;  //测试
-//	memset(Q_QPBOC_para.domain_APN,0,sizeof(Q_QPBOC_para.domain_APN));
-	memcpy(Q_QPBOC_para.domain_APN,"CMNET",5);
-//	Q_QPBOC_para.switch_control_SP=0x30;  //测试
-//	MSG_LOG("需要切成专网\r\n");
 
-	if(Q_QPBOC_para.switch_control_SP!=0x31)
-		s_isAuthOk =1;
+	//	
+	//	Q_QPBOC_para.switch_control_SP=0x31;  //测试
+	//	memset(Q_QPBOC_para.domain_APN,0,sizeof(Q_QPBOC_para.domain_APN));
+	memcpy(Q_QPBOC_para.domain_APN, "CMNET", 5);
+	//	Q_QPBOC_para.switch_control_SP=0x30;  //测试
+	//	MSG_LOG("需要切成专网\r\n");
 
-//	memset(Q_QPBOC_para.domain_name_1,0,sizeof(Q_QPBOC_para.domain_name_1));
-//	memset(Q_QPBOC_para.domain_name_2,0,sizeof(Q_QPBOC_para.domain_name_2));
-//	memset(Q_QPBOC_para.domain_name_3,0,sizeof(Q_QPBOC_para.domain_name_3));
-//	memset(Q_QPBOC_para.ip,0,sizeof(Q_QPBOC_para.ip));
-//	memset(Q_QPBOC_para.Ip_P_BAK,0,sizeof(Q_QPBOC_para.Ip_P_BAK));
+	if (Q_QPBOC_para.switch_control_SP != 0x31)
+		s_isAuthOk = 1;
+
+	//	memset(Q_QPBOC_para.domain_name_1,0,sizeof(Q_QPBOC_para.domain_name_1));
+	//	memset(Q_QPBOC_para.domain_name_2,0,sizeof(Q_QPBOC_para.domain_name_2));
+	//	memset(Q_QPBOC_para.domain_name_3,0,sizeof(Q_QPBOC_para.domain_name_3));
+	//	memset(Q_QPBOC_para.ip,0,sizeof(Q_QPBOC_para.ip));
+	//	memset(Q_QPBOC_para.Ip_P_BAK,0,sizeof(Q_QPBOC_para.Ip_P_BAK));
 
 
-//	Q_QPBOC_para.ip[0] = 132;
-//	Q_QPBOC_para.ip[1] = 216;
-//	Q_QPBOC_para.ip[2] = 116;
-//	Q_QPBOC_para.ip[3] = 137;
-//		
-//	saveMobileParameter(3,Q_QPBOC_para.ip);
-//		
-//	Q_QPBOC_para.Ip_P_BAK[0] = 58;
-//	Q_QPBOC_para.Ip_P_BAK[1] = 247;
-//	Q_QPBOC_para.Ip_P_BAK[2] = 171;
-//	Q_QPBOC_para.Ip_P_BAK[3] = 184;
-//	saveMobileParameter(23,Q_QPBOC_para.Ip_P_BAK);
+	//	Q_QPBOC_para.ip[0] = 132;
+	//	Q_QPBOC_para.ip[1] = 216;
+	//	Q_QPBOC_para.ip[2] = 116;
+	//	Q_QPBOC_para.ip[3] = 137;
+	//		
+	//	saveMobileParameter(3,Q_QPBOC_para.ip);
+	//		
+	//	Q_QPBOC_para.Ip_P_BAK[0] = 58;
+	//	Q_QPBOC_para.Ip_P_BAK[1] = 247;
+	//	Q_QPBOC_para.Ip_P_BAK[2] = 171;
+	//	Q_QPBOC_para.Ip_P_BAK[3] = 184;
+	//	saveMobileParameter(23,Q_QPBOC_para.Ip_P_BAK);
 
-//	strcat((char *)Q_QPBOC_para.domain_name_1,"upos.xxchinaums.com");
-//	strcat((char *)Q_QPBOC_para.domain_name_2,"upos.cddhinaums.com");
-//	strcat((char *)Q_QPBOC_para.domain_name_3,"upos.chxxxinaums.com");
-//	saveMobileParameter(12,Q_QPBOC_para.domain_name_1);
-//	saveMobileParameter(13,Q_QPBOC_para.domain_name_2);
-//	saveMobileParameter(20,Q_QPBOC_para.domain_name_3);
+	//	strcat((char *)Q_QPBOC_para.domain_name_1,"upos.xxchinaums.com");
+	//	strcat((char *)Q_QPBOC_para.domain_name_2,"upos.cddhinaums.com");
+	//	strcat((char *)Q_QPBOC_para.domain_name_3,"upos.chxxxinaums.com");
+	//	saveMobileParameter(12,Q_QPBOC_para.domain_name_1);
+	//	saveMobileParameter(13,Q_QPBOC_para.domain_name_2);
+	//	saveMobileParameter(20,Q_QPBOC_para.domain_name_3);
 #if 0
 	MSG_LOG("银联-分量1:\r\n");
 	BCD_LOG(Q_QPBOC_para.KEK_1, 16, 1);
@@ -5309,9 +5309,9 @@ void Q_QPBOC_para_INIT(void)
 	BCD_LOG(Q_QPBOC_para.AUTHKEY, 16, 1);
 	MSG_LOG("ODA机构号:");
 	BCD_LOG(Q_QPBOC_para.ODA_NO, 8, 1);
-	MSG_LOG("域名_1=%s:\r\n",Q_QPBOC_para.domain_name_1);
-	MSG_LOG("域名_2=%s:\r\n",Q_QPBOC_para.domain_name_2);
-	MSG_LOG("域名_3=%s:\r\n",Q_QPBOC_para.domain_name_3);
+	MSG_LOG("域名_1=%s:\r\n", Q_QPBOC_para.domain_name_1);
+	MSG_LOG("域名_2=%s:\r\n", Q_QPBOC_para.domain_name_2);
+	MSG_LOG("域名_3=%s:\r\n", Q_QPBOC_para.domain_name_3);
 	MSG_LOG("专网银联-IP:\r\n");
 	BCD_LOG(Q_QPBOC_para.Special_IP, 4, 1);
 	MSG_LOG("专网银联-PORT:\r\n");
@@ -5319,15 +5319,15 @@ void Q_QPBOC_para_INIT(void)
 	MSG_LOG("专网银联-备份ip:\r\n");
 	BCD_LOG(Q_QPBOC_para.Special_BAK, 4, 1);
 
-	MSG_LOG("参数-15--:%d:\r\n",Q_QPBOC_para.shuangmian_OVER_TIME);
-	MSG_LOG("参数-14--:%d:\r\n",Q_QPBOC_para.chongzheng_OVER_TIME);
-	MSG_LOG("拨号轮询时间--:%d:\r\n",Q_QPBOC_para.SOCKET_OVER_TIME);
-	MSG_LOG("开关控制-1--:%d:\r\n",Q_QPBOC_para.switch_control_DNS);
-	MSG_LOG("开关控制-2--:%d:\r\n",Q_QPBOC_para.switch_control_SP);
-	MSG_LOG("TMS分量1标志:%x\r\n",Q_QPBOC_para.TMS_START_FLAGE);
-	MSG_LOG("TMS密钥激活标志:%x\r\n",Q_QPBOC_para.TMS_KEY_FLAGE);
-	MSG_LOG("TMS初装机标志:%x\r\n",Q_QPBOC_para.TMS_FLAGE_FIRST);
-	MSG_LOG("QPBOC-APN:%s\r\n:",	Q_QPBOC_para.domain_APN);
+	MSG_LOG("参数-15--:%d:\r\n", Q_QPBOC_para.shuangmian_OVER_TIME);
+	MSG_LOG("参数-14--:%d:\r\n", Q_QPBOC_para.chongzheng_OVER_TIME);
+	MSG_LOG("拨号轮询时间--:%d:\r\n", Q_QPBOC_para.SOCKET_OVER_TIME);
+	MSG_LOG("开关控制-1--:%d:\r\n", Q_QPBOC_para.switch_control_DNS);
+	MSG_LOG("开关控制-2--:%d:\r\n", Q_QPBOC_para.switch_control_SP);
+	MSG_LOG("TMS分量1标志:%x\r\n", Q_QPBOC_para.TMS_START_FLAGE);
+	MSG_LOG("TMS密钥激活标志:%x\r\n", Q_QPBOC_para.TMS_KEY_FLAGE);
+	MSG_LOG("TMS初装机标志:%x\r\n", Q_QPBOC_para.TMS_FLAGE_FIRST);
+	MSG_LOG("QPBOC-APN:%s\r\n:", Q_QPBOC_para.domain_APN);
 #endif	
 }
 //
@@ -5527,13 +5527,13 @@ void PBOC_hand_TMS(unsigned char value)
 	//	unsigned char i;
 	unsigned char xorCh = 0;
 	//	unsigned char buff[10];
-	
+
 	ii = value;
-	
+
 	//if (value != 0x0D && value != 0x0A && value != 0x00) {
 	MSG_LOG("%02X", value);
 	//}
-	
+
 	if (rev_finish_TMS != 0xee)			//空则接收数据
 	{
 		if (rev_finish_TMS == 0xaa) {
@@ -5547,7 +5547,7 @@ void PBOC_hand_TMS(unsigned char value)
 			MSG_LOG("\n");
 			goto PBOC_hand_OVER;
 		}
-		
+
 		switch (ComTest_index_TMS)
 		{
 		case 0://STX 	02h 	报文起始
@@ -5561,22 +5561,22 @@ void PBOC_hand_TMS(unsigned char value)
 		case 1:		//ln
 			irda_rxBuf[ComTest_index_TMS++] = ii;
 			break;
-//		case 2:		//cmd
-//			irda_rxBuf[ComTest_index_TMS++] = ii;
-//			break;
+			//		case 2:		//cmd
+			//			irda_rxBuf[ComTest_index_TMS++] = ii;
+			//			break;
 		default:
 			irda_rxBuf[ComTest_index_TMS++] = ii;
-			
+
 			if (ComTest_index_TMS < (irda_rxBuf[mpc_ln_TMS] + 4)) {
 				break;
 			}
-			
-			
+
+
 			// BCC——从 Ln 到 DATA 的字节异或校验和（hex）。
 			xorCh = getSignXor(irda_rxBuf + mpc_stx_TMS, irda_rxBuf[mpc_ln_TMS] + 3);
-			MSG_LOG("\ngetSignXor:%02x===%02x\n", xorCh,irda_rxBuf[irda_rxBuf[mpc_ln_TMS]+3]);
+			MSG_LOG("\ngetSignXor:%02x===%02x\n", xorCh, irda_rxBuf[irda_rxBuf[mpc_ln_TMS] + 3]);
 
-			if (xorCh != irda_rxBuf[irda_rxBuf[mpc_ln_TMS]+3])
+			if (xorCh != irda_rxBuf[irda_rxBuf[mpc_ln_TMS] + 3])
 			{
 				memset(irda_rxBuf, 0, MaxPackLen);
 				ComTest_index_TMS = 0;
@@ -5595,39 +5595,39 @@ PBOC_hand_OVER:
 	return;
 }
 //////////////////////////////////////////////////////////////////////////	银商给的
-static int GenerateRandomKey(unsigned char *psRandom,unsigned char *psRandomKey)
+static int GenerateRandomKey(unsigned char *psRandom, unsigned char *psRandomKey)
 {
-    int i = 0;
+	int i = 0;
 	unsigned char sBasicKey[16][16] = {
-        {0x73, 0xF2, 0x97, 0x73, 0xAA, 0x24, 0x28, 0xE5, 0x93, 0xE5, 0x03, 0xDD, 0xAC, 0xD1, 0x54, 0xB8},
-        {0x47, 0x9B, 0x35, 0x03, 0x59, 0x72, 0x7A, 0x1C, 0x5B, 0x8B, 0x10, 0x6F, 0x0C, 0xA7, 0xA1, 0xF1},
-        {0x33, 0xEE, 0x40, 0xF3, 0xC9, 0xAF, 0xFB, 0xE8, 0x1A, 0x02, 0x39, 0x04, 0xCB, 0x91, 0x34, 0x83},
-        {0xAA, 0x61, 0x7B, 0x3B, 0xC2, 0x7A, 0x66, 0x11, 0x3C, 0x1E, 0x95, 0xB6, 0x95, 0xCD, 0x4E, 0x33},
-        {0x43, 0x76, 0xB5, 0x13, 0xFA, 0x9D, 0xC8, 0xA0, 0x9C, 0x09, 0x5A, 0xE8, 0x14, 0x60, 0x51, 0x64},
-        {0xA3, 0x0B, 0xB8, 0x0F, 0xBF, 0x0B, 0x9D, 0x46, 0x9E, 0x02, 0x6D, 0x65, 0xAE, 0xBD, 0x3D, 0x12},
-        {0x14, 0x55, 0xF9, 0x1F, 0xBC, 0xD3, 0x52, 0xDD, 0x81, 0x49, 0x1B, 0xCA, 0x3F, 0xD5, 0x20, 0xCA},
-        {0x86, 0x39, 0x25, 0xBC, 0xC9, 0x2B, 0xCC, 0xEF, 0x5A, 0x8E, 0x06, 0x90, 0xE9, 0x1E, 0xE6, 0x3F},
-        {0x60, 0x2D, 0x0C, 0x5B, 0xB3, 0x7E, 0x06, 0x98, 0xE7, 0x0D, 0x50, 0xDC, 0x17, 0x40, 0x5B, 0xBA},
-        {0x4D, 0x4A, 0x79, 0xC7, 0x0A, 0xEC, 0xA9, 0xA3, 0x9A, 0x36, 0x67, 0x55, 0x35, 0xCE, 0x3D, 0xFE},
-        {0x33, 0xE4, 0x4B, 0x53, 0xFB, 0x45, 0xFB, 0x31, 0x9C, 0xD2, 0x02, 0x93, 0x76, 0x87, 0x6F, 0x87},
-        {0xB8, 0x78, 0x6B, 0x1B, 0xB5, 0x7A, 0x60, 0xF5, 0x88, 0x6B, 0x61, 0x6A, 0xBF, 0xB4, 0x95, 0x33},
-        {0xB2, 0x20, 0x8D, 0xD7, 0x86, 0x0F, 0xCD, 0x16, 0x9E, 0x95, 0x0F, 0xDE, 0x39, 0x02, 0xFF, 0xC9},
-        {0xE9, 0x83, 0x95, 0xE1, 0x90, 0xB0, 0xA5, 0x72, 0x7D, 0x6E, 0x20, 0x37, 0xE5, 0x62, 0x37, 0x22},
-        {0xF9, 0xF4, 0x31, 0x6D, 0xB6, 0xF6, 0xD8, 0xF3, 0xF2, 0x82, 0x16, 0xF1, 0x94, 0x9D, 0x5A, 0xE5},
-        {0x30, 0xD6, 0x90, 0x4E, 0x5D, 0xAA, 0x3D, 0xDE, 0xA8, 0xBB, 0x0B, 0x0C, 0x80, 0xE9, 0x6F, 0x51}};
-		
-		if ((psRandom == NULL) || (psRandomKey == NULL))
-		{
-			return   ST_ERROR;//LOADKEY_ERR;
-		}
-		
-		for (i = 0; i < 8; i++)
-		{
-			psRandomKey[2 * i] = sBasicKey[2 * i][psRandom[i] >> 4 & 0x0F];
-			psRandomKey[2 * i + 1] = sBasicKey[2 * i + 1][psRandom[i] & 0x0F];
-		}
-		
-    return    ST_OK ; ///LOADKEY_OK;
+		{0x73, 0xF2, 0x97, 0x73, 0xAA, 0x24, 0x28, 0xE5, 0x93, 0xE5, 0x03, 0xDD, 0xAC, 0xD1, 0x54, 0xB8},
+		{0x47, 0x9B, 0x35, 0x03, 0x59, 0x72, 0x7A, 0x1C, 0x5B, 0x8B, 0x10, 0x6F, 0x0C, 0xA7, 0xA1, 0xF1},
+		{0x33, 0xEE, 0x40, 0xF3, 0xC9, 0xAF, 0xFB, 0xE8, 0x1A, 0x02, 0x39, 0x04, 0xCB, 0x91, 0x34, 0x83},
+		{0xAA, 0x61, 0x7B, 0x3B, 0xC2, 0x7A, 0x66, 0x11, 0x3C, 0x1E, 0x95, 0xB6, 0x95, 0xCD, 0x4E, 0x33},
+		{0x43, 0x76, 0xB5, 0x13, 0xFA, 0x9D, 0xC8, 0xA0, 0x9C, 0x09, 0x5A, 0xE8, 0x14, 0x60, 0x51, 0x64},
+		{0xA3, 0x0B, 0xB8, 0x0F, 0xBF, 0x0B, 0x9D, 0x46, 0x9E, 0x02, 0x6D, 0x65, 0xAE, 0xBD, 0x3D, 0x12},
+		{0x14, 0x55, 0xF9, 0x1F, 0xBC, 0xD3, 0x52, 0xDD, 0x81, 0x49, 0x1B, 0xCA, 0x3F, 0xD5, 0x20, 0xCA},
+		{0x86, 0x39, 0x25, 0xBC, 0xC9, 0x2B, 0xCC, 0xEF, 0x5A, 0x8E, 0x06, 0x90, 0xE9, 0x1E, 0xE6, 0x3F},
+		{0x60, 0x2D, 0x0C, 0x5B, 0xB3, 0x7E, 0x06, 0x98, 0xE7, 0x0D, 0x50, 0xDC, 0x17, 0x40, 0x5B, 0xBA},
+		{0x4D, 0x4A, 0x79, 0xC7, 0x0A, 0xEC, 0xA9, 0xA3, 0x9A, 0x36, 0x67, 0x55, 0x35, 0xCE, 0x3D, 0xFE},
+		{0x33, 0xE4, 0x4B, 0x53, 0xFB, 0x45, 0xFB, 0x31, 0x9C, 0xD2, 0x02, 0x93, 0x76, 0x87, 0x6F, 0x87},
+		{0xB8, 0x78, 0x6B, 0x1B, 0xB5, 0x7A, 0x60, 0xF5, 0x88, 0x6B, 0x61, 0x6A, 0xBF, 0xB4, 0x95, 0x33},
+		{0xB2, 0x20, 0x8D, 0xD7, 0x86, 0x0F, 0xCD, 0x16, 0x9E, 0x95, 0x0F, 0xDE, 0x39, 0x02, 0xFF, 0xC9},
+		{0xE9, 0x83, 0x95, 0xE1, 0x90, 0xB0, 0xA5, 0x72, 0x7D, 0x6E, 0x20, 0x37, 0xE5, 0x62, 0x37, 0x22},
+		{0xF9, 0xF4, 0x31, 0x6D, 0xB6, 0xF6, 0xD8, 0xF3, 0xF2, 0x82, 0x16, 0xF1, 0x94, 0x9D, 0x5A, 0xE5},
+		{0x30, 0xD6, 0x90, 0x4E, 0x5D, 0xAA, 0x3D, 0xDE, 0xA8, 0xBB, 0x0B, 0x0C, 0x80, 0xE9, 0x6F, 0x51} };
+
+	if ((psRandom == NULL) || (psRandomKey == NULL))
+	{
+		return   ST_ERROR;//LOADKEY_ERR;
+	}
+
+	for (i = 0; i < 8; i++)
+	{
+		psRandomKey[2 * i] = sBasicKey[2 * i][psRandom[i] >> 4 & 0x0F];
+		psRandomKey[2 * i + 1] = sBasicKey[2 * i + 1][psRandom[i] & 0x0F];
+	}
+
+	return    ST_OK; ///LOADKEY_OK;
 }
 
 
@@ -5637,7 +5637,7 @@ void down_kek_TMS(void)
 	unsigned char ret = 0;
 	//	unsigned char i=0;
 	unsigned int outdly = 0;
-	unsigned char buff[100],buff_t[100],buff_2[100];
+	unsigned char buff[100], buff_t[100], buff_2[100];
 	//	unsigned char len=0;
 	//	unsigned char XOR;
 	unsigned char kekMM[30];
@@ -5647,8 +5647,8 @@ void down_kek_TMS(void)
 	MD5_CTX md5;
 	int len = 0;
 	unsigned char backComDbg = 0;
-	int pos=0,i = 0;
-//	unsigned char isAuthkey = 0;
+	int pos = 0, i = 0;
+	//	unsigned char isAuthkey = 0;
 
 
 	memset(buff, 0, 100);
@@ -5669,90 +5669,82 @@ void down_kek_TMS(void)
 
 
 
-		len = 73;
-	   buff[mpc_stx_TMS] = 0x02;
-	   buff[mpc_ln_TMS] = len;
-	  //随机数
-	   // 随机数SysTime
-	   GetDateTime();
-	   
-	   MD5Init(&md5);
-	   MD5Update(&md5, (unsigned char *)&SysTime, sizeof(stcomtime));
-	   MD5Final(rands, &md5);
-	   memcpy(buff + mpc_RANDOM_TMS, rands+8, 8);
-	   
-	   MSG_LOG("随机数\r\n");
-	   BCD_LOG(buff + mpc_RANDOM_TMS,8,1);
-	   buff[mpc_cmd_TMS] = 0x01;
-	   
-	   pos=0;
-       memcpy(buff_t, DEV_TYPE, 8);
-	   pos += 8;
-	   memset(buff_t + pos, ' ', 12);
-	   pos += 12;
-#ifdef PBOC_TEST1
-	   memcpy(buff_t + pos, "LF28517121111111", 16);
-	   pos += 16;
-#elif SWITCH_PBOC_GUILIN_DEBUG_gui
-	   memcpy(buff_t + pos, DEV_TYPE, 8);
-	   pos += 8;
-	   memcpy(buff_t + pos,pFistVary.DeviceNo,8) ;
-	   
-	   pos += 8;
-#elif SWITCH_PBOC_GUILIN_DEBUG
-	   memcpy(buff_t + pos, "ESF3000LB6C6BF92", 16);
-	   pos += 16;
+	len = 73;
+	buff[mpc_stx_TMS] = 0x02;
+	buff[mpc_ln_TMS] = len;
+	//随机数
+	 // 随机数SysTime
+	GetDateTime();
+
+	MD5Init(&md5);
+	MD5Update(&md5, (unsigned char *)&SysTime, sizeof(stcomtime));
+	MD5Final(rands, &md5);
+	memcpy(buff + mpc_RANDOM_TMS, rands + 8, 8);
+
+	MSG_LOG("随机数\r\n");
+	BCD_LOG(buff + mpc_RANDOM_TMS, 8, 1);
+	buff[mpc_cmd_TMS] = 0x01;
+
+	pos = 0;
+	memcpy(buff_t, DEV_TYPE, 8);
+	pos += 8;
+	memset(buff_t + pos, ' ', 12);
+	pos += 12;
+
+#if SWITCH_DEBUG_UNIONPAY == 1
+	memcpy(buff_t + pos, "ESF3000LB6C6BF92", 16);
+	pos += 16;
 #else
-	   memcpy(buff_t + pos, DEV_TYPE, 8);
-	   pos += 8;
-	   Get_SerialNumF4((unsigned char *)buff_t + pos + 8);//Get_SerialNumF4_Self(buff);//
-	   BCD2Ascii(buff_t + pos + 8, buff_t + pos, 4);
-	   pos += 8;
+	memcpy(buff_t + pos, DEV_TYPE, 8);
+	pos += 8;
+	Get_SerialNumF4((unsigned char *)buff_t + pos + 8);//Get_SerialNumF4_Self(buff);//
+	BCD2Ascii(buff_t + pos + 8, buff_t + pos, 4);
+	pos += 8;
 #endif
-	   
-	   memset(buff_t + pos, ' ', 22);
-	   pos += 22;
-	   memset(buff_t + pos, ' ', 6);
-	   pos += 6;
 
-//加密处理
-		   MSG_LOG("pos=%d\r\n",pos);
-		   BCD_LOG(buff_t,64,1);
+	memset(buff_t + pos, ' ', 22);
+	pos += 22;
+	memset(buff_t + pos, ' ', 6);
+	pos += 6;
 
-		   //获取密钥
-		   if (GenerateRandomKey(rands+8, kekMM)==ST_ERROR)
-		   {
-			   MSG_LOG("获取密钥失败\r\n");
-		   }
-		   MSG_LOG("获取的密钥\r\n");
-		   BCD_LOG(kekMM,8,1);
-		   for (i=0;i<64;i+=8)
-		   {
-			   DES3_encrypt(buff_t+i, kekMM, buff_2+i);
-			   
-		   }
-		   MSG_LOG("buff_2-%d\r\n",i);
-		   BCD_LOG(buff_2,64,1);
-		   memcpy(buff+mpc_data_TMS,buff_2,64);
-		   
-		   MSG_LOG("i=%d\r\n",i);
-		   BCD_LOG(buff+mpc_data_TMS,64,1);
-		   buff[mpc_data_TMS + 64]=0x03;
-		   
-		   buff[mpc_stx_TMS + len+3] = getSignXor(buff, len+3);
-		   
-		   if (len > 0) {
-			   MSG_LOG("发送申请(%d):", len);
-			   BCD_LOG(buff, (len+4), 1);
-			   com_snd(COM1, (len+4), buff);
-		   }
-		 
+	//加密处理
+	MSG_LOG("pos=%d\r\n", pos);
+	BCD_LOG(buff_t, 64, 1);
 
-		
-	
-	  while(1)
-	  {
-	  
+	//获取密钥
+	if (GenerateRandomKey(rands + 8, kekMM) == ST_ERROR)
+	{
+		MSG_LOG("获取密钥失败\r\n");
+	}
+	MSG_LOG("获取的密钥\r\n");
+	BCD_LOG(kekMM, 8, 1);
+	for (i = 0; i < 64; i += 8)
+	{
+		DES3_encrypt(buff_t + i, kekMM, buff_2 + i);
+
+	}
+	MSG_LOG("buff_2-%d\r\n", i);
+	BCD_LOG(buff_2, 64, 1);
+	memcpy(buff + mpc_data_TMS, buff_2, 64);
+
+	MSG_LOG("i=%d\r\n", i);
+	BCD_LOG(buff + mpc_data_TMS, 64, 1);
+	buff[mpc_data_TMS + 64] = 0x03;
+
+	buff[mpc_stx_TMS + len + 3] = getSignXor(buff, len + 3);
+
+	if (len > 0) {
+		MSG_LOG("发送申请(%d):", len);
+		BCD_LOG(buff, (len + 4), 1);
+		com_snd(COM1, (len + 4), buff);
+	}
+
+
+
+
+	while (1)
+	{
+
 		if (outdly % 200 == 0) {
 			cls();
 			display(0, 0, "请连接机器COM1口115300", 0);
@@ -5773,68 +5765,68 @@ void down_kek_TMS(void)
 
 			//com_snd(COM4,len,buff);
 		}
-	 
-	  
+
+
 		if (rev_finish_TMS == 0xaa) {
-	
+
 
 			switch (irda_rxBuf[mpc_cmd_TMS])
 			{
 			case 0x01:
-				memset(buff_2,0,100);
+				memset(buff_2, 0, 100);
 				MSG_LOG("获取的密钥\r\n");
-				BCD_LOG(kekMM,8,1);
+				BCD_LOG(kekMM, 8, 1);
 				MSG_LOG("获取==\r\n");
-				BCD_LOG(irda_rxBuf+mpc_data_TMS,80,1);
+				BCD_LOG(irda_rxBuf + mpc_data_TMS, 80, 1);
 				MSG_LOG("随机数\r\n");
-				BCD_LOG(irda_rxBuf+mpc_RANDOM_TMS,8,1);
+				BCD_LOG(irda_rxBuf + mpc_RANDOM_TMS, 8, 1);
 
-		       //获取密钥
-		   if (GenerateRandomKey(irda_rxBuf+mpc_RANDOM_TMS, kekMM)==ST_ERROR)
-		   {
+				//获取密钥
+				if (GenerateRandomKey(irda_rxBuf + mpc_RANDOM_TMS, kekMM) == ST_ERROR)
+				{
 
-			   MSG_LOG("获取密钥失败\r\n");
-		   }
-		   MSG_LOG("获取的密钥\r\n");
-		   BCD_LOG(kekMM,8,1);
-		   
-		   for (i=0;i<80;i+=8)
-		   {
-			   DES3_decrypt(irda_rxBuf+mpc_data_TMS+i, kekMM, buff_2+i);
-			   
-		   }
-		   MSG_LOG("获取数据\r\n");
-		   BCD_LOG(buff_2,80,1);
-		   
-// 
-// 			if(memcmp(pFistVary.DeviceNo,buff_2+24,8)!=0)
-// 			{
-// 				cls();
-// 				display(2, 0, "获取失败，请重试", DIS_CONVERT | DIS_CENTER);
-// 				beep(3, 100, 30);
-// 				delayxms(1000);
-// 				MSG_LOG("失败\r\n");
-// 				ret = 0xF0;
-// 					break;
-// 			}
-			
-			memset(kekMM, 0, 30);
-            memcpy(kekMM,buff_2+58,16);
-			saveMobileParameter(9, kekMM);
-		set_TMS_switch_control(16,set_TMS_START_FLAGE_FLAG);
-		//	getMobileParameter(9,buff_2);
-		//	MSG_LOG("分量数据--\r\n");
-		//	BCD_LOG(buff_2,16,1);
-			MSG_LOG("分量数据\r\n");
-			BCD_LOG(kekMM,16,1);
-		  
-			cls();
-		   display(2, 0, "下载分量1成功", DIS_CONVERT | DIS_CENTER);
-		   beep(3, 100, 30);
-		   delayxms(1000);
-		   MSG_LOG("成功\r\n");
-		   ret = 0xF0;
-		   break;
+					MSG_LOG("获取密钥失败\r\n");
+				}
+				MSG_LOG("获取的密钥\r\n");
+				BCD_LOG(kekMM, 8, 1);
+
+				for (i = 0; i < 80; i += 8)
+				{
+					DES3_decrypt(irda_rxBuf + mpc_data_TMS + i, kekMM, buff_2 + i);
+
+				}
+				MSG_LOG("获取数据\r\n");
+				BCD_LOG(buff_2, 80, 1);
+
+				// 
+				// 			if(memcmp(pFistVary.DeviceNo,buff_2+24,8)!=0)
+				// 			{
+				// 				cls();
+				// 				display(2, 0, "获取失败，请重试", DIS_CONVERT | DIS_CENTER);
+				// 				beep(3, 100, 30);
+				// 				delayxms(1000);
+				// 				MSG_LOG("失败\r\n");
+				// 				ret = 0xF0;
+				// 					break;
+				// 			}
+
+				memset(kekMM, 0, 30);
+				memcpy(kekMM, buff_2 + 58, 16);
+				saveMobileParameter(9, kekMM);
+				set_TMS_switch_control(16, set_TMS_START_FLAGE_FLAG);
+				//	getMobileParameter(9,buff_2);
+				//	MSG_LOG("分量数据--\r\n");
+				//	BCD_LOG(buff_2,16,1);
+				MSG_LOG("分量数据\r\n");
+				BCD_LOG(kekMM, 16, 1);
+
+				cls();
+				display(2, 0, "下载分量1成功", DIS_CONVERT | DIS_CENTER);
+				beep(3, 100, 30);
+				delayxms(1000);
+				MSG_LOG("成功\r\n");
+				ret = 0xF0;
+				break;
 			default:
 				cls();
 				display(2, 0, "获取失败，请重试", DIS_CONVERT | DIS_CENTER);
@@ -5843,7 +5835,7 @@ void down_kek_TMS(void)
 				MSG_LOG("失败\r\n");
 				ret = 0xF0;
 				break;
-			
+
 			}
 
 			memset(irda_rxBuf, 0, MaxPackLen);
@@ -5867,19 +5859,19 @@ void down_kek_TMS(void)
 			delayxms(1000);
 			break;
 		}
-	 }
+	}
 
 
 
 
-//down_kek_over:
+	//down_kek_over:
 	SetUSART1mode(0xFD);
 
 	com_init(COM1, 256000);
 	COM_it_enable(COM1);
-	restore_flag=3;
+	restore_flag = 3;
 	DEBUG_COM = backComDbg;
-//	return ST_OK;
+	//	return ST_OK;
 }
 
 void down_kek(void)
@@ -5987,7 +5979,7 @@ void down_kek(void)
 				//	if (irda_rxBuf[mpc_data] == 0x00) {
 				if (isAuthkey == 0) {
 					saveMobileParameter(2, buff);		//kek明文
-					set_TMS_switch_control(18,set_Update_check_flag);
+					set_TMS_switch_control(18, set_Update_check_flag);
 					display(7, 0, "KEK下载成功", DIS_CONVERT | DIS_CENTER);
 				}
 				else {
@@ -6007,7 +5999,7 @@ void down_kek(void)
 				saveMobileParameter(1, irda_rxBuf + mpc_data);		//
 				saveMobileParameter(6, irda_rxBuf + mpc_data + 15);		//
 
-				gmissflag = MISS_G_FREE;
+				gGprsinfo.gmissflag = MISS_G_FREE;
 				Sign_Infor.ISOK = 0;
 				display(8, 0, "商户号和设备号下载成功", DIS_CONVERT | DIS_CENTER);
 				ret = 0xF0;
@@ -6028,16 +6020,7 @@ void down_kek(void)
 				pos += 8;
 				memset(buff + pos, ' ', 12);
 				pos += 12;
-#ifdef PBOC_TEST1
-				memcpy(buff + pos, "LF28517121111111", 16);
-				pos += 16;
-#elif SWITCH_PBOC_GUILIN_DEBUG_gui
-				memcpy(buff + pos, DEV_TYPE, 8);
-				pos += 8;
-				memcpy(buff + pos, pFistVary.DeviceNo, 8);
-
-				pos += 8;
-#elif SWITCH_PBOC_GUILIN_DEBUG
+#if SWITCH_DEBUG_UNIONPAY == 1
 				memcpy(buff + pos, "ESF3000LB6C6BF92", 16);
 				pos += 16;
 #else
@@ -6098,7 +6081,7 @@ void down_kek(void)
 		}
 
 	}
-//down_kek_over:
+	//down_kek_over:
 	SetUSART1mode(0xFD);
 
 	com_init(COM1, 256000);
@@ -6119,7 +6102,7 @@ static int inline ReadM1Block(int block, unsigned char key[6], unsigned char ser
 	}
 	else {
 		MSG_LOG(buffer, blockLen, 1);
-	}
+}
 }
 #endif
 
@@ -6989,7 +6972,7 @@ unsigned char switch_both = 0;
 void PAY_MODE_init_first(void)  //1字节存标志，1个字节存开关
 {
 	unsigned char buff[4];
-//	unsigned char buffer[33];
+	//	unsigned char buffer[33];
 	memset(buff, 0, 4);
 	shuangmian = 1;
 	switch_both = 0;
@@ -7001,8 +6984,8 @@ void PAY_MODE_init_first(void)  //1字节存标志，1个字节存开关
 
 	sysfewrite(BIS_PAY_MODE, 4, buff);
 
-//	Ascii2BCD("98765432101234567890123456789012", buffer, 32);
-//	saveMobileParameter(7, buffer);		//认证密钥明文
+	//	Ascii2BCD("98765432101234567890123456789012", buffer, 32);
+	//	saveMobileParameter(7, buffer);		//认证密钥明文
 }
 void PAY_MODE_init(void)  //1字节存标志，1个字节存开关
 {
@@ -7116,7 +7099,7 @@ void showSetOtherPaymode(void)
 
 
 	ucMENU_NUM = 0;
- 	strcpy(menu[ucMENU_NUM], "联机        ");
+	strcpy(menu[ucMENU_NUM], "联机        ");
 	function[ucMENU_NUM++] = online_1;
 
 	strcpy(menu[ucMENU_NUM], "脱机ODA     ");
@@ -7125,16 +7108,16 @@ void showSetOtherPaymode(void)
 	function[ucMENU_NUM++] = online_3;
 	strcpy(menu[ucMENU_NUM], "扫码开关     ");
 	function[ucMENU_NUM++] = showSetOtherPayCode;
-	
+
 
 	MenuFrame(menu, function, "  --配置模式菜单--  ", ucMENU_NUM, (100));
 }
 
 void Blk_QU(void)
 {
-	gmissflag =MISS_PBOC_DOWN_ODA_BLK;
+	gGprsinfo.gmissflag = MISS_PBOC_DOWN_ODA_BLK;
 	cls();
-	display(3,3,"发送查询，请稍等.",DIS_CENTER);
+	display(3, 3, "发送查询，请稍等.", DIS_CENTER);
 	return;
 }
 
@@ -7218,46 +7201,46 @@ void Show_pboc_minu(void)
 
 	getMobileParameter(11, buff);
 	strcpy(disbuf[index], "ODA机构号:");
-	memcpy((unsigned char *)(disbuf[index++] +strlen("ODA机构号:")),buff,8);
+	memcpy((unsigned char *)(disbuf[index++] + strlen("ODA机构号:")), buff, 8);
 
 
-	Q_QPBOC_para.shuangmian_OVER_TIME=get_over_time_shuang();
-	sprintf(disbuf[index++], "通讯时间:%d",Q_QPBOC_para.shuangmian_OVER_TIME);
-	Q_QPBOC_para.chongzheng_OVER_TIME=get_over_time_re();
-	sprintf(disbuf[index++], "重刷超时时间:%d",Q_QPBOC_para.chongzheng_OVER_TIME);
-		Q_QPBOC_para.SOCKET_OVER_TIME=get_SOCKET_OVER_TIME();
-	sprintf(disbuf[index++], "链接超时时间:%d",Q_QPBOC_para.SOCKET_OVER_TIME);
+	Q_QPBOC_para.shuangmian_OVER_TIME = get_over_time_shuang();
+	sprintf(disbuf[index++], "通讯时间:%d", Q_QPBOC_para.shuangmian_OVER_TIME);
+	Q_QPBOC_para.chongzheng_OVER_TIME = get_over_time_re();
+	sprintf(disbuf[index++], "重刷超时时间:%d", Q_QPBOC_para.chongzheng_OVER_TIME);
+	Q_QPBOC_para.SOCKET_OVER_TIME = get_SOCKET_OVER_TIME();
+	sprintf(disbuf[index++], "链接超时时间:%d", Q_QPBOC_para.SOCKET_OVER_TIME);
 
 	memset(buff, 0, sizeof(buff));
 	getMobileParameter(19, buff);
 	strcpy(disbuf[index], "APN:");
-	memcpy((unsigned char *)(disbuf[index++] +strlen("APN:")),buff,strlen((const char *)buff));
+	memcpy((unsigned char *)(disbuf[index++] + strlen("APN:")), buff, strlen((const char *)buff));
 
-	memset(buff,0,sizeof(buff));
-	getMobileParameter(12,buff);
+	memset(buff, 0, sizeof(buff));
+	getMobileParameter(12, buff);
 	strcpy(disbuf[index], "域名-1:");
-	memcpy((unsigned char *)(disbuf[index++] +strlen("域名-1:")),buff,strlen((const char *)buff));
+	memcpy((unsigned char *)(disbuf[index++] + strlen("域名-1:")), buff, strlen((const char *)buff));
 
-	memset(buff,0,sizeof(buff));
-	getMobileParameter(13,buff);
+	memset(buff, 0, sizeof(buff));
+	getMobileParameter(13, buff);
 	strcpy(disbuf[index], "域名-2:");
-	memcpy((unsigned char *)(disbuf[index++] +strlen("域名-2:")),buff,strlen((const char *)buff));
-	
-	memset(buff,0,sizeof(buff));
-	getMobileParameter(20,buff);
-	strcpy(disbuf[index], "域名-3:");
-	memcpy((unsigned char *)(disbuf[index++] +strlen("域名-3:")),Q_QPBOC_para.domain_name_3,strlen((const char *)buff));
+	memcpy((unsigned char *)(disbuf[index++] + strlen("域名-2:")), buff, strlen((const char *)buff));
 
-	getMobileParameter(23,buff);
+	memset(buff, 0, sizeof(buff));
+	getMobileParameter(20, buff);
+	strcpy(disbuf[index], "域名-3:");
+	memcpy((unsigned char *)(disbuf[index++] + strlen("域名-3:")), Q_QPBOC_para.domain_name_3, strlen((const char *)buff));
+
+	getMobileParameter(23, buff);
 	sprintf(disbuf[index], "公网备份IP:%d.%d.%d.%d", buff[0], buff[1], buff[2], buff[3]);
 	index++;
-	
 
-	getMobileParameter(24,buff);
+
+	getMobileParameter(24, buff);
 	getMobileParameter(25, (unsigned char *)&i);
 	sprintf(disbuf[index], "专网:%d.%d.%d.%d:%u", buff[0], buff[1], buff[2], buff[3], i);
 	index++;
-	getMobileParameter(26,buff);
+	getMobileParameter(26, buff);
 	sprintf(disbuf[index], "专网备份:%d.%d.%d.%d", buff[0], buff[1], buff[2], buff[3]);
 	index++;
 
@@ -7278,22 +7261,22 @@ void dis_qboc_ack_code(unsigned char ack)
 	{
 	case 0x51:
 		display_3232(2, 0, "帐号余额不足", 0);
-			SoundMessage(SOUND_FLING_MONEY);
+		SoundMessage(SOUND_FLING_MONEY);
 		break;
 	case 0x14:
 	case 0x05:
 		display_3232(2, 0, "无效卡号", 0);
-			SoundMessage(SOUND_FLING_MONEY);
+		SoundMessage(SOUND_FLING_MONEY);
 		break;
 	case 0x55:
 
 		display_3232(2, 0, "发卡行未开通免密免签功能", 0);
-			SoundMessage(SOUND_FLING_MONEY);
+		SoundMessage(SOUND_FLING_MONEY);
 		break;
 	case 0x40:
 
 		display_3232(2, 0, "发卡行不支持的交易类型", 0);
-			SoundMessage(SOUND_FLING_MONEY);
+		SoundMessage(SOUND_FLING_MONEY);
 		break;
 	case 0x65:
 		display_3232(2, 0, "超出消费次数限制", 0);
@@ -7350,9 +7333,9 @@ unsigned char get_repurse_num(void)
 	//st_qpoc_repurse re_infor;
 	unsigned char re_infor[2];
 
-// 	if (s_isAuthOk == 0) {
-// 		return ST_ERROR;
-// 	}
+	// 	if (s_isAuthOk == 0) {
+	// 		return ST_ERROR;
+	// 	}
 
 	sysferead(BIT_repurse_infor, 2, re_infor);
 	if (memcmp(re_infor, RECORD_FALG, 2) == 0)
@@ -7629,7 +7612,7 @@ int save_ODA_infor(unsigned char mode, unsigned char *re_infor) {
 
 	}
 	return retCode;
-}
+	}
 
 #endif
 #endif

@@ -29,6 +29,14 @@
 #include "GprsSocket.h"
 #include "QRCodeMain.h"
 #include "gps.h"
+#include "xStorage.h"
+
+
+TStorageInit s_storInit;
+static TUINT8 s_coreRam[1000];
+static TUINT8 s_appRam[1000];
+static TUINT8 s_tempRam[1000];
+static TUINT8 s_doublelinkRam[1000];
 
 //
 int  CreateDir(const   char   *sPathName)  
@@ -73,7 +81,7 @@ AFC_CORE__API stUIData* GetStatusData(void) {
 	memcpy(s_UIData.lineId, gDeviceParaTab.LineNo, LEN_LINE_ID);
 	//s_UIData.devId = 
 	s_UIData.linkStatus = gGprsinfo.GPRSLinkProcess;
-	s_UIData.modVer = 0x001;
+	s_UIData.modVer = 0x002;
 	s_UIData.task = gGprsinfo.gmissflag;
 	s_UIData.uploadRec = 0;
 	s_UIData.version = SOFT_VER_TIME_LOG;
@@ -108,17 +116,34 @@ AFC_CORE__API void* StartApp(void *argv)//int argc,
 	pthread_t tidgetNetData3;
 	pthread_t tidgetQRCode;
 	pthread_t tidgps;
-	
-	sleep(1);
+	TStorageInit *pStorInit = &s_storInit;
+	int retCode = 0;
+
+	pStorInit->m_pCoreRamBegin = s_coreRam;
+	pStorInit->m_coreRamLen = sizeof(s_coreRam);
+	pStorInit->m_pAppRamBegin = s_appRam;
+	pStorInit->m_appRamLen = sizeof(s_appRam);
+	pStorInit->m_pTempRamBegin = s_tempRam;
+	pStorInit->m_tempRamLen = sizeof(s_tempRam);
+	pStorInit->m_pDoubleLinkListRamBegin = s_doublelinkRam;
+	pStorInit->m_doubleLinkListRamLen = sizeof(s_doublelinkRam);
+	retCode = xStor_InstallStorage(pStorInit);
+	if (retCode != Ret_OK)
+	{
+		PRINT_ERR_LOCATION("fail to install storage, application exit", "");
+		return;
+	}
+	//sleep(1);
+
 
 	printf("-----------main start-------------\n");
 
 	PRINT_INFOR("存储区最大地址BIT_END_ADDR:%d\n", BIT_END_ADDR);
-  
+
 // 	CPsamCard();
 // 	
 	
-	printf("hello World\n");
+	//printf("hello World\n");
 	
 	if(CreateDir(WorkDir) != 0){	//建立工作目录，如果存在则不建，否则新建
 		MessageBox(1, "工作目录建立失败");
@@ -133,8 +158,15 @@ AFC_CORE__API void* StartApp(void *argv)//int argc,
 	Card_Init();
 	R485_Init();
 
-//	CPsamCard_Init();
 
+	if (pthread_create(&tidmain_NetConnect, NULL, main_NetConnect, NULL) != 0)
+	{
+		printf("Create thread main_NetConnect error!\n");
+		//exit(1);
+	}
+	printf("Create thread main_NetConnect, TID: %lu\n", tidmain_NetConnect);
+
+//	CPsamCard_Init();
 
 	for(u32Ret=0; u32Ret<3; u32Ret++){	//有时候会错，多试几次。
 		if(PsamInitialize() == ST_OK)
@@ -146,19 +178,13 @@ AFC_CORE__API void* StartApp(void *argv)//int argc,
 
 	ICCardInit();	//初始化IC卡消费时的变量
 
-	if (pthread_create(&tidmain_NetConnect, NULL, main_NetConnect, NULL) != 0)
-	{
-		printf("Create thread main_NetConnect error!\n");
-		//exit(1);
-	}
-	printf("Create thread main_NetConnect, TID: %lu\n", tidmain_NetConnect);
-
 	if (pthread_create(&tidmain_GPRS, NULL, main_GPRS, NULL) != 0)
 	{
 		printf("Create thread tidmain_GPRS error!\n");
 		//exit(1);
 	}
 	printf("Create thread tidmain_GPRS, TID: %lu\n", tidmain_GPRS);	
+
 
 	if (pthread_create(&tidonemsSecondDly, NULL, onemsSecondDly, NULL) != 0)	//主要是用于计时器.
 	{

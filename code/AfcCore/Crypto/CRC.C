@@ -2,43 +2,100 @@
 #include "include.h"
 #include "UtilityProc.h"
 
-const unsigned char CRC8_TAB[256]   =   {     
-	0x00,0x07,0x0E,0x09,0x1C,0x1B,0x12,0x15,0x38,0x3F,0x36,0x31,0x24,0x23,0x2A,0x2D,   
-		0x70,0x77,0x7E,0x79,0x6C,0x6B,0x62,0x65,0x48,0x4F,0x46,0x41,0x54,0x53,0x5A,0x5D,   
-		0xE0,0xE7,0xEE,0xE9,0xFC,0xFB,0xF2,0xF5,0xD8,0xDF,0xD6,0xD1,0xC4,0xC3,0xCA,0xCD,   
-		0x90,0x97,0x9E,0x99,0x8C,0x8B,0x82,0x85,0xA8,0xAF,0xA6,0xA1,0xB4,0xB3,0xBA,0xBD,   
-		0xC7,0xC0,0xC9,0xCE,0xDB,0xDC,0xD5,0xD2,0xFF,0xF8,0xF1,0xF6,0xE3,0xE4,0xED,0xEA,   
-		0xB7,0xB0,0xB9,0xBE,0xAB,0xAC,0xA5,0xA2,0x8F,0x88,0x81,0x86,0x93,0x94,0x9D,0x9A,   
-		0x27,0x20,0x29,0x2E,0x3B,0x3C,0x35,0x32,0x1F,0x18,0x11,0x16,0x03,0x04,0x0D,0x0A,   
-		0x57,0x50,0x59,0x5E,0x4B,0x4C,0x45,0x42,0x6F,0x68,0x61,0x66,0x73,0x74,0x7D,0x7A,   
-		0x89,0x8E,0x87,0x80,0x95,0x92,0x9B,0x9C,0xB1,0xB6,0xBF,0xB8,0xAD,0xAA,0xA3,0xA4,   
-		0xF9,0xFE,0xF7,0xF0,0xE5,0xE2,0xEB,0xEC,0xC1,0xC6,0xCF,0xC8,0xDD,0xDA,0xD3,0xD4,   
-		0x69,0x6E,0x67,0x60,0x75,0x72,0x7B,0x7C,0x51,0x56,0x5F,0x58,0x4D,0x4A,0x43,0x44,   
-		0x19,0x1E,0x17,0x10,0x05,0x02,0x0B,0x0C,0x21,0x26,0x2F,0x28,0x3D,0x3A,0x33,0x34,   
-		0x4E,0x49,0x40,0x47,0x52,0x55,0x5C,0x5B,0x76,0x71,0x78,0x7F,0x6A,0x6D,0x64,0x63,   
-		0x3E,0x39,0x30,0x37,0x22,0x25,0x2C,0x2B,0x06,0x01,0x08,0x0F,0x1A,0x1D,0x14,0x13,   
-		0xAE,0xA9,0xA0,0xA7,0xB2,0xB5,0xBC,0xBB,0x96,0x91,0x98,0x9F,0x8A,0x8D,0x84,0x83,   
-		0xDE,0xD9,0xD0,0xD7,0xC2,0xC5,0xCC,0xCB,0xE6,0xE1,0xE8,0xEF,0xFA,0xFD,0xF4,0xF3   
-};   
+#include <string.h>
+
+const unsigned char CRC8_TAB[256] = {
+	0x00,0x07,0x0E,0x09,0x1C,0x1B,0x12,0x15,0x38,0x3F,0x36,0x31,0x24,0x23,0x2A,0x2D,
+		0x70,0x77,0x7E,0x79,0x6C,0x6B,0x62,0x65,0x48,0x4F,0x46,0x41,0x54,0x53,0x5A,0x5D,
+		0xE0,0xE7,0xEE,0xE9,0xFC,0xFB,0xF2,0xF5,0xD8,0xDF,0xD6,0xD1,0xC4,0xC3,0xCA,0xCD,
+		0x90,0x97,0x9E,0x99,0x8C,0x8B,0x82,0x85,0xA8,0xAF,0xA6,0xA1,0xB4,0xB3,0xBA,0xBD,
+		0xC7,0xC0,0xC9,0xCE,0xDB,0xDC,0xD5,0xD2,0xFF,0xF8,0xF1,0xF6,0xE3,0xE4,0xED,0xEA,
+		0xB7,0xB0,0xB9,0xBE,0xAB,0xAC,0xA5,0xA2,0x8F,0x88,0x81,0x86,0x93,0x94,0x9D,0x9A,
+		0x27,0x20,0x29,0x2E,0x3B,0x3C,0x35,0x32,0x1F,0x18,0x11,0x16,0x03,0x04,0x0D,0x0A,
+		0x57,0x50,0x59,0x5E,0x4B,0x4C,0x45,0x42,0x6F,0x68,0x61,0x66,0x73,0x74,0x7D,0x7A,
+		0x89,0x8E,0x87,0x80,0x95,0x92,0x9B,0x9C,0xB1,0xB6,0xBF,0xB8,0xAD,0xAA,0xA3,0xA4,
+		0xF9,0xFE,0xF7,0xF0,0xE5,0xE2,0xEB,0xEC,0xC1,0xC6,0xCF,0xC8,0xDD,0xDA,0xD3,0xD4,
+		0x69,0x6E,0x67,0x60,0x75,0x72,0x7B,0x7C,0x51,0x56,0x5F,0x58,0x4D,0x4A,0x43,0x44,
+		0x19,0x1E,0x17,0x10,0x05,0x02,0x0B,0x0C,0x21,0x26,0x2F,0x28,0x3D,0x3A,0x33,0x34,
+		0x4E,0x49,0x40,0x47,0x52,0x55,0x5C,0x5B,0x76,0x71,0x78,0x7F,0x6A,0x6D,0x64,0x63,
+		0x3E,0x39,0x30,0x37,0x22,0x25,0x2C,0x2B,0x06,0x01,0x08,0x0F,0x1A,0x1D,0x14,0x13,
+		0xAE,0xA9,0xA0,0xA7,0xB2,0xB5,0xBC,0xBB,0x96,0x91,0x98,0x9F,0x8A,0x8D,0x84,0x83,
+		0xDE,0xD9,0xD0,0xD7,0xC2,0xC5,0xCC,0xCB,0xE6,0xE1,0xE8,0xEF,0xFA,0xFD,0xF4,0xF3
+};
 
 unsigned char CRC8_Tab(unsigned char *ucPtr, unsigned char ucLen)
-{   
+{
 	unsigned char ucIndex;                 //   CRC8校验表格索引
 	unsigned char ucCRC8 = 0;                 //   CRC8字节初始化
 
 	//   进行CRC8位校验   
-	while   (ucLen--){
-		ucIndex=ucCRC8^(*ucPtr++);   
-		ucCRC8=CRC8_TAB[ucIndex];   
+	while (ucLen--) {
+		ucIndex = ucCRC8 ^ (*ucPtr++);
+		ucCRC8 = CRC8_TAB[ucIndex];
 	}
 
 	//返回CRC8校验数据   
 	return(~ucCRC8);
 }
 
+// 计算值和下面硬件的算法一致,结果一样
+unsigned int cal_crc32(unsigned char *ptr, int len)
+{
+	unsigned int xbit, uii, t;
+	unsigned int data;
+	int bits;
+	unsigned int CRCw = 0xFFFFFFFF;
+	unsigned int dwPolynomial = 0x04c11db7;
+	unsigned int *ip;
 
-unsigned int GenerateCRC32(unsigned char *DataBuf,unsigned int len) 
-{ 
+	ip = (unsigned int *)ptr;
+	uii = (len / 4);
+	while (uii--)
+	{
+		xbit = (((unsigned int)1) << 31);
+		data = *ip++;
+		for (bits = 0; bits < 32; bits++)
+		{
+			if (CRCw & 0x80000000)
+			{
+				CRCw <<= 1;
+				CRCw ^= dwPolynomial;
+			}
+			else
+				CRCw <<= 1;
+
+			if (data & xbit)
+				CRCw ^= dwPolynomial;
+			xbit >>= 1;
+		}
+	}
+
+	t = len % 4;
+	if (t) {//不够4字节，后面补0
+		data = 0;
+		memcpy((unsigned char*)&data, ptr + ((len / 4) * 4), t);
+		xbit = (((unsigned int)1) << 31);
+		for (bits = 0; bits < 32; bits++)
+		{
+			if (CRCw & 0x80000000)
+			{
+				CRCw <<= 1;
+				CRCw ^= dwPolynomial;
+			}
+			else
+				CRCw <<= 1;
+
+			if (data & xbit)
+				CRCw ^= dwPolynomial;
+			xbit >>= 1;
+		}
+	}
+	return CRCw;
+}
+
+
+unsigned int GenerateCRC32(unsigned char *DataBuf, unsigned int len)
+{
 	unsigned int crc_32_tab[256] = {
 		0x0,0x77073096,0xee0e612c,0x990951ba,0x76dc419,0x706af48f,0xe963a535,0x9e6495a3,
 			0xedb8832,0x79dcb8a4,0xe0d5e91e,0x97d2d988,0x9b64c2b,0x7eb17cbd,0xe7b82d07,0x90bf1d91,
@@ -71,52 +128,52 @@ unsigned int GenerateCRC32(unsigned char *DataBuf,unsigned int len)
 			0xa00ae278,0xd70dd2ee,0x4e048354,0x3903b3c2,0xa7672661,0xd06016f7,0x4969474d,0x3e6e77db,
 			0xaed16a4a,0xd9d65adc,0x40df0b66,0x37d83bf0,0xa9bcae53,0xdebb9ec5,0x47b2cf7f,0x30b5ffe9,
 			0xbdbdf21c,0xcabac28a,0x53b39330,0x24b4a3a6,0xbad03605,0xcdd70693,0x54de5729,0x23d967bf,
-			0xb3667a2e,0xc4614ab8,0x5d681b02,0x2a6f2b94,0xb40bbe37,0xc30c8ea1,0x5a05df1b,0x2d02ef8d};
-		// 	unsigned int oldcrc32; 
-		// 	unsigned int crc32; 
-		// 	unsigned int oldcrc; 
-		// 	unsigned short charcnt; 
-		// 	unsigned char c,t; 
-		// 	oldcrc32 = 0x00000000; //初值为0 
-		// 	charcnt=0; 
-		// 	while (len--) { 
-		// 		t= (oldcrc32 >> 24) & 0xFF; //要移出的字节的值 
-		// 		oldcrc=crc_32_tab[t]; //根据移出的字节的值查表 
-		// 		c=DataBuf[charcnt]; //新移进来的字节值 
-		// 		oldcrc32= (oldcrc32 << 8) | c; //将新移进来的字节值添在寄存器末字节中 
-		// 		oldcrc32=oldcrc32^oldcrc; //将寄存器与查出的值进行xor运算 
-		// 		charcnt++; 
-		// 	} 
-		// 	crc32=oldcrc32; 
-		//	RevertTurn(4, (unsigned char*)&crc32);
-		// 	return crc32; 
-		// }
-		unsigned short i;
-		unsigned int m_CRC = 0xFFFFFFFF;//0;//
-		unsigned char *pD;
-		pD = DataBuf;
-		for(i=0;i<len;i++)
-		{
+			0xb3667a2e,0xc4614ab8,0x5d681b02,0x2a6f2b94,0xb40bbe37,0xc30c8ea1,0x5a05df1b,0x2d02ef8d };
+	// 	unsigned int oldcrc32; 
+	// 	unsigned int crc32; 
+	// 	unsigned int oldcrc; 
+	// 	unsigned short charcnt; 
+	// 	unsigned char c,t; 
+	// 	oldcrc32 = 0x00000000; //初值为0 
+	// 	charcnt=0; 
+	// 	while (len--) { 
+	// 		t= (oldcrc32 >> 24) & 0xFF; //要移出的字节的值 
+	// 		oldcrc=crc_32_tab[t]; //根据移出的字节的值查表 
+	// 		c=DataBuf[charcnt]; //新移进来的字节值 
+	// 		oldcrc32= (oldcrc32 << 8) | c; //将新移进来的字节值添在寄存器末字节中 
+	// 		oldcrc32=oldcrc32^oldcrc; //将寄存器与查出的值进行xor运算 
+	// 		charcnt++; 
+	// 	} 
+	// 	crc32=oldcrc32; 
+	//	RevertTurn(4, (unsigned char*)&crc32);
+	// 	return crc32; 
+	// }
+	unsigned short i;
+	unsigned int m_CRC = 0xFFFFFFFF;//0;//
+	unsigned char *pD;
+	pD = DataBuf;
+	for (i = 0; i < len; i++)
+	{
 #ifdef _watchdog_open
-			clr_wdt();
+		clr_wdt();
 #endif
-			m_CRC=crc_32_tab[(m_CRC^(*(pD+i)))&0xff] ^ (m_CRC>>8);
-		}
-		RevertTurn(4, (unsigned char*)&m_CRC);
-		return (m_CRC^0xffffffff);
-		//	return m_CRC;
+		m_CRC = crc_32_tab[(m_CRC ^ (*(pD + i))) & 0xff] ^ (m_CRC >> 8);
+	}
+	RevertTurn(4, (unsigned char*)&m_CRC);
+	return (m_CRC ^ 0xffffffff);
+	//	return m_CRC;
 }
 
 //银联使用qpboc
 unsigned short cal_crc16(unsigned char *ptr, unsigned char len)
 {
 	unsigned char i;
-	unsigned short crc=0;
-	while(len--!=0) {
-		for(i=0x80; i!=0; i/=2) {
-			if((crc&0x8000)!=0) {crc*=2; crc^=0x1021;} /* 余式CRC乘以2再求CRC */
-			else crc*=2;
-			if((*ptr&i)!=0) crc^=0x1021; /* 再加上本位的CRC */
+	unsigned short crc = 0;
+	while (len-- != 0) {
+		for (i = 0x80; i != 0; i /= 2) {
+			if ((crc & 0x8000) != 0) { crc *= 2; crc ^= 0x1021; } /* 余式CRC乘以2再求CRC */
+			else crc *= 2;
+			if ((*ptr&i) != 0) crc ^= 0x1021; /* 再加上本位的CRC */
 		}
 		ptr++;
 	}
@@ -124,7 +181,7 @@ unsigned short cal_crc16(unsigned char *ptr, unsigned char len)
 	return(crc);
 }
 
-unsigned int GetCrcWord(unsigned char* ptr,int length)
+unsigned int GetCrcWord(unsigned char* ptr, int length)
 {
 	union crc
 	{
@@ -134,13 +191,13 @@ unsigned int GetCrcWord(unsigned char* ptr,int length)
 	//	crc crcTemp;
 	unsigned char i;
 	char ct;
-	
-	crcTemp.ui=0;
-	
-	while(length-- != 0)
+
+	crcTemp.ui = 0;
+
+	while (length-- != 0)
 	{
-		crcTemp.ui = (unsigned int)(crcTemp.ui ^(unsigned int)((*ptr++)<<8));
-		for ( i=0; i<8; i++)
+		crcTemp.ui = (unsigned int)(crcTemp.ui ^ (unsigned int)((*ptr++) << 8));
+		for (i = 0; i < 8; i++)
 		{
 			if ((crcTemp.ui & 0x8000) != 0)
 				crcTemp.ui = (unsigned int)((crcTemp.ui << 1) ^ 0x1021);
@@ -148,55 +205,55 @@ unsigned int GetCrcWord(unsigned char* ptr,int length)
 				crcTemp.ui = (unsigned int)(crcTemp.ui << 1);
 		}
 	}
-	
+
 	//高低位互倒
-	ct = 	crcTemp.chr[0];
+	ct = crcTemp.chr[0];
 	crcTemp.chr[0] = crcTemp.chr[1];
 	crcTemp.chr[1] = ct;
-	
+
 	return crcTemp.ui;
 }
 
-unsigned int Getcrc16(unsigned char *r_data,unsigned int length, unsigned char cInhi, unsigned char cInlo) 
-{ 
-    unsigned char cl,ch; 
-    unsigned char savehi,savelo; 
-    int ii,flag;
+unsigned int Getcrc16(unsigned char *r_data, unsigned int length, unsigned char cInhi, unsigned char cInlo)
+{
+	unsigned char cl, ch;
+	unsigned char savehi, savelo;
+	int ii, flag;
 	unsigned short CRC;
 	unsigned char crc16hi;
 	unsigned char crc16lo;
 
-    crc16hi=cInhi;//0xFF; 
-    crc16lo=cInlo;//0xFF; 
-    cl=0x21; 
-    ch=0x10; 
-    for (ii=0;ii<length;ii++) 
-    {
-        crc16lo=(crc16lo ^ r_data[ii]); 
-        for (flag=0;flag<8;flag++) 
-        {
-            savehi=crc16hi; 
-            savelo=crc16lo; 
-            crc16hi=(crc16hi>>1); 
-            crc16lo=(crc16lo>>1); 
-            if ((savehi & 0x01)==0x01) 
-				crc16lo=(crc16lo | 0x80); 
-            if ((savelo & 0x01)==0x01) 
-            { 
-				crc16hi = (crc16hi ^ ch); 
-				crc16lo = (crc16lo ^ cl); 
-            }         
-        } 
-    }
-	CRC = (crc16hi)+(crc16lo<<8);
+	crc16hi = cInhi;//0xFF; 
+	crc16lo = cInlo;//0xFF; 
+	cl = 0x21;
+	ch = 0x10;
+	for (ii = 0; ii < length; ii++)
+	{
+		crc16lo = (crc16lo ^ r_data[ii]);
+		for (flag = 0; flag < 8; flag++)
+		{
+			savehi = crc16hi;
+			savelo = crc16lo;
+			crc16hi = (crc16hi >> 1);
+			crc16lo = (crc16lo >> 1);
+			if ((savehi & 0x01) == 0x01)
+				crc16lo = (crc16lo | 0x80);
+			if ((savelo & 0x01) == 0x01)
+			{
+				crc16hi = (crc16hi ^ ch);
+				crc16lo = (crc16lo ^ cl);
+			}
+		}
+	}
+	CRC = (crc16hi)+(crc16lo << 8);
 	//	over_turn(2, (unsigned char*)&CRC);	//返转
-	
+
 	return CRC;
 }
 
 unsigned int crc16_isr(unsigned char *Dat, unsigned int len)
 {
-	unsigned int i=0,TxCRC=0;
+	unsigned int i = 0, TxCRC = 0;
 	const unsigned int CRCtable[256] =
 	{
 		0x0000,0xC0C1,0xC181,0x0140,0xC301,0x03C0,0x0280,0xC241,
@@ -232,19 +289,19 @@ unsigned int crc16_isr(unsigned char *Dat, unsigned int len)
 		0x4400,0x84C1,0x8581,0x4540,0x8701,0x47C0,0x4680,0x8641,
 		0x8201,0x42C0,0x4380,0x8341,0x4100,0x81C1,0x8081,0x4040
 	};
-	for (i=0; i<len; i++)
+	for (i = 0; i < len; i++)
 	{
-		if (Dat[i]!=0)
+		if (Dat[i] != 0)
 		{
-			TxCRC=0;
-			for (i=0; i<len; i++)
+			TxCRC = 0;
+			for (i = 0; i < len; i++)
 			{
-				TxCRC=(CRCtable[Dat[i]^(TxCRC&0xFF)]^(TxCRC/0x100));
+				TxCRC = (CRCtable[Dat[i] ^ (TxCRC & 0xFF)] ^ (TxCRC / 0x100));
 			}
 		}
 	}
-	if(TxCRC==0x0000)
-		TxCRC=0xFFFF;
+	if (TxCRC == 0x0000)
+		TxCRC = 0xFFFF;
 	return TxCRC;
 }
 
@@ -257,62 +314,62 @@ unsigned int crc16_isr(unsigned char *Dat, unsigned int len)
 //***********************************************************************
 //		crc_cu:	this function caculate the crc8 checking byte of a string
 //***********************************************************************/
-void crc_cu_16(uchar *SerBuffer,uint n,uint length)     //
+void crc_cu_16(uchar *SerBuffer, uint n, uint length)     //
 {
-//	uchar temp=0;
-	uint i,j;
+	//	uchar temp=0;
+	uint i, j;
 	uint Crc;
 
 	Crc = CRC_PRESET;
 
-		for (i = 0; i < length; i++)
-		{
-		  Crc = Crc ^((uint)SerBuffer[i+n] << 8);
+	for (i = 0; i < length; i++)
+	{
+		Crc = Crc ^ ((uint)SerBuffer[i + n] << 8);
 
-		  for (j = 0; j < 8; j++)
-		  {
+		for (j = 0; j < 8; j++)
+		{
 			if (Crc & 0x8000)
 			{
-			  Crc = (Crc << 1) ^ CRC_POLYNOM;
+				Crc = (Crc << 1) ^ CRC_POLYNOM;
 			}
 			else
 			{
-			  Crc = (Crc << 1);
+				Crc = (Crc << 1);
 			}
-		  }
 		}
-		SerBuffer[length+n]     = (uchar)(Crc >> 8);
-		SerBuffer[length + 1+n] = (uchar) Crc;
+	}
+	SerBuffer[length + n] = (uchar)(Crc >> 8);
+	SerBuffer[length + 1 + n] = (uchar)Crc;
 
 }
 //***********************************************************************
 //		crc_cu:	this function caculate the crc8 checking byte of a string
 //***********************************************************************/
-uchar crc_ck_16(uchar *SerBuffer,uint length)     //uchar crc_ck_16(uchar *SerBuffer,uchar length)
+uchar crc_ck_16(uchar *SerBuffer, uint length)     //uchar crc_ck_16(uchar *SerBuffer,uchar length)
 {
-//	uchar temp=0;
-	uint i,j;
+	//	uchar temp=0;
+	uint i, j;
 	uint Crc;
 
 	Crc = CRC_PRESET;
 
-		for (i = 0; i < length; i++)
-		{
-		  Crc = Crc ^((uint)SerBuffer[i] << 8);
+	for (i = 0; i < length; i++)
+	{
+		Crc = Crc ^ ((uint)SerBuffer[i] << 8);
 
-		  for (j = 0; j < 8; j++)
-		  {
+		for (j = 0; j < 8; j++)
+		{
 			if (Crc & 0x8000)
 			{
-			  Crc = (Crc << 1) ^ CRC_POLYNOM;
+				Crc = (Crc << 1) ^ CRC_POLYNOM;
 			}
 			else
 			{
-			  Crc = (Crc << 1);
+				Crc = (Crc << 1);
 			}
-		  }
 		}
-	if ( Crc==0)return(0);        //CRC16 OK
+	}
+	if (Crc == 0)return(0);        //CRC16 OK
 	return(1);
 
 }
@@ -320,16 +377,16 @@ uchar crc_ck_16(uchar *SerBuffer,uint length)     //uchar crc_ck_16(uchar *SerBu
 //********************************************************************
 // 	crc_c: crc8 passthrough base function
 //*******************************************************************/
-uchar crc_c(uchar x,uchar temp)
+uchar crc_c(uchar x, uchar temp)
 {
-	uchar i,y;
-	for ( i=0;i<8;i++)
+	uchar i, y;
+	for (i = 0; i < 8; i++)
 	{
-		y=x^temp;
-		if (y&=0x01 )temp^=0x18;
-		temp>>=1;
-		if (y)temp|=0x80;
-		x>>=1;
+		y = x^temp;
+		if (y &= 0x01)temp ^= 0x18;
+		temp >>= 1;
+		if (y)temp |= 0x80;
+		x >>= 1;
 	}
 	return(~temp);
 }
@@ -338,24 +395,24 @@ uchar crc_c(uchar x,uchar temp)
 //		crc_ck: this function check the crc8 of a string
 //				  if check is OK:return 0,else return 1
 //**********************************************************************/
-uchar crc_ck(uchar *string_ck,uchar length)
+uchar crc_ck(uchar *string_ck, uchar length)
 {
-	uchar temp=0;
+	uchar temp = 0;
 	uchar j;
-	for ( j=0;j<length;j++)temp=crc_c(string_ck[j],temp);
-	temp=~temp;
-	if ( temp)return(1);
+	for (j = 0; j < length; j++)temp = crc_c(string_ck[j], temp);
+	temp = ~temp;
+	if (temp)return(1);
 	return(0);
 }
 //***********************************************************************
 //		crc_cu:	this function caculate the crc8 checking byte of a string
 //***********************************************************************/
-void crc_cu(uchar *string_cu,uchar length)
+void crc_cu(uchar *string_cu, uchar length)
 {
-	uchar temp=0;
+	uchar temp = 0;
 	uchar j;
-	for ( j=0;j<(length-1);j++)temp=crc_c(string_cu[j],temp);
-	string_cu[j]=temp;
+	for (j = 0; j < (length - 1); j++)temp = crc_c(string_cu[j], temp);
+	string_cu[j] = temp;
 }
 
 

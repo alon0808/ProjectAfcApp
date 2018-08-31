@@ -32,8 +32,6 @@
 #if SWITCH_PBOC
 //#define PBOC_TEST1	// 银联测试参数,加上公交等链接
 //#define  PBOC_TEST		//银联演示程序，只连接银联后台
-#define SWITCH_PBOC_GUILIN_DEBUG_gui 1
-#define SWITCH_PBOC_GUILIN_DEBUG	0
 #endif
 
 #ifdef PBOC_TEST1
@@ -64,7 +62,7 @@
 //程序版本号
 #define BasksofVer 100
 #ifdef _debug_
-	#define SOFT_VER_TIME_LOG 999
+	#define SOFT_VER_TIME_LOG 0x001
 	#define SOFT_VER_TIME "2011.11.11 QUAN"	//
 
 #elif defined _HD_XIAOER_OPEN
@@ -89,21 +87,6 @@
 #define _backLight_on_ 0
 #define _watchdog_open
 
-
-#ifdef _New_Bu_mode_
-	#define PSAM_GJ SAM4
-	#define PSAM_YD SAM3
-#elif defined FUJIAN_EKT_CPU_
-	#define PSAM_GJ SAM1	//没有公交PSAM卡
-	#define PSAM_YD SAM1
-#elif defined BUS_PINGXIANG_
-	#define PSAM_GJ SAM2
-	#define PSAM_YD SAM1 
-#else
-	#define PSAM_GJ SAM1
-	#define PSAM_YD SAM2 
-#endif
-	#define PSAM_JTB SAM3
 //刷卡的类型
 //通用M1卡
 #define CARDSTYLE_NORM1 1

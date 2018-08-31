@@ -411,7 +411,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 	if (Sign_Infor.ISOK == 0)
 	{
 		MSG_LOG("没签到--return--\r\n");
-		gmissflag = MISS_PBOC_LOGIN;
+		gGprsinfo.gmissflag = MISS_PBOC_LOGIN;
 		ACK_flag = 0;
 		MessageBox(1, "设备未签到,请稍后");
 		delayxms(500);
@@ -442,7 +442,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 		if (ret == KEY_ESC) {
 			if (gGprsinfo.GPRSLinkProcess == 0xA0)
 				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-			gmissflag = 0;
+			gGprsinfo.gmissflag = 0;
 			return -1;
 		}
 	
@@ -474,7 +474,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 
 		if (isNetOK[LINK_PBOC] == 3)
 		{
-			if(gmissflag!=MISS_PBOC_UPREC_ODA /*&&gmissflag!=MISS_PBOC_RE_PURSE*/) //有其他任务的时候，先不发联机，防止同时收到多个应答	
+			if(gGprsinfo.gmissflag!=MISS_PBOC_UPREC_ODA /*&&gmissflag!=MISS_PBOC_RE_PURSE*/) //有其他任务的时候，先不发联机，防止同时收到多个应答	
 			{
 				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 			MSG_LOG("链路链接上\r\n");
@@ -535,10 +535,10 @@ if(over_GPRStR_add2()!=ST_OK)
 			display(8, 16, (const char *)disbuff, 0);
 			}
 
-		if (gmissflag != SQmode) {
+		if (gGprsinfo.gmissflag != SQmode) {
 			//暂时不去找其他任务
 			//	MSG_LOG("暂时不去找其他任务\r\n");
-				gmissflag = SQmode;
+				gGprsinfo.gmissflag = SQmode;
 			}
 
 			clr_wdt();
@@ -562,7 +562,7 @@ if(over_GPRStR_add2()!=ST_OK)
 				tcpipClose(LINK_PBOC);
 				if (gGprsinfo.GPRSLinkProcess == 0xA0)
 					gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-				gmissflag = 0;
+				gGprsinfo.gmissflag = 0;
 				if (switch_both)
 				{
 					
@@ -602,7 +602,7 @@ if(over_GPRStR_add2()!=ST_OK)
 					MSG_LOG("444bit:%d,ACK_flag:%02x   ",msgf[field_ack].bitf,ACK_flag);
 					if (gGprsinfo.GPRSLinkProcess == 0xA0)
 						gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-					gmissflag = 0;
+					gGprsinfo.gmissflag = 0;
 				#ifdef switch_RE
 				Switch_sign(Switch_sign_OVER);
 				#endif
@@ -621,7 +621,7 @@ if(over_GPRStR_add2()!=ST_OK)
 			else {
 				ret = getkey(1);
 				if (ret == KEY_ESC) {
-					gmissflag = MISS_G_FREE;
+					gGprsinfo.gmissflag = MISS_G_FREE;
 				if (gGprsinfo.GPRSLinkProcess == 0xA0)
 				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 				#ifdef switch_RE
@@ -637,7 +637,7 @@ if(over_GPRStR_add2()!=ST_OK)
 	if (flag == 0xA5 && gMCardCand != CARDSTYLE_UNPAY_ODA) {	// 收到正确数据 
 			if (gGprsinfo.GPRSLinkProcess == 0xA0)
 				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-			gmissflag = MISS_G_FREE;
+			gGprsinfo.gmissflag = MISS_G_FREE;
 //			gSendOverTime = 0;
 
 			MSG_LOG("删冲正--\r\n");
@@ -671,7 +671,7 @@ if(over_GPRStR_add2()!=ST_OK)
 			}
 			if (gGprsinfo.GPRSLinkProcess == 0xA0)
 				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-			gmissflag = MISS_G_FREE;
+			gGprsinfo.gmissflag = MISS_G_FREE;
 		return -1;	
 	}
 

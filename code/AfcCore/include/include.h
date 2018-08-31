@@ -282,7 +282,7 @@ extern char get_back_para(unsigned char *bpara);
 // #define FLASH_TEMP_RECORD	0x1A6000	//-0x1A7000 4K空间　用于存贮准备写进flash文件系统的临时记录，开机加载判断，并删除
 //直到0x1B0000 还没有用
 #define FLASH_WHITE_START 0x1A7000//城市互联互通城市名单空间：4K    前面6字节传“有效”和长度2字节，高位在前
-#define FLASH_WHITE_END	  0x1A8000
+//#define FLASH_WHITE_END	  0x1A8000
 
 #define FLASH_WHITE_START_JTB	0x1A8000//JTB城市互联互通城市名单空间：4K    前面6字节传“有效”和长度2字节 ，高位在前  数据域里面前2字节是版本高位在前
 #define FLASH_WHITE_END_JTB		0x1A9000

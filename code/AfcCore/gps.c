@@ -112,6 +112,7 @@ void *GPS_main(void *arg)//int GPS_main(void)
 
       if(nread != SLZR_FAILURE)
       {
+#if SWITCH_DEBUG_GPS
  		printf("===========================================\n");
 
         printf("= GPS状态位 : %c  [A:有效状态 V:无效状态]\n" ,gprmc.pos_state);
@@ -130,7 +131,7 @@ void *GPS_main(void *arg)//int GPS_main(void)
 													//磁偏角，（000 - 180）度（前导位数不足则补0）
 
         printf("===========================================\n");
-
+#endif
       }
     }
 

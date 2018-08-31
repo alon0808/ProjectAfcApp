@@ -144,6 +144,7 @@
     <ClInclude Include="..\..\code\AfcCore\Crypto\RSAREF.H" />
     <ClInclude Include="..\..\code\AfcCore\Crypto\sha1.h" />
     <ClInclude Include="..\..\code\AfcCore\DEF8583.h" />
+    <ClInclude Include="..\..\code\AfcCore\EC20Lx_HTTPS.h" />
     <ClInclude Include="..\..\code\AfcCore\Fatfiles.h" />
     <ClInclude Include="..\..\code\AfcCore\GPRSdatatype.h" />
     <ClInclude Include="..\..\code\AfcCore\GprsSocket.h" />

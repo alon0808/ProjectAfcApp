@@ -1,6 +1,8 @@
 #ifndef _INCLUDED_DEBUG_OUT_H
 #define _INCLUDED_DEBUG_OUT_H
 
+#include <stdio.h>
+
 #define STR_SPLIT_LINE1	"=========================================================="
 #define STR_SPLIT_LINE2	"----------------------------------------------------------"
 #define STR_SPLIT_LINE3	"***************************"
@@ -14,7 +16,8 @@ typedef enum {
 }EPrintLevel;
 
 
-#define PRINT_INFOR_LOCATION(str, str1)		printf("[%s-%d]%s %s\r\n", __FUNCTION__, __LINE__, str, str1)
+#define PRINT_INFOR_LOCATION(str, str1)		printf("[Info][%s-%d]%s %s\r\n", __FUNCTION__, __LINE__, str, str1)
+#define PRINT_ERR_LOCATION(str, str1)		printf("[Err][%s-%d]%s %s\r\n", __FUNCTION__, __LINE__, str, str1)
 #define PRINT_INFOR(...)		print2debug(PL_INFOR, 1, __VA_ARGS__)
 #define PRINT_ERROR(...)		print2debug(PL_ERROR, 1, __VA_ARGS__)
 #define PRINT_WARNING(...)		print2debug(PL_WARNING, 1, __VA_ARGS__)

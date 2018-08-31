@@ -12,6 +12,8 @@
 #include "libHandanCore.h"
 #include "UtilityProc.h"
 
+#include <string.h>
+
 
 #define STATION_NAME_SHOW_FONT_SIZE     30
 #define STATION_NAME_SHOW_LENGTH        160
@@ -1715,6 +1717,9 @@ void CMainPage2::slot_1s_timer()
 		msgText += ("\n");
         // the third line
 		sprintf(buffer, "IC:%d", uiData->uploadRec);
+		msgText += buffer;
+
+		sprintf(buffer, " %02X-%02X", uiData->task, uiData->linkStatus);
 		msgText += buffer;
 
 

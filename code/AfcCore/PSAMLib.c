@@ -23,6 +23,7 @@
 
 #include "SlzrTypeDef.h"
 #include "MYDES.h"
+#include "szct.h"
 
 //#define _debugPSAM_
 

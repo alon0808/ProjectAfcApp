@@ -1,4 +1,5 @@
 #include "Macro_Proj.h"
+#include "EC20Lx_HTTPS.h"
 #include <stdio.h>//printf
 #include <string.h>//×Ö·û´®´¦Àí
 #include <sys/socket.h>//Ì×½Ó×Ö
