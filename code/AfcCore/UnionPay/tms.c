@@ -75,7 +75,7 @@ extern unsigned char gmissflag;
 extern unsigned char isNetOK[MAX_RCV_PACKET_NUM];
 extern unsigned char gprsErrorTimes;
 extern volatile stGPrsDataStyle gGPRS_data_style;
-extern unsigned char DEBUG_COM;
+unsigned char DEBUG_COM;
 //extern char  const  MachineCode[64];
 
 //key:密钥,initdat:初始值默认全00,Sdat加解密数据,len:加解密数据长度,outdat:输出的数据

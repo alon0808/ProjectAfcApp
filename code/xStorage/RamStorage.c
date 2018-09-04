@@ -83,6 +83,8 @@ static void *getConfigPointer(unsigned int Address_f) {
 	case BIS_BLK_63:
 		pConfig = &gDeviceParaTab.TYPE_63;
 		break;
+	case BIT_PBOC_NS_BIG:
+		pConfig = &gDeviceParaTab.batchNo;
 	default:
 		break;
 	}

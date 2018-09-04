@@ -26,7 +26,8 @@
 // Content-Length: 62
 
 
-#define HTTP_POST "POST /mjc/webtrans/VPB_lb HTTP/1.1\r\nHOST: %s:%d\r\nUser-Agent: Donjin Http 0.1\r\nCache-Control: no-cache\r\nContent-Type:x-ISO-TPDU/x-auth\r\nAccept: */*\r\nContent-Length: %d\r\n\r\n"
+//#define HTTP_POST "POST /mjc/webtrans/ABC HTTP/1.1\r\nHOST: %s:%d\r\nUser-Agent: Donjin Http 0.1\r\nCache-Control: no-cache\r\nContent-Type:x-ISO-TPDU/x-auth\r\nAccept: */*\r\nContent-Length: %d\r\n\r\n"
+#define HTTP_POST "POST /mjc/webtrans/ABC HTTP/1.1\r\nHOST: 145.4.206.244:5000\r\nUser-Agent: Donjin Http 0.1\r\nCache-Control: no-cache\r\nContent-Type:x-ISO-TPDU/x-auth\r\nAccept: */*\r\nContent-Length: %d\r\n\r\n"
 //#define HTTP_POST "POST /mjc/webtrans/VPB_lb HTTP/1.1\r\nHOST: 101.231.114.200:5000\r\nUser-Agent: Donjin Http 0.1\r\nCache-Control: no-cache\r\nContent-Type:x-ISO-TPDU/x-auth\r\nAccept: */*\r\nContent-Length: %d\r\n\r\n"
 //#define HTTP_POST "POST /mjc/webtrans/VPB_lb HTTP/1.1\r\nHOST: 145.4.206.244:5000\r\nUser-Agent: Donjin Http 0.1\r\nCache-Control: no-cache\r\nContent-Type:x-ISO-TPDU/x-auth\r\nAccept: */*\r\nContent-Length: %d\r\n\r\n"
 

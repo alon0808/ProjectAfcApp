@@ -1682,7 +1682,7 @@ void CMainPage2::slot_1s_timer()
 		m_label_time1->setText(strCurrentTime1);
 	}
 
-	if (m_seconds > 5 || m_seconds < 0) {
+	if (m_seconds > 3 || m_seconds < 0) {
 		stUIData *uiData = GetStatusData();
 		QString msgText = "邯郸公交 ";
 		char buffer[500];

@@ -2190,15 +2190,14 @@ unsigned char GJDataDeal(unsigned char *pakege)
 			
 			MSG_LOG("校时000---\r\n");
 			ret = BCDTime2Long(getbuff);
-			MSG_LOG("校时1111---\r\n");
+			//MSG_LOG("校时1111---\r\n");
 			i = BCDTime2Long(&SysTime.year_h);
-			MSG_LOG("校时222---\r\n");
+			//MSG_LOG("校时222---\r\n");
 			ret -= i;
 			if( ret > 10 || ret <-10)	//差10秒左右要校时
 			{
 				MSG_LOG("校时---\r\n");
 				timewrite(getbuff);
-
 			}
 		}
 	}
@@ -2507,7 +2506,7 @@ unsigned char GJDataDeal(unsigned char *pakege)
 
 		MSG_LOG("Send ACK:");
 		BCD_LOG(getbuff,len,1);
-		gprs_send_data(1, len, getbuff);	//发送应答到后台
+		gprs_send_data(LINK_GJ, len, getbuff);	//发送应答到后台
 
 
 		break;

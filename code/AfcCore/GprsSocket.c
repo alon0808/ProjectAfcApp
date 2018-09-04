@@ -46,6 +46,7 @@
 #include "szct.h"
 #include "qpboc_8583.h"
 #include "EC20Lx_HTTPS.h"
+#include "Gszct.h"
 
 #define _debug_gprs
 
@@ -58,21 +59,6 @@ unsigned short gSendOverTime;//发送后收应答超时计数器
 
 extern stsl8583filelist gsl8583filelist[sl8583fileNum];
 extern st8583filedown gsl8583FileDownPara;
-
-//通信帧结构定义
-#define FRAME_SIZE							2048				//一帧数据最大字节长度
-typedef struct tag_FRAME_BUF {
-	unsigned char ucFrameType;									//帧类型字节
-	unsigned char uiFrameLen[2];									//帧长度
-	unsigned char FrameBuf[FRAME_SIZE];							//帧缓冲
-} FRAME_BUF;
-
-#define MAX_RCV_PACKET_NUM					2					//接收包缓冲大小
-//应用包缓冲队列,用于存放数据链路层接收到的数据帧,包括应用层数据和控制帧数据
-typedef struct tag_PACKET_BUF {
-	FRAME_BUF LinkFrame;										//帧内容
-	unsigned char ucItemStatus;									//帧状态标示 
-} PACKET_RCV;
 
 
 int ServerTIMEOUT = 400;				//1分钟没有收到数据重连,超时时间通过信息配置
@@ -227,7 +213,7 @@ int SocketLink(void)
 			}
 		}
 		else if (gGprsinfo.isNetOK[i] == FALSE) {
-
+			PRINT_DEBUG("SocketLink.for:%d,%s:%d\n", i, gDeviceParaTab.gServerInfo[i].IPaddr, gDeviceParaTab.gServerInfo[i].port);
 			strcpy(servInetAddr, gDeviceParaTab.gServerInfo[i].IPaddr);
 			time(&ServerGetDataTime[i]);	//重新连接了，得置超时计数器
 			time(&tt);
@@ -276,42 +262,42 @@ extern int socket_performNSsl(void *pData, int len, unsigned char *pOutput, int 
 int SendDataTOserver(void)	//发送相关的数据到服务器
 {
 	int i, ret;
-	//	int len;
-	//	unsigned char *obuf = NULL;
+	int len;
+	unsigned char *obuf = NULL;
 
 	for (i = 0; i < _SOCKET_MAXNUM; i++) {
 		//printf("Net-Netsendline[%d].dataFlag:%d\n", i, Netsendline[i].dataFlag);
 		if (Netsendline[i].dataFlag == 0xAA) {
 
-			MSG_LOG("SendDataTOserver-Netsendline[i].dataFlag:%02X\n", Netsendline[i].dataFlag);
+			MSG_LOG("SendDataTOserver-Netsendline[%d].dataFlag:%02X, linkattr:%02X\n", i, Netsendline[i].dataFlag, gDeviceParaTab.gServerInfo[i].linkAttr.dataCh);
 			if (gDeviceParaTab.gServerInfo[i].linkAttr.bits.bit0 != 0) {	// tls
 #ifdef _debug_
 				MSG_LOG("Net-SendData-tls:%d,sID:%d,Len:%d\n", i, g_socketfd[i], Netsendline[i].bufLen);
 #endif
-				/*			//https_setServerInfor(gDeviceParaTab.gServerInfo + i);
-							len = MAXLINE;
-							obuf = (unsigned char*)Netrecvline[i].Revbuf;
-							if (gDeviceParaTab.gServerInfo[i].linkAttr.bits.bit3 == 0) {
-								ret = https_performSsl(Netsendline[i].Sendbuf, Netsendline[i].bufLen, obuf, &len);
-							}
-							else {
-								ret = socket_performNSsl(Netsendline[i].Sendbuf, Netsendline[i].bufLen, obuf, &len);
-							}
-							if (ret != Ret_Ok)
-							{
-								SET_INT16(obuf, PECFunction);
-								len = 2;
-							}
+				//https_setServerInfor(gDeviceParaTab.gServerInfo + i);
+				len = MAXLINE;
+				obuf = (unsigned char*)Netrecvline[i].Revbuf;
+				if (gDeviceParaTab.gServerInfo[i].linkAttr.bits.bit3 == 0) {
+					ret = https_performSsl(Netsendline[i].Sendbuf, Netsendline[i].bufLen, obuf, &len);
+				}
+				else {
+					ret = socket_performNSsl(Netsendline[i].Sendbuf, Netsendline[i].bufLen, obuf, &len);
+				}
+				if (ret != Ret_OK)
+				{
+					SET_INT16(obuf, PECFunction);
+					len = 2;
+				}
 
-							time(&ServerGetDataTime[i]);
-							Netrecvline[i].Revbuf[len] = 0;        // null terminate
-							Netrecvline[i].bufLen = len;
-							Netrecvline[i].dataFlag = 0xAA;
-			#ifdef _debug_
-							MSG_LOG("Time:%d,socket Read:%d len:%d\r\n", ServerGetDataTime[i], i, len);
-			#endif
-							Netsendline[i].dataFlag = 0;
-							Netsendline[i].bufLen = 0;*/
+				time(&ServerGetDataTime[i]);
+				Netrecvline[i].Revbuf[len] = 0;        // null terminate
+				Netrecvline[i].bufLen = len;
+				Netrecvline[i].dataFlag = 0xAA;
+#ifdef _debug_
+				MSG_LOG("Time:%d,socket Read:%d len:%d\r\n", ServerGetDataTime[i], i, len);
+#endif
+				Netsendline[i].dataFlag = 0;
+				Netsendline[i].bufLen = 0;
 
 			}
 			else if (gGprsinfo.isNetOK[i] != FALSE) {
@@ -512,10 +498,18 @@ void GPRSSocketParaINIT(void)
 	gDeviceParaTab.gServerInfo[i].linkAttr.dataCh = 0;
 	++i;
 
+#if SWITCH_DEBUG_UNIONPAY
+	strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "202.101.25.188");			////139.199.213.63:2020 测试。
+	gDeviceParaTab.gServerInfo[i].port = 20141;
+#else
+	strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "120.204.69.139");			////139.199.213.63:2020 测试。
+	gDeviceParaTab.gServerInfo[i].port = 30000;
+#endif
 	strcpy(gDeviceParaTab.gServerInfo[i].APN, "CMNET");
-	strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "124.232.132.94");			////139.199.213.63:2020 测试。
-	gDeviceParaTab.gServerInfo[i].port = 443;
 	gDeviceParaTab.gServerInfo[i].linkAttr.dataCh = 0x01;
+#if !HTTP_HEAD
+	gDeviceParaTab.gServerInfo[i].linkAttr.dataCh |= 0x04;
+#endif
 }
 
 int GJRec_Send(void)
@@ -859,10 +853,10 @@ void gprs_send_data(unsigned char linkNum, unsigned int len, void *pData)
 	int si;
 	unsigned char *dat = (unsigned char *)pData;
 
-	if ((linkNum == 0) || (linkNum > 4))//链接号只能从1到4,其它的默认0号链接
+	if ((linkNum < LINK_GJ) || (linkNum >= 4))//链接号只能从1到4,其它的默认0号链接
 		return;
 
-	si = linkNum - 1;
+	si = linkNum;// -1;
 
 	Netsendline[si].bufLen = len;
 	memcpy(Netsendline[si].Sendbuf, dat, Netsendline[si].bufLen);
@@ -873,7 +867,7 @@ void TaskRecWrite(void)
 {
 	unsigned char buffer[4096];//[2100];
 	unsigned int uilen;
-#ifdef HTTP_HEAD
+#if HTTP_HEAD
 	char http_head[256];
 	unsigned int http_len = 0;
 	int ClientIP;
@@ -940,7 +934,7 @@ void TaskRecWrite(void)
 		debugstring("TaskRecWrite_snd data:");
 		debugdata(buffer, uilen, 1);
 #endif
-		gprs_send_data(1, uilen, buffer);
+		gprs_send_data(LINK_GJ, uilen, buffer);
 		if ((gGprsinfo.gmissflag == MISS_G_HART) || (gGprsinfo.gmissflag == MISS_G_GPS)) {
 			gGprsinfo.gmissflag = MISS_G_FREE;
 			return;//不需要等应答
@@ -988,9 +982,9 @@ void TaskRecWrite(void)
 		debugdata(buffer, uilen, 1);
 #endif
 
-#ifdef HTTP_HEAD
+#if HTTP_HEAD
 		memset(http_head, 0, sizeof(http_head));
-		http_len = Build_http_pack(http_head, ClientIP, ClientPort, uilen);
+		http_len = Build_http_pack(http_head, gDeviceParaTab.gServerInfo[LINK_PBOC].IPaddr, gDeviceParaTab.gServerInfo[LINK_PBOC].port, uilen);
 		MSG_LOG("httphead len:%d\r\n%s\r\n", http_len, http_head);
 		memmove(buffer + http_len, buffer, uilen);
 		memcpy(buffer, http_head, http_len);
@@ -1084,7 +1078,7 @@ void mainGprs(void)
 		else {
 			Netrecvline[link].dataFlag = 0xAA;
 #ifdef _debug_gprs
-			debugstring("MAIN:");
+			debugstring("GJDataDeal:");
 			debugdata((unsigned char*)&Netrecvline[0].dataFlag, 20, 1);
 #endif
 		}
@@ -1106,7 +1100,7 @@ void mainGprs(void)
 		else {
 			Netrecvline[link].dataFlag = 0xAA;
 #ifdef _debug_gprs
-			debugstring("MAIN:");
+			debugstring("QPBOC_DataDeal:");
 			debugdata((unsigned char*)&Netrecvline[0].dataFlag, 20, 1);
 #endif
 		}
@@ -1227,20 +1221,33 @@ void *main_NetConnect(void *arg)
 void *main_GPRS(void *arg)
 {
 	unsigned int t = 0;
+	int send_timeout = 0;
 
 	while (1) {
 		usleep(10000);//10ms
 
 		main_Onesec();
 
+
 		if ((gGprsinfo.gmissflag == 0) || (gGprsinfo.gmissflag == MISS_G_FREE) || (gGprsinfo.gmissflag == MISS_G_LOGINGJ)) {//查找GPRS的任务
 
-			find_G_new_mission();
+			if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD) {
+				++send_timeout;
+				if (send_timeout >= 3000) {
+					PRINT_WARNING("main_GPRS timeout, set free:%d\n", send_timeout);
+					gGprsinfo.GPRSLinkProcess = GPRS_FREE;
+					send_timeout = 0;
+				}
+			}
+			else {
+				send_timeout = 0;
+				find_G_new_mission();
 
 #ifdef qPBOC_BUS	
-			if (qpoc_flag_or() == ST_OK)
-				find_qpboc_new_mission();
+				if (qpoc_flag_or() == ST_OK)
+					find_qpboc_new_mission();
 #endif
+			}
 		}
 
 		if ((t++ % 100) == 0)

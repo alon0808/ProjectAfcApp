@@ -62,8 +62,8 @@
 //³ÌÐò°æ±¾ºÅ
 #define BasksofVer 100
 #ifdef _debug_
-	#define SOFT_VER_TIME_LOG 0x001
-	#define SOFT_VER_TIME "2011.11.11 QUAN"	//
+	#define SOFT_VER_TIME_LOG 0x002
+	#define SOFT_VER_TIME "2018.09.03 CHANGSHA"	//
 
 #elif defined _HD_XIAOER_OPEN
 	#define SOFT_VER_TIME_LOG BasksofVer+102

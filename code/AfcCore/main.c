@@ -95,6 +95,7 @@ extern void* getNetData(void *arg);
 extern unsigned char CPUPsamInitJTB(void);
 extern void *main_GPRS(void *arg);
 extern void *onemsSecondDly(void *arg);
+extern void InitQpboc8583(void);
 AFC_CORE__API void* StartApp(void *argv)//int argc, 
 {
 //	char c;
@@ -177,6 +178,8 @@ AFC_CORE__API void* StartApp(void *argv)//int argc,
 	CPUPsamInitJTB();
 
 	ICCardInit();	//初始化IC卡消费时的变量
+
+	InitQpboc8583();
 
 	if (pthread_create(&tidmain_GPRS, NULL, main_GPRS, NULL) != 0)
 	{

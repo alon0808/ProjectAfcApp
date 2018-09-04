@@ -22,7 +22,8 @@
 #define		HEAD	"613200324605"	
 #define		BUSS_ID	"898520154110004"
 #else
-#define		TPDU	"6000270000"	// 上海银联TPDU
+//#define		TPDU	"6000270000"	// 上海银联TPDU
+#define		TPDU	"6005370000"	// 上海银联TPDU
 #define		HEAD	"613200324605"	
 #endif
 
@@ -222,7 +223,7 @@ mode=1: shopNo[15];//商户编号
 mode=2: KEK[48];//KEK 16字节
 */
 unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf);
-unsigned int Build_http_pack(char *outhttppack, unsigned int ip, unsigned int port, unsigned int Senddatlen);
+unsigned int Build_http_pack(char *outhttppack, char *ip, unsigned int port, unsigned int Senddatlen);
 unsigned int Build_qpboc_8583Packge(unsigned char *revBuf, unsigned char mode);
 extern void find_qpboc_new_mission(void);//此任务一秒进一次
 
@@ -289,6 +290,7 @@ extern unsigned char s_isDownOdaBlkList;
 extern QPBOC_TYPE_63 TYPE_63;
 extern unsigned char ODA_time;
 extern void SHANGHU_INIT_F(void);
+extern void InitQpboc8583(void);
 
 extern unsigned int gSendGLogin_qpoc;
 extern  unsigned char deal_type;

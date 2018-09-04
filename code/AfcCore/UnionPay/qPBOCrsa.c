@@ -3164,6 +3164,7 @@ void Pboc_delay_card(void)
 	unsigned int sno1;
 	unsigned char buffer[10];
 
+	PRINT_DEBUG_LOCATION("Pboc_delay_card--Pboc_delay_card", "");
 	//	InitRC531();
 	PcdRfReset(5);
 	delayxms(5);
@@ -3177,6 +3178,9 @@ void Pboc_delay_card(void)
 			{
 				i = 0;
 			}
+		}
+		else {
+
 		}
 	} while (i < 3);
 	return;

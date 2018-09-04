@@ -22,6 +22,12 @@ void debugstring(const char *str)
 void debugdata(unsigned char *value, unsigned int uclen, unsigned char mode)
 {
 	unsigned int i;
+
+	if (uclen > 5000) {
+		printf("%d.", uclen);
+		uclen = 5000;
+	}
+
 	for (i = 0; i < uclen; i++)
 	{
 		printf("%02X", value[i]);

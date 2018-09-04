@@ -190,7 +190,7 @@ extern void tcpipClose(unsigned char mode);
 //以下银联增加部分
 //
 /*****************************************/
-unsigned char s_isAuthOk = 0;
+unsigned char s_isAuthOk = 1;
 unsigned char s_isDownOdaBlkList = 0;
 QPBOC_TYPE_63 TYPE_63;
 unsigned char  CountPointRead(void);
@@ -250,7 +250,7 @@ void add_qpoc_flag(void)
 	if ((gGprsinfo.gmissflag&MISS_PBOC_LOGIN) == MISS_PBOC_LOGIN)
 	{
 		//	s_isAuthOk = 1;
-		MSG_LOG("次数加-2-\r\n");
+		MSG_LOG("次数加-2-:%d\r\n", qpoc_flag.POBC_time);
 		qpoc_flag.POBC_time++;
 		restore_flag = 3;
 	}
@@ -734,6 +734,9 @@ unsigned char getBitmapBits(unsigned char fieldID, unsigned char *sl8583bitmap)
 */
 
 void InitQpboc8583(void) {
+
+	Q_QPBOC_para.switch_control_SP = 0x31;
+
 	getMobileParameter(8, &g_supportQR);
 }
 
@@ -2739,9 +2742,13 @@ int build8583_qpboc_Auth(unsigned char *oDat, unsigned inout) {
 	// session key
 	getMobileParameter(7, keyMain);
 #if SWITCH_DEBUG_UNIONPAY == 1
-
+#if 0
 	// 1123A61AE36305A75CC8B91F2A486999
 	memcpy(keyMain, "\x11\x23\xA6\x1A\xE3\x63\x05\xA7\x5C\xC8\xB9\x1F\x2A\x48\x69\x99", 16);
+#else
+	//CDE39991B206A0F6BDD85D2F0417B7FC
+	memcpy(keyMain, "\xCD\xE3\x99\x91\xB2\x06\xA0\xF6\xBD\xD8\x5D\x2F\x04\x17\xB7\xFC", 16);
+#endif
 #endif
 
 	BCD_LOG(keyMain, 16, 1);
@@ -3088,21 +3095,13 @@ int build8583_qpboc_0820(unsigned char *oDat, unsigned char *mode, unsigned char
 // 	return ilen;
 // }
 
-unsigned int Build_http_pack(char *outhttppack, unsigned int ip, unsigned int port, unsigned int Senddatlen)
+unsigned int Build_http_pack(char *outhttppack, char *ip, unsigned int port, unsigned int Senddatlen)
 {
-	char IPbuffer[20] = { 0 };
-	unsigned char temp[4] = { 0 };
 	unsigned int lenth = 0;
 
-	memcpy(temp, &ip, 4);
 
-	memset(IPbuffer, 0, sizeof(IPbuffer));
-	memset(IPbuffer, 0, sizeof(IPbuffer));
-
-	sprintf(IPbuffer, "%03d.%03d.%03d.%03d", temp[0], temp[1], temp[2], temp[3]);
-
-	lenth = sprintf(outhttppack, HTTP_POST, IPbuffer, port, Senddatlen);
-	//lenth = sprintf(outhttppack, HTTP_POST, Senddatlen);
+	//lenth = sprintf(outhttppack, HTTP_POST, ip, port, Senddatlen);
+	lenth = sprintf(outhttppack, HTTP_POST, Senddatlen);
 
 	return lenth;
 
@@ -3412,7 +3411,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 	unsigned short nestpLen;//其它包的长度
 	unsigned char *nestpP;//是否有重包，如果有就指向下一包。
-#ifdef HTTP_HEAD
+#if HTTP_HEAD
 	char * start_p = NULL;
 	char *ret_p = NULL;
 #endif
@@ -3436,7 +3435,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 	clr_wdt();
 
-	MSG_LOG("QPBOC_DataDeal:%d\n", packLen);
+	MSG_LOG("QPBOC_DataDeal:%d, %02X\n", packLen, Q_QPBOC_para.switch_control_SP);
+	BCD_LOG(pakege, packLen, 1);
 	//	gSendOverTime = 0;
 	memcpy((unsigned char*)&Alen, pakege + 1, 2);//数据域总长度
 	//	unsigned char msgtype;
@@ -3454,7 +3454,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 #endif
 
 
-#ifdef HTTP_HEAD
+#if HTTP_HEAD
 	/*
 	HTTP/1.1 500 Internal Server Error
 	Allow: POST, PUT
@@ -3481,9 +3481,17 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 	}
 
 	ret_p = strtok(start_p, ":");
+	//MSG_LOG("85831:len:%d,%s\r\n", strlen(ret_p), ret_p);
 	ret_p = strtok(NULL, "\r\n");
+	for (i = 0; i < 10; i++) {
+		if (*ret_p == ' ') {
+			++ret_p;
+		}
+		else {
+			break;
+		}
+	}
 	MSG_LOG("8583:len:%d,%s\r\n", strlen(ret_p), ret_p);
-
 
 	Alen = __atol(ret_p);
 
@@ -3494,22 +3502,15 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		return ST_OK;
 
 	}
-
-
 	////////////////////////////////////////////////////////////////
-
-
-
 
 	start_p = NULL;
 	start_p = strstr((char *)pakege, (char *)"\r\n\r\n");		//之后就是数据了
 
 	start_p += 4;
 
-
-
 	memmove(pakege, start_p, Alen);
-	MSG_LOG("8583数据\r\n");
+	MSG_LOG("8583数据:%d\r\n", Alen);
 	BCD_LOG((unsigned char *)pakege, Alen, 1);
 
 	memcpy(pakege_8583, pakege, Alen);
@@ -3517,9 +3518,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 	BCD_LOG((unsigned char *)pakege_8583, Alen, 1);
 
 #else
-	pakege += 1;
 	if (packLen == 0 || packLen < 5) {
-
+		add_qpoc_flag();
 		debugstring("GPRS error msg:");
 		BCD_LOG((unsigned char *)pakege, 2, 1);
 		ACK_flag = 0xAA;
@@ -3528,7 +3528,6 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		//return 1;
 		return 1;
 	}
-	pakege += 2;
 #endif
 
 	if (s_isAuthOk == 0) {
@@ -3560,6 +3559,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		return ST_OK;
 	}
 
+
 	for (i = 0; i < 129; i++) {	//初始化
 		msgf[i].bitf = 0;
 		msgf[i].len = 0;
@@ -3572,7 +3572,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 
 	if (sl8583head->ID != 0x60) {
-		MSG_LOG("TPDU ID error:%02X\r\n", sl8583head->ID);
+		MSG_LOG("TPDU ID error:%02X,%d\r\n", sl8583head->ID, Alen);
 		i = 0;
 		if (memcmp(pakege + i, "\x00\x22", 2) != 0) {
 			debugdata(pakege + 3, Alen, 1);
@@ -3655,7 +3655,6 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		{
 			lc = lc;
 		}
-
 
 		//MSG_LOG("里面有%d域\r\n", sfi);
 
@@ -3822,6 +3821,9 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 	case 0x0810://签到的回应
 
 		MSG_LOG("签到---\r\n");
+		if (ACK_flag != 0x00) {
+			add_qpoc_flag();
+		}
 
 		if (msgf[60].bitf)
 		{
@@ -3875,8 +3877,13 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 
 #if SWITCH_DEBUG_UNIONPAY == 1
+#if 0
 			// DAB3CDCBE03DB394D3928304CE588ABA
 			memcpy(KEK, "\xDA\xB3\xCD\xCB\xE0\x3D\xB3\x94\xD3\x92\x83\x04\xCE\x58\x8A\xBA", 16);
+#else
+			//CDE39991B206A0F6BDD85D2F0417B7FC
+			memcpy(KEK, "\xCD\xE3\x99\x91\xB2\x06\xA0\xF6\xBD\xD8\x5D\x2F\x04\x17\xB7\xFC", 16);
+#endif
 #endif
 
 			MSG_LOG("(char*)smpPara.KEK:\n");
@@ -4191,6 +4198,9 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 	// 		return ;
 	// 	}
 //add hbg
+	if (qpoc_flag.POBC_time > 2) {
+		return;
+	}
 	if (Sign_Infor.ISOK == 0) {//还没有签过到
 		if (gGprsinfo.gmissflag == MISS_PBOC_LOGIN)
 			return;	//已经是签到状态了。
@@ -4538,7 +4548,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 					return -1;
 				}
 			}
-			}
+		}
 
 		// 		if(outdly++ > 200)
 		// 			return;
@@ -4562,7 +4572,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 
 			return 0;
 		}
-		}
+	}
 	//	return 0;
 }
 
@@ -4604,7 +4614,7 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 		//	card_ser = 0;
 			//cardSound=0;
 		return -8;
-}
+	}
 
 #endif
 	cardlen = strlen((const char *)qr_pboc_AccountNo);
@@ -4864,6 +4874,7 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 		//MSG_LOG("===1===\r\n");
 	clr_wdt();
 	sysferead(BIT_qpbpc_para, sizeof(stMobileParameter), (unsigned char *)&smpPara);
+#if 0
 	//MSG_LOG("===2===\r\n");
 	itemp = __cpuCrc32((unsigned char*)&smpPara, (sizeof(stMobileParameter) - 4));
 	// //MSG_LOG("===3===\r\n");
@@ -4880,6 +4891,7 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 		sysfewrite(BIT_qpbpc_para, sizeof(stMobileParameter), (unsigned char *)&smpPara);
 		return ST_ERROR;
 	}
+#endif
 
 	switch (mode) {
 	case 1:
@@ -4887,9 +4899,8 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 		memcpy(smpPara.shopNo, "898131141110001", 15);
 #elif SWITCH_DEBUG_UNIONPAY == 2
 		memcpy(smpPara.shopNo, "898131141110001", 15);
-#else
-		memcpy(obuf, smpPara.shopNo, 15);
 #endif
+		memcpy(obuf, smpPara.shopNo, 15);
 		break;
 	case 2:
 		memcpy(obuf, smpPara.KEK, 16);
@@ -4905,7 +4916,7 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 		memcpy(obuf, smpPara.tpdu, 5);
 		break;
 	case 6:
-		memcpy(smpPara.device, "1163727", 8);
+		memcpy(smpPara.device, "11637278", 8);
 		memcpy(obuf, smpPara.device, 8);
 		break;
 
@@ -5260,6 +5271,7 @@ void Q_QPBOC_para_INIT(void)
 	memcpy(Q_QPBOC_para.domain_APN, "CMNET", 5);
 	//	Q_QPBOC_para.switch_control_SP=0x30;  //测试
 	//	MSG_LOG("需要切成专网\r\n");
+
 
 	if (Q_QPBOC_para.switch_control_SP != 0x31)
 		s_isAuthOk = 1;
@@ -6102,7 +6114,7 @@ static int inline ReadM1Block(int block, unsigned char key[6], unsigned char ser
 	}
 	else {
 		MSG_LOG(buffer, blockLen, 1);
-}
+	}
 }
 #endif
 
@@ -7612,7 +7624,7 @@ int save_ODA_infor(unsigned char mode, unsigned char *re_infor) {
 
 	}
 	return retCode;
-	}
+}
 
 #endif
 #endif

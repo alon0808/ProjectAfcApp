@@ -145,14 +145,14 @@ typedef struct
 }ECHO_1;
 
 //通信帧结构定义
-#define FRAME_SIZE							1500				//一帧数据最大字节长度
+#define FRAME_SIZE							2048				//一帧数据最大字节长度
 typedef struct tag_FRAME_BUF {
 	unsigned char ucFrameType;									//帧类型字节
 	unsigned char uiFrameLen[2];									//帧长度
 	unsigned char FrameBuf[FRAME_SIZE];							//帧缓冲
 } FRAME_BUF;
 
-#define MAX_RCV_PACKET_NUM					5					//接收包缓冲大小
+#define MAX_RCV_PACKET_NUM					2					//接收包缓冲大小
 //应用包缓冲队列,用于存放数据链路层接收到的数据帧,包括应用层数据和控制帧数据
 typedef struct tag_PACKET_BUF {
 	FRAME_BUF LinkFrame;										//帧内容

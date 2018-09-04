@@ -298,7 +298,7 @@ typedef int boolean;
 #define CARD_forbid		0x62
 
 
-
+#if 0
 //****************************************************************
 //              下面变量需要存放到铁电存储器
 //****************************************************************
@@ -403,7 +403,7 @@ typedef int boolean;
 #define BIT_KeyPrice		BIT_GPSChildLine+2
 //已经用到铁电的最大地址
 #define BIT_FE_END_ADDR		BIT_KeyPrice+4	//7318
-
+#endif
 ///////////////////////////////各种卡的定义/////////////////////////////////			
 #define CARD_DATA_GATHER	61				//数据采集卡
 #define CARD_DEV_SET		62				//设备设置卡
@@ -1182,6 +1182,7 @@ typedef struct {
 	unsigned char Crc32[4];
 
 	QPBOC_TYPE_63 TYPE_63;
+	int batchNo;
 
 }stDeviceParatable;//新的票价
 

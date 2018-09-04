@@ -732,7 +732,7 @@ unsigned char GetDateTime(void)
 unsigned char profile(unsigned char mode)
 {
 	unsigned char buff[64];
-	unsigned int len;
+	unsigned int len = 0;
 	unsigned int ret;
 
 	ret = CmdFindCardSet(buff, &len, buff + 30);
