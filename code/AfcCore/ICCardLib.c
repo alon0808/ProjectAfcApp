@@ -160,6 +160,10 @@ int File_read(unsigned char mode)
 			strcpy(gDeviceParaTab.gServerInfo[0].APN, "CMNET");
 			strcpy(gDeviceParaTab.gServerInfo[0].IPaddr, "139.199.213.63");			////139.199.213.63:2020 测试。
 			gDeviceParaTab.gServerInfo[0].port = 2020;
+
+			gDeviceParaTab.unionPayInof.batchNo = 0;
+			gDeviceParaTab.unionPayInof.shuangmian = 1;
+			gDeviceParaTab.unionPayInof.switch_both = 0;
 		}
 		else if (mode == _File_BuInfo_mode) {
 			gBuInfo.stop_flag = 1;
@@ -168,7 +172,7 @@ int File_read(unsigned char mode)
 			close(fd);
 		fd = open(fullName, O_CREAT | O_WRONLY, S_IRWXG | S_IRWXO | S_IRWXU);	//写黑名单索引文件
 	}
-	
+
 	if (ret < dLen) {	//文件不存在 当前新建一个
 		PRINT_DEBUG("创建或者修改文件:%d, %d", ret, dLen);
 		if (fd >= 0)
@@ -200,7 +204,7 @@ int File_read(unsigned char mode)
 		PRINT_DEBUG_LOCATION("调试强制为允许刷卡", "");
 		gBuInfo.stop_flag = 0;
 	}
-	
+
 #endif
 
 	return flag;
@@ -390,6 +394,7 @@ void *main_ExKeyBoard(void *arg)
 
 		if (R485ReadData(rkbuf, &i) == 0)
 		{
+			PRINT_DEBUG("main_ExKeyBoard:%02X\n", rkbuf[0]);
 			KeyBoardDeal(rkbuf[0]);
 			if (KeyDeal() == ST_OK) {
 				if (KeyBoardStyle != KEYBOARD_INPUT) {//票价需要重新读取
@@ -1429,6 +1434,10 @@ TimeErr:
 	temp_s /= 10;
 	if (i > 5)	//四舍五入
 		temp_s++;
+
+#if SWITCH_DEBUG_PRICE
+	temp_s = 1;
+#endif
 
 #ifdef _debug_ICcard_
 	debugstring("temp_s:");

@@ -154,6 +154,15 @@ int unblock_connect(const char* ip, int port, int time)
 	return sockfd;
 }
 
+int getIsNetOk(unsigned char link) {
+	if (gGprsinfo.isNetOK[link] > 0) {
+		return BOOL_TRUE;
+	}
+	else {
+		return BOOL_FALSE;
+	}
+}
+
 //SOCEKT 建立链接
 int SocketLink(void)
 {
@@ -873,6 +882,7 @@ void TaskRecWrite(void)
 	int ClientIP;
 	int ClientPort;
 #endif
+	unsigned char link = 0;
 
 	if ((gGprsinfo.GPRSLinkProcess != TCPSTARTSTAT) &&//还没连接TCPIP
 		(gGprsinfo.GPRSLinkProcess != GPRS_SENDING_CMD)) {
@@ -947,21 +957,22 @@ void TaskRecWrite(void)
 		//		uilen = BuildHTTPPackge(buffer, gGprsinfo.gmissflag);
 		break;
 	case MISS_PBOC_LOGIN:
-	case MISS_PBOC_PURSE:
+	//case MISS_PBOC_PURSE:
 	case MISS_PBOC_RE_PURSE:
 	case MISS_PBOC_UPREC_ODA:
 	case MISS_PBOC_DOWN_ODA_BLK:
 	case MISS_PBOC_UPREC_ODA_first:
 	case MISS_PBOC_UPREC_ca:
 	case MISS_PBOC_LOGIN_aut:
-		if (gGprsinfo.isNetOK[LINK_PBOC] == 0)
+		link = LINK_PBOC;
+		if (gGprsinfo.isNetOK[link] == 0)
 		{
 			printf("银联链接有问题\r\n");
 			return;
 		}
 		else
 		{
-			MSG_LOG("银联链路%d正常:%d\r\n", LINK_PBOC, gGprsinfo.isNetOK[LINK_PBOC]);
+			MSG_LOG("银联链路%d正常:%d\r\n", link, gGprsinfo.isNetOK[link]);
 		}
 
 		//uilen = Buildsl8583Packge(buffer, gmissflag);//BuildGJPackge(buffer, gmissflag);
@@ -984,7 +995,7 @@ void TaskRecWrite(void)
 
 #if HTTP_HEAD
 		memset(http_head, 0, sizeof(http_head));
-		http_len = Build_http_pack(http_head, gDeviceParaTab.gServerInfo[LINK_PBOC].IPaddr, gDeviceParaTab.gServerInfo[LINK_PBOC].port, uilen);
+		http_len = Build_http_pack(http_head, gDeviceParaTab.gServerInfo[link].IPaddr, gDeviceParaTab.gServerInfo[link].port, uilen);
 		MSG_LOG("httphead len:%d\r\n%s\r\n", http_len, http_head);
 		memmove(buffer + http_len, buffer, uilen);
 		memcpy(buffer, http_head, http_len);
@@ -1010,7 +1021,7 @@ void TaskRecWrite(void)
 			}
 		}
 
-		gprs_send_data(LINK_PBOC, uilen, buffer);
+		gprs_send_data(link, uilen, buffer);
 		if ((gGprsinfo.gmissflag == MISS_G_HART) || (gGprsinfo.gmissflag == MISS_G_GPS) || (gGprsinfo.gmissflag == MISS_G_DBLKI)) {
 			MSG_LOG("gmissflag:%02X,不等待\r\n", gGprsinfo.gmissflag);
 			gGprsinfo.gmissflag = MISS_G_FREE;

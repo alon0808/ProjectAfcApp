@@ -10,6 +10,8 @@ extern "C" {
 #endif
 
 	extern void flashread(unsigned int addr, unsigned char *rec_data, unsigned int length);
+	extern void sysferead(unsigned int Address_f, unsigned int length, unsigned char *rec_data);
+	extern void sysfereadOffset(unsigned int Address_f, unsigned int offsetAddr, unsigned int length, unsigned char *rec_data);
 	extern void MessageBox(unsigned char mode, const char *dStr);
 
 #ifdef __cplusplus

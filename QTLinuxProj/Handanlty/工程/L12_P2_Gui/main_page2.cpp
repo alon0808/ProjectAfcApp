@@ -440,13 +440,7 @@ void CMainPage2::main_page_up_down()
 	m_label_time->setStyleSheet("QLabel{border:0px;background:transparent;font:34px;color:#ffffff; }");
 	m_label_time->setAlignment(Qt::AlignLeft);
 
-	m_label_slzr = new QLabel(this);
-	m_label_slzr->setFixedSize(140, 36);
-	m_label_slzr->move(330, 320);
-	m_label_slzr->setStyleSheet("QLabel{border:0px;background:transparent;font:34px;color:#ffffff; }");
-	m_label_slzr->setAlignment(Qt::AlignLeft);
-	m_label_slzr->setText("sdjflsjflsdf");
-	//m_label_slzr->show();
+	createComponent();
 
 	//时间定时器
 	m_timer = new QTimer(this);
@@ -579,14 +573,8 @@ void CMainPage2::left_right_init1()
 	m_label_time1->setStyleSheet("QLabel{border:0px;background:transparent;font:18px;color:#ffffff; }");
 	m_label_time1->setAlignment(Qt::AlignCenter);
 
-
-	m_label_slzr = new QLabel(this);
-	m_label_slzr->setFixedSize(230, 120);
-	m_label_slzr->move(200, 350);
-	m_label_slzr->setStyleSheet("QLabel{border:0px;background:transparent;font:20px;color:#ffffff; }");
-	m_label_slzr->setAlignment(Qt::AlignLeft);
-	m_label_slzr->setText("sdj11212111312312312321312flsjflsdf");
-	//m_label_slzr->show();
+	createComponent();
+	//m_textBrown_slzr->show();
 
 	//时间定时器
 	m_timer = new QTimer(this);
@@ -1682,48 +1670,59 @@ void CMainPage2::slot_1s_timer()
 		m_label_time1->setText(strCurrentTime1);
 	}
 
-	if (m_seconds > 3 || m_seconds < 0) {
+	if (m_seconds > 2 || m_seconds < 0) {
 		stUIData *uiData = GetStatusData();
 		QString msgText = "邯郸公交 ";
 		char buffer[500];
 		int pos = 0;
 
-		if (uiData->isGJOk) {
-			msgText += "G";
+		if (uiData->message[0] != '\0') {
+			msgText = "<br/><font size=\"10\" color=\"red\">";
+			msgText += uiData->message;
+			msgText += "</font>";
+			uiData->message[0] = '\0';
 		}
 		else {
-			msgText += "N";
-		}
-		if (uiData->isGpsOk) {
-			msgText += "R";
-		}
-		else {
-			msgText += "L";
-		}
-		sprintf(buffer, " v%X.%02X", (uiData->version >> 8) & 0x00FF, uiData->version & 0x00FF);
-		msgText += (buffer);
-		msgText += ("\n");
-		// 第二行
-		pos = 0;
-		BytesToChars(uiData->lineId, 2, buffer+ pos, 50);
-		pos += 4;
-		buffer[pos] = '-';
-		++pos;
-		BytesToChars(uiData->lineId + 2, 1, buffer + pos, 50);
-		pos += 2;
-        msgText += (buffer);
-        msgText += "路 ";
-		msgText += uiData->devId;
-		msgText += ("\n");
-        // the third line
-		sprintf(buffer, "IC:%d", uiData->uploadRec);
-		msgText += buffer;
+			if (uiData->isGJOk) {
+				msgText += "G";
+			}
+			else {
+				msgText += "N";
+			}
+			if (uiData->isGpsOk) {
+				msgText += "R";
+			}
+			else {
+				msgText += "L";
+			}
+			sprintf(buffer, " v%X.%02X", (uiData->version >> 8) & 0x00FF, uiData->version & 0x00FF);
+			msgText += (buffer);
+			msgText += ("<br/>");
+			// new line
+			sprintf(buffer, "<font size=\"10\" color=\"red\">&nbsp;&nbsp;&nbsp;&nbsp;%d.%02d元   </font>", uiData->basePrice / 100, uiData->basePrice % 100);
+			msgText += (buffer);
+			msgText += ("<br/>");
+			// 第二行
+			pos = 0;
+			BytesToChars(uiData->lineId, 2, buffer + pos, 50);
+			pos += 4;
+			buffer[pos] = '-';
+			++pos;
+			BytesToChars(uiData->lineId + 2, 1, buffer + pos, 50);
+			pos += 2;
+			msgText += (buffer);
+			msgText += "路 ";
+			msgText += uiData->devId;
+			msgText += ("<br/>");
+			// the third line
+			sprintf(buffer, "IC:%d", uiData->uploadRec);
+			msgText += buffer;
 
-		sprintf(buffer, " %02X-%02X", uiData->task, uiData->linkStatus);
-		msgText += buffer;
+			sprintf(buffer, " %02X-%02X", uiData->task, uiData->linkStatus);
+			msgText += buffer;
+		}
 
-
-		m_label_slzr->setText(msgText);
+		m_textBrown_slzr->setHtml(msgText);
 		m_seconds = 0;
 	}
 	else {
@@ -1759,8 +1758,8 @@ void CMainPage2::slot_dynamic_text_event(const CDynTextParam &_param)
 			slot_head_widget_notify(kEnumMainPageCurrentStationName, 0, &eventData);         //当前站名
 
 		}break;
-	}
-}break;
+		}
+	}break;
 	case kEnumPushbuttonStationName1:
 	{
 		switch (_param.m_action)
@@ -1806,7 +1805,7 @@ void CMainPage2::slot_dynamic_text_event(const CDynTextParam &_param)
 		}
 
 	}break;
-}
+	}
 }
 
 
@@ -1962,7 +1961,20 @@ bool CMainPage2::get_debug_interface()
 	return m_current_is_debug;
 }
 
+void CMainPage2::createComponent() {
 
+	m_textBrown_slzr = new QTextBrowser(this);
+	m_textBrown_slzr->setFixedSize(230, 120);
+	m_textBrown_slzr->move(200, 350);
+	m_textBrown_slzr->setStyleSheet("QTextBrowser{border:0px;background:transparent;font:15px;color:#ffffff; }");
+	m_textBrown_slzr->setAlignment(Qt::AlignLeft);
+	m_textBrown_slzr->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//设置垂直滚动条不可见
+	m_textBrown_slzr->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//设置水平滚动条不可见
+	m_textBrown_slzr->setText("邯郸公交2018");
+
+
+
+}
 
 
 

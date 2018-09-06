@@ -81,10 +81,20 @@ static void *getConfigPointer(unsigned int Address_f) {
 	switch (Address_f)
 	{
 	case BIS_BLK_63:
-		pConfig = &gDeviceParaTab.TYPE_63;
+		pConfig = &gDeviceParaTab.unionPayInof.TYPE_63;
 		break;
 	case BIT_PBOC_NS_BIG:
-		pConfig = &gDeviceParaTab.batchNo;
+		pConfig = &gDeviceParaTab.unionPayInof.batchNo;
+		break;
+	case BIS_PAY_MODE:
+		pConfig = &gDeviceParaTab.unionPayInof.shuangmian;
+		break;
+	case BIT_repurse_infor:
+		pConfig = &gDeviceParaTab.unionPayInof.repurseRecord;
+		break;
+	case BIT_DEVICE_NO:
+		pConfig = gDeviceParaTab.DeviceNo;
+		break;
 	default:
 		break;
 	}
@@ -114,6 +124,18 @@ void sysferead(unsigned int Address_f, unsigned int length, unsigned char *rec_d
 	memcpy(rec_data, pConfig, length);
 }
 
+
+void sysfereadOffset(unsigned int Address_f, unsigned int offsetAddr, unsigned int length, unsigned char *rec_data) {
+
+	void *pConfig = getConfigPointer(Address_f);
+
+	if (pConfig == NULL) {
+		MSG_LOG("sysfewrite is NULL:%08X\n", Address_f);
+		return;
+	}
+	memcpy(rec_data, (unsigned char *)pConfig + offsetAddr, length);
+}
+
 void feread(unsigned int Address_f, unsigned int length, unsigned char *rec_data) {
 	void *pConfig = getConfigPointer(Address_f);
 
@@ -129,7 +151,9 @@ void flashwrite(unsigned int addr, unsigned char *writebuf, unsigned int length)
 }
 
 void dis_messgebox(char *istr, int code, unsigned char row) {
-
+	UNUSED_VAR(code);
+	UNUSED_VAR(row);
+	MessageBox((unsigned char)0, (const char *)istr);
 }
 
 
@@ -225,12 +249,6 @@ int buildDataSend_0B(unsigned char mode, unsigned int offset, unsigned int Alen,
 
 }
 
-void MessageBox(unsigned char mode, const char *dStr)
-{
-	#warning "need MessageBox code"
-
-		printf("mode:%d, %s\r\n", mode, dStr);
-}
 
 void BuildQRCRecorde(unsigned char delType, unsigned char *recBuf, unsigned char *qrcdat, unsigned int qrcdatLen) {
 

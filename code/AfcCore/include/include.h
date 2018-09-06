@@ -563,12 +563,6 @@ extern void  feread(unsigned int Address_f,unsigned int length,unsigned char *re
 * 输出：NULL
 ****************************************************/
 extern void sysfewrite(unsigned int Address_f,unsigned int length, unsigned char *Framdata);
-/********************************************
-* 功能：读取铁电内容 多次读出比较 只比较前256个
-* 输入：Address_f-铁电地址 length-长度 Framdata-数据指针
-* 输出：NULL
-****************************************************/
-extern void sysferead(unsigned int Address_f,unsigned int length,unsigned char *rec_data);
 
 extern void open_wdt(void);
 //文件系统空单是上面的值减去8M。

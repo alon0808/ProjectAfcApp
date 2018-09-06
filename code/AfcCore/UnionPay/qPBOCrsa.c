@@ -3908,6 +3908,7 @@ void cpuPBOCmain(void)
 
 	if (checkBusInfo() > 10)
 	{
+		PRINT_ERROR("cpuPBOCmain checkBusInfo FAIL\n");
 		cls();
 		if (gchn_eng == 'E') {
 			display(0, 0, "warring:", 1);
@@ -3989,19 +3990,6 @@ void cpuPBOCmain(void)
 	//	debugstring("---1---\r\n");
 
 	MSG_LOG("cpuP  BO  Cmain:%d!!\r\n", cardMessage.card_catalog);
-
-#ifndef BUS_GUILIN_
-	//	debugstring("---2---\r\n");
-	memcpy(Buffer, "\xe0\x50", 2);
-	//	memcpy(Buffer,"\xe0\x80",2);
-	ret = RfPassthrough(qpbocrevbuf, 2, Buffer, 2);
-	if (ret == 0) {
-		TradeResult.TradeType = qPBOC_TRADE_ABORT;
-		return;
-	}
-	MSG_LOG("CPU start=%s\r\n", BCD2ASC(Buffer, ret));
-#endif
-
 
 
 	cType = 0;

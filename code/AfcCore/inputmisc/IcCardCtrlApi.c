@@ -1022,11 +1022,12 @@ SLZR_U32 R485WriteData(SLZR_U8 *pSendData, SLZR_U32 u32SendLen)
 
     UartTcFlush(m_u485UartFd);
     u32Ret = UartWrite(m_u485UartFd, pSendData, u32SendLen);
+	PRINT_DEBUG("R485WriteData:%02X, %02X\n", m_u485UartFd, u32Ret);
+	BCD_LOG(pSendData, u32SendLen, 1);
     if ( u32Ret == SLZR_FAILURE )
     {
         return SLZR_FAILURE;
     }
-    
 //     SLZR_U32 i = 0; 
 // 	printf("[%s] m_u485UartFd=%d write:", __FUNCTION__, m_u485UartFd);
 //     for ( i = 0; i < u32SendLen; i++)
@@ -1049,8 +1050,11 @@ SLZR_U32 R485ReadData(SLZR_U8 *pRecvData, SLZR_U32 *pRcvLen)
 	
 //	SetR485_EN(1);
 
+
+	//PRINT_DEBUG("R485ReadData:%02X\n", m_u485UartFd);
     u32Ret = UartRead(m_u485UartFd, szRcvBuf, 1);
-	
+
+	PRINT_DEBUG("R485ReadData111:%d, %02X,%02X\n", u32Ret, m_u485UartFd, szRcvBuf[0]);
 //	printf("[%s] m_u485UartFd=%d\r\n", __FUNCTION__, m_u485UartFd);
 
     if ( u32Ret == SLZR_FAILURE )
@@ -1058,7 +1062,6 @@ SLZR_U32 R485ReadData(SLZR_U8 *pRecvData, SLZR_U32 *pRcvLen)
 //		printf("[%s] ERROR0----\r\n", __FUNCTION__);
         return SLZR_FAILURE;
     }
-	
 	
 // 	for (int i = 0; i < u32Ret; i++)
 //             printf("%02x ", szRcvBuf[i]);

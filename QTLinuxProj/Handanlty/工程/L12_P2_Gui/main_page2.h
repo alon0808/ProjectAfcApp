@@ -5,6 +5,7 @@
 #include <QDialog>
 #include <QLabel>
 #include <QTimer>
+#include <QTextBrowser>
 #include "common_data.h"
 
 class CDynTextParam;
@@ -75,6 +76,9 @@ private:
     void req_station_and_line(); //首次进入画面主动获取站名和线路
 
     void show_sd_status(int _event);
+
+	void createComponent();
+
     /////////////////////////////////////////////////////////左右
     QLabel *m_label_network;            //2G 3G 4G
     QPushButton *m_pushbutton_signal;   //4G 信号
@@ -89,7 +93,7 @@ private:
     
     QPushButton *m_pushbutton_sd_status;
 
-	QLabel *m_label_slzr; //时间显示
+	QTextBrowser *m_textBrown_slzr; // 三联众瑞显示
 
     QLabel *m_label_time; //时间显示
     QLabel *m_label_time1; //时间显示

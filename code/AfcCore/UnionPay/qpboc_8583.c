@@ -148,7 +148,6 @@ extern PACKET_RCV gPacketRcvBuf[MAX_RCV_PACKET_NUM];	//接收帧缓冲
 extern volatile stGPrsDataStyle gGPRS_data_style;
 extern unsigned char gTcpIpbusy;//模块是正正在发数据，模块工作是发命令，然后回应后再发数据。在等回应时不能发其它数据。
 extern unsigned int c_serial;
-extern unsigned char isNetOK[MAX_RCV_PACKET_NUM];//两路链接是否成功;
 extern Parameter5 cardMessage;
 unsigned int gErrortimes[MAX_RCV_PACKET_NUM];
 
@@ -956,7 +955,7 @@ unsigned int Build_qpboc_8583_35(unsigned char *dat)
 //3域：交易处理码000000 默认
 unsigned int Build_qpboc_8583_03(unsigned char *dat)
 {
-	memcpy(dat, "\x19\x00\x00", 3);
+	memcpy(dat, "\x00\x00\x00", 3);
 	setBitmapBits(3, gpboc_8583bitmapaddr);
 	MSG_LOG("%s:len:%d dat:", __FUNCTION__, 3);
 	BCD_LOG(dat, 3, 1);
@@ -1192,7 +1191,7 @@ unsigned int Build_qpboc_8583_25(unsigned char *dat)
 	// 
 	// 	}else{
 
-	memcpy(dat, "\x91", 1);		//00  正常提交
+	memcpy(dat, "\x00", 1);		//00  正常提交
 //	}
 
 	MSG_LOG("%s:len:%d dat:", __FUNCTION__, 1);
@@ -3882,7 +3881,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 			memcpy(KEK, "\xDA\xB3\xCD\xCB\xE0\x3D\xB3\x94\xD3\x92\x83\x04\xCE\x58\x8A\xBA", 16);
 #else
 			//CDE39991B206A0F6BDD85D2F0417B7FC
-			memcpy(KEK, "\xCD\xE3\x99\x91\xB2\x06\xA0\xF6\xBD\xD8\x5D\x2F\x04\x17\xB7\xFC", 16);
+			memcpy(KEK, "\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31", 16);
 #endif
 #endif
 
@@ -3894,8 +3893,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 			memcpy(pinkeycheck, pakege + msgf[62].dbuf_addr + 16, 4);
 
 			memcpy(mackeytemp, pakege + msgf[62].dbuf_addr + 20, 8);
-			memcpy(mackeycheck, pakege + msgf[62].dbuf_addr + 28, 4); // 湖南银联取值与上海银联总部不一样
-			//memcpy(mackeycheck, pakege + msgf[62].dbuf_addr + 20 + 16, 4); // 湖南银联取值与上海银联总部不一样
+			//memcpy(mackeycheck, pakege + msgf[62].dbuf_addr + 28, 4); // 湖南银联取值与上海银联总部不一样
+			memcpy(mackeycheck, pakege + msgf[62].dbuf_addr + 20 + 16, 4); // 湖南银联取值与上海银联总部不一样
 
 			//memcpy(tdkeytemp, pakege + msgf[62].dbuf_addr + 40, 16);
 			//memcpy(tdkeycheck, pakege + msgf[62].dbuf_addr + 56, 4);
@@ -3991,7 +3990,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 			memcpy(Sign_Infor.TDK_KEY, tdkeytemp, 16);
 			memcpy(Sign_Infor.MAC_KEY_CHECKVALUE, tdkeycheck, 4);
 
-			saveSingInInfo();
+			//saveSingInInfo();
 			// 上海银联只要求到60域就签到成功了
 			qpoc_init_singe();//成功，请标志
 			Sign_Infor.ISOK = 'O';	//置签到成功标识
@@ -4175,7 +4174,7 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 
 	gErrorFlag &= (~ERROR_BUS_CONNECT);// 清除错误标识
 
-	if (gGprsinfo.isNetOK[LINK_PBOC] == 0) {
+	if (getIsNetOk(LINK_PBOC) == BOOL_FALSE) {
 		return;
 	}
 	/*
@@ -4214,6 +4213,8 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 		return;
 	}
 
+	//return;
+
 #ifdef switch_RE
 	if (save_infor_add(ODA_FeRC_Check, NULL) != Ret_NO) {
 		MSG_LOG("要上传冲正交易---\r\n");
@@ -4229,10 +4230,12 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 	}
 #endif
 
+#if 0
 	if (save_ODA_infor(ODA_FeRC_Check, NULL) != Ret_NO) {
 		MSG_LOG("要上传ODA交易---\r\n");
 		gGprsinfo.gmissflag = MISS_PBOC_UPREC_ODA;
 	}
+#endif
 	// 	 	gSendGLogin_qpoc++;
 	// 		if(gSendGLogin_qpoc > 12000){ //40分钟  40 *60 *5 
 	// 			 		gSendGLogin_qpoc = 0;
@@ -4279,8 +4282,6 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 			display(6, 0, "通讯中...", DIS_ClsLine | DIS_CENTER);
 			display(8, 0, "请稍等", DIS_ClsLine | DIS_CENTER);
 		}
-
-
 
 		MSG_LOG("do %s:0x%02X\r\n", __FUNCTION__, SQmode);
 		MSG_LOG("set_timer0(10000,2)--\r\n");
@@ -4332,7 +4333,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 			gGprsinfo.gmissflag = 0;
 			return -1;
 		}
-		if (isNetOK[LINK_PBOC] == 3)
+		if (getIsNetOk(LINK_PBOC) != BOOL_FALSE)
 		{
 			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		}
@@ -4873,7 +4874,7 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 	// 	MSG_LOG("使用银联参数结构体的大小=%d=\r\n",sizeof(stMobileParameter));
 		//MSG_LOG("===1===\r\n");
 	clr_wdt();
-	sysferead(BIT_qpbpc_para, sizeof(stMobileParameter), (unsigned char *)&smpPara);
+	//sysferead(BIT_qpbpc_para, sizeof(stMobileParameter), (unsigned char *)&smpPara);
 #if 0
 	//MSG_LOG("===2===\r\n");
 	itemp = __cpuCrc32((unsigned char*)&smpPara, (sizeof(stMobileParameter) - 4));
@@ -4896,7 +4897,7 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 	switch (mode) {
 	case 1:
 #if SWITCH_DEBUG_UNIONPAY == 1
-		memcpy(smpPara.shopNo, "898131141110001", 15);
+		memcpy(smpPara.shopNo, "898130175230001", 15);
 #elif SWITCH_DEBUG_UNIONPAY == 2
 		memcpy(smpPara.shopNo, "898131141110001", 15);
 #endif
@@ -4916,10 +4917,9 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 		memcpy(obuf, smpPara.tpdu, 5);
 		break;
 	case 6:
-		memcpy(smpPara.device, "11637278", 8);
+		memcpy(smpPara.device, "00000001", 8);
 		memcpy(obuf, smpPara.device, 8);
 		break;
-
 	case 7:
 		memcpy(obuf, smpPara.AUTHKEY, 16);
 		break;
@@ -7006,9 +7006,13 @@ void PAY_MODE_init(void)  //1字节存标志，1个字节存开关
 	sysferead(BIS_PAY_MODE, 4, buff);
 	MSG_LOG("开关\r\n");
 	BCD_LOG(buff, 4, 1);
+#if 0
 	shuangmian = buff[0];
 	switch_both = buff[1];
-
+#else
+	shuangmian = 1;
+	switch_both = 0;
+#endif
 }
 unsigned char pay_time = 0;
 void PAY_MODE_SWITCH(unsigned char shuangmian_T, unsigned char switch_both_T)  //1字节存标志，1个字节存开关
@@ -7332,7 +7336,7 @@ unsigned char read_re_infor(unsigned char *out_infor, int *pOlen)
 	{
 		return ST_ERROR;
 	}
-	sysferead(BIT_repurse_infor + 4, len, out_infor);
+	sysfereadOffset(BIT_repurse_infor, 4, len, out_infor);
 	MSG_LOG("铁电有冲正记录需要处理\n");
 	*pOlen = len;
 

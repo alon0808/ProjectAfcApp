@@ -24,6 +24,8 @@ extern "C" {
 
 	extern void *main_GPRS(void *arg);
 
+	extern int getIsNetOk(unsigned char link);
+
 #ifdef __cplusplus
 }
 #endif

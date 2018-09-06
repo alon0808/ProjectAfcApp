@@ -5,7 +5,7 @@
 
 #define LEN_DEV_ID	9
 #define LEN_LINE_ID	3
-
+#define LEN_MESSAGE	50
 
 typedef struct {
 	unsigned char isGJOk;
@@ -18,6 +18,9 @@ typedef struct {
 	int uploadRec;
 	int version;
 	int modVer;
+	int basePrice;
+
+	char message[LEN_MESSAGE + 1];
 }stUIData;
 
 #ifdef __cplusplus
@@ -27,7 +30,7 @@ extern "C" {
 	extern AFC_CORE__API stUIData *GetStatusData(void);
 
 	extern AFC_CORE__API void* StartApp(void *argv);
-	
+
 
 #ifdef __cplusplus
 }

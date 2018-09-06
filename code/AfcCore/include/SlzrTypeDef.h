@@ -1136,6 +1136,19 @@ typedef struct {
 }stServerInfo;
 
 typedef struct {
+	QPBOC_TYPE_63 TYPE_63;
+	int batchNo;
+
+	unsigned char shuangmian;		// is union pay no password no sign(shuangmian)
+	unsigned char switch_both;		// is swith
+	unsigned char paymodeRfu[2];	// RFU
+
+	unsigned char repurseRecord[850];	// reversal message for union pay transaction
+
+
+}stUnionPayInfor;
+
+typedef struct {
 	unsigned char citycode[2];
 	unsigned char hanye[2];
 	unsigned char startDateTime[7];//启用时间
@@ -1181,8 +1194,7 @@ typedef struct {
 
 	unsigned char Crc32[4];
 
-	QPBOC_TYPE_63 TYPE_63;
-	int batchNo;
+	stUnionPayInfor unionPayInof;
 
 }stDeviceParatable;//新的票价
 

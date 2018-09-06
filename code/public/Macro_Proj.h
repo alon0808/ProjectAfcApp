@@ -42,7 +42,8 @@
 #define SWITCH_DEBUG_PRJ	1
 
 #if SWITCH_DEBUG_PRJ
-#define SWITCH_DEBUG_UNIONPAY	1	// use GuiLin test parameter
+#define SWITCH_DEBUG_PRICE	1	// transaction price force 0.01 yuan
+#define SWITCH_DEBUG_UNIONPAY	1	// use HanDan test parameter
 #define debug_GJ_TLVDeal_	1
 #define SWITCH_DEBUG_GPS	0
 #define SWITCH_DEBUG_UI		0
@@ -50,6 +51,7 @@
 #define SWITCH_DEBUG_APDU	1
 #define SWITCH_TEST_SHUAKA	1
 #else
+#define SWITCH_DEBUG_PRICE	0	// use GuiLin test parameter
 #define SWITCH_DEBUG_UNIONPAY	0
 #define SWITCH_DEBUG_GPS	0
 #define SWITCH_DEBUG_UI		0
@@ -110,7 +112,8 @@ typedef struct {
 							(buf)[1] = ((len) >> 16) & 0x0FF;\
 							(buf)[2] = ((len) >> 8) & 0x0FF;\
 							(buf)[3] = ((len) ) & 0x0FF
-#define GET_INT32(buf) ((buf)[0]<<24)|((buf)[1]<<16|(buf)[2]<<8)|((buf)[3]&0x0FF)
+#define GET_INT32(buf)	(((buf)[0]<<24)|((buf)[1]<<16|(buf)[2]<<8)|((buf)[3]&0x0FF))
+#define GET_INT32S(buf) (((buf)[3]<<24)|((buf)[2]<<16|(buf)[1]<<8)|((buf)[0]&0x0FF))
 
 #define LOOP_FOREVER		while(1);
 
@@ -125,6 +128,8 @@ typedef struct {
 #include "debugOut.h"
 #include "debugInfor.h"
 #include "UtilityProc.h"
+
+#include <unistd.h>
 
 #endif
 

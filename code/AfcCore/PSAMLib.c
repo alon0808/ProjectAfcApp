@@ -58,6 +58,7 @@ void *onemsSecondDly(void *arg)
 		for (t = 0; t < 4; t++) {
 			if (timer0_tick[t] > 0)
 				timer0_tick[t]--;
+
 		}
 
 		//----beep---------
