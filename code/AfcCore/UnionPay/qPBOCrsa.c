@@ -2797,6 +2797,7 @@ int qPbocTradeProc(IN INT32U InputMoney, OUT INT32U *Len, OUT INT8U *pOutMsg)
 		ret = -1;
 		//	ret = SQDataFromSVT(MISS_PBOC_PURSE, 6000);
 		ret = Send_WaitRecvData(MISS_PBOC_PURSE, 6000);
+
 		if (ret == 0)
 		{
 			TradeResult.TradeType = qPBOC_RESUL_TC;
@@ -3160,6 +3161,7 @@ unsigned char qPbocDisp_history(unsigned char mode, unsigned int Index)
 extern unsigned int c_serial;
 void Pboc_delay_card(void)
 {
+#if 0
 	unsigned int i;
 	unsigned int sno1;
 	unsigned char buffer[10];
@@ -3184,6 +3186,11 @@ void Pboc_delay_card(void)
 		}
 	} while (i < 3);
 	return;
+#else
+	int timeout = 1000;
+
+	MakeSureCardLeave(timeout);
+#endif
 }
 //extern unsigned char SYSgetbussinessNO(unsigned char *dat);
 extern void addStatMoney(unsigned char mode, unsigned int moneyv, unsigned char type);
@@ -3232,7 +3239,7 @@ unsigned char get_rcardMainNO(unsigned char *outdata)
 }
 
 
-unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff)
+unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff, unsigned char transResult)
 {
 	BER_TVL TempTVL;
 	stPbocRec pbocrec;
@@ -3385,7 +3392,7 @@ unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff)
 
 	memcpy(pbocrec.rBuLineDevNo, pFistVary.LineNo, 3);//ÏßÂ·±àºÅ
 	memcpy(pbocrec.rBuLineDevNo + 3, ASC2BCD((char*)buff + 2, 6), 3);//Æû³µ±àºÅ
-	pbocrec.rNull = 0xad;
+	pbocrec.rNull = transResult;
 
 	usI = 0;
 	usI = cal_crc16((unsigned char *)&pbocrec, 130);

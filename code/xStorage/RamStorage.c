@@ -16,7 +16,6 @@
 unsigned char DriveCardNo[4];
 unsigned int g24GDisFlash = 0;//24G卡界面刷新
 unsigned int endTime = 0;
-unsigned int gmissflag = 0;//24G卡界面刷新
 unsigned int GPRSLinkProcess = 0;
 unsigned char nnAudioflag = 0;
 unsigned char gucRestorFlag = 0;
@@ -83,8 +82,11 @@ static void *getConfigPointer(unsigned int Address_f) {
 	case BIS_BLK_63:
 		pConfig = &gDeviceParaTab.unionPayInof.TYPE_63;
 		break;
-	case BIT_PBOC_NS_BIG:
+	case BIT_PBOC_NS_BIG:	// 批次号
 		pConfig = &gDeviceParaTab.unionPayInof.batchNo;
+		break;
+	case BIT_PBOC_NS_8583:	// 流水号
+		pConfig = &gDeviceParaTab.unionPayInof.sysTrackNo;
 		break;
 	case BIS_PAY_MODE:
 		pConfig = &gDeviceParaTab.unionPayInof.shuangmian;

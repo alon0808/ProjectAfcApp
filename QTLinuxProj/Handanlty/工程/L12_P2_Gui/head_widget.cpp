@@ -505,9 +505,6 @@ void CHeadWidget::main_head_init()
     CCommonInterface ::init_new_button(m_pushbutton_platform_status1,1024 - 36 - 30,(82 - 42)/2,36,42);
 
 
-
-
-
     slot_1s_timer();
 
 

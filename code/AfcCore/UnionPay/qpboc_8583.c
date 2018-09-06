@@ -262,7 +262,7 @@ unsigned char qpoc_flag_or(void)
 		if ((gGprsinfo.gmissflag&MISS_PBOC_LOGIN) == MISS_PBOC_LOGIN)  //银联超时重新签到
 		{
 			restore_flag = 3;
-			gGprsinfo.gmissflag = 0x4f;
+			gGprsinfo.gmissflag = MISS_G_FREE;
 			debugstring("超过10次\r\n");
 			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 
@@ -962,6 +962,7 @@ unsigned int Build_qpboc_8583_03(unsigned char *dat)
 	return 3;
 
 }
+
 //4  交易金额  N12    BCD  M  M  终端可输入最大金额 99999999.99
 unsigned int Build_qpboc_8583_04(unsigned char *dat)
 {
@@ -1000,6 +1001,14 @@ unsigned int Build_qpboc_8583_04(unsigned char *dat)
 	BCD_LOG(dat, pos, 1);
 	return pos;
 
+}
+
+//7 交易传输时间
+unsigned int Build_qpboc_8583_07(unsigned char *dat)
+{
+	memcpy(dat, (unsigned char*)&SysTime.month, 5);
+	setBitmapBits(7, gpboc_8583bitmapaddr);
+	return 5;
 }
 
 unsigned int get_deal_count(unsigned int addr)
@@ -1426,7 +1435,7 @@ unsigned int Build_qpboc_8583_49(unsigned char *dat)
 
 	setBitmapBits(49, gpboc_8583bitmapaddr);
 	dat[3] = 0;
-	MSG_LOG("%s:len:%d dat:%s(ASCII)\r\n", __FUNCTION__, 3, dat);
+	MSG_LOG("%s:len:%d dat:%s(ASCII,%02X)\r\n", __FUNCTION__, 3, dat, gGprsinfo.gmissflag);
 	return 3;
 
 }
@@ -2199,7 +2208,7 @@ unsigned int Build_qpboc_8583_60_purse(unsigned char *dat)
 	//memcpy(dat + 2, ASC2BCD((char*)buffer + startPos, len), len >> 1);
 	len >>= 1;
 	setBitmapBits(60, gpboc_8583bitmapaddr);
-	MSG_LOG("%s:len:%d dat:", __FUNCTION__, len);
+	MSG_LOG("%s:len:%d dat:%02X,", __FUNCTION__, len, gGprsinfo.gmissflag);
 	BCD_LOG(dat + 2, len, 1);
 	return len + 2;
 }
@@ -2308,6 +2317,61 @@ void ProcessAlgorithmCreatMacEcb(unsigned char *key, unsigned char *data, int le
 }
 
 
+void ProcessAlgorithmCreatMacEcb_ChangSha(unsigned char *key, unsigned char *data, int len, unsigned char *mac)
+{
+	int i, j;// , n, m;
+
+	unsigned char tmp[9] = "\0";
+	unsigned char sTmp[17] = "\0";
+
+
+
+	MSG_LOG("MAKLEY:");
+	BCD_LOG(key, 16, 1);
+	MSG_LOG("dat:len:%d\r\n", len);
+	BCD_LOG(data, len, 1);
+
+	memset(sTmp, 0x00, 8);
+	memset(tmp, 0x00, 8);
+	for (i = 0; i < len; i += 8) {
+		if (i + 8 >= len) {
+			break;
+		}
+		//memcpy(sTmp, data + i, 8);
+		for (j = 0; j < 8; ++j)
+		{
+			tmp[j] ^= data[i + j];
+		}
+		//DES_encrypt(tmp, key, sTmp);
+		//memcpy(tmp, sTmp, 8);
+	}
+	if (i < len) {	// 有不足8字节的块
+		memset(sTmp, 0x00, 8);
+		memcpy(sTmp, data + i, len - i);
+		for (j = 0; j < 8; ++j)
+		{
+			tmp[j] ^= sTmp[j];
+		}
+		//DES_encrypt(tmp, key, mac);
+	}
+	// c) 将异或运算后的最后8个字节（RESULT BLOCK）转换成16 个HEXDECIMAL：
+	BCD2Ascii(tmp, sTmp, 8);
+	// d)  取前8 个字节用MAK加密：
+	DES_encrypt(sTmp, key, tmp);
+	// e)  将加密后的结果与后8 个字节异或：
+	for (j = 0; j < 8; ++j)
+	{
+		sTmp[j + 8] ^= tmp[j];
+	}
+	// f)  用异或的结果TEMP BLOCK 再进行一次单倍长密钥算法运算。
+	DES_encrypt(sTmp + 8, key, tmp);
+	// g)  将运算后的结果（ENC BLOCK2）转换成16 个HEXDECIMAL：
+	BCD2Ascii(tmp, sTmp, 8);
+
+	memcpy(mac, sTmp, 8);
+
+	return;
+}
 
 int Build_qpboc_8583_64(unsigned char *iDat, unsigned int iDatLen, unsigned char *oDat)
 {
@@ -2316,12 +2380,12 @@ int Build_qpboc_8583_64(unsigned char *iDat, unsigned int iDatLen, unsigned char
 	unsigned char omac[8];
 	// 	unsigned char buffer[60];
 		//stMobilStyle
-	MSG_LOG("解密的MAC\r\n:");
+	MSG_LOG("加密的MAC\r\n:");
 	BCD_LOG(Sign_Infor.MAC_KEY, 16, 1);
 
 	setBitmapBits(64, gpboc_8583bitmapaddr);	//因为MAC计算加上了位元表，所以要先把第64域的位加上，再计算MAC
 
-	ProcessAlgorithmCreatMacEcb(Sign_Infor.MAC_KEY, iDat, iDatLen, omac);
+	ProcessAlgorithmCreatMacEcb_ChangSha(Sign_Infor.MAC_KEY, iDat, iDatLen, omac);
 
 	memcpy(oDat, omac, 8);	//取前8个字节
 
@@ -2559,6 +2623,13 @@ int build8583_qpboc_Purse_0200(unsigned char *oDat)
 	++tlvCount;
 	ilen += iret;
 
+#if 0
+	iret = Build_qpboc_8583_07(oDat + ilen); 		
+	SetTLV(tlv8583 + tlvCount, 7, iret, oDat + ilen);
+	++tlvCount;
+	ilen += iret;
+#endif
+
 	iret = Build_qpboc_8583_11(oDat + ilen);
 	SetTLV(tlv8583 + tlvCount, 11, iret, oDat + ilen);
 	++tlvCount;
@@ -2610,11 +2681,12 @@ int build8583_qpboc_Purse_0200(unsigned char *oDat)
 	SetTLV(tlv8583 + tlvCount, 42, iret, oDat + ilen);
 	++tlvCount;
 	ilen += iret;
-
+#if 0
 	iret = Build_qpboc_8583_48(oDat + ilen);
 	SetTLV(tlv8583 + tlvCount, 48, iret, oDat + ilen);
 	++tlvCount;
 	ilen += iret;
+#endif
 
 	iret = Build_qpboc_8583_49(oDat + ilen);
 	SetTLV(tlv8583 + tlvCount, 49, iret, oDat + ilen);
@@ -2690,7 +2762,7 @@ int build8583_qpboc_Purse_0200(unsigned char *oDat)
 	}
 	memcpy(repurse_infor, RECORD_FALG, 2);
 	SET_INT16(repurse_infor + 2, tmpI);
-	MSG_LOG("打好冲正总的(%d):\n", tmpI);
+	MSG_LOG("打好冲正总的(%d, %02X):\n", tmpI, gGprsinfo.gmissflag);
 	BCD_LOG(repurse_infor, tmpI + 4, 1);
 
 
@@ -3512,10 +3584,6 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 	MSG_LOG("8583数据:%d\r\n", Alen);
 	BCD_LOG((unsigned char *)pakege, Alen, 1);
 
-	memcpy(pakege_8583, pakege, Alen);
-	MSG_LOG("拷贝8583数据\r\n");
-	BCD_LOG((unsigned char *)pakege_8583, Alen, 1);
-
 #else
 	if (packLen == 0 || packLen < 5) {
 		add_qpoc_flag();
@@ -3993,8 +4061,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 			//saveSingInInfo();
 			// 上海银联只要求到60域就签到成功了
 			qpoc_init_singe();//成功，请标志
-			Sign_Infor.ISOK = 'O';	//置签到成功标识
-			gGprsinfo.gmissflag = MISS_G_FREE;
+			Sign_Infor.ISOK = 'O';	//置签到成功标识	
+			// 后面置了任务
 			restore_flag = 3;
 			ACK_flag = 0xFF;
 			// 下载黑名单
@@ -4008,20 +4076,14 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		if (s_isDownOdaBlkList == 1) {
 			gGprsinfo.gmissflag = MISS_PBOC_DOWN_ODA_BLK;
 		}
-		else
+		else {
 			gGprsinfo.gmissflag = MISS_G_FREE;
+		}
 
 		if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
 			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		break;
 
-		// 	case 0x0830://终端签退回应	
-		// 		MSG_LOG("签退---\r\n");	
-		// 
-		// 		gmissflag = MISS_G_FREE;
-		// 		if(GPRSLinkProcess == GPRS_SENDING_CMD)
-		// 			GPRSLinkProcess = TCPSTARTSTAT;
-		// 		break;
 
 	case 0x0210:
 		MSG_LOG("交易返回=0x0210=\r\n");
@@ -4066,12 +4128,9 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		//add hbg
 		else if (ACK_flag == 0)
 		{
-			gGprsinfo.gmissflag = MISS_G_FREE;
 
-			restore_flag = 3;
+			MSG_LOG("(ACK_flag == 0)1111111111111\n");
 
-			if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
-				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		}
 		if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
 			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
@@ -4166,8 +4225,10 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 		MSG_LOG("E");
 
 		if (gErrortimes[1] > 0) {
-			if ((gGprsinfo.gmissflag & MISS_GJ) != 0)
-				gGprsinfo.gmissflag = 0;
+			if ((gGprsinfo.gmissflag & MISS_GJ) != 0) {
+				PRINT_WARNING("find_qpboc_new_missionnfo.gmissflag & MISS_GJ) != \n");
+				gGprsinfo.gmissflag = MISS_G_FREE;
+			}
 			return;//上次连接错误,时间没到不给任务.
 		}
 	}
@@ -4317,9 +4378,8 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 #ifdef WIFI_TLH_
 		wifiTlh_main();
 #else
-		main_GPRS(NULL);
+		//main_GPRS(NULL);
 #endif
-
 
 		outdly = get_timer0(3);
 		if (outdly == 0)
@@ -4330,7 +4390,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 		if (ret == KEY_ESC) {
 			if (gGprsinfo.GPRSLinkProcess == 0xA0)
 				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-			gGprsinfo.gmissflag = 0;
+			gGprsinfo.gmissflag = MISS_G_FREE;
 			return -1;
 		}
 		if (getIsNetOk(LINK_PBOC) != BOOL_FALSE)
@@ -4388,26 +4448,6 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 		}
 
 
-
-
-
-		//	if (flag == 0xA5 && gMCardCand != CARDSTYLE_UNPAY_ODA) {	// 收到正确数据   
-		//		if (GPRSLinkProcess == 0xA0)
-		//			GPRSLinkProcess = TCPSTARTSTAT;
-		//		//gmissflag = 0;
-		//		gSendOverTime = 0;
-
-			//	MSG_LOG("删冲正-xxxxxxxxx-\r\n");
-				//memset(repurse_infor, 0, sizeof(repurse_infor));
-			//	save_repurse_infor(FeRC_Dlelt, NULL);
-
-	//pboc_free_cnt = PBOC_FREE_CNT;
-	//
-		//		MSG_LOG("返回正常:%02x\r\n", flag);
-
-		//		return 0;
-		//	}
-
 		if (get_repurse_num() == ST_OK &&shuangmian == 1)
 		{
 			MSG_LOG("要冲正-22222-\r\n");
@@ -4452,30 +4492,6 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 				display(8, 16, (const char *)disbuff, 0);
 			}
 
-			/*
-
-						if(GPRSLinkProcess == GPRS_SENDING_CMD){
-
-						//	if ((read_dat++ > 65530*3) && (gGPRS_data_style.ucReadStyle == GPRS_SISR))
-							if (read_dat++ > 65530*3)
-							{
-
-								read_dat = 0;
-								if (count ++ >5)
-								{
-									MSG_LOG("再发试试\r\n");
-									count = 0;
-									gmissflag = 0;
-									find_qpboc_new_mission();
-								}
-								ALL4G_SISREAD(gGPRS_data_style.link);
-
-							}
-						}
-			*/
-
-
-
 			if (gGprsinfo.gmissflag != SQmode) {
 				gGprsinfo.gmissflag = SQmode;
 			}
@@ -4483,7 +4499,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 #ifdef WIFI_TLH_
 			wifiTlh_main();
 #else
-			main_GPRS(NULL);
+			//main_GPRS(NULL);
 #endif
 
 			if (outdly == 0)
@@ -4492,7 +4508,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 				tcpipClose(LINK_PBOC);
 				if (gGprsinfo.GPRSLinkProcess == 0xA0)
 					gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-				gGprsinfo.gmissflag = 0;
+				gGprsinfo.gmissflag = MISS_G_FREE;
 #if defined QK && !defined switch_RE 
 				set_pos_infor_1(0xad);  //超时标志，限双通道
 #endif
@@ -4520,7 +4536,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 					MSG_LOG("444bit:%d,ACK_flag:%02x   ", msgf[field_ack].bitf, ACK_flag);
 					if (gGprsinfo.GPRSLinkProcess == 0xA0)
 						gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-					gGprsinfo.gmissflag = 0x4f;
+					gGprsinfo.gmissflag = MISS_G_FREE;
 					//	gSendOverTime = 0;
 
 					return -1;	//
@@ -4544,7 +4560,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 			else {
 				ret = getkey(1);
 				if (ret == KEY_ESC) {
-					gGprsinfo.gmissflag = 0;
+					gGprsinfo.gmissflag = MISS_G_FREE;
 
 					return -1;
 				}
@@ -7382,7 +7398,7 @@ void save_repurse_infor(unsigned char mode, unsigned char *re_infor) {
 		re_inforLen = GET_INT16(re_infor + 2) + 4;
 		memcpy(re_infor, RECORD_FALG, 2);
 		sysfewrite(addr, re_inforLen, re_infor);
-		MSG_LOG("写铁电冲正\r\n ");
+		MSG_LOG("写铁电冲正:%02X\r\n", gGprsinfo.gmissflag);
 		BCD_LOG(re_infor, re_inforLen, 1);
 		break;
 	case FeRC_Dlelt://删掉

@@ -3,17 +3,6 @@
 
 //modify by lks
 
-#define _debug_
-
-#ifdef _debug_
-#define MSG_LOG(...) printf(__VA_ARGS__)
-#define BCD_LOG(b, l, m) debugdata(b, l, m)
-#else
-#define MSG_LOG(...)
-#define BCD_LOG(...)
-#endif
-
-
 
 //记录空间2M
 #define RECORD_SPACE_LENGH 0x200000
@@ -1138,6 +1127,7 @@ typedef struct {
 typedef struct {
 	QPBOC_TYPE_63 TYPE_63;
 	int batchNo;
+	int sysTrackNo;	// 系统跟踪号=系统流水号
 
 	unsigned char shuangmian;		// is union pay no password no sign(shuangmian)
 	unsigned char switch_both;		// is swith

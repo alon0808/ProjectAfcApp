@@ -4791,10 +4791,6 @@ void main_card(void)
 #ifdef BUS_CPU_
 		CPUMainCard();//CPU卡,应该不用2.4G的
 #endif
-#ifdef qPBOC_BUS
-		cpuPBOCmain();
-		return;
-#endif
 		return;
 	}
 

@@ -526,11 +526,11 @@ void audio(unsigned char flag)
 
 	if (i > 0)
 	{
-		printf("[%s]2222audio , %s,ret=%d\r\n", __FUNCTION__, wavfile, ret);
+		//printf("[%s]2222audio , %s,ret=%d\r\n", __FUNCTION__, wavfile, ret);
 		ret = system(wavfile);
 		//ret = system("aplay /mnt/qrdata/wav/flingmoney.wav");
 		//ret = system(wavfile);
-		printf("[%s]33334audio , %s,ret=%d\r\n", __FUNCTION__, wavfile, ret);
+		//printf("[%s]33334audio , %s,ret=%d\r\n", __FUNCTION__, wavfile, ret);
 		usleep(10000);
 	}
 }
@@ -549,8 +549,9 @@ void cls(void)
 
 void display(unsigned char x, unsigned char y, const char *str, unsigned char mode)
 {
-	#warning "display need code";
-	printf("%s ", str);
+	MessageBox(0, str);
+	//#warning "display need code";
+	//printf("%s ", str);
 }
 void miniDispstr(unsigned char x, unsigned char y, const char *lcd_string, unsigned char mode)
 {
@@ -732,6 +733,40 @@ unsigned char GetTypeAUID(unsigned char *pUID)
 	}
 
 #undef  _debugPSAM_
+}
+
+void MakeSureCardLeave(int timeout)
+{
+	unsigned int count;
+	unsigned char result, status;
+	unsigned int len;
+	unsigned char receive[1024] = { 0 };
+
+	count = 0;
+	while (1)
+	{
+		result = CmdFindCardSet(receive, &len, &status);
+		if ((result == MI_OK) && (status == MI_OK))
+		{
+			count = 0;
+			timeout--;
+		}
+		else
+		{
+
+			count++;
+		}
+		if (count >= 1)
+		{
+			PRINT_DEBUG("卡片已经移开\n");
+			break;
+		}
+		if (timeout < 0) {
+			PRINT_ERROR("等待卡片离开时超时\n");
+			break;
+		}
+		usleep(100000);
+	}
 }
 
 void MifareHalt(void)

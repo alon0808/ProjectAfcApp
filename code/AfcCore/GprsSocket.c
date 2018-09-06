@@ -573,6 +573,11 @@ void find_G_new_mission(void)//此任务一秒进一次
 	// 	
 	// 	gErrorFlag &= (~ERROR_BUS_CONNECT);// 清除错误标识
 
+	if ((gGprsinfo.gmissflag & MISS_PBOC_LOGIN) != 0) {	// 银联有任务
+		return;
+	}
+
+
 	if (gGprsinfo.ISOK == 0) {//还没有签过到
 		if (gGprsinfo.gmissflag == MISS_G_LOGINGJ)
 			return;	//已经是签到状态了。
@@ -584,8 +589,6 @@ void find_G_new_mission(void)//此任务一秒进一次
 			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 		return;
 	}
-
-
 
 	//先找参数文件
 	for (i = 0; i < sl8583fileNum; i++) {
@@ -936,6 +939,7 @@ void TaskRecWrite(void)
 	case MISS_G_TREC:
 		uilen = Buildsl8583Packge(buffer, gGprsinfo.gmissflag);//BuildGJPackge(buffer, gmissflag);
 		if (uilen == 0) {
+			PRINT_ERROR("missfree Buildsl8583Packge:%d\n", uilen);
 			gGprsinfo.gmissflag = MISS_G_FREE;
 			break;
 		}
@@ -946,6 +950,7 @@ void TaskRecWrite(void)
 #endif
 		gprs_send_data(LINK_GJ, uilen, buffer);
 		if ((gGprsinfo.gmissflag == MISS_G_HART) || (gGprsinfo.gmissflag == MISS_G_GPS)) {
+			PRINT_ERROR("info.gmissflag == MISS_G_HART) || (gGprsinfo.gmissflag == MISS_G\n");
 			gGprsinfo.gmissflag = MISS_G_FREE;
 			return;//不需要等应答
 		}
@@ -956,8 +961,9 @@ void TaskRecWrite(void)
 	case MISS_HTTP_PRO:
 		//		uilen = BuildHTTPPackge(buffer, gGprsinfo.gmissflag);
 		break;
+	case MISS_PBOC_PURSE:
+		break;
 	case MISS_PBOC_LOGIN:
-	//case MISS_PBOC_PURSE:
 	case MISS_PBOC_RE_PURSE:
 	case MISS_PBOC_UPREC_ODA:
 	case MISS_PBOC_DOWN_ODA_BLK:
@@ -974,7 +980,6 @@ void TaskRecWrite(void)
 		{
 			MSG_LOG("银联链路%d正常:%d\r\n", link, gGprsinfo.isNetOK[link]);
 		}
-
 		//uilen = Buildsl8583Packge(buffer, gmissflag);//BuildGJPackge(buffer, gmissflag);
 
 		memset(msgf, 0, sizeof(msgf));
@@ -984,6 +989,7 @@ void TaskRecWrite(void)
 		memset(buffer, 0, sizeof(buffer));//算MAC时候buff里面不够8字节要填\x00 ，先清空
 		uilen = Build_qpboc_8583Packge(buffer, gGprsinfo.gmissflag);
 		if (uilen == 0) {
+			PRINT_ERROR("miss free Build_qpboc_8583Packge\n");
 			gGprsinfo.gmissflag = MISS_G_FREE;
 			break;
 		}
@@ -996,7 +1002,7 @@ void TaskRecWrite(void)
 #if HTTP_HEAD
 		memset(http_head, 0, sizeof(http_head));
 		http_len = Build_http_pack(http_head, gDeviceParaTab.gServerInfo[link].IPaddr, gDeviceParaTab.gServerInfo[link].port, uilen);
-		MSG_LOG("httphead len:%d\r\n%s\r\n", http_len, http_head);
+		MSG_LOG("httphead len:%d\r\n", http_len);
 		memmove(buffer + http_len, buffer, uilen);
 		memcpy(buffer, http_head, http_len);
 		uilen += http_len;
@@ -1036,7 +1042,7 @@ void TaskRecWrite(void)
 	case MISS_G_FREE:
 		break;
 	default:
-		gGprsinfo.gmissflag = 0;
+		gGprsinfo.gmissflag = MISS_G_FREE;
 		break;
 	}
 

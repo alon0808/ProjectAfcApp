@@ -8,6 +8,8 @@
 #define LEN_MESSAGE	50
 
 typedef struct {
+	char message[LEN_MESSAGE + 1];
+	unsigned char isNeedUpdate;
 	unsigned char isGJOk;
 	unsigned char isDDOk;
 	unsigned char isGpsOk;
@@ -20,7 +22,6 @@ typedef struct {
 	int modVer;
 	int basePrice;
 
-	char message[LEN_MESSAGE + 1];
 }stUIData;
 
 #ifdef __cplusplus

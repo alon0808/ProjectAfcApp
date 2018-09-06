@@ -12,6 +12,7 @@
 #include "debug_.h"
 
 #include <string.h>
+#include "szct.h"
 
 #define _debug_IcApi_
 

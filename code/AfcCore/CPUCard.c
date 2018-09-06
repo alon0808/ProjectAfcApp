@@ -25,6 +25,7 @@
 #include "ICCardLib.h"
 #include "RamStorage.h"
 #include "qpboc_head.h"
+#include "szct.h"
 
 #define _debug_CPU_
 

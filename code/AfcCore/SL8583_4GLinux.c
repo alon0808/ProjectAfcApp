@@ -31,6 +31,7 @@
 
 #include "xSys_Lantaiyuan.h"
 #include "STProLib.h"
+#include "szct.h"
 
 #define _debug_SL8583
 

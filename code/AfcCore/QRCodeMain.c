@@ -30,6 +30,7 @@
 #include "RecordFile.h"
 #include "xSys_Lantaiyuan.h"
 #include "RamStorage.h"
+#include "szct.h"
 
 
 // typedef struct Qr_input_info{

@@ -70,30 +70,37 @@ int  CreateDir(const   char   *sPathName)
 }
 
 static stUIData s_UIData;
+static stUIData s_backUIData;
 static char s_message[LEN_MESSAGE + 1] = { 0 };
 
 AFC_CORE__API stUIData* GetStatusData(void) {
-
+	stUIData *pUIData = &s_UIData;
 	//Get_SerialNum(s_UIData.devId);
-	memcpy(s_UIData.devId, gDeviceParaTab.DeviceNo, 8);
-	s_UIData.devId[LEN_DEV_ID - 1] = '\0';
+	memcpy(pUIData->devId, gDeviceParaTab.DeviceNo, 8);
+	pUIData->devId[LEN_DEV_ID - 1] = '\0';
 	//s_UIData.isDDOk = gGprsinfo.isNetOK[link_DD];
-	s_UIData.isGJOk = gGprsinfo.isNetOK[LINK_GJ];
-	memcpy(s_UIData.lineId, gDeviceParaTab.LineNo, LEN_LINE_ID);
+	pUIData->isGJOk = gGprsinfo.isNetOK[LINK_GJ];
+	memcpy(pUIData->lineId, gDeviceParaTab.LineNo, LEN_LINE_ID);
 	//s_UIData.devId = 
-	s_UIData.linkStatus = gGprsinfo.GPRSLinkProcess;
-	s_UIData.modVer = 0x003;	// 3.0
-	s_UIData.task = gGprsinfo.gmissflag;
-	s_UIData.uploadRec = 0;
-	s_UIData.version = SOFT_VER_TIME_LOG;
-	s_UIData.basePrice = GET_INT32S(gDeviceParaTab.busPrice);
+	pUIData->linkStatus = gGprsinfo.GPRSLinkProcess;
+	pUIData->modVer = 0x003;	// 3.0
+	pUIData->task = gGprsinfo.gmissflag;
+	pUIData->uploadRec = 0;
+	pUIData->version = SOFT_VER_TIME_LOG;
+	pUIData->basePrice = GET_INT32S(gDeviceParaTab.busPrice);
 
+	pUIData->isNeedUpdate = BOOL_FALSE;
 	if (s_message[0] != '\0') {
-		strcpy(s_UIData.message, s_message);
+		strcpy(pUIData->message, s_message);
 		s_message[0] = '\0';
+		pUIData->isNeedUpdate = BOOL_TRUE;
+	}
+	if (memcmp(&pUIData->isGJOk, &s_backUIData.isGJOk, sizeof(stUIData) - LEN_MESSAGE + 2) != 0) {
+		pUIData->isNeedUpdate = BOOL_TRUE;
+		memcpy(&s_backUIData.isGJOk, &pUIData->isGJOk, sizeof(stUIData) - LEN_MESSAGE + 2);
 	}
 
-	return &s_UIData;
+	return pUIData;
 }
 
 

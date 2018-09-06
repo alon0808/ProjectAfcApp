@@ -12,7 +12,7 @@ typedef struct
 extern int Send_WaitRecvData(unsigned char SQmode, int msecends);
 extern void set_flag_aut(unsigned char data);
 extern unsigned write_linux_re(unsigned char mode);
-extern unsigned char write_linux_re_build(void);
+extern unsigned char write_linux_re_build(unsigned char transResult);
 extern oda_ack ODAACK;
 extern void ODA_ACK_INIT(void);
 #endif

@@ -100,6 +100,7 @@ extern unsigned char MifareRead(unsigned char cBlockNo, unsigned char *pRdData);
 extern unsigned char MifIsPurse(unsigned char *buffer);
 extern unsigned char MiBlockInvalid(unsigned char mode,unsigned char count,unsigned char *ptr);
 extern unsigned char GetTypeAUID( unsigned char *pUID );
+extern void MakeSureCardLeave(int timeout);
 extern void MifareHalt(void);
 extern unsigned char MifareValueDebit(unsigned char cSubCommand, unsigned char cBlockNo, unsigned char *pValue);
 // ==================================================================

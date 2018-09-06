@@ -43,7 +43,8 @@ public:
 
     };
 private:
-	int m_seconds;
+	int m_freshTimes;
+	int m_timerTrige;
 signals:
     void signal_button_menu();
     void signal_button_exit();

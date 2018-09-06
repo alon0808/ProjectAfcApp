@@ -23,6 +23,7 @@
 
 #include "ICCardLib.h"
 #include "STProLib.h"
+#include "szct.h"
 
 #define _debug_recordFile
 

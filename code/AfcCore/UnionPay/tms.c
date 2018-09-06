@@ -727,7 +727,7 @@ int ProcessTmsData(void) {
 			//com_snd(COM4,len,buff);
 		}
 		gGprsinfo.gmissflag = MISS_G_TMS;
-		main_GPRS(NULL);
+		//main_GPRS(NULL);
 		
 		if (gGprsinfo.GPRSLinkProcess == 20) {
 
@@ -1071,7 +1071,7 @@ int ProcessTmsData_2(void) {
 		}
 
 		gGprsinfo.gmissflag = MISS_G_TMS;
-		main_GPRS(NULL);
+		//main_GPRS(NULL);
 	//	main_card();
 		if (gGprsinfo.GPRSLinkProcess == 20) {
 

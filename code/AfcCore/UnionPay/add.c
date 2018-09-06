@@ -34,17 +34,17 @@ extern time_t BCDTime2Long(unsigned char*timee);
 qpboc_pos_infor Q_pos_infor;  //È«¾Ö±äÁ¿
 void init_Q_pos_infor(void)
 {
-	memset((unsigned char *)&Q_pos_infor,0,sizeof(qpboc_pos_infor));
+	memset((unsigned char *)&Q_pos_infor, 0, sizeof(qpboc_pos_infor));
 #ifndef switch_oda
 	if (switch_both)
 	{
-		shuangmian=1;
+		shuangmian = 1;
 	}
 #endif
 }
 void set_pos_infor_1(unsigned char mode)
 {
-	if(switch_both)
+	if (switch_both)
 	{
 		Q_pos_infor.flge = mode;
 		shuangmian = 0;       //³¬Ê±ÇÐµ½ÍÑ»ú
@@ -54,96 +54,96 @@ void set_pos_infor_1(unsigned char mode)
 #define Q_T  3
 unsigned char get_q_(unsigned char mode)
 {
-	int t1,t2;
-   //ÅÐ¶ÏÊÇ·ñÐèÒªÔÙÇë¿î
- 
-	if(	switch_both==1 && Q_pos_infor.flge==0xad)
+	int t1, t2;
+	//ÅÐ¶ÏÊÇ·ñÐèÒªÔÙÇë¿î
+
+	if (switch_both == 1 && Q_pos_infor.flge == 0xad)
 	{
 
 		t1 = BCDTime2Long(&SysTime.year_h);
-		t2= BCDTime2Long(Q_pos_infor.time_last);
+		t2 = BCDTime2Long(Q_pos_infor.time_last);
 
-		if (mode==1)  //Ö»ÅÐ¶ÏÊ±¼ä
+		if (mode == 1)  //Ö»ÅÐ¶ÏÊ±¼ä
 		{
-				MSG_LOG("==ÏÖÔÚÊ±¼ä%d\r\n",t1);
-				MSG_LOG("==ÉÏÒ»±ÊÊ±¼ä%d\r\n",t2);
-			if(t1-t2>=Q_T)
+			MSG_LOG("==ÏÖÔÚÊ±¼ä%d\r\n", t1);
+			MSG_LOG("==ÉÏÒ»±ÊÊ±¼ä%d\r\n", t2);
+			if (t1 - t2 >= Q_T)
 			{
-				MSG_LOG("==ÏÖÔÚÊ±¼ä%d\r\n",t1);
-				MSG_LOG("==ÉÏÒ»±ÊÊ±¼ä%d\r\n",t2);
-				Q_pos_infor.flge=0;
+				MSG_LOG("==ÏÖÔÚÊ±¼ä%d\r\n", t1);
+				MSG_LOG("==ÉÏÒ»±ÊÊ±¼ä%d\r\n", t2);
+				Q_pos_infor.flge = 0;
 			}
 		}
 		else  //Ê±¼ä¸ú¿¨ºÅ¶¼ÅÐ¶Ï
 		{
-			MSG_LOG("ÏÖÔÚÊ±¼ä%d\r\n",t1);
-			MSG_LOG("ÉÏÒ»±ÊÊ±¼ä%d\r\n",t2);
-            
+			MSG_LOG("ÏÖÔÚÊ±¼ä%d\r\n", t1);
+			MSG_LOG("ÉÏÒ»±ÊÊ±¼ä%d\r\n", t2);
 
-			if( memcmp(Q_pos_infor.c_serial_qpoc,(unsigned char *)&c_serial,4)==0 )  //
+
+			if (memcmp(Q_pos_infor.c_serial_qpoc, (unsigned char *)&c_serial, 4) == 0)  //
 			{
-				
+
 				return ST_OK;
-			   
+
 			}
-			else if( memcmp(Q_pos_infor.c_serial_qpoc,(unsigned char *)&c_serial,4) !=0 && t1-t2<=Q_T)
+			else if (memcmp(Q_pos_infor.c_serial_qpoc, (unsigned char *)&c_serial, 4) != 0 && t1 - t2 <= Q_T)
 			{
 				return ST_ERROR;
 			}
 			else
 			{
-				Q_pos_infor.flge=0;
+				Q_pos_infor.flge = 0;
 				return ST_OK;
-			
+
 			}
 		}
-		
+
 
 	}
 	else
 	{
-			return ST_OK;
+		return ST_OK;
 	}
 
 	return ST_OK;
 }
 
-unsigned char SWITCH_(unsigned char *temp,unsigned char len,unsigned char *data)
+unsigned char SWITCH_(unsigned char *temp, unsigned char len, unsigned char *data)
 {
-//	unsigned char BLK_TEMP[30];
+	//	unsigned char BLK_TEMP[30];
 	unsigned char BLK_TEMP_1[30];
 	unsigned int uitemp;
-	
-   memcpy((unsigned char *)&uitemp,temp,4);
-//uitemp-=1;
-	if (len==6)
+
+	memcpy((unsigned char *)&uitemp, temp, 4);
+	//uitemp-=1;
+	if (len == 6)
 	{
-		sprintf((char *)BLK_TEMP_1,"%06u",uitemp);//°ÑÊ®Áù½øÖÆ×ª³ÉASCIIµÄÊ®½øÖÆ
-		memcpy(data,BLK_TEMP_1,len);
-		
+		sprintf((char *)BLK_TEMP_1, "%06u", uitemp);//°ÑÊ®Áù½øÖÆ×ª³ÉASCIIµÄÊ®½øÖÆ
+		memcpy(data, BLK_TEMP_1, len);
+
 #ifdef _debug_
 
-		debugstring((char *)BLK_TEMP_1);
-		debugstring("\r\n");
-	
-#endif
-	}
-	else if (len==8)
-	
-	{
-		sprintf((char *)BLK_TEMP_1,"%08u",uitemp);//°ÑÊ®Áù½øÖÆ×ª³ÉASCIIµÄÊ®½øÖÆ
-		memcpy(data,BLK_TEMP_1,len);
-		
-#ifdef _debug_
-	
 		debugstring((char *)BLK_TEMP_1);
 		debugstring("\r\n");
 
 #endif
 	}
+	else if (len == 8)
+
+	{
+		sprintf((char *)BLK_TEMP_1, "%08u", uitemp);//°ÑÊ®Áù½øÖÆ×ª³ÉASCIIµÄÊ®½øÖÆ
+		memcpy(data, BLK_TEMP_1, len);
+
+#ifdef _debug_
+
+		debugstring((char *)BLK_TEMP_1);
+		debugstring("\r\n");
+
+#endif
+	}
 
 
-return ST_OK;
+	return ST_OK;
 
 }
 //
@@ -152,46 +152,46 @@ return ST_OK;
 /////////////////////
 
 
-void set_over_time(unsigned char mode,unsigned char len){
+void set_over_time(unsigned char mode, unsigned char len) {
 
-	unsigned char U_time=0;
-    unsigned int i;
+	unsigned char U_time = 0;
+	unsigned int i;
 	char buffer[30], buffer_2[30];
-char U_format[30];
+	char U_format[30];
 	unsigned char ret;
 	getMobileParameter(mode, (unsigned char *)&U_time);
-	
-///////////////
+
+	///////////////
 
 
-	i=0;
-	memset(U_format,0,sizeof(U_format));
-	U_format[0]='%';
-	U_format[1]='0';
-	sprintf(U_format+2,"%d",len);
-	strcat(U_format,"d");
-	MSG_LOG("¸ñÊ½=%s\r\n",U_format);
+	i = 0;
+	memset(U_format, 0, sizeof(U_format));
+	U_format[0] = '%';
+	U_format[1] = '0';
+	sprintf(U_format + 2, "%d", len);
+	strcat(U_format, "d");
+	MSG_LOG("¸ñÊ½=%s\r\n", U_format);
 	cls();
-	display(0,2,"ÉèÖÃ³¬Ê±Ê±¼ä",DIS_CENTER);
-	memset(buffer,0,sizeof(buffer));
-	sprintf(buffer,U_format,U_time);
-	sprintf(buffer_2,U_format,U_time);
-	display(2,4,(char*)buffer_2,0);
-	while(1)
+	display(0, 2, "ÉèÖÃ³¬Ê±Ê±¼ä", DIS_CENTER);
+	memset(buffer, 0, sizeof(buffer));
+	sprintf(buffer, U_format, U_time);
+	sprintf(buffer_2, U_format, U_time);
+	display(2, 4, (char*)buffer_2, 0);
+	while (1)
 	{
 
 		delayxms(10);
-		memset(buffer_2,0,sizeof(buffer));
-		buffer_2[0]=buffer[i];
-		display(2,4+i,(char*)&buffer_2,DIS_CONVERT);
-		ret =getkey(1);
-		switch(ret)
+		memset(buffer_2, 0, sizeof(buffer));
+		buffer_2[0] = buffer[i];
+		display(2, 4 + i, (char*)&buffer_2, DIS_CONVERT);
+		ret = getkey(1);
+		switch (ret)
 		{
 
 		case UP:
-			if((buffer[i]<='0')||(buffer[i]>'9'))
-				buffer[i]='9';
-			else if((buffer[i]<='9')&&(buffer[i]>'0'))
+			if ((buffer[i] <= '0') || (buffer[i] > '9'))
+				buffer[i] = '9';
+			else if ((buffer[i] <= '9') && (buffer[i] > '0'))
 				buffer[i]--;
 			break;
 
@@ -201,17 +201,17 @@ char U_format[30];
 		case ENTER:
 
 			i++;
-			memset(buffer_2,0,10);
-			memcpy(buffer_2,buffer,len);
-			display(2,4,(char*)buffer_2,0);
-			if(i >=len){
-				U_time=Ascii2INT((unsigned char *)buffer,2);
-			MSG_LOG("±£´æ=%d\r\n",U_time);
-			//	Ascii2BCD(buffer,(unsigned char *)&U_time,2);
-			   saveMobileParameter(mode,(unsigned char *)&U_time);
-			   display(3,3,"ÉèÖÃ³É¹¦",DIS_CENTER);
-			   delayxms(1500);
-			   MSG_LOG("±£´æ\r\n");
+			memset(buffer_2, 0, 10);
+			memcpy(buffer_2, buffer, len);
+			display(2, 4, (char*)buffer_2, 0);
+			if (i >= len) {
+				U_time = Ascii2INT((unsigned char *)buffer, 2);
+				MSG_LOG("±£´æ=%d\r\n", U_time);
+				//	Ascii2BCD(buffer,(unsigned char *)&U_time,2);
+				saveMobileParameter(mode, (unsigned char *)&U_time);
+				display(3, 3, "ÉèÖÃ³É¹¦", DIS_CENTER);
+				delayxms(1500);
+				MSG_LOG("±£´æ\r\n");
 				goto SetupDevi_exit;
 			}
 			break;
@@ -220,27 +220,27 @@ char U_format[30];
 		}
 	}
 SetupDevi_exit:
-;
+	;
 }
 
 unsigned char get_over_time_re(void)
 {
-	unsigned char out_data=0;
-	if(getMobileParameter(15,(unsigned char *)&out_data)==ST_OK)
+	unsigned char out_data = 0;
+	if (getMobileParameter(15, (unsigned char *)&out_data) == ST_OK)
 	{
 		return out_data;
 	}
 	else
 	{
-	//	MSG_LOG("»ñÈ¡Ê§°Ü£¬È¡Ä¬ÈÏ\r\n");
+		//	MSG_LOG("»ñÈ¡Ê§°Ü£¬È¡Ä¬ÈÏ\r\n");
 		return time_over_re;
 	}
-	
+
 }
 unsigned char get_over_time_shuang(void)
 {
-	unsigned char out_data=0;
-	if(getMobileParameter(14,(unsigned char *)&out_data)==ST_OK)
+	unsigned char out_data = 0;
+	if (getMobileParameter(14, (unsigned char *)&out_data) == ST_OK)
 	{
 		return out_data;
 	}
@@ -252,8 +252,8 @@ unsigned char get_over_time_shuang(void)
 }
 unsigned char get_SOCKET_OVER_TIME(void)
 {
-	unsigned char out_data=0;
-	if(getMobileParameter(21,(unsigned char *)&out_data)==ST_OK)
+	unsigned char out_data = 0;
+	if (getMobileParameter(21, (unsigned char *)&out_data) == ST_OK)
 	{
 		return out_data;
 	}
@@ -265,135 +265,135 @@ unsigned char get_SOCKET_OVER_TIME(void)
 }
 void set_over_time_re(void)
 {
-	set_over_time(15,2);
-	Q_QPBOC_para.chongzheng_OVER_TIME=get_over_time_re();
+	set_over_time(15, 2);
+	Q_QPBOC_para.chongzheng_OVER_TIME = get_over_time_re();
 
 }
 void set_over_time_shuang(void)
 {
-	set_over_time(14,2);
+	set_over_time(14, 2);
 
-	Q_QPBOC_para.shuangmian_OVER_TIME=get_over_time_shuang();
+	Q_QPBOC_para.shuangmian_OVER_TIME = get_over_time_shuang();
 
 }
 void set_SOCKET_OVER_TIME(void)
 {
-	set_over_time(21,2);
+	set_over_time(21, 2);
 
-	Q_QPBOC_para.SOCKET_OVER_TIME=get_SOCKET_OVER_TIME();
+	Q_QPBOC_para.SOCKET_OVER_TIME = get_SOCKET_OVER_TIME();
 
 }
 
 qpboc_pos_infor timeout_infor;  //È«¾Ö±äÁ¿
 void init_timeout_infor(void)
 {
-	memset((unsigned char *)&timeout_infor,0,sizeof(qpboc_pos_infor));
+	memset((unsigned char *)&timeout_infor, 0, sizeof(qpboc_pos_infor));
 }
 
 //ÇÐ»»±êÖ¾
 void Switch_sign(unsigned char mode)
 {
-// 	if(shuangmian==1)
-// 	{
-		timeout_infor.flge = mode;
-//	}
+	// 	if(shuangmian==1)
+	// 	{
+	timeout_infor.flge = mode;
+	//	}
 }
 extern void DisRetry2(void);
- extern unsigned char restore_flag;
-unsigned char Judge_timeout(unsigned char mode,unsigned int time_out,qpboc_pos_infor *timeout_infor,unsigned char switch_over )//ÅÐ¶Ï³¬Ê±.switch_over£ºÊÇ·ñÐèÒªÅÐ¶Ï =1,ÐèÒªÅÐ¶Ï
+extern unsigned char restore_flag;
+unsigned char Judge_timeout(unsigned char mode, unsigned int time_out, qpboc_pos_infor *timeout_infor, unsigned char switch_over)//ÅÐ¶Ï³¬Ê±.switch_over£ºÊÇ·ñÐèÒªÅÐ¶Ï =1,ÐèÒªÅÐ¶Ï
 {
-	int t1,t2;
+	int t1, t2;
 	qpboc_pos_infor  * U_timeout_infor;
-//	unsigned char disbuff[10];
-	//memcpy((unsigned char *)&U_timeout_infor,(unsigned char *)timeout_infor,sizeof(qpboc_pos_infor));
-   
-	U_timeout_infor=timeout_infor;
+	//	unsigned char disbuff[10];
+		//memcpy((unsigned char *)&U_timeout_infor,(unsigned char *)timeout_infor,sizeof(qpboc_pos_infor));
+
+	U_timeout_infor = timeout_infor;
 	//ÅÐ¶ÏÊÇ·ñ³¬Ê±
- 	if(	switch_over==1 && U_timeout_infor->flge==Switch_sign_OVER )
+	if (switch_over == 1 && U_timeout_infor->flge == Switch_sign_OVER)
 	{
 
 		t1 = BCDTime2Long(&SysTime.year_h);
-		t2= BCDTime2Long(U_timeout_infor->time_last);
-		if (mode==1)  //Ö»ÅÐ¶ÏÊ±¼ä
+		t2 = BCDTime2Long(U_timeout_infor->time_last);
+		if (mode == 1)  //Ö»ÅÐ¶ÏÊ±¼ä
 		{
 
-				if(switch_both==1)
-				{
-					MSG_LOG("==ÏÖÔÚÊ±¼ä%d\r\n",t1);
-					MSG_LOG("==ÉÏÒ»±ÊÊ±¼ä%d\r\n",t2);
-					DisRetry2();
-					restore_flag=0;
-				}
-			
-
-
-			if(t1-t2>time_out+3)
+			if (switch_both == 1)
 			{
-			//	MSG_LOG("==ÏÖÔÚÊ±¼ä%d\r\n",t1);
-			//	MSG_LOG("=xx=ÉÏÒ»±ÊÊ±¼ä%d\r\n",t2);
-				U_timeout_infor->flge=0;
-				restore_flag=3;
+				MSG_LOG("==ÏÖÔÚÊ±¼ä%d\r\n", t1);
+				MSG_LOG("==ÉÏÒ»±ÊÊ±¼ä%d\r\n", t2);
+				DisRetry2();
+				restore_flag = 0;
+			}
+
+
+
+			if (t1 - t2 > time_out + 3)
+			{
+				//	MSG_LOG("==ÏÖÔÚÊ±¼ä%d\r\n",t1);
+				//	MSG_LOG("=xx=ÉÏÒ»±ÊÊ±¼ä%d\r\n",t2);
+				U_timeout_infor->flge = 0;
+				restore_flag = 3;
 				return ST_OK;
 			}
 			else
 			{
 				return ST_ERROR;
-				
+
 			}
 		}
-		else if(mode==2) //Ê±¼ä¸ú¿¨ºÅ¶¼ÅÐ¶Ï
+		else if (mode == 2) //Ê±¼ä¸ú¿¨ºÅ¶¼ÅÐ¶Ï
 		{
-			MSG_LOG("222ÏÖÔÚÊ±¼ä%d\r\n",t1);
-			MSG_LOG("22ÉÏÒ»±ÊÊ±¼ä%d\r\n",t2);
-            
+			MSG_LOG("222ÏÖÔÚÊ±¼ä%d\r\n", t1);
+			MSG_LOG("22ÉÏÒ»±ÊÊ±¼ä%d\r\n", t2);
+
 			//ÔÝÊ±Ö»ÅÐ¶ÏÓÐ¿¨À´¾Í×Ô¶¯³åÕý£¬²»×öÔÙÇë¿î
-			if( memcmp(U_timeout_infor->c_serial_qpoc,(unsigned char *)&c_serial,4)==0 )  //
+			if (memcmp(U_timeout_infor->c_serial_qpoc, (unsigned char *)&c_serial, 4) == 0)  //
 			{
-				U_timeout_infor->flge=0;
+				U_timeout_infor->flge = 0;
 				return ST_OK;
-			   
+
 			}
-// 			else if( memcmp(U_timeout_infor->c_serial_qpoc,(unsigned char *)&c_serial,4) !=0 && t1-t2<=time_out)
-// 			{
-// 				return ST_ERROR;
-// 			}
+			// 			else if( memcmp(U_timeout_infor->c_serial_qpoc,(unsigned char *)&c_serial,4) !=0 && t1-t2<=time_out)
+			// 			{
+			// 				return ST_ERROR;
+			// 			}
 			else
 			{
-				U_timeout_infor->flge=0;
+				U_timeout_infor->flge = 0;
 				return ST_OK;
-			
+
 			}
 		}
 
 		else
 		{
-			
-			if(switch_both==1)
+
+			if (switch_both == 1)
 			{
-				if( memcmp(U_timeout_infor->c_serial_qpoc,(unsigned char *)&c_serial,4)!=0 )  //
+				if (memcmp(U_timeout_infor->c_serial_qpoc, (unsigned char *)&c_serial, 4) != 0)  //
 				{
 					MSG_LOG("²»Í¬¿¨\r\n");
-					U_timeout_infor->flge=0;
+					U_timeout_infor->flge = 0;
 					return ST_OK;
-					
+
 				}
 				else
 				{
 					MSG_LOG("Í¬¿¨\r\n");
 					//	U_timeout_infor->flge=0;
 					return ST_ERROR;
-					
+
 				}
 			}
 			else
 			{
 				MSG_LOG("µ¥Í¨µÀÔÚÏß\r\n");
-				U_timeout_infor->flge=0;
+				U_timeout_infor->flge = 0;
 				return ST_OK;
 			}
-			
+
 		}
-		
+
 
 	}
 	else
@@ -405,29 +405,29 @@ unsigned char Judge_timeout(unsigned char mode,unsigned int time_out,qpboc_pos_i
 }
 void save_over_infor(unsigned int uiTemp)
 {
-// 	if(shuangmian)
-// 	{
-		memcpy(timeout_infor.NS,(unsigned char *)&uiTemp,4);
-		memcpy(timeout_infor.time_last,(unsigned char*)&SysTime, 7);
-		memcpy(timeout_infor.c_serial_qpoc,(unsigned char*)&c_serial, 4);  //ÔÝÊ±²»¹ÜnfcÊÖ»ú
+	// 	if(shuangmian)
+	// 	{
+	memcpy(timeout_infor.NS, (unsigned char *)&uiTemp, 4);
+	memcpy(timeout_infor.time_last, (unsigned char*)&SysTime, 7);
+	memcpy(timeout_infor.c_serial_qpoc, (unsigned char*)&c_serial, 4);  //ÔÝÊ±²»¹ÜnfcÊÖ»ú
 //	}
 }
-void Judge_timeout_re(unsigned char mode,unsigned char switch_over )//mode=1,Ö»±È½ÏÊ±¼ä£¬2  //ÔÚÏß²Å´æÔÚ
+void Judge_timeout_re(unsigned char mode, unsigned char switch_over)//mode=1,Ö»±È½ÏÊ±¼ä£¬2  //ÔÚÏß²Å´æÔÚ
 {
-	unsigned int time_out=0;
-	if(timeout_infor.flge==Switch_sign_OVER )  //ÑÓÊ±ÉÏËÍ
+	unsigned int time_out = 0;
+	if (timeout_infor.flge == Switch_sign_OVER)  //ÑÓÊ±ÉÏËÍ
 	{
-		
-		
-		time_out=get_over_time_re();
-		MSG_LOG("time_out=%d\r\n",time_out);
 
-			
-		if(Judge_timeout(mode,time_out,&timeout_infor,1)==ST_OK) //switch_over Ä¬ÈÏ´ò¿ª
+
+		time_out = get_over_time_re();
+		MSG_LOG("time_out=%d\r\n", time_out);
+
+
+		if (Judge_timeout(mode, time_out, &timeout_infor, 1) == ST_OK) //switch_over Ä¬ÈÏ´ò¿ª
 		{
-			
+
 			write_re_flash();
-			
+
 		}
 	}
 }
@@ -440,7 +440,7 @@ void Judge_timeout_re(unsigned char mode,unsigned char switch_over )//mode=1,Ö»±
 
 typedef struct
 {
-	
+
 	unsigned int time;			//
 //	unsigned char RES[20];
 
@@ -448,34 +448,34 @@ typedef struct
 DELAY_SEND_STRUCT delay_send;
 void init_delay_send(void)
 {
-	memset((unsigned char *)&delay_send,0,sizeof(DELAY_SEND_STRUCT));
+	memset((unsigned char *)&delay_send, 0, sizeof(DELAY_SEND_STRUCT));
 }
 void set_delay_send(unsigned int val)
 {
-	delay_send.time=val;
+	delay_send.time = val;
 }
 unsigned int get_delay_send(void)
 {
-	
+
 	return delay_send.time;
 }
 void reduce_delay_send(void)
 {
-	if(delay_send.time>0)
+	if (delay_send.time > 0)
 	{
-	//	MSG_LOG("ÑÓÊ±ÕÒÈÎÎñ¼õ1==%d==\r\n",delay_send.time);
+		//	MSG_LOG("ÑÓÊ±ÕÒÈÎÎñ¼õ1==%d==\r\n",delay_send.time);
 		delay_send.time--;
 	}
 }
 unsigned char  DELAY_SEND(void)
 {
-	if(delay_send.time==0)
+	if (delay_send.time == 0)
 	{
 		return ST_OK;
 	}
 	else
 	{
-//		MSG_LOG("¸ÕË¢Íê¿¨\r\n");
+		//		MSG_LOG("¸ÕË¢Íê¿¨\r\n");
 		return ST_ERROR;
 	}
 }
@@ -483,22 +483,22 @@ unsigned char  DELAY_SEND(void)
 ///////////////////////////
 unsigned int getRECORD_LEEN_O(void)
 {
-	return RECORD_LEN_O ;
+	return RECORD_LEN_O;
 }
 //Çå³ý²¢¸ñÊ½µ±Ç°´æÖüÇø
 void lib_clr_Record_point_O(void)
 {
 	unsigned char buff[128];
 	unsigned int crc32;
-	unsigned int temp,uit;
+	unsigned int temp, uit;
 #ifdef _debug_
 	debugstring("lib Clr Record!!\r\n");
 #endif
-	temp =FLASH1_START_O;
-	for(uit=0; uit<FLASH_SIZE; uit++){
+	temp = FLASH1_START_O;
+	for (uit = 0; uit < FLASH_SIZE; uit++) {
 		clr_wdt();
 		flasherase(ERASE64KBYTESECTOR, temp);
-		temp+=0x10000;
+		temp += 0x10000;
 		delayxms(2);
 	}
 	memset(buff, 0xEE, 64);
@@ -506,7 +506,7 @@ void lib_clr_Record_point_O(void)
 	//	debugstring("lib Clr 1 \r\n");
 	crc32 = GenerateCRC32(buff, 60);
 	//	debugstring("lib Clr 2 \r\n");
-	memcpy(buff+60, (unsigned char*)&crc32, 4);
+	memcpy(buff + 60, (unsigned char*)&crc32, 4);
 	flashwrite(FLASH1_START_O, buff, 64);
 	//	debugstring("lib Clr 3 \r\n");
 	return;
@@ -515,9 +515,9 @@ unsigned int RecRomCheckFF_O(unsigned char *datt, unsigned int len)
 {
 	unsigned int i;
 	unsigned int counter = 0;
-	
-	for(i=0; i<len; i++){
-		if(datt[i] == 0xFF){
+
+	for (i = 0; i < len; i++) {
+		if (datt[i] == 0xFF) {
 			counter++;
 		}
 	}
@@ -527,9 +527,9 @@ unsigned int RecRomCheck00_O(unsigned char *datt, unsigned int len)
 {
 	unsigned int i;
 	unsigned int counter = 0;
-	
-	for(i=0; i<len; i++){
-		if(datt[i] == 0){
+
+	for (i = 0; i < len; i++) {
+		if (datt[i] == 0) {
 			counter++;
 		}
 	}
@@ -544,124 +544,124 @@ int Get_Record_point_O(unsigned char *headp, unsigned char mode)
 	unsigned char tempbuf[RECORD_LEN_O];
 	unsigned char pbuf0[RECORD_LEN_O];
 	unsigned int crc32;
-	unsigned int temp,uit;
-	unsigned int addrF,current;
-	unsigned int curdar,enddar,firstdar;
+	unsigned int temp, uit;
+	unsigned int addrF, current;
+	unsigned int curdar, enddar, firstdar;
 	unsigned int RECORDLEN;
-	
+
 	RECORDLEN = getRECORD_LEEN_O();
-	
-	temp=FLASH1_START_O;
-	for(uit=0; uit<FLASH_SIZE; uit++){//È¡³ö±êÊ¶£¬±êÊ¶ÇøµÄ³¤¶ÈºÍ¼ÇÂ¼³¤¶ÈÒ»ÖÂ
+
+	temp = FLASH1_START_O;
+	for (uit = 0; uit < FLASH_SIZE; uit++) {//È¡³ö±êÊ¶£¬±êÊ¶ÇøµÄ³¤¶ÈºÍ¼ÇÂ¼³¤¶ÈÒ»ÖÂ
 		flashread(temp, buff, 64);
 		flashread(temp, tempbuf, 64);
-		if(memcmp(buff, tempbuf, 64) == 0)
+		if (memcmp(buff, tempbuf, 64) == 0)
 			break;
 	}
-	if(uit >= FLASH_SIZE){
+	if (uit >= FLASH_SIZE) {
 		debugstring("±êÊ¶¶Á³ö´íÎó:");
 	}
 	crc32 = GenerateCRC32(buff, 60);
-	memcpy((unsigned char*)&uit, buff+60, 4);
-	
-// #ifdef _debug_
-// 	debugstring("G Crc32:");
-// 	debugdata((unsigned char *)&crc32, 4, 1);
-// 	debugdata(buff, 64, 1);
-// #endif
+	memcpy((unsigned char*)&uit, buff + 60, 4);
 
-	if((crc32 == uit)&&(memcmp(buff, "BDBD´Ë¿éÒÑ¾­ÆôÓÃ! ", 18) == 0)){//ÒÑ¾­ÆôÓÃ
-		if(mode == 0x5a){//Ö»ÐèÒª·µ»ØÊÇ·ñ»¹ÓÐ¿Õ¼ä£¬²é¿´×îºóµØÖ·¾ÍÐÐ
-			temp = FLASH1_START_O+FLASH_MAX_O;//²é¿´5100Ìõ¼ÇÂ¼ÊÇ·ñÊÇÈ«FF,²»ÊÇ¾ÍÈÏÎªÊÇÂúµÄ
+	// #ifdef _debug_
+	// 	debugstring("G Crc32:");
+	// 	debugdata((unsigned char *)&crc32, 4, 1);
+	// 	debugdata(buff, 64, 1);
+	// #endif
+
+	if ((crc32 == uit) && (memcmp(buff, "BDBD´Ë¿éÒÑ¾­ÆôÓÃ! ", 18) == 0)) {//ÒÑ¾­ÆôÓÃ
+		if (mode == 0x5a) {//Ö»ÐèÒª·µ»ØÊÇ·ñ»¹ÓÐ¿Õ¼ä£¬²é¿´×îºóµØÖ·¾ÍÐÐ
+			temp = FLASH1_START_O + FLASH_MAX_O;//²é¿´5100Ìõ¼ÇÂ¼ÊÇ·ñÊÇÈ«FF,²»ÊÇ¾ÍÈÏÎªÊÇÂúµÄ
 			memset(buff, 0, RECORDLEN);
 			flashread(temp, buff, RECORDLEN);
-			if(RecRomCheckFF_O(buff, RECORDLEN) > (RECORDLEN-4)){//Ö»Òª´óÓÚÈ«²¿Êý¾ÝÖÐ²»ÊÇFFµÄÐ¡ÓÚ4¸ö¾ÍËãÊÇ¿ÕµÄ
+			if (RecRomCheckFF_O(buff, RECORDLEN) > (RECORDLEN - 4)) {//Ö»Òª´óÓÚÈ«²¿Êý¾ÝÖÐ²»ÊÇFFµÄÐ¡ÓÚ4¸ö¾ÍËãÊÇ¿ÕµÄ
 				return 0xff;
 			}
-			else{
+			else {
 				temp += RECORDLEN;
 				memset(buff, 0, RECORDLEN);
 				flashread(temp, buff, RECORDLEN);
-				if(RecRomCheckFF_O(buff, RECORDLEN) > (RECORDLEN-4)){
+				if (RecRomCheckFF_O(buff, RECORDLEN) > (RECORDLEN - 4)) {
 					return 0xff;
 				}
 				return -2;
 			}
 		}
 	}
-	else{//Ã»ÓÐÆôÓÃ£¬²Á³ý
+	else {//Ã»ÓÐÆôÓÃ£¬²Á³ý
 #ifdef _debug_
 		debugstring("²Á³ý");
 #endif
 		temp = FLASH1_START_O;
-		for(uit=0; uit<FLASH_SIZE; uit++){//320KÎª5¿é
+		for (uit = 0; uit < FLASH_SIZE; uit++) {//320KÎª5¿é
 			flasherase(ERASE64KBYTESECTOR, temp);
-			temp+=0x10000;
+			temp += 0x10000;
 			delayxms(2);
 			//delayxms(2);
 		}
 		memset(buff, 0xEE, 64);
 		memcpy(buff, "BDBD´Ë¿éÒÑ¾­ÆôÓÃ! ", 18);
 		crc32 = GenerateCRC32(buff, 60);
-		memcpy(buff+60, (unsigned char*)&crc32, 4);
+		memcpy(buff + 60, (unsigned char*)&crc32, 4);
 		flashwrite(FLASH1_START_O, buff, 64);
 
-		temp = FLASH1_START_O+RECORDLEN;
+		temp = FLASH1_START_O + RECORDLEN;
 		memcpy(headp, (unsigned char*)&temp, 4);
 		return temp;
 	}
-//²éÕÒµ±Ç°ÐèÒªÐ´ÈëµÄµØÖ·
-	temp = FLASH1_START_O+64;
+	//²éÕÒµ±Ç°ÐèÒªÐ´ÈëµÄµØÖ·
+	temp = FLASH1_START_O + 64;
 	memset(tempbuf, 0xff, RECORDLEN);
 	memset(pbuf0, 0, RECORDLEN);
 	addrF = 0;
 	firstdar = 0;
 	curdar = 0;
-	enddar = ((LEN_EEPROM_O/RECORDLEN)-50); //FLASH_REC_MAX;
-	while(1){//ÏÈÕÒµ±Ç°Ö¸Õë
-		curdar = ((enddar-firstdar)/2)+firstdar;
+	enddar = ((LEN_EEPROM_O / RECORDLEN) - 50); //FLASH_REC_MAX;
+	while (1) {//ÏÈÕÒµ±Ç°Ö¸Õë
+		curdar = ((enddar - firstdar) / 2) + firstdar;
 		temp = curdar*RECORDLEN;
-		temp += (FLASH1_START_O+64);
+		temp += (FLASH1_START_O + 64);
 
 		clr_wdt();
 		flashread(temp, buff, RECORDLEN);
-// #ifdef _debug_
-// 		debugstring("temp:");
-// 		debugdata((unsigned char *)&temp, 4, 1);
-// 		debugstring("firstdar:");
-// 		debugdata((unsigned char *)&firstdar, 4, 1);
-// 		debugstring("curdar:");
-// 		debugdata((unsigned char *)&curdar, 4, 1);
-// 		debugstring("enddar:");
-// 		debugdata((unsigned char *)&enddar, 4, 1);
-// 		debugstring("buff:");
-// 		debugdata(buff, RECORDLEN, 1);
-// #endif
-		if(RecRomCheckFF_O(buff, RECORDLEN) > (RECORDLEN-4)){
-//		if(memcmp(buff, tempbuf, RECORDLEN) == 0){
-			if(firstdar==curdar)//ÒÑ¾­ÕÒµ½
+		// #ifdef _debug_
+		// 		debugstring("temp:");
+		// 		debugdata((unsigned char *)&temp, 4, 1);
+		// 		debugstring("firstdar:");
+		// 		debugdata((unsigned char *)&firstdar, 4, 1);
+		// 		debugstring("curdar:");
+		// 		debugdata((unsigned char *)&curdar, 4, 1);
+		// 		debugstring("enddar:");
+		// 		debugdata((unsigned char *)&enddar, 4, 1);
+		// 		debugstring("buff:");
+		// 		debugdata(buff, RECORDLEN, 1);
+		// #endif
+		if (RecRomCheckFF_O(buff, RECORDLEN) > (RECORDLEN - 4)) {
+			//		if(memcmp(buff, tempbuf, RECORDLEN) == 0){
+			if (firstdar == curdar)//ÒÑ¾­ÕÒµ½
 				break;
 			else
 			{
-				enddar=curdar;
+				enddar = curdar;
 			}
 		}
-		else{
-			if(enddar==curdar)//ÒÑ¾­ÕÒµ½,Ã»ÓÐ¿Õ¼äÁË¡£ÐèÒª²É¼¯
+		else {
+			if (enddar == curdar)//ÒÑ¾­ÕÒµ½,Ã»ÓÐ¿Õ¼äÁË¡£ÐèÒª²É¼¯
 				break;
 			else
 			{
-				firstdar=curdar+1;
+				firstdar = curdar + 1;
 			}
 		}
 	}
-	
-// #ifdef _debug_
-// 	debugstring("temp  temp:");
-// 	debugdata((unsigned char *)&temp, 4, 1);
-// #endif
+
+	// #ifdef _debug_
+	// 	debugstring("temp  temp:");
+	// 	debugdata((unsigned char *)&temp, 4, 1);
+	// #endif
 	current = temp; //ÕâÊÇµ±Ç°Ö¸Õë
-	
+
 // #ifdef _debug_
 // 	debugstring("----------------------\r\ntemp:");
 // 	debugdata((unsigned char *)&temp, 4, 1);
@@ -671,65 +671,65 @@ int Get_Record_point_O(unsigned char *headp, unsigned char mode)
 	addrF = 0;
 	firstdar = 0;
 	curdar = 0;
-	enddar = current - (FLASH1_START_O+64);
+	enddar = current - (FLASH1_START_O + 64);
 	enddar /= RECORDLEN; //µ±Ç°ÌõÊý¡£
 
-	while(1){
-		curdar = ((enddar-firstdar)/2)+firstdar;
+	while (1) {
+		curdar = ((enddar - firstdar) / 2) + firstdar;
 		temp = curdar*RECORDLEN;
-		temp += (FLASH1_START_O+64);
-		
+		temp += (FLASH1_START_O + 64);
+
 		clr_wdt();
 		flashread(temp, buff, RECORDLEN);
-// #ifdef _debug_
-// 		debugstring("temp:");
-// 		debugdata((unsigned char *)&temp, 4, 1);
-// 		debugstring("firstdar:");
-// 		debugdata((unsigned char *)&firstdar, 4, 1);
-// 		debugstring("curdar:");
-// 		debugdata((unsigned char *)&curdar, 4, 1);
-// 		debugstring("enddar:");
-// 		debugdata((unsigned char *)&enddar, 4, 1);
-// 		debugstring("buff:");
-// 		debugdata(buff, RECORDLEN, 1);
-// #endif
-		if(RecRomCheck00_O(buff, RECORDLEN) < (RECORDLEN-2)){
-//		if(memcmp(buff, pbuf0, RECORDLEN) != 0){
-			if(firstdar==curdar)//ÒÑ¾­ÕÒµ½
+		// #ifdef _debug_
+		// 		debugstring("temp:");
+		// 		debugdata((unsigned char *)&temp, 4, 1);
+		// 		debugstring("firstdar:");
+		// 		debugdata((unsigned char *)&firstdar, 4, 1);
+		// 		debugstring("curdar:");
+		// 		debugdata((unsigned char *)&curdar, 4, 1);
+		// 		debugstring("enddar:");
+		// 		debugdata((unsigned char *)&enddar, 4, 1);
+		// 		debugstring("buff:");
+		// 		debugdata(buff, RECORDLEN, 1);
+		// #endif
+		if (RecRomCheck00_O(buff, RECORDLEN) < (RECORDLEN - 2)) {
+			//		if(memcmp(buff, pbuf0, RECORDLEN) != 0){
+			if (firstdar == curdar)//ÒÑ¾­ÕÒµ½
 				break;
 			else
 			{
-				enddar=curdar;
+				enddar = curdar;
 			}
 		}
-		else{
-			if(enddar==curdar)//ÒÑ¾­ÕÒµ½,Ã»ÓÐ¿Õ¼äÁË¡£ÐèÒª²É¼¯
+		else {
+			if (enddar == curdar)//ÒÑ¾­ÕÒµ½,Ã»ÓÐ¿Õ¼äÁË¡£ÐèÒª²É¼¯
 				break;
 			else
 			{
-				firstdar=curdar+1;
+				firstdar = curdar + 1;
 			}
 		}
 
 	}
 	addrF = temp;
-	if(addrF == 0)
+	if (addrF == 0)
 		addrF = 64;	//±êÊ¶Çø³¤¶È64×Ö½Ú
 	memcpy(headp, (unsigned char*)&addrF, 4);
 
-// #ifdef _debug_
-// 	debugstring("headp point:");
-// 	debugdata(headp, 4, 1);
-// 	debugstring("current point:");
-// 	debugdata((unsigned char*)&current, 4, 1);
-// #endif
+	// #ifdef _debug_
+	// 	debugstring("headp point:");
+	// 	debugdata(headp, 4, 1);
+	// 	debugstring("current point:");
+	// 	debugdata((unsigned char*)&current, 4, 1);
+	// #endif
 	return current;
 }
 
 unsigned int cal_space_O(void)
 {
 	int headp, curp;
-	
+
 	curp = Get_Record_point_O((unsigned char*)&headp, 0x5a);
 	if (curp == -2)
 		return 0;
@@ -737,59 +737,59 @@ unsigned int cal_space_O(void)
 		return 0xff;
 }
 
-unsigned char libWriteRecord_O( unsigned char *buffer)
+unsigned char libWriteRecord_O(unsigned char *buffer)
 {
-	unsigned char i=0;
+	unsigned char i = 0;
 	unsigned char buff[RECORD_LEN_O];
-	unsigned int temp, itt=0;
+	unsigned int temp, itt = 0;
 	unsigned int RECORDLEN;
-	 MSG_LOG("do %s\r\n",__FUNCTION__);
+	MSG_LOG("do %s\r\n", __FUNCTION__);
 	RECORDLEN = getRECORD_LEEN_O();
-	
+
 	memset(buff, 0x00, RECORDLEN);
 	memcpy(buff, buffer, RECORDLEN);
-	
+
 	temp = Get_Record_point_O(buff, 0);
-	
+
 #ifdef _debug_
 	debugstring("-------------------\r\ncur:");
 
-	debugdata((unsigned char*)&temp, 4, 1);	
-	MSG_LOG("µ±Ç°Ö¸Õë=%04x\r\n",temp);
+	debugdata((unsigned char*)&temp, 4, 1);
+	MSG_LOG("µ±Ç°Ö¸Õë=%04x\r\n", temp);
 	memcpy((unsigned char *)&itt, (unsigned char*)&buff, 4);
-	MSG_LOG("Í·Ö¸Õë=%04x\r\n",itt);
+	MSG_LOG("Í·Ö¸Õë=%04x\r\n", itt);
 	flashread(temp, buff, RECORDLEN);
 	debugdata(buff, RECORDLEN, 1);
 #endif
-	
-	for(i=0; i<3; i++) 
+
+	for (i = 0; i < 3; i++)
 	{
 		flashwrite(temp, buffer, RECORDLEN);
 #ifdef _debug_
 		debugstring("-------------------\r\ncur:");
 		debugdata((unsigned char*)&temp, 4, 1);
-		debugstring("WrilibWriteRecord_OteRecord : \r\n");		
-		debugdata(buffer,RECORDLEN,1);
+		debugstring("WrilibWriteRecord_OteRecord : \r\n");
+		debugdata(buffer, RECORDLEN, 1);
 #endif
-		
+
 		flashread(temp, buff, RECORDLEN);
 #ifdef _debug_
 		debugstring("WriteRecordCheck ulofset2: \r\n");
 		debugdata(buff, RECORDLEN, 1);
 #endif
-		if(memcmp(buffer, buff, RECORDLEN) == 0) 
+		if (memcmp(buffer, buff, RECORDLEN) == 0)
 		{
-		
+
 			return 0;
 		}
-		else{//Ð´´í£¬ÕýÇøÐ´È«01£¬¸±ÇøÐ´ÊµÊý¾Ý£¬²¢Ð´µ½ÏÂÒ»Êý¾ÝµØÖ·
+		else {//Ð´´í£¬ÕýÇøÐ´È«01£¬¸±ÇøÐ´ÊµÊý¾Ý£¬²¢Ð´µ½ÏÂÒ»Êý¾ÝµØÖ·
 #ifdef _debug_
 			debugstring("write record ERROR!!!\r\n");
 			debugdata((unsigned char*)&temp, 4, 1);
 #endif
 			//			spiInit();
 			//			delayxms(2);
-			if(RecRomCheckFF_O(buff, RECORDLEN) <= (RECORDLEN-4)){//²»ÊÇÈ«FF£¬Ð´ÁË²¿·Ö£¬µ«Ã»Ð´¶Ô¡£µØÖ·ÀÛ¼Ó
+			if (RecRomCheckFF_O(buff, RECORDLEN) <= (RECORDLEN - 4)) {//²»ÊÇÈ«FF£¬Ð´ÁË²¿·Ö£¬µ«Ã»Ð´¶Ô¡£µØÖ·ÀÛ¼Ó
 #ifdef _debug_
 				debugstring("@@@@@@@@@@@@@@@@@@@@");
 				debugdata(buff, RECORDLEN, 1);
@@ -799,11 +799,11 @@ unsigned char libWriteRecord_O( unsigned char *buffer)
 				temp += RECORDLEN;
 				delayxms(2);
 			}
-			else{//»¹ÊÇÈ«FF£¬Ã»Ð´½øÈ¥£¬²»ÀÛ¼ÓµØÖ·
-				if(i>0)
+			else {//»¹ÊÇÈ«FF£¬Ã»Ð´½øÈ¥£¬²»ÀÛ¼ÓµØÖ·
+				if (i > 0)
 					i--;	//²âÊÔ²»Í£µÄÐ´£¬Èç¹ûÐ´ÁËºó»¹ÊÇÈ«FF.
 				itt++;
-				if(itt > 10){	//Ð´10´Î²»³É¹¦£¬¾ÍÍË³ö¡£
+				if (itt > 10) {	//Ð´10´Î²»³É¹¦£¬¾ÍÍË³ö¡£
 					i = 3;
 					break;
 				}
@@ -820,10 +820,10 @@ unsigned char libWriteRecord_O( unsigned char *buffer)
 	display(2, 2, "Data Flash Error!", 1);
 	memset(buffer, 0, 20);
 	memcpy(buffer, "ADDR:", 5);
-	BCD2Ascii((unsigned char *)&temp, buffer+5, 4);
-	display(6,0,(char*)buffer, 0);
-	led_on(LED_RED|LED_GREEN);
-	for(;;)
+	BCD2Ascii((unsigned char *)&temp, buffer + 5, 4);
+	display(6, 0, (char*)buffer, 0);
+	led_on(LED_RED | LED_GREEN);
+	for (;;)
 		delayxms(50);
 }
 
@@ -832,24 +832,24 @@ unsigned char libWriteRecord_O( unsigned char *buffer)
 
 unsigned char FeRC_Dlelt_O(void)
 {
-	unsigned int  headp=0;//curp=0,
-	unsigned int RECORDLEN=0;
+	unsigned int  headp = 0;//curp=0,
+	unsigned int RECORDLEN = 0;
 	unsigned int addr;
-	unsigned char disbuf[RECORD_LEN_O],disbuf_1[RECORD_LEN_O];
+	unsigned char disbuf[RECORD_LEN_O], disbuf_1[RECORD_LEN_O];
 	RECORDLEN = getRECORD_LEEN_O();
 	//curp = 
 	Get_Record_point_O((unsigned char*)&headp, 0);
-	addr=headp;
-	if(addr < FLASH2_START1_O){//µ±Ç°Çø²ÅÐ´0,ÀúÊ·Çø²»Ð´0
+	addr = headp;
+	if (addr < FLASH2_START1_O) {//µ±Ç°Çø²ÅÐ´0,ÀúÊ·Çø²»Ð´0
 		memset(disbuf, 0, RECORDLEN);
 		flashwrite(addr, disbuf, RECORDLEN);//°ÑÕâÌõÐ´³ÉÈ«0£¬
-		
+
 		delayxms(1);
-		memset(disbuf_1,0xff,RECORDLEN);
-		flashread(addr,disbuf_1,RECORDLEN);
+		memset(disbuf_1, 0xff, RECORDLEN);
+		flashread(addr, disbuf_1, RECORDLEN);
 		MSG_LOG("¶Á³öÀ´==Êý¾Ý\r\n");
-		BCD_LOG(disbuf_1,RECORDLEN,1);
-		if (memcmp(disbuf,disbuf_1,RECORDLEN)!=0)
+		BCD_LOG(disbuf_1, RECORDLEN, 1);
+		if (memcmp(disbuf, disbuf_1, RECORDLEN) != 0)
 		{
 			MSG_LOG("Ð´Ê§°Ü\r\n");
 			return 1;
@@ -864,36 +864,36 @@ int GJRec_Send_O(void)
 	unsigned int sum;
 	unsigned int curp, headp;
 	unsigned int RECORDLEN;
-		unsigned char tmpChs[10];
+	unsigned char tmpChs[10];
 	RECORDLEN = getRECORD_LEEN_O();
-		curp = Get_Record_point_O((unsigned char*)&headp, 0);
-		//Èç¹û¼ÇÂ¼»º³åÖÐÃ»ÓÐ¼ÇÂ¼¿É·¢½«·¢ËÍE2PROMÖÐÃ»ÓÐ·¢³É¹¦µÄ¼ÇÂ¼
-		if (curp > headp)
-		{
-			sum = (curp - headp) / RECORDLEN;
+	curp = Get_Record_point_O((unsigned char*)&headp, 0);
+	//Èç¹û¼ÇÂ¼»º³åÖÐÃ»ÓÐ¼ÇÂ¼¿É·¢½«·¢ËÍE2PROMÖÐÃ»ÓÐ·¢³É¹¦µÄ¼ÇÂ¼
+	if (curp > headp)
+	{
+		sum = (curp - headp) / RECORDLEN;
 #ifdef _debug_
-			debugstring("ÓÐ¼ÇÂ¼!\r\n");
+		debugstring("ÓÐ¼ÇÂ¼!\r\n");
 #endif		
-						flashread(headp, tmpChs, 4);
-			MSG_LOG("Ç°Ãæ4¸ö×Ö½Ú¸ñÊ½:");
-			BCD_LOG(tmpChs, 4, 1);
-			MSG_LOG("Ö¸Õë×´Ì¬:");
-			if (memcmp(tmpChs, "\x55\xAA", 2) != 0) {
-				sum=0;
-				
-				save_ODA_infor(FeRC_Dlelt, NULL);
-		}
-		}
-		else {
+		flashread(headp, tmpChs, 4);
+		MSG_LOG("Ç°Ãæ4¸ö×Ö½Ú¸ñÊ½:");
+		BCD_LOG(tmpChs, 4, 1);
+		MSG_LOG("Ö¸Õë×´Ì¬:");
+		if (memcmp(tmpChs, "\x55\xAA", 2) != 0) {
 			sum = 0;
-			if (curp >= (FLASH1_START_O + FLASH_RCLR_O)) {//0x3E800Èç¹û¼ÇÂ¼µØÖ·ÒÑ¾­´ïµ½ÁË40000Ìõ£¨64×Ö½Ú£©£¬ÔòÖØÖÃ´æÖüÇø£¬ÖØÐÂ¿ªÊ¼
-				//clr_Record_point();
-				lib_clr_Record_point_O();//Ô­À´ÓÃµÄÊÇ clr_Record_point();   Õâ¸öº¯Êý»á°Ñ±¸·ÝÇøµÄµØÖ·Ò²Çåµô¡£¡£
-				
-			}
-			
+
+			save_ODA_infor(FeRC_Dlelt, NULL);
 		}
-	
+	}
+	else {
+		sum = 0;
+		if (curp >= (FLASH1_START_O + FLASH_RCLR_O)) {//0x3E800Èç¹û¼ÇÂ¼µØÖ·ÒÑ¾­´ïµ½ÁË40000Ìõ£¨64×Ö½Ú£©£¬ÔòÖØÖÃ´æÖüÇø£¬ÖØÐÂ¿ªÊ¼
+			//clr_Record_point();
+			lib_clr_Record_point_O();//Ô­À´ÓÃµÄÊÇ clr_Record_point();   Õâ¸öº¯Êý»á°Ñ±¸·ÝÇøµÄµØÖ·Ò²Çåµô¡£¡£
+
+		}
+
+	}
+
 	return sum;
 }
 
@@ -901,11 +901,11 @@ int GJRec_Send_O(void)
 int save_ODA_infor(unsigned char mode, unsigned char *re_infor) {
 
 
-//	unsigned char buff[512];
-//	unsigned int addr = 0;
-	unsigned int  headp=0;
+	//	unsigned char buff[512];
+	//	unsigned int addr = 0;
+	unsigned int  headp = 0;
 	//,curp=0;
-	unsigned int RECORDLEN=0;
+	unsigned int RECORDLEN = 0;
 	int re_inforLen = 0;
 	//	int tmpI = 0;
 	//	stTlv tlvCardStyle;
@@ -918,7 +918,7 @@ int save_ODA_infor(unsigned char mode, unsigned char *re_infor) {
 	{
 	case ODA_FeRC_Init://³õÊ¼»¯
 		MSG_LOG("³õÊ¼»¯ODAÄ¿Â¼½á¹¹\n ");
-	lib_clr_Record_point_O();
+		lib_clr_Record_point_O();
 
 		break;
 	case ODA_FeRC_Write://Ð´¼ÇÂ¼
@@ -934,9 +934,9 @@ int save_ODA_infor(unsigned char mode, unsigned char *re_infor) {
 		break;
 	case ODA_FeRC_Dlelt://É¾µô
 		MSG_LOG("É¾ODA8583¼ÇÂ¼\n ");
-	
-		if (FeRC_Dlelt_O()==1) {
-		
+
+		if (FeRC_Dlelt_O() == 1) {
+
 			retCode = Ret_Err_Format;
 			break;
 		}
@@ -945,9 +945,9 @@ int save_ODA_infor(unsigned char mode, unsigned char *re_infor) {
 	case ODA_FeRC_Check://²é¿´ÊÇ·ñÓÐ¼ÇÂ¼
 		//MSG_LOG("C");
 
-		
-		if (GJRec_Send_O()!=0) {
-					MSG_LOG("ÓÐ¼ÇÂ¼\r\n");
+
+		if (GJRec_Send_O() != 0) {
+			MSG_LOG("ÓÐ¼ÇÂ¼\r\n");
 			retCode = Ret_YES;
 		}
 		else
@@ -961,8 +961,8 @@ int save_ODA_infor(unsigned char mode, unsigned char *re_infor) {
 
 		MSG_LOG("¶Á¼ÇÂ¼\r\n");
 		RECORDLEN = getRECORD_LEEN_O();
-//		curp =
-	Get_Record_point_O((unsigned char*)&headp, 0);
+		//		curp =
+		Get_Record_point_O((unsigned char*)&headp, 0);
 		flashread(headp, re_infor, RECORDLEN);
 
 		re_inforLen = GET_INT16(re_infor + 2) + 4;
@@ -973,7 +973,7 @@ int save_ODA_infor(unsigned char mode, unsigned char *re_infor) {
 		}
 		break;
 	default:
-			MSG_LOG("ÆäËü\r\n");
+		MSG_LOG("ÆäËü\r\n");
 		break;
 	}
 
