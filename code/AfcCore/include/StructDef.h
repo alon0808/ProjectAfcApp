@@ -27,44 +27,6 @@ typedef struct
 
 #define LEN_F_FLAG_VARY		7	
 
-typedef struct
-{
-	unsigned char listSector;			
-	unsigned char publishSector;		
-	unsigned char publicMoneySector;	
-	unsigned char publicMessageSector;
-	unsigned char dealRecordSector[3];	 //!@	
-	unsigned char oddMonthSector;		//月票所在扇区	
-	unsigned char dodMonthSector;	
-	
-	unsigned char PublishKEYA[6];		
-	unsigned char PublichKEYA[6];		
-	unsigned char MonthKEYA[6];		
-	unsigned char MoneyKEYA[6];
-	unsigned char RecodeKEYA[6];
-	
-	unsigned char CityCode[2];			
-	unsigned char TradeCode[2];	
-	unsigned char PublishBicker[10];
-	unsigned char PublishBickerH[4];
-	unsigned char CardCheckCode[4];			
-	unsigned char card_catalog;
-	unsigned char Zicard_catalog;
-	unsigned char MoneySectorType;	
-	
-	
-	unsigned char catalogPOST;//目录所在扇区，云平台中使用
-	
-	unsigned char PbocTac[4];	
-	unsigned char stuffNO[4];//发行区的发行日期，司机卡中用于员工编号
-	
-	unsigned char getdata_w;
-	unsigned char getdata_flag;
-	unsigned char WriteRecord_dis;
-	unsigned char ProcessFlag;
-
-	unsigned char FactorFlg[8];//发卡方标识
-}Parameter5;
 typedef struct 
 {
 	unsigned char packetStatus;			//包的状态

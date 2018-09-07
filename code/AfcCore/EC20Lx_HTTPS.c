@@ -15,6 +15,7 @@
 #include <pthread.h>
 
 #include "GprsSocket.h"
+#include "szct.h"
 
 
 #if (HTTP_SSL != 0)

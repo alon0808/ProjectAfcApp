@@ -11,8 +11,9 @@ TEMPLATE = lib
 CONFIG += staticlib
 DEFINES += _linux_
 
-INCLUDEPATH += ../../code/public
-INCLUDEPATH += ../../code/UtilProc
+INCLUDEPATH += ../../code/AfcCore/include/
+INCLUDEPATH += ../../code/public/
+INCLUDEPATH += ../../code/UtilProc/
 
 SOURCES += utilprostaic.cpp \
     ../../code/UtilProc/UtilityProc.c \

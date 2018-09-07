@@ -69,7 +69,6 @@ extern unsigned int ghisCur;//历史当前指针
 extern TCP_IP_PACKET1 tcpipPacket;
 extern Parameter3 ComSumeFile;
 extern unsigned char restore_flag;						//显示复原
-extern Parameter5 cardMessage;
 extern unsigned int g24GDisFlash;//24G卡界面刷新
 extern pFistVary_1 pFistVary;
 extern stBusVerIfo gBusVerInfo;
@@ -2726,7 +2725,7 @@ int qPbocTradeProc(IN INT32U InputMoney, OUT INT32U *Len, OUT INT8U *pOutMsg)
 
 	//	miniDispstr(6, 0, "Q7", 0);
 
-	if ((NewPriceTab.rate[cardMessage.card_catalog - 0x40] == 104) || (NewPriceTab.rate[cardMessage.card_catalog - 0x40] == 204)) {
+	if ((NewPriceTab.rate[gCardinfo.card_catalog - 0x40] == 104) || (NewPriceTab.rate[gCardinfo.card_catalog - 0x40] == 204)) {
 
 		audio(Audio_FLING_MONEY);	//请投币
 		MessageBox(1, "此卡禁止刷卡!");
@@ -3436,7 +3435,7 @@ unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff, unsigned char transResu
 	// 	}
 	uiTemp++;
 
-	qrecbuff[uiTemp++] = cardMessage.card_catalog;	//卡类
+	qrecbuff[uiTemp++] = gCardinfo.card_catalog;	//卡类
 
 	Get_SerialNumF4(qrecbuff + uiTemp);	//设备序列号4
 	uiTemp += 4;
@@ -3719,7 +3718,7 @@ unsigned char qPbocBuildRec(unsigned char *qrecbuff)
 	// 	}
 	uiTemp++;
 
-	qrecbuff[uiTemp++] = cardMessage.card_catalog;	//卡类
+	qrecbuff[uiTemp++] = gCardinfo.card_catalog;	//卡类
 
 	Get_SerialNumF4(qrecbuff + uiTemp);	//设备序列号4
 	uiTemp += 4;
@@ -3945,7 +3944,7 @@ void cpuPBOCmain(void)
 #endif
 
 
-	if ((cal_space_O() < 5) && (cardMessage.card_catalog != CARD_DATA_GATHER))
+	if ((cal_space_O() < 5) && (gCardinfo.card_catalog != CARD_DATA_GATHER))
 	{
 		cls();
 		if (gchn_eng == 'E') {
@@ -3981,12 +3980,12 @@ void cpuPBOCmain(void)
 
 	//	miniDispstr(6, 0, "Q3", 0);
 #if !defined BUS_DK_GZHUAIREN_ && !defined BUS_GZDK_ZLS_
-	cardMessage.card_catalog = CARD_qPBOC_BUS;
+	gCardinfo.card_catalog = CARD_qPBOC_BUS;
 #else
 #ifdef CARD_NORMAL_BUS
-	cardMessage.card_catalog = CARD_NORMAL_BUS;
+	gCardinfo.card_catalog = CARD_NORMAL_BUS;
 #else
-	cardMessage.card_catalog = CARD_NORMAL;
+	gCardinfo.card_catalog = CARD_NORMAL;
 #endif
 #endif
 
@@ -3996,7 +3995,7 @@ void cpuPBOCmain(void)
 
 	//	debugstring("---1---\r\n");
 
-	MSG_LOG("cpuP  BO  Cmain:%d!!\r\n", cardMessage.card_catalog);
+	MSG_LOG("cpuP  BO  Cmain:%d!!\r\n", gCardinfo.card_catalog);
 
 
 	cType = 0;

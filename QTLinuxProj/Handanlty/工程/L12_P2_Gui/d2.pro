@@ -277,3 +277,19 @@ INCLUDEPATH += $$PWD/../../../Bin
 DEPENDPATH += $$PWD/../../../Bin
 
 unix:!macx: PRE_TARGETDEPS += $$PWD/../../../Bin/libUtilPro.a
+
+unix:!macx: LIBS += -L$$PWD/../../../../code/AfcCore/lib/ -lQrcode
+
+INCLUDEPATH += $$PWD/../../../../code/AfcCore/include
+DEPENDPATH += $$PWD/../../../../code/AfcCore/include
+
+#unix:!macx: LIBS += -L$$PWD/../Bin/ -lcrypto -lssl
+
+#INCLUDEPATH += $$PWD/../Bin
+#DEPENDPATH += $$PWD/../Bin
+
+
+unix:!macx: LIBS += -L$$PWD/../Bin/ -lcurl
+
+INCLUDEPATH += $$PWD/../Bin
+DEPENDPATH += $$PWD/../Bin

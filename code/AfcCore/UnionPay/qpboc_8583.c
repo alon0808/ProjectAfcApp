@@ -148,7 +148,6 @@ extern PACKET_RCV gPacketRcvBuf[MAX_RCV_PACKET_NUM];	//接收帧缓冲
 extern volatile stGPrsDataStyle gGPRS_data_style;
 extern unsigned char gTcpIpbusy;//模块是正正在发数据，模块工作是发命令，然后回应后再发数据。在等回应时不能发其它数据。
 extern unsigned int c_serial;
-extern Parameter5 cardMessage;
 unsigned int gErrortimes[MAX_RCV_PACKET_NUM];
 
 
@@ -4614,7 +4613,7 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 	display(0, 0, "交易码:", 0);
 
 	gMCardCand = CARDSTYLE_QR_PBOC;
-	cardMessage.card_catalog = CARD_qPBOC_BUS;
+	gCardinfo.card_catalog = CARD_qPBOC_BUS;
 	s_sum1 = get_s_sum1(0);
 
 

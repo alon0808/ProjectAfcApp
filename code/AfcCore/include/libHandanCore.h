@@ -13,6 +13,7 @@ typedef struct {
 	unsigned char isGJOk;
 	unsigned char isDDOk;
 	unsigned char isGpsOk;
+	unsigned char stopflag;
 	unsigned char  lineId[LEN_LINE_ID];
 	char devId[LEN_DEV_ID];
 	int task;
@@ -21,6 +22,7 @@ typedef struct {
 	int version;
 	int modVer;
 	int basePrice;
+	int delayTime;		// delay time for user interface refresh
 
 }stUIData;
 
@@ -36,5 +38,16 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+
+typedef enum {
+	//mi_Invalid = 0,
+	mi_Yuan = 0,
+	mi_Piao,
+	mi_Jia,
+	mi_Zheng,
+	mi_Zai,
+	mi_,
+}emMessageId;
 
 #endif

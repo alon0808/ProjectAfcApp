@@ -90,10 +90,14 @@ AFC_CORE__API stUIData* GetStatusData(void) {
 	pUIData->basePrice = GET_INT32S(gDeviceParaTab.busPrice);
 
 	pUIData->isNeedUpdate = BOOL_FALSE;
+	pUIData->delayTime = 100;
+	pUIData->stopflag = gBuInfo.stop_flag;
 	if (s_message[0] != '\0') {
 		strcpy(pUIData->message, s_message);
 		s_message[0] = '\0';
 		pUIData->isNeedUpdate = BOOL_TRUE;
+
+		pUIData->delayTime = 1000;
 	}
 	if (memcmp(&pUIData->isGJOk, &s_backUIData.isGJOk, sizeof(stUIData) - LEN_MESSAGE + 2) != 0) {
 		pUIData->isNeedUpdate = BOOL_TRUE;
@@ -113,6 +117,9 @@ void MessageBox(unsigned char mode, const char *dStr)
 		return;
 	}
 	strcpy(s_message, dStr);
+	//PRINT_DEBUG("messagebox:%s\n", s_message);
+
+	//BCD_LOG(s_message, 30, 1);
 	//usleep(1000000);
 }
 

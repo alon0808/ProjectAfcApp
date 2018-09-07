@@ -16,7 +16,6 @@ extern unsigned char restore_flag;
 //有些卡需要区分男女声
 extern unsigned char nnAudioflag;
 extern unsigned char gchn_eng;//中英文标志
-extern Parameter5 cardMessage;
 extern stPricetable NewPriceTab;
 extern unsigned int startTime,endTime,nowTime,endTimeEn;
 extern unsigned char gucEndTimeFlag;
@@ -246,7 +245,7 @@ unsigned char Waittime(void)
 // 	debugdata(buff, 1, 1);
 	return buff[0];
 #elif defined BUS_DONGXIANG_	//东乡的老年卡20分钟后才能刷
-	if(cardMessage.card_catalog == CARD_OLDMAN_BUS)
+	if(gCardinfo.card_catalog == CARD_OLDMAN_BUS)
 		return 20;
 	else
 		return WAIT_TIME;
@@ -471,9 +470,9 @@ unsigned char cmpBussineesNo(void)
 #ifdef _debug_
 	debugstring("Cmp BN::");
 	debugdata(bnbuf, 2, 1);
-	debugdata(cardMessage.TradeCode, 2, 1);
+	debugdata(gCardinfo.TradeCode, 2, 1);
 #endif
-	if(memcmp(bnbuf, cardMessage.TradeCode, 2) == 0)
+	if(memcmp(bnbuf, gCardinfo.TradeCode, 2) == 0)
 		return ST_OK;
 	else
 		return ST_ERROR;
@@ -512,7 +511,7 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 	getCpuInfo(&cpuinfo);
 	if(cpuinfo.catalogPOST > 15)
 		cpuinfo.catalogPOST = 0;
-	cardMessage.listSector = cpuinfo.catalogPOST;
+	gCardinfo.listSector = cpuinfo.catalogPOST;
 	memcpy(cNo, (unsigned char *)&c_serial, 4);
 	cNo[0] ^= 0x71;
 	cNo[1] ^= 0x30;
@@ -522,20 +521,20 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 	memcpy(buffer+4, cNo, 2);//0扇区默认密钥
 #else //#ifdef BUS_Cloud_
 	memcpy(cNo, (unsigned char *)&c_serial, 4);
-	cardMessage.listSector = 0;
+	gCardinfo.listSector = 0;
 	memcpy(buffer, "\xa0\xa1\xa2\xa3\xa4\xa5", 6);//0扇区默认密钥
 #endif
 
 	flag = 0xff;
-	cardMessage.publishSector = 1;//the bussiness  card used
+	gCardinfo.publishSector = 1;//the bussiness  card used
 	for(i=0; i<2; i++){
 #ifdef _debug_
 		debugstring("card type proce:");
-		debugdata((unsigned char*)&cardMessage.listSector, 1, 1);
+		debugdata((unsigned char*)&gCardinfo.listSector, 1, 1);
 		debugdata(buffer, 6, 1);
 #endif
-		pos = ((cardMessage.listSector*4)+1);//读目录区第一块。
-		MifareAuthKey(PICC_AUTHENT1A,(unsigned char *)&c_serial,buffer,cardMessage.listSector*4);
+		pos = ((gCardinfo.listSector*4)+1);//读目录区第一块。
+		MifareAuthKey(PICC_AUTHENT1A,(unsigned char *)&c_serial,buffer,gCardinfo.listSector*4);
 #ifdef _debug_
 		debugstring("card type proce2:");
 		debugdata((unsigned char*)&pos, 1, 1);
@@ -597,33 +596,33 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 		debugstring("ListSectBUff:");
 		debugdata(buffer, 16, 1);
 #endif
-		memset((unsigned char*)&cardMessage.listSector, 0xff, 9);
+		memset((unsigned char*)&gCardinfo.listSector, 0xff, 9);
 		ii=0;
 		for(i=0;i<16;i++)
 		{
 			switch(buffer[i])
 			{
 			case LIST_AREA:
-				cardMessage.listSector=i;			
+				gCardinfo.listSector=i;			
 				break;
 			case PUBLISH_AREA:
-				cardMessage.publishSector=i;		
+				gCardinfo.publishSector=i;		
 				break;
 			case DEALRECORD_AREA:
-				cardMessage.dealRecordSector[ii]=i;	
+				gCardinfo.dealRecordSector[ii]=i;	
 				ii++;
 				break;
 			case PBULICMESSAGE_AREA:
-				cardMessage.publicMessageSector=i;	
+				gCardinfo.publicMessageSector=i;	
 				break;
 			case ODDMONTH_AREA:
-				cardMessage.oddMonthSector=i;		
+				gCardinfo.oddMonthSector=i;		
 				break;
 			case DODMONTH_AREA:
-				cardMessage.dodMonthSector=i;		
+				gCardinfo.dodMonthSector=i;		
 				break;
 			case PUBLICMONEY_AREA:
-				cardMessage.publicMoneySector=i;	
+				gCardinfo.publicMoneySector=i;	
 				break;
 			default:
 				break;
@@ -631,30 +630,30 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 		}
 	}
 
-	memcpy(cardMessage.PublishKEYA, cNo, 4);
-	memcpy(cardMessage.PublishKEYA+4, cNo, 2);
-	memcpy(cardMessage.PublichKEYA, cNo, 4);
-	memcpy(cardMessage.PublichKEYA+4, cNo, 2);
-	memcpy(cardMessage.MoneyKEYA, cNo, 4);
-	memcpy(cardMessage.MoneyKEYA+4, cNo, 2);
-	memcpy(cardMessage.MonthKEYA, cNo, 4);
-	memcpy(cardMessage.MonthKEYA+4, cNo, 2);
-	memcpy(cardMessage.RecodeKEYA, cNo, 4);
-	memcpy(cardMessage.RecodeKEYA+4, cNo, 2);
+	memcpy(gCardinfo.PublishKEYA, cNo, 4);
+	memcpy(gCardinfo.PublishKEYA+4, cNo, 2);
+	memcpy(gCardinfo.PublichKEYA, cNo, 4);
+	memcpy(gCardinfo.PublichKEYA+4, cNo, 2);
+	memcpy(gCardinfo.MoneyKEYA, cNo, 4);
+	memcpy(gCardinfo.MoneyKEYA+4, cNo, 2);
+	memcpy(gCardinfo.MonthKEYA, cNo, 4);
+	memcpy(gCardinfo.MonthKEYA+4, cNo, 2);
+	memcpy(gCardinfo.RecodeKEYA, cNo, 4);
+	memcpy(gCardinfo.RecodeKEYA+4, cNo, 2);
 	
 #ifdef _debug_
 	debugdata((unsigned char *)&c_serial, 4, 1);
-	debugdata((unsigned char *)&cardMessage.publishSector, 1, 1);
-	debugdata(cardMessage.PublishKEYA, 6, 1);
+	debugdata((unsigned char *)&gCardinfo.publishSector, 1, 1);
+	debugdata(gCardinfo.PublishKEYA, 6, 1);
 #endif
-	if (MifareAuthKey(PICC_AUTHENT1A,(unsigned char *)&c_serial,cardMessage.PublishKEYA,cardMessage.publishSector*4)==0)
+	if (MifareAuthKey(PICC_AUTHENT1A,(unsigned char *)&c_serial,gCardinfo.PublishKEYA,gCardinfo.publishSector*4)==0)
 	{
 		debugstring("MifareAuthKey error\r\n ");
 		return ST_ERROR; 
 	}
 //	debugstring("E ");
 	
-	if(MifareRead(cardMessage.publishSector*4,buffer)==0)
+	if(MifareRead(gCardinfo.publishSector*4,buffer)==0)
 	{
 		debugstring("read 4 error\r\n ");
 		return ST_ERROR;
@@ -671,35 +670,35 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 	
 	gMCardCand = CARDSTYLE_NORM1;
 	pos=0;
-	memcpy(cardMessage.CityCode, buffer+pos, CITY_CODE_LEN);			//城市代码	2
+	memcpy(gCardinfo.CityCode, buffer+pos, CITY_CODE_LEN);			//城市代码	2
 	pos+=CITY_CODE_LEN;
-	memcpy(cardMessage.TradeCode, buffer+pos, TRADE_CODE_LEN);			//行业代码	2
+	memcpy(gCardinfo.TradeCode, buffer+pos, TRADE_CODE_LEN);			//行业代码	2
 	pos+=TRADE_CODE_LEN;	
-	memcpy((unsigned char *)cardMessage.PublishBicker, buffer+pos, PUBLISH_BICKER_LEN);	//卡流水号	4	
-	memcpy(cardMessage.CardCheckCode, buffer+8, CARD_CHECH_CODE_LEN);	//mac码		4
-	cardMessage.card_catalog=buffer[13];								//卡类		1
+	memcpy((unsigned char *)gCardinfo.PublishBicker, buffer+pos, PUBLISH_BICKER_LEN);	//卡流水号	4	
+	memcpy(gCardinfo.CardCheckCode, buffer+8, CARD_CHECH_CODE_LEN);	//mac码		4
+	gCardinfo.card_catalog=buffer[13];								//卡类		1
 #ifdef New_Times_Card__
-	cardMessage.Zicard_catalog = buffer[14];
+	gCardinfo.Zicard_catalog = buffer[14];
 #else
-	cardMessage.Zicard_catalog = 0;
+	gCardinfo.Zicard_catalog = 0;
 #endif
 	
-	MSG_LOG("cardMessage.card_catalog=%x\r\n",cardMessage.card_catalog);
+	MSG_LOG("gCardinfo.card_catalog=%x\r\n",gCardinfo.card_catalog);
 	MSG_LOG("mode=%x\r\n",mode);
-	if(cardMessage.card_catalog ==CARD_WHITE_BUS)
+	if(gCardinfo.card_catalog ==CARD_WHITE_BUS)
 	{
 		return CARD_WHITE_BUS;
 	}
 	
-	if(cardMessage.card_catalog>97)
+	if(gCardinfo.card_catalog>97)
 		return CARD_WHITE_BUS;
 #ifdef BUS_Cloud_
-	if((mode == 0xA1)&&(cardMessage.card_catalog < 0x40)){//读到卡类就返回, 当控制卡返回
+	if((mode == 0xA1)&&(gCardinfo.card_catalog < 0x40)){//读到卡类就返回, 当控制卡返回
 		return CONTROL_CARD;
 	}
 
-	if(cardMessage.card_catalog == CARD_Business){
-		if(MifareRead(cardMessage.publishSector*4+1,buffer)==0)//取目录区所在位置
+	if(gCardinfo.card_catalog == CARD_Business){
+		if(MifareRead(gCardinfo.publishSector*4+1,buffer)==0)//取目录区所在位置
 		{
 			return ST_ERROR;
 		}
@@ -714,18 +713,18 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 		if(memcmp((unsigned char*)&crc32, buffer+8, 4) != 0){
 			debugstring("CRCerror:");
 			debugdata((unsigned char*)&crc32, 4, 1);
-			cardMessage.catalogPOST = 0;
+			gCardinfo.catalogPOST = 0;
 			return ST_ERROR;
 		}
 // 		if(MiBlockInvalid(1,15,buffer)==ST_ERROR) 
 // 		{
-// 			cardMessage.catalogPOST = 0;
+// 			gCardinfo.catalogPOST = 0;
 // 			return ST_ERROR;
 // 		}
-		cardMessage.catalogPOST = buffer[0];//写目录
+		gCardinfo.catalogPOST = buffer[0];//写目录
 		return CONTROL_CARD;
 	}
-	if(cardMessage.card_catalog == CARD_FENDUAN_Line){
+	if(gCardinfo.card_catalog == CARD_FENDUAN_Line){
 		return CONTROL_CARD;
 	}
 #endif //#ifdef BUS_Cloud_
@@ -733,7 +732,7 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 
 #ifdef _debug_
 	debugstring("card_catalog:");
-	debugdata((unsigned char*)&cardMessage.card_catalog,1,1);
+	debugdata((unsigned char*)&gCardinfo.card_catalog,1,1);
 #endif	
 
 
@@ -754,7 +753,7 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 		return CARD_NO_SYSTEM;
 	}
 
-	if(MifareRead(cardMessage.publishSector*4+1, buffer)==0)//发行日期 有效日期 启用日期 卡押金	保留	校验
+	if(MifareRead(gCardinfo.publishSector*4+1, buffer)==0)//发行日期 有效日期 启用日期 卡押金	保留	校验
 	{
 		return ST_ERROR;
 	}
@@ -778,16 +777,16 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 	nowTime = 0;
 	endTimeEn = 0;
 
-	memcpy(cardMessage.stuffNO, buffer, 4);//员工卡的卡号,主要是司机卡使用
+	memcpy(gCardinfo.stuffNO, buffer, 4);//员工卡的卡号,主要是司机卡使用
 
 	nnAudioflag = buffer[14];//性别
 	
 #ifdef BUS_SHAODONG_	//绍东原来没有年审的卡要加入年审。给了他们后，此段代码可以不用。
 	if((buffer[4] == 0x20)&&(buffer[5] == 0x20)){
-		if((cardMessage.card_catalog != CARD_NORMAL_BUS)&&
-			(cardMessage.card_catalog != CARD_SD_YIXIN)&&
-			(cardMessage.card_catalog != CARD_TELECOM_USER)&&
-			(cardMessage.card_catalog != CARD_TELECOM_BUS)){
+		if((gCardinfo.card_catalog != CARD_NORMAL_BUS)&&
+			(gCardinfo.card_catalog != CARD_SD_YIXIN)&&
+			(gCardinfo.card_catalog != CARD_TELECOM_USER)&&
+			(gCardinfo.card_catalog != CARD_TELECOM_BUS)){
 			memcpy(buffer+4, "\x20\x12\x09\x01", 4);
 		}
 	}
@@ -828,12 +827,12 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 	RevertTurn(4, (unsigned char*)&endTimeEn);
 
 #ifdef _debug_
-	debugstring("cardMessage.card_catalog:");
-	debugdata((unsigned char*)&cardMessage.card_catalog, 1, 1);
+	debugstring("gCardinfo.card_catalog:");
+	debugdata((unsigned char*)&gCardinfo.card_catalog, 1, 1);
 #endif
 
 #ifdef BUS_PRO_JSB
-	if(cardMessage.card_catalog < 0x20){
+	if(gCardinfo.card_catalog < 0x20){
 #endif
 // 		if(isSLZR == 0xDA){
 // 			if(getMiKey_SLZR() == ST_ERROR){
@@ -848,7 +847,7 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 //		}
 #ifdef BUS_PRO_JSB
 	}
-	else if((cardMessage.card_catalog>=61)&&(cardMessage.card_catalog<74))
+	else if((gCardinfo.card_catalog>=61)&&(gCardinfo.card_catalog<74))
 	{
 #if defined BUS_JIUJIANG_ || defined BUS_HANDAN_
 		if(getMiKey()==ST_ERROR)	//九江，现在的控制卡也全部取密钥
@@ -856,7 +855,7 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 			return ST_ERROR;
 		}
 #endif
-		if(IsInBlackList(cardMessage.PublishBicker) < FLASH_BLK_END){
+		if(IsInBlackList(gCardinfo.PublishBicker) < FLASH_BLK_END){
 			return CARD_BLACK_PRO;
 		}
 // 		return	CONTROL_CARD;
@@ -869,7 +868,7 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 		gucRestorFlag = 0;
 
 #ifdef BUS_Cloud_
-		if(cardMessage.card_catalog == CARD_KEY_BUS)
+		if(gCardinfo.card_catalog == CARD_KEY_BUS)
 			return ST_OK;
 #endif
 
@@ -878,15 +877,15 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 		}
 
 #ifdef Card_typeM_Min_is0_
-		if(IsInBlackList(cardMessage.PublishBicker) < FLASH_BLK_END){
+		if(IsInBlackList(gCardinfo.PublishBicker) < FLASH_BLK_END){
 			return CARD_BLACK_PRO;
 		}
 
-		if((cardMessage.card_catalog>=61)&&(cardMessage.card_catalog<74))
+		if((gCardinfo.card_catalog>=61)&&(gCardinfo.card_catalog<74))
 		{
 			return	CONTROL_CARD;
 		}
-		else if(cardMessage.card_catalog >= 0x20)
+		else if(gCardinfo.card_catalog >= 0x20)
 		{
 			return CARD_NO_SYSTEM;
 		}
@@ -914,21 +913,21 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 		}
 		else if(pos==ST_ERROR) {
 #ifdef BUS_PRO_JSB
-			if(cardMessage.card_catalog<0x20){//用户卡返回错误，不是用户卡不返回
+			if(gCardinfo.card_catalog<0x20){//用户卡返回错误，不是用户卡不返回
 				return ST_ERROR;
 			}
 #endif
 		}
 #ifdef BUS_PRO_JSB
-		if(cardMessage.card_catalog<0x20)
+		if(gCardinfo.card_catalog<0x20)
 		{
-			if(IsInBlackList(cardMessage.PublishBicker) < FLASH_BLK_END){
+			if(IsInBlackList(gCardinfo.PublishBicker) < FLASH_BLK_END){
 				return CARD_BLACK_PRO;
 			}
-			if(NewPriceTab.rate[cardMessage.card_catalog] == 0){//折扣为0，不能消费
+			if(NewPriceTab.rate[gCardinfo.card_catalog] == 0){//折扣为0，不能消费
 				return ST_OK;
 			}
-			if(cardMessage.card_catalog!=CARD_NORMAL)
+			if(gCardinfo.card_catalog!=CARD_NORMAL)
 			{
 #ifdef BUS_JIUJIANG_
 				if(endTime<nowTime)
@@ -939,14 +938,14 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 					return CARD_NO_TIME;
 				} 
 			}
-			if(NewPriceTab.rate[cardMessage.card_catalog]==202)//免费消费
+			if(NewPriceTab.rate[gCardinfo.card_catalog]==202)//免费消费
 			{
 				return MONTH_CARD;	
 			}
-			else if((NewPriceTab.rate[cardMessage.card_catalog] == 104)||(NewPriceTab.rate[cardMessage.card_catalog] == 204)){
+			else if((NewPriceTab.rate[gCardinfo.card_catalog] == 104)||(NewPriceTab.rate[gCardinfo.card_catalog] == 204)){
 				return CARD_forbid;//此卡被禁止使用
 			}
-			if(cardMessage.oddMonthSector!=0xff)//月票
+			if(gCardinfo.oddMonthSector!=0xff)//月票
 			{
 				return MONTH_CARD;		   
 			}
@@ -959,12 +958,12 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 			return	CONTROL_CARD;
 		}
 #elif defined Card_typeM_Min_is0_ //这里有鄂州、宝鸡
-		if(cardMessage.card_catalog<0x20)
+		if(gCardinfo.card_catalog<0x20)
 		{
 #ifdef BUS_EZOU_	//普通卡，学生卡不年审
-			if((cardMessage.card_catalog!=CARD_NORMAL_BUS)&&(cardMessage.card_catalog!=CARD_STUDENT_BUS))//
+			if((gCardinfo.card_catalog!=CARD_NORMAL_BUS)&&(gCardinfo.card_catalog!=CARD_STUDENT_BUS))//
 #else
-			if(cardMessage.card_catalog!=CARD_NORMAL_BUS)//
+			if(gCardinfo.card_catalog!=CARD_NORMAL_BUS)//
 #endif
 			{
 				// 如果读出卡内时间或POS机时间错误，则不判断有效期 2010.03.11
@@ -974,24 +973,24 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 				}
 			}
 
-			if(cardMessage.card_catalog == CARD_OLDMAN_BUS){//老年卡，属于年卡
+			if(gCardinfo.card_catalog == CARD_OLDMAN_BUS){//老年卡，属于年卡
 				return CARD_YEAR;//年票
 			}
 
-			if(NewPriceTab.rate[cardMessage.card_catalog]==202)//免费消费
+			if(NewPriceTab.rate[gCardinfo.card_catalog]==202)//免费消费
 			{
 				return MONTH_CARD;	
 			}
-			else if(NewPriceTab.rate[cardMessage.card_catalog] == 203){//不能使用次数
+			else if(NewPriceTab.rate[gCardinfo.card_catalog] == 203){//不能使用次数
 				return CARD_MONEY;			//钱包
 			}
-			else if(NewPriceTab.rate[cardMessage.card_catalog]==204){//年票
+			else if(NewPriceTab.rate[gCardinfo.card_catalog]==204){//年票
 				return CARD_YEAR;
 			}
-			else if(NewPriceTab.rate[cardMessage.card_catalog] == 207){//都不能使用
+			else if(NewPriceTab.rate[gCardinfo.card_catalog] == 207){//都不能使用
 				return CARD_forbid;
 			}
-			if(cardMessage.oddMonthSector!=0xff)//月票
+			if(gCardinfo.oddMonthSector!=0xff)//月票
 			{
 				return MONTH_CARD;		   
 			}
@@ -1004,22 +1003,22 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 			return INVALID_CARD;
 #else  //#ifdef BUS_PRO_JSB
 
-		if(SWITCH_BLK(cardMessage.PublishBicker,16)==CARD_BLACK_PRO)   //黑名单转成BCD码
+		if(SWITCH_BLK(gCardinfo.PublishBicker,16)==CARD_BLACK_PRO)   //黑名单转成BCD码
 		{
 			return CARD_BLACK_PRO;
 		}
 
 
-		if(cardMessage.card_catalog>=0x40)
+		if(gCardinfo.card_catalog>=0x40)
 		{
 #ifdef BUS_YICHUN	//宜春用 CARD_COUPON_BUS 作为员工司机卡
-			if(cardMessage.card_catalog == CARD_COUPON_BUS){
+			if(gCardinfo.card_catalog == CARD_COUPON_BUS){
 				if(DriverCardDeal() == ST_OK)
 					return ST_OK;//员工司机卡签到，签退正常。
 			}//不能签到，签退。按季票（折扣率扣）
 #endif
 			gucEndTimeFlag = 0;
-			if(cardMessage.card_catalog!=CARD_NORMAL)//
+			if(gCardinfo.card_catalog!=CARD_NORMAL)//
 			{
 				if((startTime>nowTime)||(endTime<nowTime)||(startTime>endTime)){
 					return CARD_NO_TIME;
@@ -1028,25 +1027,25 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 					gucEndTimeFlag = 1;
 				}
 			}
-			if((NewPriceTab.rate[cardMessage.card_catalog-0x40] == 103)||(NewPriceTab.rate[cardMessage.card_catalog-0x40] == 203)){
+			if((NewPriceTab.rate[gCardinfo.card_catalog-0x40] == 103)||(NewPriceTab.rate[gCardinfo.card_catalog-0x40] == 203)){
 				return CARD_MONEY; //此卡不能扣次，只能扣钱
 			}
-			if((NewPriceTab.rate[cardMessage.card_catalog-0x40] == 104)||(NewPriceTab.rate[cardMessage.card_catalog-0x40] == 204)){
+			if((NewPriceTab.rate[gCardinfo.card_catalog-0x40] == 104)||(NewPriceTab.rate[gCardinfo.card_catalog-0x40] == 204)){
 				return CARD_forbid;//此卡被禁止使用
 			}
-			if(NewPriceTab.rate[cardMessage.card_catalog-0x40]<=100)
+			if(NewPriceTab.rate[gCardinfo.card_catalog-0x40]<=100)
 			{
 				return CARD_MONEY;				//现金卡
 			}
-			if((NewPriceTab.rate[cardMessage.card_catalog-0x40]==101)||(NewPriceTab.rate[cardMessage.card_catalog-0x40]==201))
+			if((NewPriceTab.rate[gCardinfo.card_catalog-0x40]==101)||(NewPriceTab.rate[gCardinfo.card_catalog-0x40]==201))
 			{
 				return MONTH_CARD;//扣次后不需要扣钱包附加费，纯月票卡；101要加一次附加费，110不加附加费，111加一次，112加两次，依次到119.
 			}
-			if((NewPriceTab.rate[cardMessage.card_catalog-0x40]>=110) && (NewPriceTab.rate[cardMessage.card_catalog-0x40]<=119))
+			if((NewPriceTab.rate[gCardinfo.card_catalog-0x40]>=110) && (NewPriceTab.rate[gCardinfo.card_catalog-0x40]<=119))
 			{
 				return MONTH_CARD;//扣次后不需要扣附加费，纯月票卡；101要加一次附加费，110不加附加费，111加一次，112加两次，依次到119.
 			}
-			if((NewPriceTab.rate[cardMessage.card_catalog-0x40] ==102)||(NewPriceTab.rate[cardMessage.card_catalog-0x40] == 202))	
+			if((NewPriceTab.rate[gCardinfo.card_catalog-0x40] ==102)||(NewPriceTab.rate[gCardinfo.card_catalog-0x40] == 202))	
 			{
 				return CARD_STUFF_BUS;//员工卡
 			}

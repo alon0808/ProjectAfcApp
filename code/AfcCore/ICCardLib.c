@@ -2559,6 +2559,14 @@ int getCardtypeHANDAN(char *cardD, unsigned char type)
 	{
 		strcpy(cardD, "员工手机卡");
 	}
+	else if (type == CARD_LIANGTONG_STUF)
+	{
+		strcpy(cardD, "员工手机卡");
+	}
+	else if (type == CARD_qPBOC_BUS)
+	{
+		strcpy(cardD, "银行卡");
+	}
 	else {
 		sprintf(cardD, "%d号卡", type);
 		//cardD[0] = 0;
@@ -2604,6 +2612,7 @@ void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsign
 {
 	unsigned char disp[50];
 	char buffer1[20];
+	int len = 0;
 
 
 	led_on(LED_GREEN);
@@ -2627,14 +2636,15 @@ void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsign
 
 	if (dmode == ID_REC_TOLL)	//扣费
 	{
-		sprintf(buffer1, "余额:%d.%02d元", remM / 100, remM % 100);
-		display(2, 1, buffer1, 0);
-		sprintf(buffer1, "扣款:%d.%02d元", pucM / 100, pucM % 100);
+		len += sprintf(buffer1 + len, "余额:%d.%02d元\n", remM / 100, remM % 100);
+		//display(2, 1, buffer1, 0);
+		len += sprintf(buffer1 + len, "扣款:%d.%02d元\n", pucM / 100, pucM % 100);
 		display(4, 1, buffer1, 0);
 
-		strcpy(buffer1, "卡类:");
-		if (getCardtype(buffer1 + 5, gCardinfo.card_catalog) == ST_ERROR) {
-			sprintf(buffer1 + 5, "%d", gCardinfo.card_catalog);
+		//strcpy(buffer1, "卡类:");
+		len += sprintf(buffer1 + len, "卡类:");
+		if (getCardtype(buffer1 + len, gCardinfo.card_catalog) == ST_ERROR) {
+			sprintf(buffer1 + len, "%d", gCardinfo.card_catalog);
 		}
 		display(0, 1, buffer1, 0);
 

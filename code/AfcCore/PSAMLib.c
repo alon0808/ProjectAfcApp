@@ -549,6 +549,7 @@ void cls(void)
 
 void display(unsigned char x, unsigned char y, const char *str, unsigned char mode)
 {
+	PRINT_DEBUG("display: %s\n", str);
 	MessageBox(0, str);
 	//#warning "display need code";
 	//printf("%s ", str);

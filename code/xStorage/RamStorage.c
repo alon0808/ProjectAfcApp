@@ -29,7 +29,6 @@ unsigned int nowTime = 0;
 unsigned int startTime = 0;
 unsigned int endTimeEn = 0;
 stGPrsDataStyle gGPRS_data_style;
-Parameter5 cardMessage;
 unsigned char gprsErrorTimes = 0;
 Parameter3 ComSumeFile;
 unsigned char isNetOK[MAX_RCV_PACKET_NUM];//两路链接是否成功;
@@ -155,6 +154,8 @@ void flashwrite(unsigned int addr, unsigned char *writebuf, unsigned int length)
 void dis_messgebox(char *istr, int code, unsigned char row) {
 	UNUSED_VAR(code);
 	UNUSED_VAR(row);
+	PRINT_DEBUG("dis_messgebox: %s\n", istr);
+	
 	MessageBox((unsigned char)0, (const char *)istr);
 }
 

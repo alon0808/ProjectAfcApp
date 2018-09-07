@@ -9,7 +9,7 @@ QMAKE_CC = arm-linux-gnueabi-g++
 TARGET = HandanCore
 TEMPLATE = lib
 DEFINES += _linux_
-QMAKE_CFLAGS = -fvisibility=hidden -Dhi3536 -Wall -std=c++0x -D_THREAD_SAFE -MMD  -Wno-strict-aliasing -fpermissive
+QMAKE_CFLAGS = -fvisibility=hidden -Dhi3536 -Wall -std=c++0x -D_THREAD_SAFE -MMD  -Wno-strict-aliasing -fpermissive #-fexec-charset=GB2312
 QMAKE_CXXFLAGS = $$QMAKE_CFLAGS
 
 INCLUDEPATH += ../../code/public
@@ -64,7 +64,10 @@ SOURCES += handancore.cpp \
     ../../code/AfcCore/Crypto/CRC.C \
     ../../code/debug/debugOut.c \
     ../../code/xStorage/xStorage.c \
-    ../../code/xStorage/RamStorage.c
+    ../../code/xStorage/RamStorage.c \
+    ../../code/AfcCore/QRCodeMain.c \
+    ../../code/AfcCore/gps.c \
+    ../../code/xStorage/FileManage.c
 
 HEADERS += handancore.h\
         handancore_global.h \
@@ -200,7 +203,12 @@ HEADERS += handancore.h\
     ../../code/AfcCore/Crypto/RSAREF.H \
     ../../code/AfcCore/Crypto/RSALib.h \
     ../../code/AfcCore/Crypto/RSA.h \
-    ../../code/xStorage/xStorage.h
+    ../../code/xStorage/xStorage.h \
+    ../../code/AfcCore/lib/QRScan.h \
+    ../../code/AfcCore/QRCodeMain.h \
+    ../../code/AfcCore/gps.h \
+    ../../code/xStorage/FileManage.h \
+    ../../code/AfcCore/EC20Lx_HTTPS.h
 
 unix {
     target.path = /usr/lib
@@ -211,12 +219,12 @@ DISTFILES += \
     ../../code/AfcCore/Makefile.bak \
     ../../code/AfcCore/Makefile
 
-unix:!macx: LIBS += -L$$PWD/../../code/AfcCore/lib/ -lcurl
+#unix:!macx: LIBS += -L$$PWD/../../code/AfcCore/lib/ -lcurl
 
-INCLUDEPATH += $$PWD/../../code/AfcCore/include
-DEPENDPATH += $$PWD/../../code/AfcCore/include
+#INCLUDEPATH += $$PWD/../../code/AfcCore/include
+#DEPENDPATH += $$PWD/../../code/AfcCore/include
 
-unix:!macx: PRE_TARGETDEPS += $$PWD/../../code/AfcCore/lib/libcurl.a
+#unix:!macx: PRE_TARGETDEPS += $$PWD/../../code/AfcCore/lib/libcurl.a
 
 unix:!macx: LIBS += -L$$PWD/../Bin/ -lUtilPro
 
@@ -224,3 +232,18 @@ INCLUDEPATH += $$PWD/../Bin
 DEPENDPATH += $$PWD/../Bin
 
 unix:!macx: PRE_TARGETDEPS += $$PWD/../Bin/libUtilPro.a
+
+unix:!macx: LIBS += -L$$PWD/../../code/AfcCore/lib/ -lQrcode
+
+INCLUDEPATH += $$PWD/../../code/AfcCore/include
+DEPENDPATH += $$PWD/../../code/AfcCore/include
+
+unix:!macx: LIBS += -L$$PWD/../Bin/ -lcrypto -lssl
+
+INCLUDEPATH += $$PWD/../Bin
+DEPENDPATH += $$PWD/../Bin
+
+unix:!macx: LIBS += -L$$PWD/../Bin/ -lcurl
+
+INCLUDEPATH += $$PWD/../Bin
+DEPENDPATH += $$PWD/../Bin

@@ -43,8 +43,9 @@ public:
 
     };
 private:
-	int m_freshTimes;
-	int m_timerTrige;
+	int m_freshTimes;	// refresh times when ui update
+	int m_timerTrige;	// timer is 100ms, so it is for add to 1s
+	int m_uiDelayTime;	// ui delay time
 signals:
     void signal_button_menu();
     void signal_button_exit();

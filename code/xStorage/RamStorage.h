@@ -4,6 +4,7 @@
 extern unsigned char DriveCardNo[4];
 extern unsigned int g24GDisFlash;//24G¿¨½çÃæË¢ĞÂ
 extern int gOverTimes;
+extern stCardInfo gCardinfo;
 
 #ifdef __cplusplus
 extern "C" {

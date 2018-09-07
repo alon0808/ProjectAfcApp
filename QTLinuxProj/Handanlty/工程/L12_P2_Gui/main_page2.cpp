@@ -13,6 +13,7 @@
 #include "UtilityProc.h"
 
 #include <string.h>
+#include <QTextCodec>
 
 #define TIME_INTERVAL	100
 
@@ -578,6 +579,7 @@ void CMainPage2::left_right_init1()
 	//m_textBrown_slzr->show();
 	m_freshTimes = 0;
 	m_timerTrige = 0;
+	m_uiDelayTime = 0;
 	//时间定时器
 	m_timer = new QTimer(this);
 	m_timer->setInterval(TIME_INTERVAL);
@@ -1648,6 +1650,48 @@ void CMainPage2::slot_init_time_out()
 	show_init_tips(false);
 }
 
+//const wchar_t HanZi[100] = "元票价";
+
+QString GetMeesageText(char *pHandzi, int len) {
+	//char *retValue = "\0";
+	QString retValue = "";
+	int i;
+	char item;
+	//int maxLen = strlen(HanZi);
+
+	for (i = 0; i < len; ++i) {
+		item = pHandzi[i];
+		switch (item)
+		{
+		case mi_Yuan:
+			retValue += "元";
+			break;
+		case mi_Piao:
+			retValue += "票";
+			break;
+		case mi_Jia:
+			retValue += "价";
+			break;
+		default:
+			break;
+		}
+	}
+	qDebug() << retValue;
+	return retValue;
+}
+
+void gb2312ToUtf8(std::string& strGb2312)
+{
+
+	QTextCodec* utf8Codec = QTextCodec::codecForName("utf-8");
+	QTextCodec* gb2312Codec = QTextCodec::codecForName("gb2312");
+
+	QString strUnicode = gb2312Codec->toUnicode(strGb2312.c_str());
+	QByteArray ByteUtf8 = utf8Codec->fromUnicode(strUnicode);
+
+	strGb2312 = ByteUtf8.data();
+}
+
 void CMainPage2::slot_1s_timer()
 {
 	QString strCurrentTime = QDateTime::currentDateTime().toString("hh:mm:ss");//yyyy-MM-dd
@@ -1675,18 +1719,34 @@ void CMainPage2::slot_1s_timer()
 		}
 	}
 
-	//if (m_seconds > 2 || m_seconds < 0) 
+	if (m_uiDelayTime < TIME_INTERVAL)
 	{
 		stUIData *uiData = GetStatusData();
-
+		m_uiDelayTime = uiData->delayTime;
 		if (uiData->isNeedUpdate != BOOL_FALSE) {
 			QString msgText = "邯郸公交 ";
 			char buffer[500];
 			int pos = 0;
 			if (uiData->message[0] != '\0') {
+				std::string tmpStr;
+#if 0
+				uiData->message[0] = 2;
+				uiData->message[1] = 1;
+				uiData->message[2] = 2;
+				//uiData->message[3] = 2;
 				msgText = "<br/><font size=\"10\" color=\"red\">";
-				msgText += uiData->message;
+				msgText += GetMeesageText(uiData->message + 1, uiData->message[0]);
 				msgText += "</font>";
+				//printf("mainpage2:%s\n", uiData->message);
+				qDebug() << msgText;
+#else
+				msgText = "<font size=\"10\" color=\"red\">";
+				tmpStr = uiData->message;
+				gb2312ToUtf8(tmpStr);
+				msgText += QString::fromStdString(tmpStr);
+				msgText += "</font>";
+				//qDebug() << msgText;
+#endif
 				uiData->message[0] = '\0';
 			}
 			else {
@@ -1706,7 +1766,11 @@ void CMainPage2::slot_1s_timer()
 				msgText += (buffer);
 				msgText += ("<br/>");
 				// new line
-				sprintf(buffer, "<font size=\"10\" color=\"red\">&nbsp;&nbsp;&nbsp;&nbsp;%d.%02d元   </font>", uiData->basePrice / 100, uiData->basePrice % 100);
+				if (uiData->stopflag == BOOL_FALSE) {
+					sprintf(buffer, "<font size=\"10\" color=\"red\">&nbsp;&nbsp;&nbsp;&nbsp;%d.%02d元   </font>", uiData->basePrice / 100, uiData->basePrice % 100);
+				else {
+					sprintf(buffer, "<font size=\"10\" color=\"red\">&nbsp;&nbsp;&nbsp;&nbsp;暂停打卡</font>");
+				}
 				msgText += (buffer);
 				msgText += ("<br/>");
 				// 第二行
@@ -1727,260 +1791,261 @@ void CMainPage2::slot_1s_timer()
 
 				sprintf(buffer, " %02X-%02X", uiData->task, uiData->linkStatus);
 				msgText += buffer;
+				}
+
+				m_textBrown_slzr->setHtml(msgText);
+				//m_seconds = 0;
+				++m_freshTimes;
+			}
+		}
+		m_uiDelayTime -= TIME_INTERVAL;
+	}
+
+	void CMainPage2::slot_dynamic_text_event(const CDynTextParam &_param)
+	{
+		QString str_sheet = "";
+		switch (_param.m_control_id)
+		{
+		case kEnumPushbuttonStationName:
+		{
+			switch (_param.m_action)
+			{
+			case CDynamicText::kEnumAlignmentLeft: //文字左对齐
+#if 0
+			case CDynamicText::kEnumAlignmentRight://文字居中对齐
+			{
+				m_label_station2->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+			}break;
+#endif
+			case CDynamicText::kEnumAlignmentRight://文字居中对齐
+			{
+				m_label_station2->setAlignment(Qt::AlignCenter);
+			}break;
+
+			case CDynamicText::kEnumUpdateText:    //更新文本显示
+			{
+				CEventData eventData;
+				eventData.m_str_data = _param.m_control_show_text;
+				slot_head_widget_notify(kEnumMainPageCurrentStationName, 0, &eventData);         //当前站名
+
+			}break;
+			}
+		}break;
+		case kEnumPushbuttonStationName1:
+		{
+			switch (_param.m_action)
+			{
+			case CDynamicText::kEnumAlignmentLeft: //文字左对齐
+			case CDynamicText::kEnumAlignmentRight://文字居中对齐
+			{
+				m_label_arrive1->setAlignment(Qt::AlignCenter);
+			}break;
+
+			case CDynamicText::kEnumUpdateText:    //更新文本显示
+			{
+				CEventData eventData;
+				eventData.m_str_data = _param.m_control_show_text;
+				slot_head_widget_notify(kEnumMainPageCurrentStationName1, 0, &eventData);         //当前站名
+
+			}break;
+			}
+		}break;
+		case kEnumLabelMessageShow:
+		{
+
+			switch (_param.m_action)
+			{
+			case CDynamicText::kEnumAlignmentLeft: //文字左对齐
+			case CDynamicText::kEnumAlignmentRight://文字居中对齐
+			{
+				m_label_scroll_text->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+			}break;
+#if 0
+			case CDynamicText::kEnumAlignmentRight://文字居中对齐
+			{
+				m_label_scroll_text->setAlignment(Qt::AlignCenter);
+			}break;
+#endif
+			case CDynamicText::kEnumUpdateText:    //更新文本显示
+			{
+				CEventData eventData;
+				eventData.m_str_data = _param.m_control_show_text;
+				slot_head_widget_notify(kEnumMainPageCurrentMessage, 0, &eventData);
+
+			}break;
 			}
 
-			m_textBrown_slzr->setHtml(msgText);
-			//m_seconds = 0;
-			++m_freshTimes;
+		}break;
 		}
 	}
-}
 
-void CMainPage2::slot_dynamic_text_event(const CDynTextParam &_param)
-{
-	QString str_sheet = "";
-	switch (_param.m_control_id)
+
+
+	void CMainPage2::set_message_content(const QString &_text)
 	{
-	case kEnumPushbuttonStationName:
-	{
-		switch (_param.m_action)
-		{
-		case CDynamicText::kEnumAlignmentLeft: //文字左对齐
-#if 0
-		case CDynamicText::kEnumAlignmentRight://文字居中对齐
-		{
-			m_label_station2->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-		}break;
-#endif
-		case CDynamicText::kEnumAlignmentRight://文字居中对齐
-		{
-			m_label_station2->setAlignment(Qt::AlignCenter);
-		}break;
+		CDynTextParam param_station_name;
+		param_station_name.m_control_this = m_label_scroll_text;
+		param_station_name.m_control_type = CDynamicText::kEnumLabel;
+		param_station_name.m_control_id = kEnumLabelMessageShow;
+		param_station_name.m_control_source_text = _text;
+		param_station_name.m_control_font_size = MESSAGE_FONT_SIZE;
+		param_station_name.m_control_show_length = MESSAGE_SHOW_LENGTH;
 
-		case CDynamicText::kEnumUpdateText:    //更新文本显示
-		{
-			CEventData eventData;
-			eventData.m_str_data = _param.m_control_show_text;
-			slot_head_widget_notify(kEnumMainPageCurrentStationName, 0, &eventData);         //当前站名
-
-		}break;
-		}
-	}break;
-	case kEnumPushbuttonStationName1:
-	{
-		switch (_param.m_action)
-		{
-		case CDynamicText::kEnumAlignmentLeft: //文字左对齐
-		case CDynamicText::kEnumAlignmentRight://文字居中对齐
-		{
-			m_label_arrive1->setAlignment(Qt::AlignCenter);
-		}break;
-
-		case CDynamicText::kEnumUpdateText:    //更新文本显示
-		{
-			CEventData eventData;
-			eventData.m_str_data = _param.m_control_show_text;
-			slot_head_widget_notify(kEnumMainPageCurrentStationName1, 0, &eventData);         //当前站名
-
-		}break;
-		}
-	}break;
-	case kEnumLabelMessageShow:
-	{
-
-		switch (_param.m_action)
-		{
-		case CDynamicText::kEnumAlignmentLeft: //文字左对齐
-		case CDynamicText::kEnumAlignmentRight://文字居中对齐
-		{
-			m_label_scroll_text->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-		}break;
-#if 0
-		case CDynamicText::kEnumAlignmentRight://文字居中对齐
-		{
-			m_label_scroll_text->setAlignment(Qt::AlignCenter);
-		}break;
-#endif
-		case CDynamicText::kEnumUpdateText:    //更新文本显示
-		{
-			CEventData eventData;
-			eventData.m_str_data = _param.m_control_show_text;
-			slot_head_widget_notify(kEnumMainPageCurrentMessage, 0, &eventData);
-
-		}break;
-		}
-
-	}break;
+		m_dynamic_text_message->set_text(param_station_name);
 	}
-}
 
+	void CMainPage2::slot_qr_status_timer()
+	{
 
+		qDebug() << "slot_qr_status_timer";
+		m_timer_qr->stop();
 
-void CMainPage2::set_message_content(const QString &_text)
-{
-	CDynTextParam param_station_name;
-	param_station_name.m_control_this = m_label_scroll_text;
-	param_station_name.m_control_type = CDynamicText::kEnumLabel;
-	param_station_name.m_control_id = kEnumLabelMessageShow;
-	param_station_name.m_control_source_text = _text;
-	param_station_name.m_control_font_size = MESSAGE_FONT_SIZE;
-	param_station_name.m_control_show_length = MESSAGE_SHOW_LENGTH;
+		slot_head_widget_notify(kEnumMainPageVerificationRrStatus, kEnumQrStatusNormal, 0);
 
-	m_dynamic_text_message->set_text(param_station_name);
-}
-
-void CMainPage2::slot_qr_status_timer()
-{
-
-	qDebug() << "slot_qr_status_timer";
-	m_timer_qr->stop();
-
-	slot_head_widget_notify(kEnumMainPageVerificationRrStatus, kEnumQrStatusNormal, 0);
-
-}
+	}
 #include <QDebug>
-void CMainPage2::slot_main_page2_picture(const CPlayPicture & _data)
-{
-	//CEventData eventData;
-	//qDebug() << "CMainPage2::slot_main_page2_picture";
-	//eventData.m_str_data = _data.m_path;
-	//slot_head_widget_notify(kEnumMainPageAdvert,0,&eventData);
-	if (m_widget_show_picture1)
+	void CMainPage2::slot_main_page2_picture(const CPlayPicture & _data)
 	{
-		m_widget_show_picture1->set_image(_data.m_image);
-		m_widget_show_picture1->repaint();
-	}
-
-}
-
-void CMainPage2::slot_pushbutton_test()
-{
-	static int index = 0;
-
-	if (!m_label_test_picture->isVisible())
-	{
-		m_label_test_picture->show();
-		m_label_test_picture->setPixmap(QPixmap("/opt/test_picture/test1.jpg"));
-		//m_label_test_picture->setStyleSheet(QString("QLabel{border:0px;border-image:url(%1);}").arg("/opt/test_picture/test1.jpg"));
-		index = 1;
-	}
-	else if (1 == index)
-	{
-		m_label_test_picture->setPixmap(QPixmap("/opt/test_picture/test2.jpg"));
-		//m_label_test_picture->setStyleSheet(QString("QLabel{border:0px;border-image:url(%1);}").arg("/opt/test_picture/test2.jpg"));
-		index++;
-	}
-	else if (2 == index)
-	{
-		m_label_test_picture->setPixmap(QPixmap("/opt/test_picture/test3.jpg"));
-		index++;
-	}
-	else if (3 == index)
-	{
-		m_label_test_picture->setPixmap(QPixmap("/opt/test_picture/test4.jpg"));
-		index++;
-	}
-	else if (4 == index)
-	{
-		m_label_test_picture->setPixmap(QPixmap("/opt/test_picture/test5.jpg"));
-		index++;
-	}
-	else
-	{
-		m_label_test_picture->hide();
-		index++;
-	}
-}
-
-void CMainPage2::show_failed_interface()
-{
-	m_label_time->hide();
-	if (m_is_demo)
-		m_label_time1->show();
-	else
-		m_label_time1->hide();
-	//m_label_charge_type->hide();
-	m_label_line_name->show();
-	m_label_direction->show();
-	m_label_station2->show();
-
-	m_label_ticket->hide(); //票价
-	m_label_ticket1->hide(); //金额
-	m_label_remaining_sum->hide();  //余额
-	m_label_remaining_sum1->hide(); //余额1
-	m_label_arrive->hide();//到站
-	m_label_arrive1->hide();//到站
-	m_label_printf_test->hide();
-	m_label_message_type->hide();//刷卡消息类型
-	m_widget_message_bg->hide();
-	//m_m_label_station_status->hide();
-
-
-	if (e_Dev_Mode_Slave_Mac == CCommonData::getInstance()->m_CSystemPosSetup.DEVMODE)
-	{
-		m_m_label_station_status->hide();
-		m_label_direction->hide();
-		m_label_station2->hide();
-	}
-
-}
-
-void CMainPage2::debug_interface(bool _flag)
-{
-	m_current_is_debug = _flag;
-	if (_flag)
-	{
-		m_m_widget_debug_bg->show();
-		m_label_debug->show();
-
-		if (e_Dev_Mode_Slave_Mac == CCommonData::getInstance()->m_CSystemPosSetup.DEVMODE)
+		//CEventData eventData;
+		//qDebug() << "CMainPage2::slot_main_page2_picture";
+		//eventData.m_str_data = _data.m_path;
+		//slot_head_widget_notify(kEnumMainPageAdvert,0,&eventData);
+		if (m_widget_show_picture1)
 		{
-			m_widget_line1->show();
-			m_widget_line2->show();
-			m_label_debug_tip->show();
+			m_widget_show_picture1->set_image(_data.m_image);
+			m_widget_show_picture1->repaint();
+		}
+
+	}
+
+	void CMainPage2::slot_pushbutton_test()
+	{
+		static int index = 0;
+
+		if (!m_label_test_picture->isVisible())
+		{
+			m_label_test_picture->show();
+			m_label_test_picture->setPixmap(QPixmap("/opt/test_picture/test1.jpg"));
+			//m_label_test_picture->setStyleSheet(QString("QLabel{border:0px;border-image:url(%1);}").arg("/opt/test_picture/test1.jpg"));
+			index = 1;
+		}
+		else if (1 == index)
+		{
+			m_label_test_picture->setPixmap(QPixmap("/opt/test_picture/test2.jpg"));
+			//m_label_test_picture->setStyleSheet(QString("QLabel{border:0px;border-image:url(%1);}").arg("/opt/test_picture/test2.jpg"));
+			index++;
+		}
+		else if (2 == index)
+		{
+			m_label_test_picture->setPixmap(QPixmap("/opt/test_picture/test3.jpg"));
+			index++;
+		}
+		else if (3 == index)
+		{
+			m_label_test_picture->setPixmap(QPixmap("/opt/test_picture/test4.jpg"));
+			index++;
+		}
+		else if (4 == index)
+		{
+			m_label_test_picture->setPixmap(QPixmap("/opt/test_picture/test5.jpg"));
+			index++;
 		}
 		else
 		{
-			m_widget_line1->hide();
-			m_widget_line2->hide();
-			m_label_debug_tip->hide();
+			m_label_test_picture->hide();
+			index++;
+		}
+	}
+
+	void CMainPage2::show_failed_interface()
+	{
+		m_label_time->hide();
+		if (m_is_demo)
+			m_label_time1->show();
+		else
+			m_label_time1->hide();
+		//m_label_charge_type->hide();
+		m_label_line_name->show();
+		m_label_direction->show();
+		m_label_station2->show();
+
+		m_label_ticket->hide(); //票价
+		m_label_ticket1->hide(); //金额
+		m_label_remaining_sum->hide();  //余额
+		m_label_remaining_sum1->hide(); //余额1
+		m_label_arrive->hide();//到站
+		m_label_arrive1->hide();//到站
+		m_label_printf_test->hide();
+		m_label_message_type->hide();//刷卡消息类型
+		m_widget_message_bg->hide();
+		//m_m_label_station_status->hide();
+
+
+		if (e_Dev_Mode_Slave_Mac == CCommonData::getInstance()->m_CSystemPosSetup.DEVMODE)
+		{
+			m_m_label_station_status->hide();
+			m_label_direction->hide();
+			m_label_station2->hide();
 		}
 
-		m_widget_icon->show();
 	}
-	else
+
+	void CMainPage2::debug_interface(bool _flag)
 	{
-		m_m_widget_debug_bg->hide();
-		m_label_debug->hide();
-		m_label_debug_tip->hide();
+		m_current_is_debug = _flag;
+		if (_flag)
+		{
+			m_m_widget_debug_bg->show();
+			m_label_debug->show();
 
-		m_widget_line1->hide();
-		m_widget_line2->hide();
+			if (e_Dev_Mode_Slave_Mac == CCommonData::getInstance()->m_CSystemPosSetup.DEVMODE)
+			{
+				m_widget_line1->show();
+				m_widget_line2->show();
+				m_label_debug_tip->show();
+			}
+			else
+			{
+				m_widget_line1->hide();
+				m_widget_line2->hide();
+				m_label_debug_tip->hide();
+			}
 
-		m_widget_icon->hide();
+			m_widget_icon->show();
+		}
+		else
+		{
+			m_m_widget_debug_bg->hide();
+			m_label_debug->hide();
+			m_label_debug_tip->hide();
+
+			m_widget_line1->hide();
+			m_widget_line2->hide();
+
+			m_widget_icon->hide();
+		}
+
 	}
 
-}
+	bool CMainPage2::get_debug_interface()
+	{
+		return m_current_is_debug;
+	}
 
-bool CMainPage2::get_debug_interface()
-{
-	return m_current_is_debug;
-}
+	void CMainPage2::createComponent() {
 
-void CMainPage2::createComponent() {
-
-	m_textBrown_slzr = new QTextBrowser(this);
-	m_textBrown_slzr->setFixedSize(230, 120);
-	m_textBrown_slzr->move(200, 350);
-	m_textBrown_slzr->setStyleSheet("QTextBrowser{border:0px;background:transparent;font:15px;color:#ffffff; }");
-	m_textBrown_slzr->setAlignment(Qt::AlignLeft);
-	m_textBrown_slzr->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//设置垂直滚动条不可见
-	m_textBrown_slzr->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//设置水平滚动条不可见
-	m_textBrown_slzr->setText("邯郸公交2018");
+		m_textBrown_slzr = new QTextBrowser(this);
+		m_textBrown_slzr->setFixedSize(230, 120);
+		m_textBrown_slzr->move(200, 350);
+		m_textBrown_slzr->setStyleSheet("QTextBrowser{border:0px;background:transparent;font:15px;color:#ffffff; }");
+		m_textBrown_slzr->setAlignment(Qt::AlignLeft);
+		m_textBrown_slzr->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//设置垂直滚动条不可见
+		m_textBrown_slzr->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//设置水平滚动条不可见
+		m_textBrown_slzr->setText("邯郸公交2018");
 
 
 
-}
+	}
 
 
 

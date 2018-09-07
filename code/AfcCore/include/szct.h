@@ -62,8 +62,8 @@
 //程序版本号
 #define BasksofVer 100
 #ifdef _debug_
-	#define SOFT_VER_TIME_LOG 0x004
-	#define SOFT_VER_TIME "2018.09.06 20:50 CHANGSHA"	//
+	#define SOFT_VER_TIME_LOG 0x005
+	#define SOFT_VER_TIME "2018.09.07 20:50 CHANGSHA"	//
 
 #elif defined _HD_XIAOER_OPEN
 	#define SOFT_VER_TIME_LOG BasksofVer+102
@@ -509,7 +509,8 @@
 #define CARD_JTB			12				//市民卡/交通部的卡类
 #define CARD_MOTH_CI		13				//邯郸次卡  可以随意刷
 #define CARD_LIANGTONG_STUF 14              //手机员工卡
-#define CARD_qPBOC_BUS		15				//91 银行卡卡类 [在有些地方银行卡卡类写成不同的]
+#define CARD_qPBOC_BUS		16				//91 银行卡卡类 [在有些地方银行卡卡类写成不同的]
+#define CARD_qPBOC_QR		17				//91 银行卡卡类 [在有些地方银行卡卡类写成不同的]
 
 #define  CARD_FENDUAN_Line	33		//分段线路票价卡
 ///////////////////////////////语音端口号//////////////////////////////
