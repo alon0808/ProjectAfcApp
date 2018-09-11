@@ -978,7 +978,7 @@ int StringHex2UInt32(char *pInput, int ilen, unsigned int *pOlen) {
 	if (ilen > 8) {
 		return Ret_Err_Overflow;
 	}
-	MSG_LOG("StringHex2UInt32(%d):%s", ilen, pInput);
+	//MSG_LOG("StringHex2UInt32(%d):%s", ilen, pInput);
 	limit = *pOlen;
 	*pOlen == 0;
 

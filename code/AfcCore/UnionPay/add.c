@@ -188,17 +188,17 @@ void set_over_time(unsigned char mode, unsigned char len) {
 		switch (ret)
 		{
 
-		case UP:
+		case SLZRKEY_UP:
 			if ((buffer[i] <= '0') || (buffer[i] > '9'))
 				buffer[i] = '9';
 			else if ((buffer[i] <= '9') && (buffer[i] > '0'))
 				buffer[i]--;
 			break;
 
-		case ESC:
+		case SLZRKEY_ESC:
 			//memcpy(pFistVary.DeviceNo, pFistVary.DeviceNo_1, 8);
 			goto SetupDevi_exit;
-		case ENTER:
+		case SLZRKEY_ENTER:
 
 			i++;
 			memset(buffer_2, 0, 10);
@@ -909,6 +909,8 @@ int save_ODA_infor(unsigned char mode, unsigned char *re_infor) {
 	int re_inforLen = 0;
 	//	int tmpI = 0;
 	//	stTlv tlvCardStyle;
+
+	return Ret_OK;
 
 	int retCode = Ret_OK;
 	if (mode != ODA_FeRC_Check) {

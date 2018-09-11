@@ -136,7 +136,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #if(!defined(APPLICATION_TYPE_D2) && !defined(APPLICATION_TYPE_P2))
     CProtocol::getInstance()->call_json_system_passenger_flow(7,2,0);
 #endif
-
+	
 	//#else
 	if (pthread_create(&tidgetNetData1, NULL, StartApp, (void *)1) != 0)
 	{

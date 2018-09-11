@@ -107,6 +107,7 @@ typedef struct {
 #define SET_INT16(buf, len)	(buf)[0] = ((len) >> 8) & 0x0FF;\
 							(buf)[1] = ((len)) & 0x0FF
 #define GET_INT16(buf) ((buf)[0]<<8)|((buf)[1]&0x0FF)
+#define GET_INT16S(buf) ((buf)[1]<<8)|((buf)[0]&0x0FF)
 //
 #define SET_INT32(buf, len)	(buf)[0] = ((len) >> 24) & 0x0FF;\
 							(buf)[1] = ((len) >> 16) & 0x0FF;\
@@ -122,7 +123,12 @@ typedef struct {
 #endif	
 
 ////////////////////////////////////////////////////////////////////////////////
-#define HTTP_SSL	1
+// constant variable
+#ifndef INFINITE
+#define INFINITE 0xFFFFFFFF
+#endif
+
+
 
 
 #include "debugOut.h"

@@ -848,6 +848,7 @@ void CMainPage::main_middle_init()
         m_label_local_station->setText(tr("本站"));
         m_label_local_station->setAlignment(Qt::AlignVCenter);
         m_label_local_station->setWordWrap(true);
+		m_label_local_station->hide();
     }
 
 

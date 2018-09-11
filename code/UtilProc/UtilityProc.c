@@ -155,6 +155,18 @@ unsigned char getSignXor(unsigned char *pSrc, int len) {
 
 	return xorCh;
 }
+
+unsigned char getSignAdd(unsigned char *pSrc, int len) {
+	unsigned char addCh = 0;
+	int i;
+
+	for (i = 0; i < len; i++)		//kid 到xr 值之前的校验
+	{
+		addCh += pSrc[i];
+	}
+
+	return addCh;
+}
 ///////////////////////////////////////////////////////////////////////
 
 

@@ -50,7 +50,7 @@ contains(TEMPLATE, "lib") {
 
 INCLUDEPATH += ../../../../code/public
 INCLUDEPATH += ../../../../code/AfcCore/include
-INCLUDEPATH += ../../code/UtilProc
+INCLUDEPATH += ../../../../code/UtilProc
 
 SOURCES += main.cpp\
     menu_widget.cpp \

@@ -7,22 +7,32 @@
 #define LEN_LINE_ID	3
 #define LEN_MESSAGE	50
 
+#ifndef SLZRKEY_UP
+#define SLZRKEY_UP		115	// Arrow Up
+#define SLZRKEY_DOWN	114	// Arrow Down
+#define SLZRKEY_ESC		28		// Esc
+#define SLZRKEY_ENTER	139		// Enter
+
+#define SLZRKEY_F1		KEY_F1	// Function
+#define SLZRKEY_F2		KEY_F2
+#endif
+
 typedef struct {
-	char message[LEN_MESSAGE + 1];
-	unsigned char isNeedUpdate;
-	unsigned char isGJOk;
-	unsigned char isDDOk;
-	unsigned char isGpsOk;
-	unsigned char stopflag;
-	unsigned char  lineId[LEN_LINE_ID];
-	char devId[LEN_DEV_ID];
-	int task;
-	int linkStatus;
-	int uploadRec;
-	int version;
-	int modVer;
-	int basePrice;
-	int delayTime;		// delay time for user interface refresh
+	unsigned char ud_isNeedUpdate;
+	unsigned char ud_isGJOk;
+	unsigned char ud_isDDOk;
+	unsigned char ud_isUnpayOk;
+	unsigned char ud_isGpsOk;
+	unsigned char ud_stopflag;
+	unsigned char  ud_lineId[LEN_LINE_ID];
+	char ud_devId[LEN_DEV_ID];
+	int ud_task;
+	int ud_linkStatus;
+	int ud_uploadRec;
+	int ud_version;
+	int ud_modVer;
+	int ud_basePrice;
+	int ud_delayTime;		// delay time for user interface refresh
 
 }stUIData;
 
@@ -30,7 +40,9 @@ typedef struct {
 extern "C" {
 #endif
 
-	extern AFC_CORE__API stUIData *GetStatusData(void);
+	extern AFC_CORE__API stUIData *GetStatusData(int timerTrige);
+
+	extern AFC_CORE__API int GetStatusMessage(int timerTrige, char *pMsg, int *pTimeDelay);
 
 	extern AFC_CORE__API void* StartApp(void *argv);
 

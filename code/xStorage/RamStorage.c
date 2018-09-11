@@ -30,14 +30,12 @@ unsigned int startTime = 0;
 unsigned int endTimeEn = 0;
 stGPrsDataStyle gGPRS_data_style;
 unsigned char gprsErrorTimes = 0;
-Parameter3 ComSumeFile;
 unsigned char isNetOK[MAX_RCV_PACKET_NUM];//两路链接是否成功;
 unsigned char StufferNO[4];
 unsigned short gErrorFlag;//错误标识,高字节表示错误编号，低字节表示错次数据 详见"*错误编码标识定义"
 unsigned int ghisCur;
 pFistVary_1 pFistVary;
 unsigned char restore_flag = 0;
-unsigned char gMCardCand = 0;
 stPricetable NewPriceTab;
 int gOverTimes = 0;
 
@@ -95,6 +93,9 @@ static void *getConfigPointer(unsigned int Address_f) {
 		break;
 	case BIT_DEVICE_NO:
 		pConfig = gDeviceParaTab.DeviceNo;
+		break;
+	case BIT_PBOC_NS:
+		pConfig = gDeviceParaTab.unionPayInof.gj_pboc_trackNo;
 		break;
 	default:
 		break;

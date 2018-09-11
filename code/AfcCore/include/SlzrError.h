@@ -13,8 +13,8 @@ typedef struct slzr_err_s
 }slzr_err_t;
 
 #define SLZR_SUCCESS   0
-#define SLZR_FAILURE   1001
-#define SLZR_IGNORE    1002
+#define SLZR_FAILURE   10010
+#define SLZR_IGNORE    10020
 
 #define ESNDTOUT      1003
 #define ERCVTOUT      1004

@@ -139,7 +139,6 @@ extern unsigned int gErrortimes[MAX_RCV_PACKET_NUM];//´íÎó´ÎÊý¾Ý,Ö÷ÒªÊÇÓÃÓÚGPRSÁ
 extern Parameter2 POINT_MESSAGE;
 extern unsigned int a_sum1, s_sum1, a_sumR;
 extern unsigned short gSendOverTime;//·¢ËÍºóÊÕÓ¦´ð³¬Ê±¼ÆÊýÆ÷
-extern unsigned char gMCardCand;
 #define GPRSCOMMAX 1600
 extern unsigned char gprsRevBuf[1600];//GPRS½ÓÊÕ»º³å
 extern volatile unsigned short gprsIndex;
@@ -375,14 +374,14 @@ void set_oda_para(void)
 		switch (ret)
 		{
 #ifndef _New_Bu_mode_
-		case UP:
+		case SLZRKEY_UP:
 			if ((pFistVary.DeviceNo[i] <= '0') || (pFistVary.DeviceNo[i] > '9'))
 				pFistVary.DeviceNo[i] = '9';
 			else if ((pFistVary.DeviceNo[i] <= '9') && (pFistVary.DeviceNo[i] > '0'))
 				pFistVary.DeviceNo[i]--;
 
 			break;
-		case F2:
+		case SLZRKEY_F2:
 			i++;
 			if (i == 8)
 				i = 0;
@@ -390,7 +389,7 @@ void set_oda_para(void)
 			memcpy(buffer, pFistVary.DeviceNo, 8);
 			display(2, 4, (char*)buffer, 0);
 			break;
-		case F1:
+		case SLZRKEY_F1:
 			if (i > 0)
 				i--;
 			else
@@ -399,9 +398,9 @@ void set_oda_para(void)
 			memcpy(buffer, pFistVary.DeviceNo, 8);
 			display(2, 4, (char*)buffer, 0);
 			break;
-		case DOWN:
+		case SLZRKEY_DOWN:
 #else
-		case UP:
+		case SLZRKEY_UP:
 #endif  
 			if ((ODA_BUFF[i] < '9') && (ODA_BUFF[i] >= '0'))
 				ODA_BUFF[i]++;
@@ -416,10 +415,10 @@ void set_oda_para(void)
 			else
 				ODA_BUFF[i] = '0';
 			break;
-		case ESC:
+		case SLZRKEY_ESC:
 			//memcpy(pFistVary.DeviceNo, pFistVary.DeviceNo_1, 8);
 			goto SetupDevi_exit;
-		case ENTER:
+		case SLZRKEY_ENTER:
 #ifdef _New_Bu_mode_
 			i++;
 			memset(buffer, 0, 10);
@@ -510,14 +509,14 @@ void set__para(unsigned char len, unsigned char mode)
 		switch (ret)
 		{
 #ifndef _New_Bu_mode_
-		case UP:
+		case SLZRKEY_UP:
 			if ((pFistVary.DeviceNo[i] <= '0') || (pFistVary.DeviceNo[i] > '9'))
 				pFistVary.DeviceNo[i] = '9';
 			else if ((pFistVary.DeviceNo[i] <= '9') && (pFistVary.DeviceNo[i] > '0'))
 				pFistVary.DeviceNo[i]--;
 
 			break;
-		case F2:
+		case SLZRKEY_F2:
 			i++;
 			if (i == 8)
 				i = 0;
@@ -525,7 +524,7 @@ void set__para(unsigned char len, unsigned char mode)
 			memcpy(buffer, pFistVary.DeviceNo, 8);
 			display(2, 4, (char*)buffer, 0);
 			break;
-		case F1:
+		case SLZRKEY_F1:
 			if (i > 0)
 				i--;
 			else
@@ -534,9 +533,9 @@ void set__para(unsigned char len, unsigned char mode)
 			memcpy(buffer, pFistVary.DeviceNo, 8);
 			display(2, 4, (char*)buffer, 0);
 			break;
-		case DOWN:
+		case SLZRKEY_DOWN:
 #else
-		case UP:
+		case SLZRKEY_UP:
 #endif  
 			if ((BUFF[i] < '9') && (BUFF[i] >= '0'))
 				BUFF[i]++;
@@ -554,7 +553,7 @@ void set__para(unsigned char len, unsigned char mode)
 			else
 				BUFF[i] = '0';
 			break;
-		case ESC:
+		case SLZRKEY_ESC:
 
 			memset(buffer, 0, len + 2);
 			memcpy(buffer, BUFF, i);
@@ -572,7 +571,7 @@ void set__para(unsigned char len, unsigned char mode)
 
 
 			//			break;
-		case ENTER:
+		case SLZRKEY_ENTER:
 			//#ifdef _New_Bu_mode_
 			i++;
 			memset(buffer, 0, len + 2);
@@ -735,7 +734,7 @@ void InitQpboc8583(void) {
 
 	Q_QPBOC_para.switch_control_SP = 0x31;
 
-	getMobileParameter(8, &g_supportQR);
+	//getMobileParameter(8, &g_supportQR);
 }
 
 
@@ -770,7 +769,7 @@ int Build_qpboc_8583_02(unsigned char *dat)
 
 
 
-	if (gMCardCand == CARDSTYLE_QR_PBOC)
+	if (gCardinfo.gMCardCand == CARDSTYLE_QR_PBOC)
 	{
 		cardNolen = strlen((const char *)qr_pboc_AccountNo);
 		//MSG_LOG("qr¿¨ÕÊºÅ:%s\r\n",qr_pboc_AccountNo);
@@ -971,7 +970,7 @@ unsigned int Build_qpboc_8583_04(unsigned char *dat)
 
 	//	memset(Buff,0,20);
 
-	if (gMCardCand != CARDSTYLE_QR_PBOC)
+	if (gCardinfo.gMCardCand != CARDSTYLE_QR_PBOC)
 	{
 
 		get_BER_TVL(QpbocTVLFCI.t_9F02.SizeOff, &TempTVL);
@@ -1029,7 +1028,7 @@ unsigned int get_deal_count(unsigned int addr)
 	MSG_LOG("get_deal_count%d:%d\n", addr, uiTemp);
 	if (addr == BIT_PBOC_NS_BIG)  //·¢ÏÖodaÈ¡µÇÂ½µÄÅú´ÎºÅ»á³öÏÖ±¨ÎÄ¸ñÊ½³ö´í
 	{
-		if (gMCardCand == CARDSTYLE_UNPAY_ODA)
+		if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA)
 			uiTemp += 300000;
 		MSG_LOG("È¡Åú´ÎºÅ:%d\n", uiTemp);
 		return uiTemp;
@@ -1143,8 +1142,8 @@ unsigned int Build_qpboc_8583_13(unsigned char *dat)
 //¶þÎ¬ÂëµÄ»°Îªqrcardd==1
 unsigned int Build_qpboc_8583_22(unsigned char *dat)
 {
-#if 0
-	if (gMCardCand == CARDSTYLE_QR_PBOC)
+#if 1
+	if (gCardinfo.gMCardCand == CARDSTYLE_QR_PBOC)
 	{
 		memcpy(dat, "\x03\x20", 2);	//POSÖÕ¶Ë²»ÊäÈëÃÜÂë£¬É¨Âë¸¶22ÓòÈ¡ÖµÎª032¡£
 	}
@@ -1193,7 +1192,7 @@ unsigned char Build_qpboc_8583_23(unsigned char *dat)
 //25  ·þÎñµãÌõ¼þÂë  N2    BCD  M  M
 unsigned int Build_qpboc_8583_25(unsigned char *dat)
 {
-	// 	if (gMCardCand == CARDSTYLE_QR_PBOC)
+	// 	if (gCardinfo.gMCardCand == CARDSTYLE_QR_PBOC)
 	// 	{
 	// 		memcpy(dat, "\x03", 1);		//03  ¶þÎ¬Âë
 	// 
@@ -1212,7 +1211,7 @@ unsigned int Build_qpboc_8583_25(unsigned char *dat)
 //26 ·þÎñµã PIN »ñÈ¡Âë n2 BCD C 06
 unsigned int Build_qpboc_8583_26(unsigned char *dat)
 {
-	// 	if (gMCardCand == CARDSTYLE_QR_PBOC)
+	// 	if (gCardinfo.gMCardCand == CARDSTYLE_QR_PBOC)
 	return 1;
 }
 
@@ -1311,11 +1310,11 @@ unsigned int Build_qpboc_8583_48(unsigned char *dat)
 
 	memcpy(dat + len, "\x1F\x52\x02", 3);
 	len += 3;
-	if (gMCardCand == CARDSTYLE_QPBOC) {
+	if (gCardinfo.gMCardCand == CARDSTYLE_QPBOC) {
 		memcpy(dat + len, "03", 2);
 		len += 2;
 	}
-	else if (gMCardCand == CARDSTYLE_QR_PBOC) {
+	else if (gCardinfo.gMCardCand == CARDSTYLE_QR_PBOC) {
 		memcpy(dat + len, "02", 2);
 		len += 2;
 	}
@@ -1323,7 +1322,7 @@ unsigned int Build_qpboc_8583_48(unsigned char *dat)
 		memcpy(dat + len, "01", 2);
 		len += 2;
 	}
-	if (gMCardCand == CARDSTYLE_UNPAY_ODA) {
+	if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA) {
 		memcpy(dat + len, "\xFF\x56", 2);
 		len += 2;
 
@@ -1373,7 +1372,7 @@ unsigned int Build_qpboc_8583_48(unsigned char *dat)
 	BCD2Ascii(DriveCardNo, dat + len, 4);
 	len += 8;
 #endif
-	if (gMCardCand == CARDSTYLE_UNPAY_ODA) {
+	if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA) {
 		memcpy(dat + len, "\xFF\x43\x08", 3);
 		len += 3;
 		getMobileParameter(11, dat + len);
@@ -1580,7 +1579,7 @@ unsigned int Build_qpboc_8583_55(unsigned char *dat, unsigned char isSetbitMap)
 //	char disbuff[16];
 
 
-	if (gMCardCand == CARDSTYLE_QR_PBOC)
+	if (gCardinfo.gMCardCand == CARDSTYLE_QR_PBOC)
 	{
 		//		MSG_LOG("¶þÎ¬ÂëÃ»ÓÐ55Óò\r\n");
 		return 0;
@@ -2001,7 +2000,7 @@ unsigned int tag_A2(unsigned char *dat)
 	A2_pos += 5;
 	pos += 5;
 
-	if (gMCardCand == CARDSTYLE_QR_PBOC)
+	if (gCardinfo.gMCardCand == CARDSTYLE_QR_PBOC)
 	{
 
 		bcdlen = strlen((char *)qr_pboc_AccountNo);
@@ -2598,10 +2597,10 @@ int build8583_qpboc_Purse_0200(unsigned char *oDat)
 	memset(gpboc_8583bitmapaddr, 0, 8);
 	ilen += 8;	//ÕâÀïÊÇÎ»Ôª±í£¬Ìø¹ý
 
-	SetTLV(tlv8583 + tlvCount, 65, 1, &gMCardCand);
+	SetTLV(tlv8583 + tlvCount, 65, 1, &gCardinfo.gMCardCand);
 	++tlvCount;
 
-	if (gMCardCand != CARDSTYLE_QR_PBOC)
+	if (gCardinfo.gMCardCand != CARDSTYLE_QR_PBOC)
 	{
 		iret = Build_qpboc_8583_02(oDat + ilen); 	//Ö÷ÕÊºÅ
 
@@ -2623,7 +2622,7 @@ int build8583_qpboc_Purse_0200(unsigned char *oDat)
 	ilen += iret;
 
 #if 0
-	iret = Build_qpboc_8583_07(oDat + ilen); 		
+	iret = Build_qpboc_8583_07(oDat + ilen);
 	SetTLV(tlv8583 + tlvCount, 7, iret, oDat + ilen);
 	++tlvCount;
 	ilen += iret;
@@ -2650,7 +2649,7 @@ int build8583_qpboc_Purse_0200(unsigned char *oDat)
 	++tlvCount;
 	ilen += iret;
 
-	if (gMCardCand != CARDSTYLE_QR_PBOC)
+	if (gCardinfo.gMCardCand != CARDSTYLE_QR_PBOC)
 	{	// Õâ¸öÊÇ¿ÉÑ¡µÄ
 		iret = Build_qpboc_8583_23(oDat + ilen);
 		SetTLV(tlv8583 + tlvCount, 23, iret, oDat + ilen);
@@ -2663,7 +2662,7 @@ int build8583_qpboc_Purse_0200(unsigned char *oDat)
 	++tlvCount;
 	ilen += iret;
 
-	if (gMCardCand != CARDSTYLE_QR_PBOC)
+	if (gCardinfo.gMCardCand != CARDSTYLE_QR_PBOC)
 	{
 		iret = Build_qpboc_8583_35(oDat + ilen);//¶þ´ÅµÀÊý¾Ý
 		SetTLV(tlv8583 + tlvCount, 35, iret, oDat + ilen);
@@ -2692,7 +2691,7 @@ int build8583_qpboc_Purse_0200(unsigned char *oDat)
 	++tlvCount;
 	ilen += iret;
 
-	if (gMCardCand == CARDSTYLE_QPBOC)
+	if (gCardinfo.gMCardCand == CARDSTYLE_QPBOC)
 	{
 #if 0
 		iret = Build_qpboc_8583_53(oDat + ilen);
@@ -2707,17 +2706,14 @@ int build8583_qpboc_Purse_0200(unsigned char *oDat)
 		ilen += iret;
 	}
 
-	if (gMCardCand == CARDSTYLE_QR_PBOC)
+	if (gCardinfo.gMCardCand == CARDSTYLE_QR_PBOC)
 	{
-#if 1
+#if 0
 		iret = Build_qpboc_8583_57(oDat + ilen);
 		//SetTLV(tlv8583 + tlvCount, 57, iret, oDat + ilen);
 		//++tlvCount;
 		ilen += iret;
-#endif
-	}
-	else {
-#if 0
+#else
 		iret = Build_qpboc_8583_59(oDat + ilen);
 		SetTLV(tlv8583 + tlvCount, 59, iret, oDat + ilen);
 		++tlvCount;
@@ -2739,7 +2735,7 @@ int build8583_qpboc_Purse_0200(unsigned char *oDat)
 	++tlvCount;
 #endif
 #if 0
-	if (gMCardCand == CARDSTYLE_UNPAY_ODA) {
+	if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA) {
 		iret = Build_qpboc_8583_63_purse(oDat + ilen);
 		SetTLV(tlv8583 + tlvCount, 63, iret, oDat + ilen);
 		++tlvCount;
@@ -4336,7 +4332,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 
 	if (msecends > 0) {
 		flag = 0;
-		if (gMCardCand != CARDSTYLE_UNPAY_ODA)
+		if (gCardinfo.gMCardCand != CARDSTYLE_UNPAY_ODA)
 		{
 			cls();
 			display(6, 0, "Í¨Ñ¶ÖÐ...", DIS_ClsLine | DIS_CENTER);
@@ -4386,7 +4382,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 			return -1;
 		}
 		ret = getkey(1);
-		if (ret == KEY_ESC) {
+		if (ret == SLZRKEY_ESC) {
 			if (gGprsinfo.GPRSLinkProcess == 0xA0)
 				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 			gGprsinfo.gmissflag = MISS_G_FREE;
@@ -4428,7 +4424,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 			flag = 3;
 			if (SQmode == MISS_PBOC_PURSE)
 			{
-				if (gMCardCand == CARDSTYLE_UNPAY_ODA) {
+				if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA) {
 					;//	display(6, 0, "ÕýÔÚ·¢ËÍODAÏû·Ñ¼ÇÂ¼", DIS_ClsLine | DIS_CENTER);
 				}
 				else
@@ -4437,7 +4433,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 			}
 			else if (SQmode == MISS_PBOC_RE_PURSE)
 			{
-				if (gMCardCand == CARDSTYLE_UNPAY_ODA) {
+				if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA) {
 					display(6, 0, "ÕýÔÚ·¢ËÍODAÏû·Ñ¼ÇÂ¼", DIS_ClsLine | DIS_CENTER);
 				}
 				else {
@@ -4474,18 +4470,13 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 			//			i = get_timer0(1);
 			outdly = get_timer0(3);
 
-
-
-
-
-
 			//
 
 			// 			memset(disbuff,0,sizeof(disbuff));
 			// 			sprintf((char *)disbuff,"T1:%04d",i);
 			// 			miniDispstr(6,30,(const char *)disbuff,0);
 
-			if (gMCardCand != CARDSTYLE_UNPAY_ODA) {
+			if (gCardinfo.gMCardCand != CARDSTYLE_UNPAY_ODA) {
 				memset(disbuff, 0, sizeof(disbuff));
 				sprintf((char *)disbuff, "%dS", outdly / 1000);
 				display(8, 16, (const char *)disbuff, 0);
@@ -4503,6 +4494,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 
 			if (outdly == 0)
 			{
+				emv_set_pboc_result(pr_repurse);
 				MSG_LOG("time out-3-\r\n");
 				tcpipClose(LINK_PBOC);
 				if (gGprsinfo.GPRSLinkProcess == 0xA0)
@@ -4526,9 +4518,9 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 					flag = 0xA5;
 
 					MSG_LOG("444bit:%d,ACK_flag:%02x   ", msgf[field_ack].bitf, ACK_flag);
+
+					emv_set_pboc_result(pr_success);
 					break;
-
-
 				}
 				else {
 					MSG_LOG("%s,Ó¦´ð:%02X\r\n", __FUNCTION__, ACK_flag);
@@ -4537,11 +4529,15 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 						gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 					gGprsinfo.gmissflag = MISS_G_FREE;
 					//	gSendOverTime = 0;
+					MSG_LOG("É¾³åÕý111--\r\n");
+					//memset(repurse_infor, 0, sizeof(repurse_infor));
+					save_repurse_infor(FeRC_Dlelt, NULL);
 
+					emv_set_pboc_result(pr_fail);
 					return -1;	//
 				}
 
-				// 				if (gMCardCand == CARDSTYLE_UNPAY_ODA&&ACK_flag_oda !==0) {
+				// 				if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA&&ACK_flag_oda !==0) {
 				// 					MSG_LOG("É¾ODA858¼ÇÂ¼--:%d\r\n", ACK_flag);
 				// 					save_ODA_infor(ODA_FeRC_Dlelt, NULL);
 				// 					
@@ -4558,9 +4554,10 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 			}
 			else {
 				ret = getkey(1);
-				if (ret == KEY_ESC) {
+				if (ret == SLZRKEY_ESC) {
 					gGprsinfo.gmissflag = MISS_G_FREE;
 
+					emv_set_pboc_result(pr_repurse);
 					return -1;
 				}
 			}
@@ -4572,7 +4569,7 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 		// 		clr_wdt();
 
 
-		if (flag == 0xA5 && gMCardCand != CARDSTYLE_UNPAY_ODA) {	// ÊÕµ½ÕýÈ·Êý¾Ý 
+		if (flag == 0xA5 && gCardinfo.gMCardCand != CARDSTYLE_UNPAY_ODA) {	// ÊÕµ½ÕýÈ·Êý¾Ý 
 			if (gGprsinfo.GPRSLinkProcess == 0xA0)
 				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 			//gmissflag = 0;
@@ -4612,7 +4609,7 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 	cls();
 	display(0, 0, "½»Ò×Âë:", 0);
 
-	gMCardCand = CARDSTYLE_QR_PBOC;
+	gCardinfo.gMCardCand = CARDSTYLE_QR_PBOC;
 	gCardinfo.card_catalog = CARD_qPBOC_BUS;
 	s_sum1 = get_s_sum1(0);
 
@@ -4654,7 +4651,7 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 	if (ret == 0)
 	{
 
-		money_msg(ID_REC_TOLL, a_sum1, s_sum1, 0);
+		money_msg(ID_REC_TOLL, INFINITE, s_sum1, 0);
 		SoundMessage(SOUND_DEAL);
 
 		//memset(recordbuff, 0, sizeof(recordbuff));
@@ -5876,7 +5873,7 @@ void down_kek_TMS(void)
 			break;
 		}
 		ret = getkey(1);
-		if (ret == KEY_ESC) {
+		if (ret == SLZRKEY_ESC) {
 			break;
 		}
 		if (outdly++ > 10000) {
@@ -6096,7 +6093,7 @@ void down_kek(void)
 			break;
 		}
 		ret = getkey(1);
-		if (ret == KEY_ESC) {
+		if (ret == SLZRKEY_ESC) {
 			break;
 		}
 		if (outdly++ > 1000) {
@@ -6211,7 +6208,7 @@ void set_bussid(unsigned char mode)
 		switch (ret)
 		{
 
-		case UP:
+		case SLZRKEY_UP:
 			if ((shopNo[i] < '9') && (shopNo[i] >= '0'))
 				shopNo[i]++;
 			else if (shopNo[i] == '9') {
@@ -6225,9 +6222,9 @@ void set_bussid(unsigned char mode)
 			else
 				shopNo[i] = '0';
 			break;
-		case ESC:
+		case SLZRKEY_ESC:
 			goto Setupbuss_exit;
-		case ENTER:
+		case SLZRKEY_ENTER:
 			i++;
 			memset(buffer, 0, 16);
 			memcpy(buffer, shopNo, pralenth);
@@ -7025,7 +7022,7 @@ void PAY_MODE_init(void)  //1×Ö½Ú´æ±êÖ¾£¬1¸ö×Ö½Ú´æ¿ª¹Ø
 	shuangmian = buff[0];
 	switch_both = buff[1];
 #else
-	shuangmian = 1;
+	shuangmian = 0;
 	switch_both = 0;
 #endif
 }
@@ -7419,233 +7416,7 @@ void save_repurse_infor(unsigned char mode, unsigned char *re_infor) {
 		break;
 	}
 }
-#if 0
-//¿ª»ú¼ÓÔØ
-//mode==1  Ð´½øÌúµç£¬mode==2É¾µôÌúµç¼ÇÂ¼  3 ¼ì²éÊÇ·ñÓÐ¼ÇÂ¼ÐèÒª×ªÕý      ½â¾öÏû·ÑÎ´Íê³É  ¶ÏµçÃ»¼ÇÂ¼µÄÇé¿ö
-int save_ODA_infor(unsigned char mode, unsigned char *re_infor) {
 
-	//	unsigned int CRC;
-	//	unsigned char i;
-	unsigned char buff[512];
-	unsigned int addr = 0;
-	stOdaRecordAddr odaRecord;
-	int re_inforLen = 0;
-	//	int tmpI = 0;
-	//	stTlv tlvCardStyle;
-	unsigned char tmpChs[4] = { 0,0,0,0 };
-	int retCode = Ret_OK;
-
-
-	if (mode != ODA_FeRC_Check) {
-		MSG_LOG("save_repurse_infor(%02X):%d\n", mode, re_inforLen);
-	}
-
-	addr = FLASH_M_REC_START;
-
-	if (mode != ODA_FeRC_Init) {	// ¼ì²éÄ¿Â¼Çø
-		sysferead(BIT_UNPAY_ODA_RECORD, sizeof(stOdaRecordAddr), (unsigned char *)&odaRecord);
-		if (mode != ODA_FeRC_Check)
-		{
-
-			MSG_LOG("odaRecord.odaRecordBegin==%x\r\n", odaRecord.odaRecordBegin);
-			MSG_LOG("odaRecord.odaRecordEnd==%x\r\n", odaRecord.odaRecordEnd);
-			MSG_LOG("odaRecord.odaRecordWrite==%x\r\n", odaRecord.odaRecordWrite);
-			MSG_LOG("odaRecord.odaRecordRead==%x\r\n", odaRecord.odaRecordRead);
-			MSG_LOG("odaRecord.odaRecordEarase==%x\r\n", odaRecord.odaRecordEarase);
-		}
-		if (odaRecord.odaRecordBegin != FLASH_M_REC_START) {
-			addr = FLASH_M_REC_START;
-			flasherase(ERASE4KBYTESECTOR, addr);
-			odaRecord.odaRecordEarase = addr + 0x1000;	// ²ÁÐ´4K
-			odaRecord.odaRecordWrite = addr;
-			odaRecord.odaRecordRead = addr;
-			odaRecord.odaRecordBegin = addr;
-			odaRecord.odaRecordEnd = FLASH_M_REC_START + LEN_M_REC;
-		}
-	}
-	switch (mode)
-	{
-	case ODA_FeRC_Init://³õÊ¼»¯
-		MSG_LOG("³õÊ¼»¯ODAÄ¿Â¼½á¹¹\n ");
-		addr = FLASH_M_REC_START;
-		flasherase(ERASE4KBYTESECTOR, addr + 0);
-		//flasherase(ERASE64KBYTESECTOR, addr + 0x10000);
-		//flasherase(ERASE64KBYTESECTOR, addr + 0x20000);
-		//flasherase(ERASE64KBYTESECTOR, addr + 0x30000);
-		odaRecord.odaRecordEarase = addr + 0x1000;	// ²ÁÐ´32K
-		odaRecord.odaRecordWrite = addr;
-		odaRecord.odaRecordRead = addr;
-		odaRecord.odaRecordBegin = addr;
-		odaRecord.odaRecordEnd = FLASH_M_REC_START + LEN_M_REC;
-		sysfewrite(BIT_UNPAY_ODA_RECORD, sizeof(stOdaRecordAddr), (unsigned char *)&odaRecord);
-
-		break;
-	case ODA_FeRC_Write://Ð´¼ÇÂ¼
-		re_inforLen = GET_INT16(re_infor + 2) + 4;
-		if (re_inforLen > 0x1000) {
-			MSG_LOG("ODA¼ÇÂ¼ÎÞ·¨Ð´Èë×ßÈë4KµÄ¼ÇÂ¼:%d\n", re_inforLen);
-			retCode = Ret_Err_Overflow;
-			break;
-		}
-
-		// 4K¶ÔÆë
-		addr = odaRecord.odaRecordWrite;
-		MSG_LOG("re_inforLen==%d\r\n", re_inforLen);
-		MSG_LOG("odaRecord.odaRecordWrite==%x\r\n", odaRecord.odaRecordWrite);
-		MSG_LOG("ALIGN_4K_CUR(addr)==%x\r\n", ALIGN_4K_CUR(addr));
-
-		MSG_LOG("ALIGN_4K_CUR(addr + re_inforLen)==%x\r\n", ALIGN_4K_CUR(addr + re_inforLen));
-		if (ALIGN_4K_CUR(addr) != ALIGN_4K_CUR(addr + re_inforLen)) {
-			//flashwrite(addr, "\xFF\xFF\xFF\xFF", 4);
-			addr = ALIGN_4K_NEXT(odaRecord.odaRecordWrite + re_inforLen);
-			MSG_LOG("ODA½»Ò×ÒªÐ´ÐÂµÄ4K, Ö±½ÓÏÈ²Á³ý4K\n");
-			flasherase(ERASE4KBYTESECTOR, addr);
-			odaRecord.odaRecordEarase = addr + 0x1000;	// ²ÁÐ´4K
-			if (odaRecord.odaRecordEarase >= odaRecord.odaRecordEnd) {
-				odaRecord.odaRecordEarase = odaRecord.odaRecordBegin;
-			}
-			if (odaRecord.odaRecordRead > addr && odaRecord.odaRecordRead < odaRecord.odaRecordEarase) {
-				MSG_LOG("ODA½»Ò×ÓÐ¼ÇÂ¼±»²Á³ýÁË:%d,%d\n", addr, odaRecord.odaRecordRead);
-				odaRecord.odaRecordRead = ALIGN_4K_NEXT(odaRecord.odaRecordRead);
-			}
-		}
-		// ÊÇ·ñÖ¸Õëµ½½áÊøÁË		
-		if (addr > odaRecord.odaRecordEnd) {
-			MSG_LOG("ODA¼ÇÂ¼µÄÐ´Ö¸ÕëÒì³£:%08X,%08X\n", addr, odaRecord.odaRecordEnd);
-			addr = odaRecord.odaRecordBegin;
-		}
-		else if (addr == odaRecord.odaRecordEnd) {
-			MSG_LOG("ODA¼ÇÂ¼µÄÐ´Ö¸Õëµ½Î²ÁË:%08X,%08X\n", addr, odaRecord.odaRecordEnd);
-			addr = odaRecord.odaRecordBegin;
-			//flasherase(ERASE4KBYTESECTOR, addr);
-		}
-		// Ð´¼ÇÂ¼
-		memcpy(re_infor, RECORD_FALG, 2);
-		if ((re_inforLen & 0x01) != 0) {
-			re_infor[re_inforLen] = 0xFF;
-			++re_inforLen;
-		}
-		memset(buff, 0, re_inforLen);
-		flashwrite(addr, re_infor, re_inforLen);
-		delayxms(1);
-		flashread(addr, buff, re_inforLen);
-		MSG_LOG("¶Á³öÀ´Êý¾Ý\r\n");
-		BCD_LOG(buff, re_inforLen, 1);
-		if (memcmp(buff, re_infor, re_inforLen) != 0)
-		{
-			MSG_LOG("Ð´Ê§°Ü\r\n");
-		}
-
-		odaRecord.odaRecordWrite = addr + re_inforLen;
-
-		sysfewrite(BIT_UNPAY_ODA_RECORD, sizeof(stOdaRecordAddr), (unsigned char *)&odaRecord);
-
-		MSG_LOG("Ð´FLAHS ODA8583¼ÇÂ¼:");
-		BCD_LOG(re_infor, re_inforLen, 1);
-
-		break;
-	case ODA_FeRC_Dlelt://É¾µô
-		MSG_LOG("É¾ODA8583¼ÇÂ¼\n ");
-		addr = odaRecord.odaRecordRead;
-		if (addr == odaRecord.odaRecordWrite) {
-			MSG_LOG("Ö¸ÕëÒì³£%08X\n", addr);
-			retCode = Ret_Err_Format;
-			break;
-		}
-		flashread(addr, tmpChs, 4);
-		if (memcmp(tmpChs, RECORD_FALG, 2) != 0) {
-			MSG_LOG("ODA 8583¼ÇÂ¼Òì³£%08X\n", addr);
-			retCode = Ret_Err_Format;
-			break;
-		}
-		re_inforLen = GET_INT16(tmpChs + 2) + 4;
-		addr += re_inforLen;
-		if (addr == odaRecord.odaRecordWrite) {
-
-		}
-		else {
-			flashread(addr, tmpChs, 4);
-			if (tmpChs[0] == 0xFF) {
-				++addr;
-				if (addr == odaRecord.odaRecordWrite) {
-
-				}
-				else if (memcmp(tmpChs + 1, RECORD_FALG, 2) != 0) {
-					addr = ALIGN_4K_NEXT(addr);
-				}
-			}
-			else if (memcmp(tmpChs, RECORD_FALG, 2) != 0) {
-				addr = ALIGN_4K_NEXT(addr);
-			}
-		}
-		if (addr >= odaRecord.odaRecordEnd) {
-			addr = odaRecord.odaRecordBegin;
-		}
-		odaRecord.odaRecordRead = addr;
-		MSG_LOG("odaRecord.odaRecordRead dele==%x\r\n", odaRecord.odaRecordRead);
-		//memset((unsigned char*)&re_infor, 0, sizeof(re_infor));
-		sysfewrite(BIT_UNPAY_ODA_RECORD, sizeof(stOdaRecordAddr), (unsigned char *)&odaRecord);
-		break;
-	case ODA_FeRC_Check://²é¿´ÊÇ·ñÓÐ¼ÇÂ¼
-		//MSG_LOG("C");
-		addr = odaRecord.odaRecordRead;
-		if (addr == odaRecord.odaRecordWrite) {
-			retCode = Ret_NO;
-			break;
-		}
-
-		flashread(addr, tmpChs, 4);
-		MSG_LOG("Ç°Ãæ4¸ö×Ö½Ú¸ñÊ½:");
-		BCD_LOG(tmpChs, 4, 1);
-		MSG_LOG("Ö¸Õë×´Ì¬:");
-		if (memcmp(tmpChs, RECORD_FALG, 2) != 0) {
-			retCode = Ret_NO;
-			break;
-		}
-		MSG_LOG("Ç°Ãæ4¸ö×Ö½Ú¸ñÊ½:");
-		BCD_LOG(tmpChs, 4, 1);
-		MSG_LOG("Ö¸Õë×´Ì¬:");
-		BCD_LOG((unsigned char *)&odaRecord, sizeof(stOdaRecordAddr), 1);
-		retCode = Ret_YES;
-		break;
-	case ODA_FeRC_READ://²é¿´ÊÇ·ñÓÐ¼ÇÂ¼
-		addr = odaRecord.odaRecordRead;
-		if (odaRecord.odaRecordRead == odaRecord.odaRecordWrite) {
-			retCode = Ret_Err_N_Exist;
-			break;
-		}
-		MSG_LOG("odaRecord.odaRecordRead==%x\r\n", odaRecord.odaRecordRead);
-		MSG_LOG("addr==%x\r\n", addr);
-		flashread(addr, tmpChs, 4);
-		if (memcmp(tmpChs, RECORD_FALG, 2) != 0) {
-			retCode = Ret_Err_Format;
-			break;
-		}
-		re_inforLen = GET_INT16(tmpChs + 2) + 4;
-		if (re_inforLen > 4) {
-			re_inforLen = ALIGN_2_NEXT(re_inforLen);
-			flashread(addr, re_infor, re_inforLen);
-		}
-		else {	// ¶ªÆú²»Òª
-			odaRecord.odaRecordRead += re_inforLen;
-			sysfewrite(BIT_UNPAY_ODA_RECORD, sizeof(stOdaRecordAddr), (unsigned char *)&odaRecord);
-			retCode = Ret_Err_Format;
-		}
-		break;
-	default:
-		break;
-	}
-	if (mode != ODA_FeRC_Check) {
-		MSG_LOG("Ç°Ãæ4¸ö×Ö½Ú¸ñÊ½:");
-		BCD_LOG(tmpChs, 4, 1);
-		MSG_LOG("Ö¸Õë×´Ì¬:");
-		BCD_LOG((unsigned char *)&odaRecord, sizeof(stOdaRecordAddr), 1);
-
-	}
-	return retCode;
-}
-
-#endif
 #endif
 
 

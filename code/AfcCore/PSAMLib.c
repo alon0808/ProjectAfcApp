@@ -63,12 +63,14 @@ void *onemsSecondDly(void *arg)
 
 		//----beep---------
 		if (beep_enable) {//需要响
+			//PRINT_DEBUG("onemsSecondDly:%d\n", beep_enable);
 			set_beer_b(0);
 			beep_enable--;
 		}
 		else {
 			if (beep_times > 1) {//响了一次，但是还有1次以上。
 				if (beep_delay) {//不响延时
+					//PRINT_DEBUG("onemsSecondDlyset_beer_b(1);:%d\n", beep_delay);
 					set_beer_b(1);
 					beep_delay--;
 				}
@@ -79,6 +81,8 @@ void *onemsSecondDly(void *arg)
 				}
 			}
 			else if (beep_times == 1) {//已经响了一次了，关闭BEEP
+
+				//PRINT_DEBUG("onemsSecondDlyset_beer_b(1);:%d\n", beep_times);
 				set_beer_b(1);
 				beep_times = 0;
 			}

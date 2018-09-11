@@ -1,6 +1,7 @@
+#ifndef _INCLUDE_SCZT_HEAD_H_
+#define _INCLUDE_SCZT_HEAD_H_
 
-#ifndef _SCZT_HEAD_H_
-#define _SCZT_HEAD_H_
+#include <stdio.h>
 
 #include "Main_City.h"
 #include "STProLib.h"
@@ -8,6 +9,8 @@
 #include "SlzrTypeDef.h"
 #include "BuCtrlFlag.H"
 
+
+#if 1
 //#define _debug_sys_info_
 #define _debug_
 //#define debug_IF2_TLVDeal_
@@ -16,6 +19,7 @@
 //#define _debug_gprs
 //#define _debug_gps_
 #define _debug_CPU_
+#endif
 
 
 #ifdef _debug_
@@ -42,6 +46,8 @@
 #define DEV_TYPE	"ESF3000L"
 #endif
 
+#define SWITCH_ODA_BACKEND	1
+
 //用PC串口发送GPS轨迹信息，模拟车辆运行
 //#define _GPS_Speed
 //考勤功能
@@ -60,24 +66,9 @@
 #define GPS_COM COM5
 
 //程序版本号
-#define BasksofVer 100
 #ifdef _debug_
-	#define SOFT_VER_TIME_LOG 0x005
-	#define SOFT_VER_TIME "2018.09.07 20:50 CHANGSHA"	//
-
-#elif defined _HD_XIAOER_OPEN
-	#define SOFT_VER_TIME_LOG BasksofVer+102
-	#define SOFT_VER_TIME "2016.9.12 ZCZ"	//
-#elif defined _HD_XIAOER_
-//小额消费版本
-	#define SOFT_VER_TIME_LOG  BasksofVer+205
-	#define SOFT_VER_TIME "2016..12 ZCZ"	//
-
-#else
-//这里是程序版本
-	#define SOFT_VER_TIME_LOG BasksofVer+58
-	#define SOFT_VER_TIME "2017.02.09"	//
-
+#define SOFT_VER_TIME_LOG 0x006
+#define SOFT_VER_TIME "2018.09.08 18:50 CHANGSHA"	//
 #endif
 
 #define PRAGRAMMER "ZZC"
@@ -134,32 +125,24 @@
 #define _TEST_GPRS 2
 #define _TEST_Irda 3
 
-#ifdef _New_Bu_mode_
-#define KEY_ENT    KEY_1		// Ent
-#define KEY_ESC    KEY_3		// Esc
-#define KEY_UP	KEY_5	// Arrow Up
+/* key 115 Pressed  UP
+key 115 Released
+key 114 Pressed		DOWN
+key 114 Released
+key 139 Pressed		ENTER
+key 139 Released
+key 28 Pressed		ESC
+key 28 Released*/
+#ifndef SLZRKEY_UP
+#define SLZRKEY_UP		115	// Arrow Up
+#define SLZRKEY_DOWN	114	// Arrow Down
+#define SLZRKEY_ESC		28		// Esc
+#define SLZRKEY_ENTER	139		// Enter
 
-#define UP		KEY_5	// Arrow Up
-#define DOWN	KEY_2	// Arrow Down
-#define ESC		KEY_3		// Esc
-#define ENTER	KEY_1		// Enter
-
-#define KEY_DOWN	KEY_2
-#else
-#define KEY_F1	KEY_1
-#define KEY_F2	KEY_4
-#define KEY_DOWN	KEY_5
-#define KEY_UP	KEY_2
-#define KEY_ESC	KEY_3
-#define KEY_ENT	KEY_6
-
-#define UP		KEY_UP	// Arrow Up
-#define DOWN	KEY_DOWN	// Arrow Down
-#define ESC		KEY_ESC	// Esc
-#define ENTER	KEY_ENT	// Enter
-#define F1		KEY_F1	// Function
-#define F2		KEY_F2
+#define SLZRKEY_F1		KEY_F1	// Function
+#define SLZRKEY_F2		KEY_F2
 #endif
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////					功能开关
 ////////////////////////////////////////////////////////////////////////////////
@@ -377,17 +360,17 @@
 #define ADF2_DEAL_COUNT		0x0004
 
 #ifdef _debug_
-	#define WAIT_TIME 1
+#define WAIT_TIME 1
 #else
-	#ifdef BUS_SYBAOSHI_
-		#define WAIT_TIME 20
-	#elif defined ZongKong_CPU_ //中控的CPU单独处理
-		#define WAIT_TIME 2
-	#elif defined _HD_XIAOER_ //邯郸小额消费等待时间2小时
-		#define WAIT_TIME 20
-	#else
-		#define WAIT_TIME 5
-	#endif
+#ifdef BUS_SYBAOSHI_
+#define WAIT_TIME 20
+#elif defined ZongKong_CPU_ //中控的CPU单独处理
+#define WAIT_TIME 2
+#elif defined _HD_XIAOER_ //邯郸小额消费等待时间2小时
+#define WAIT_TIME 20
+#else
+#define WAIT_TIME 5
+#endif
 #endif
 
 ///////////////////////////////固定长度定义/////////////////////////////////
@@ -815,7 +798,7 @@ typedef struct
 //192   保存银行临时记录
 #define BIT_qPBOC_Rec_Temp (BIT_TMS_FILE_DOWNLOAD+BIT_TMS_FILE_DOWNLOAD_LEN)
 
-#define BIT_END_ADDR		(BIT_qPBOC_Rec_Temp+192)
+#define BIT_END_ADDR		(BIT_qPBOC_Rec_Temp+256)
 
 //----------------------------------
 //28(24) 调度命令信息  调度数据存在7168开始的地址，7K，铁电共8K能用1024字节

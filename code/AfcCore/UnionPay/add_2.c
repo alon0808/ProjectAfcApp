@@ -469,7 +469,9 @@ int GJRec_Send_add(void)
 
 int save_infor_add(unsigned char mode, unsigned char *re_infor) {
 
-
+#if SWITCH_ODA_BACKEND
+	return Ret_OK;
+#else
 //	unsigned char buff[512];
 //	unsigned int addr = 0;
 	unsigned int curp=0, headp=0;
@@ -481,6 +483,7 @@ int save_infor_add(unsigned char mode, unsigned char *re_infor) {
 	//unsigned char buff_crc[512];
 //#endif
 	int retCode = Ret_OK;
+
 	if (mode != ODA_FeRC_Check) {
 		MSG_LOG("save_repurse_infor(%02X):%d\n", mode, re_inforLen);
 	}
@@ -504,20 +507,20 @@ int save_infor_add(unsigned char mode, unsigned char *re_infor) {
 		break;
 	case ODA_FeRC_Dlelt://删掉
 		MSG_LOG("删ODA8583记录\n ");
-	
-		if (FeRC_Dlelt_add()==1) {
-		
+
+		if (FeRC_Dlelt_add() == 1) {
+
 			retCode = Ret_Err_Format;
 			break;
 		}
 
 		break;
 	case ODA_FeRC_Check://查看是否有记录
-		//MSG_LOG("C");
+						//MSG_LOG("C");
 
-		
-		if (GJRec_Send_add()!=0) {
-					MSG_LOG("有记录\r\n");
+
+		if (GJRec_Send_add() != 0) {
+			MSG_LOG("有记录\r\n");
 			retCode = Ret_YES;
 		}
 		else
@@ -535,19 +538,19 @@ int save_infor_add(unsigned char mode, unsigned char *re_infor) {
 		flashread(headp, re_infor, RECORDLEN);
 
 #ifdef _debug_
-	debugstring("-------------------\r\ncur:");
-	
-	MSG_LOG("读取当前指针=%04x\r\n",headp);
+		debugstring("-------------------\r\ncur:");
 
-	MSG_LOG("头指针=%04x\r\n",curp);
-	debugdata(re_infor, RECORDLEN, 1);
-// 	memcpy( buff_crc,re_infor,512);
-// 	memset(buff_crc,re_infor[30],512);
-// 	if(memcpy(buff_crc,re_infor,512)!=0)
-// 	{
-// 		beep(4,200,200);
-// 		MSG_LOG("读出错误\r\n");
-// 	}
+		MSG_LOG("读取当前指针=%04x\r\n", headp);
+
+		MSG_LOG("头指针=%04x\r\n", curp);
+		debugdata(re_infor, RECORDLEN, 1);
+		// 	memcpy( buff_crc,re_infor,512);
+		// 	memset(buff_crc,re_infor[30],512);
+		// 	if(memcpy(buff_crc,re_infor,512)!=0)
+		// 	{
+		// 		beep(4,200,200);
+		// 		MSG_LOG("读出错误\r\n");
+		// 	}
 #endif
 
 		re_inforLen = GET_INT16(re_infor + 2) + 4;
@@ -558,11 +561,12 @@ int save_infor_add(unsigned char mode, unsigned char *re_infor) {
 		}
 		break;
 	default:
-			MSG_LOG("其它\r\n");
+		MSG_LOG("其它\r\n");
 		break;
 	}
 
 	return retCode;
+#endif
 }
 //未上传
 void showGPRStR_add_2(void)

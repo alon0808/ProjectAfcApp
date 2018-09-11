@@ -106,6 +106,15 @@ typedef enum {
 	ODA,
 	UICS
 }PBOC_CHANNEL;
+
+typedef enum {
+	pr_invalid = 0,
+	pr_success,
+	pr_fail,
+	pr_repurse,
+	pr_doubt	// timeout
+}emPbocResult;
+
 typedef union
 {
 	INT8U	CharBuff[2];
@@ -547,14 +556,21 @@ typedef struct
 	unsigned char rNull;//129 预留
 	unsigned char rCrc16[2];//130-131 记录校验码 前130字节的CRC16  HEX
 	unsigned char rDriverNo[4];//132-135 司机编号，低位在前
-	unsigned char rfDDAResult;	//136 认证结果
+	unsigned char rfDDAResult;	//136 认证结果记录是否正常标志,在线或者ODA
 	unsigned char rCardType;	//137 卡类
 	unsigned char rDeviceSerial[4];//138-141//设备序列号
 
 	unsigned char rZYADD[8];//142-149 专用文件名称
-	unsigned char rCDdata[16];//150-165 2磁道数据
+	unsigned char rCDdataLen;	// 二磁道数据长度
+	unsigned char rCDdata[19];//150-165 2磁道数据
 
-	unsigned char rBBB[18];	//166-183 保留
+	unsigned char pbocDevId[8];
+	unsigned char pbocBussinessCode[15];
+
+	unsigned char pbocSysTrackNo[3];
+
+	unsigned char pbocBatchNo[3];
+	//unsigned char rBBB[18];	//166-183 保留
 }stPbocRec;
 typedef struct
 {
@@ -570,7 +586,7 @@ EXTERN unsigned char GetDateTime(void);
 extern void get_BER_TVL(unsigned int  bitPos, BER_TVL *OutTVL);
 extern void emv_set_pay_channel(PBOC_CHANNEL channel);
 extern PBOC_CHANNEL emv_get_pay_channel(void);
-extern void emv_set_pay_channel(PBOC_CHANNEL channel);
+void emv_set_pboc_result(emPbocResult pbocresult);
 extern void getMobileParameter_test(void);
 extern unsigned char qrDisp_history(unsigned char mode, unsigned int Index);
 extern EMV_CARDTYPE emv_get_card_type(void);

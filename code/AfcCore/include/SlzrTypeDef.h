@@ -1133,6 +1133,8 @@ typedef struct {
 	unsigned char switch_both;		// is swith
 	unsigned char paymodeRfu[2];	// RFU
 
+	unsigned char gj_pboc_trackNo[4];
+
 	unsigned char repurseRecord[850];	// reversal message for union pay transaction
 
 
@@ -1239,14 +1241,6 @@ typedef enum {
 // 		Ret_Ok = 0
 // }RetCode;
 // #endif // !_RetCode_
-
-
-
-// function, little endian
-// #define SET_INT16(buf, len)	(buf)[0] = ((len) >> 8) & 0x0FF; (buf)[1] = ((len)) & 0x0FF
-#define GET_INT16_B(buf) (((buf)[0]<<8)|((buf)[1]&0x0FF))	// 大端存储
-//#define GET_INT16(buf) (((buf)[1]<<8)|((buf)[0]&0x0FF))	// 小端存储
-
 
 #define voice_invalid		"/mnt/qrdata/wav/invalidcard.wav"		//非法卡
 #define voice_studentcard	"/mnt/qrdata/wav/studentcard.wav"		//学生卡

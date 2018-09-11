@@ -61,7 +61,6 @@ extern void SetR485_EN(int on_off);
 
 extern 
 void Voice_main(int VoiceChoose);
-extern int KeyBoard_main(int *value);
 
 #ifdef _cplusplus
 }

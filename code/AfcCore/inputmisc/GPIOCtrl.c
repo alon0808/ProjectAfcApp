@@ -16,7 +16,6 @@
 #include <sys/types.h>  
 #include <sys/stat.h>  
 
-#define DEV_PATH "/dev/input/event1"   //difference is possible  
 
 
 /*

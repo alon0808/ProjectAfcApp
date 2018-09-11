@@ -1,8 +1,6 @@
 
 //creat by lks
 
-#include "debugInfor.h"
-
 extern unsigned char ASCII2ZBcod(char *strin, unsigned char *ZBbuf, unsigned char ZBlen);
 extern unsigned char ZBcod2ASCII(unsigned char *ZBbuf, unsigned char ZBlen, char *strin);
 

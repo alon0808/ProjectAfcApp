@@ -1,7 +1,6 @@
 #include "Macro_Proj.h"
 #include "xSys_Lantaiyuan.h"
 #include "MYDES.h"
-#include "debugInfor.h"
 
 #include <string.h>
 #include <unistd.h>

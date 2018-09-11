@@ -19,7 +19,6 @@ extern unsigned char gchn_eng;//中英文标志
 extern stPricetable NewPriceTab;
 extern unsigned int startTime,endTime,nowTime,endTimeEn;
 extern unsigned char gucEndTimeFlag;
-extern unsigned char gMCardCand;
 extern unsigned int c_serial;
 extern stcomtime SysTime;
 extern unsigned char gucRestorFlag;
@@ -154,14 +153,14 @@ void KeyInputNum(unsigned char val)
 		switch(ret)
 		{
 #ifndef _New_Bu_mode_
-		case UP:
+		case SLZRKEY_UP:
 			if((Bakbuf[i]<='0')||(Bakbuf[i]>'9'))
 				Bakbuf[i]='9';
 			else if((Bakbuf[i]<='9')&&(Bakbuf[i]>'0'))
 				Bakbuf[i]--;
 			
 			break;
-		case F2:  
+		case SLZRKEY_F2:  
 			i++;
 			if(i>= nLen)
 				i = 0;
@@ -169,7 +168,7 @@ void KeyInputNum(unsigned char val)
 			memcpy(buffer,Bakbuf,8);
 			display(2,6,(char*)buffer,0);
 			break;
-		case F1:
+		case SLZRKEY_F1:
 			if(i>0)
 				i--;
 			else
@@ -178,18 +177,18 @@ void KeyInputNum(unsigned char val)
 			memcpy(buffer,Bakbuf,8);
 			display(2,6,(char*)buffer,0);
 			break; 
-		case DOWN:
+		case SLZRKEY_DOWN:
 #else
-		case UP:
+		case SLZRKEY_UP:
 #endif   
 			if((Bakbuf[i]<'0')||(Bakbuf[i]>='9'))
 				Bakbuf[i]='0';
 			else if((Bakbuf[i]<'9')&&(Bakbuf[i]>='0'))
 				Bakbuf[i]++;
 			break;
-		case ESC:   
+		case SLZRKEY_ESC:   
 			goto SetupDevi_exit;
-		case ENTER:
+		case SLZRKEY_ENTER:
 #ifdef _New_Bu_mode_
 			i++;
 			if(i>= nLen){
@@ -668,7 +667,7 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 		return ST_ERROR;
 	}
 	
-	gMCardCand = CARDSTYLE_NORM1;
+	gCardinfo.gMCardCand = CARDSTYLE_NORM1;
 	pos=0;
 	memcpy(gCardinfo.CityCode, buffer+pos, CITY_CODE_LEN);			//城市代码	2
 	pos+=CITY_CODE_LEN;
@@ -683,8 +682,8 @@ unsigned char Card_typeProcess_nomal(unsigned char mode)
 	gCardinfo.Zicard_catalog = 0;
 #endif
 	
-	MSG_LOG("gCardinfo.card_catalog=%x\r\n",gCardinfo.card_catalog);
-	MSG_LOG("mode=%x\r\n",mode);
+	MSG_LOG("gCardinfo.card_catalog=%x\n",gCardinfo.card_catalog);
+	MSG_LOG("mode=%x\n",mode);
 	if(gCardinfo.card_catalog ==CARD_WHITE_BUS)
 	{
 		return CARD_WHITE_BUS;

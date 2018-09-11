@@ -513,6 +513,7 @@ void restore_disp(void)
 		pos = 0;
 		memset(buffer, 0, 50);
 
+#if 0
 		memcpy(buffer, (unsigned char *)"线路:", 5);
 		pos = 5;
 
@@ -533,6 +534,7 @@ void restore_disp(void)
 		memset(buffer, 0, 50);
 		strcpy((char*)buffer, SYS_HEAD_STR);
 
+
 #if defined _debug_ || defined _debug_blk || defined _debug_price || defined debug_GJ_TLVDeal_||defined JT_TES
 		strcpy((char*)buffer, "测试程序");
 
@@ -541,6 +543,7 @@ void restore_disp(void)
 		memcpy((unsigned char*)&ii, gBusVerInfo.busProVer, 2);
 		sprintf((char*)buffer + 30, " V%d.%02d", (ii / 100), (ii % 100));
 		strcat((char*)buffer, (char*)(buffer + 30));
+#endif
 
 #ifdef _DriverKey_signin_
 		if (BUflag != 0) {
@@ -559,6 +562,8 @@ void restore_disp(void)
 		// 			else
 		// 				display(0,0,"更新程序",DIS_CENTER|DIS_CONVERT);
 		// 		}
+
+#if 0
 		if (gBuInfo.stop_flag)
 		{
 			memset(buffer, 0, 50);
@@ -569,7 +574,9 @@ void restore_disp(void)
 
 		}
 		else
+#endif
 		{
+#if 0
 			//			imm = 0;
 			memset(buffer, 0, 50);
 			memcpy((unsigned char*)&mmoney, gDeviceParaTab.busPrice, 4);
@@ -579,6 +586,7 @@ void restore_disp(void)
 			// 			mmoney += imm;
 			sprintf((char*)buffer, "票价:%d.%02d元", mmoney / 100, mmoney % 100);
 			display(4, 1, (char*)buffer, 0);
+#endif
 #ifdef KEYBOARD
 			sprintf((char*)buffer, "%d.%02d ", mmoney / 100, mmoney % 100);
 			LED_Dis3((char*)buffer);
@@ -2577,6 +2585,7 @@ int getCardtypeHANDAN(char *cardD, unsigned char type)
 
 int getCardtype(char *cardD, unsigned char type)
 {//优惠卡显示
+	//PRINT_DEBUG("getCardtype:%d", gCardinfo.gMCardCand);
 	if (gCardinfo.gMCardCand != CARDSTYLE_JTB)
 		return getCardtypeHANDAN(cardD, type);
 	else
@@ -2610,13 +2619,13 @@ void disp_no_swipe(void)
 //消费后显示信息，cMode: 0 - M1卡， 1 - 手机卡， 2 - CPU卡
 void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsigned char cMOde)
 {
-	unsigned char disp[50];
-	char buffer1[20];
+	unsigned char dispBuf[100];
+	//char dispBuf[20];
 	int len = 0;
 
 
 	led_on(LED_GREEN);
-	Light_main(QR_LIGHT, LIGHT_OPEN, QR_G, (char *)buffer1);
+	Light_main(QR_LIGHT, LIGHT_OPEN, QR_G, (char *)dispBuf);
 
 	gBuInfo.restore_flag = 3;
 	// 	if(memcmp(gCardinfo.PublishBicker,(unsigned char*)&last_card_no ,4))
@@ -2632,24 +2641,23 @@ void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsign
 	// 	tmp = gDeviceParaTab.count;
 	cls();
 
-	memset(disp, 0, 50);
+	memset(dispBuf, 0, 50);
 
 	if (dmode == ID_REC_TOLL)	//扣费
 	{
-		len += sprintf(buffer1 + len, "余额:%d.%02d元\n", remM / 100, remM % 100);
-		//display(2, 1, buffer1, 0);
-		len += sprintf(buffer1 + len, "扣款:%d.%02d元\n", pucM / 100, pucM % 100);
-		display(4, 1, buffer1, 0);
-
-		//strcpy(buffer1, "卡类:");
-		len += sprintf(buffer1 + len, "卡类:");
-		if (getCardtype(buffer1 + len, gCardinfo.card_catalog) == ST_ERROR) {
-			sprintf(buffer1 + len, "%d", gCardinfo.card_catalog);
+		if (remM != INFINITE) {
+			len += sprintf(dispBuf + len, "余额:%d.%02d元\n", remM / 100, remM % 100);
 		}
-		display(0, 1, buffer1, 0);
+		len += sprintf(dispBuf + len, "扣款:%d.%02d元\n", pucM / 100, pucM % 100);
 
-		sprintf(buffer1, "%d.%02d", pucM / 100, pucM % 100);
-		LED_Dis3(buffer1);
+		len += sprintf(dispBuf + len, "卡类:");
+		if (getCardtype(dispBuf + len, gCardinfo.card_catalog) == ST_ERROR) {
+			sprintf(dispBuf + len, "%d", gCardinfo.card_catalog);
+		}
+		display(0, 1, dispBuf, 0);
+
+		sprintf(dispBuf, "%d.%02d", pucM / 100, pucM % 100);
+		LED_Dis3(dispBuf);
 
 	}
 	else if (dmode == ID_REC_MON)
@@ -2660,26 +2668,26 @@ void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsign
 				display(3, 1, "员工卡", DIS_CENTER);
 			}
 			else {
-				getCardtype((char*)buffer1, gCardinfo.card_catalog);
-				display(3, 0, buffer1, DIS_CENTER);
+				getCardtype((char*)dispBuf, gCardinfo.card_catalog);
+				display(3, 0, dispBuf, DIS_CENTER);
 			}
 		}
 		else
 		{
-			sprintf(buffer1, "余次:%d", remM);
-			display(2, 1, buffer1, 0);
-			sprintf(buffer1, "扣次:%d", pucM);
-			display(4, 1, buffer1, 0);
+			sprintf(dispBuf, "余次:%d", remM);
+			display(2, 1, dispBuf, 0);
+			sprintf(dispBuf, "扣次:%d", pucM);
+			display(4, 1, dispBuf, 0);
 
-			sprintf(buffer1, "C%2d", pucM);
-			LED_Dis3(buffer1);
+			sprintf(dispBuf, "C%2d", pucM);
+			LED_Dis3(dispBuf);
 		}
 
-		strcpy(buffer1, "卡类:");
-		if (getCardtype(buffer1 + 5, gCardinfo.card_catalog) == ST_ERROR) {
-			sprintf(buffer1 + 5, "%d", gCardinfo.card_catalog);
+		strcpy(dispBuf, "卡类:");
+		if (getCardtype(dispBuf + 5, gCardinfo.card_catalog) == ST_ERROR) {
+			sprintf(dispBuf + 5, "%d", gCardinfo.card_catalog);
 		}
-		display(0, 1, buffer1, 0);
+		display(0, 1, dispBuf, 0);
 	}
 	else
 	{

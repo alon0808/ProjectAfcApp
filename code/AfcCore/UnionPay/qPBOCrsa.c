@@ -67,7 +67,6 @@ extern unsigned char cardSound;			//刷卡没有成功标志
 extern unsigned int card_ser;
 extern unsigned int ghisCur;//历史当前指针
 extern TCP_IP_PACKET1 tcpipPacket;
-extern Parameter3 ComSumeFile;
 extern unsigned char restore_flag;						//显示复原
 extern unsigned int g24GDisFlash;//24G卡界面刷新
 extern pFistVary_1 pFistVary;
@@ -90,7 +89,6 @@ extern void disp_no_swipe(void);
 int getqPbocMoney(void);
 extern unsigned char GPRSLinkProcess;
 
-extern unsigned char gMCardCand;
 
 #define GPRSCOMMAX 1600
 extern unsigned char gprsRevBuf[1600];//GPRS接收缓冲
@@ -117,6 +115,7 @@ extern INT8U	QpbocTVLData[LEN_QBOCTVL_DATA];
 
 static EMV_CARDTYPE emv_cardtype;
 static PBOC_CHANNEL pay_channel;
+static emPbocResult pboc_result;
 
 void emv_set_card_type(EMV_CARDTYPE type)
 {
@@ -137,7 +136,15 @@ PBOC_CHANNEL emv_get_pay_channel(void)
 {
 	return pay_channel;
 }
+void emv_set_pboc_result(emPbocResult pbocresult)
+{
+	pboc_result = pbocresult;
+}
 
+emPbocResult emv_get_pboc_result(void)
+{
+	return pboc_result;
+}
 
 unsigned char shuangmian = 1;	//双免交易成功标记
 unsigned char online_funtion = 0;		//先走电子现金，余额不足时候走双免交易，需填写终端属性为9F66为：28000000
@@ -2149,7 +2156,7 @@ int  QpbocAppSelect(void)
 #endif
 		{
 			if (shuangmian != 0) {
-				gMCardCand = CARDSTYLE_PBOC;
+				gCardinfo.gMCardCand = CARDSTYLE_PBOC;
 				MSG_LOG("1双免交易PDO_9F66\r\n");
 				memcpy(PosOfferData.PDOL.bPosAttr9F66, "\x26\x80\x00\x00", 4);	//银联技术员指导，说填这个
 
@@ -2769,6 +2776,8 @@ int qPbocTradeProc(IN INT32U InputMoney, OUT INT32U *Len, OUT INT8U *pOutMsg)
 	a_sum1 = i;
 
 	MSG_LOG("余额:%d\r\n", a_sum1);
+#else
+	//a_sum1 = INFINITE;
 #endif
 	//---------------------------------------------------------
 
@@ -2779,13 +2788,13 @@ int qPbocTradeProc(IN INT32U InputMoney, OUT INT32U *Len, OUT INT8U *pOutMsg)
 		online_funtion = 0;
 
 		if (shuangmian != 0) {
-			gMCardCand = CARDSTYLE_QPBOC;
+			gCardinfo.gMCardCand = CARDSTYLE_QPBOC;
 			emv_set_pay_channel(PAY_Online);
 			MSG_LOG("账户上没有余额,走双免流程\r\n");
 		}
 		else {
 			emv_set_pay_channel(ODA);
-			gMCardCand = CARDSTYLE_UNPAY_ODA;
+			gCardinfo.gMCardCand = CARDSTYLE_UNPAY_ODA;
 			MSG_LOG("账户上没有余额,走ODA流程\r\n");
 
 			TradeResult.TradeType = qPBOC_RESUL_TC;
@@ -3241,104 +3250,72 @@ unsigned char get_rcardMainNO(unsigned char *outdata)
 unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff, unsigned char transResult)
 {
 	BER_TVL TempTVL;
-	stPbocRec pbocrec;
+	stPbocRec *pbocrec = NULL;
 	unsigned int uiTemp;
 	INT16U usI;
 	unsigned char buff[50];
-	unsigned char buffer[10];
 	//unsigned int i=0;
 //	char *p=NULL;
 	unsigned char len = 0;
+	unsigned char chanel = emv_get_pay_channel();
 
+
+	pbocrec = (stPbocRec *)qrecbuff;
 	memset(qrecbuff, 0x5A, 256);
 	feread(BIT_PBOC_NS, 4, (unsigned char*)&uiTemp);
 
 	if (uiTemp == 0)
 		uiTemp = 1;
 	sprintf((char*)buff, "%012ui", uiTemp);
-	// 	uiTemp ++;
-	// 	sysfewrite(BIT_PBOC_NS, 4, (unsigned char*)&uiTemp);
+	if (chanel == PAY_Online) {
+		uiTemp++;
+		sysfewrite(BIT_PBOC_NS, 4, (unsigned char*)&uiTemp);
+	}
 
-
-	  //1.记录流水号
-	memcpy(pbocrec.rpurSerial, ASC2BCD((char*)buff, 12), 6);
+	//1.记录流水号
+	memcpy(pbocrec->rpurSerial, ASC2BCD((char*)buff, 12), 6);
 	//2.银联卡编号 3. 卡主帐户 4.卡有效日期 YYMM
-	memset(pbocrec.rBankCardNo, '0', 18);//银联卡编号---------------------
-// 	if(QpbocTVLFCI.t_5A.SizeOff != 0)	//2014.4.29
-// 	{
-// 
-// 
-// 		get_BER_TVL(QpbocTVLFCI.t_5A.SizeOff,&TempTVL);
-// 
-// 		memset(pbocrec.rcardMainNO, 0xFF, 10);
-// 		if(TempTVL.L <= 10)
-// 			memcpy(pbocrec.rcardMainNO+(10-TempTVL.L), TempTVL.V, TempTVL.L);//卡主帐户
-// 		else
-// 			memcpy(pbocrec.rcardMainNO, TempTVL.V, TempTVL.L);//卡主帐户
-// 		
-// 		get_BER_TVL(QpbocTVLFCI.t_5F24.SizeOff,&TempTVL);
-// 		memcpy(pbocrec.rcardlimitdata, TempTVL.V, 2);
-// 		
-// 	}else{
-// 
-// 		memset(pbocrec.rcardMainNO, 0xFF, 10);
-// 		get_BER_TVL(QpbocTVLFCI.t_57.SizeOff,&TempTVL);
-// 		
-// 		MSG_LOG("2磁道数据:");
-// 		BCD_LOG(TempTVL.V, TempTVL.L, 1);
-// 		memset(buff,0,sizeof(buff));
-// 		BCD2Ascii(TempTVL.V,buff,19);
-// 		p = strtok((char *)buff,"D");
-// 		len = strlen(p);
-// 		if (len%2)
-// 		{
-// 			memmove(p+1,p,len);
-// 			p[len++] = 'F';		//
-// 		}
-// 
-// 		MSG_LOG("len:%d,:%s\r\n",len,p);
-// 		Ascii2BCD((unsigned char *)p,(pbocrec.rcardMainNO+10-len/2),len);
-// 		BCD_LOG(pbocrec.rcardMainNO,10,1);
-	// 	}
-	memset(pbocrec.rcardMainNO, 0xFF, 10);
-	len = get_rcardMainNO(pbocrec.rcardMainNO);
+	memset(pbocrec->rBankCardNo, '0', 18);//银联卡编号---------------------
+
+	memset(pbocrec->rcardMainNO, 0xFF, 10);
+	len = get_rcardMainNO(pbocrec->rcardMainNO);
 	MSG_LOG("len:%d\r\n", len);
-	BCD_LOG(pbocrec.rcardMainNO, 10, 1);
-	BCD_LOG(pbocrec.rcardMainNO, 10, 1);
+	BCD_LOG(pbocrec->rcardMainNO, 10, 1);
+	BCD_LOG(pbocrec->rcardMainNO, 10, 1);
 	//5.卡片序列号
-	memset(pbocrec.rcardseial, 0, 2);
+	memset(pbocrec->rcardseial, 0, 2);
 	get_BER_TVL(QpbocTVLFCI.t_5F34.SizeOff, &TempTVL);
 	MSG_LOG("%04XPIN序号:", QpbocTVLFCI.t_5F34.TagValue);
 	// 	BCD_LOG(TempTVL.V,TempTVL.L,1);
 
 	if (TempTVL.L == 1)
-		pbocrec.rcardseial[1] = TempTVL.V[0];//卡片序列号
+		pbocrec->rcardseial[1] = TempTVL.V[0];//卡片序列号
 	else
-		memcpy(pbocrec.rcardseial, TempTVL.V, 2);//卡片序列号	
+		memcpy(pbocrec->rcardseial, TempTVL.V, 2);//卡片序列号	
 
 //6.应用密文
 
 	get_BER_TVL(QpbocTVLFCI.t_9F26.SizeOff, &TempTVL);
-	memcpy(pbocrec.rUseKeytext, TempTVL.V, 8);//应用密文
+	memcpy(pbocrec->rUseKeytext, TempTVL.V, 8);//应用密文
 //7.应用信息数据 	
 	if (PosTradeCout > 0)
-		pbocrec.rUsemsginfo = PosTradeCout - 1;//应用信息数据
+		pbocrec->rUsemsginfo = PosTradeCout - 1;//应用信息数据
 	else
-		pbocrec.rUsemsginfo = PosTradeCout;//应用信息数据
+		pbocrec->rUsemsginfo = PosTradeCout;//应用信息数据
 	//8.发卡行应用数据
-	memset(pbocrec.rpublisBanduse, 0, 32);//发卡行应用数据
+	memset(pbocrec->rpublisBanduse, 0, 32);//发卡行应用数据
 	get_BER_TVL(QpbocTVLFCI.t_9F10.SizeOff, &TempTVL);
-	memcpy(pbocrec.rpublisBanduse, TempTVL.V, TempTVL.L);//发卡行应用数据
+	memcpy(pbocrec->rpublisBanduse, TempTVL.V, TempTVL.L);//发卡行应用数据
 
 	get_BER_TVL(QpbocTVLFCI.t_9F37.SizeOff, &TempTVL);
-	memcpy(pbocrec.rRand, TempTVL.V, 4);//不可预知数
+	memcpy(pbocrec->rRand, TempTVL.V, 4);//不可预知数
 
 	get_BER_TVL(QpbocTVLFCI.t_9F36.SizeOff, &TempTVL);
-	memcpy(pbocrec.rdealTimer, TempTVL.V, 2);//应用交易计数器HEX
+	memcpy(pbocrec->rdealTimer, TempTVL.V, 2);//应用交易计数器HEX
 
-	memcpy(pbocrec.rchekend, PosOfferData.AutenData.TVR, 5);//终端验证结果
+	memcpy(pbocrec->rchekend, PosOfferData.AutenData.TVR, 5);//终端验证结果
 	get_BER_TVL(QpbocTVLFCI.t_82.SizeOff, &TempTVL);
-	memcpy(pbocrec.ryyjfType, TempTVL.V, 2);//应用交互特征
+	memcpy(pbocrec->ryyjfType, TempTVL.V, 2);//应用交互特征
 
 // 	debugstring("######t_9F10.L:");
 // 	debugdata((unsigned char*)&QpbocTVLFCI.t_9F08.SizeOff, 4, 0);
@@ -3346,159 +3323,113 @@ unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff, unsigned char transResu
 // 	debugdata((unsigned char*)TempTVL.V, 4, 1);
 
 	if (QpbocTVLFCI.t_9F08.SizeOff == 0) {
-		memset(pbocrec.ruseVer, 0, 2);//应用版本号
+		memset(pbocrec->ruseVer, 0, 2);//应用版本号
 	}
 	else {
 		get_BER_TVL(QpbocTVLFCI.t_9F08.SizeOff, &TempTVL);
-		memcpy(pbocrec.ruseVer, TempTVL.V, 2);//应用版本号
+		memcpy(pbocrec->ruseVer, TempTVL.V, 2);//应用版本号
 	}
 
 	if (PosTradeCout > 0)
 		uiTemp = PosTradeCout - 1;//交易序列计数器---------------------
 	else
 		uiTemp = PosTradeCout;
-	memcpy(pbocrec.rSrlTimer, (unsigned char*)&uiTemp, 2);//交易序列计数器---------------------
-	RevertTurn(2, pbocrec.rSrlTimer);
+	memcpy(pbocrec->rSrlTimer, (unsigned char*)&uiTemp, 2);//交易序列计数器---------------------
+	RevertTurn(2, pbocrec->rSrlTimer);
 
 	get_BER_TVL(QpbocTVLFCI.t_9F74.SizeOff, &TempTVL);
-	memcpy(pbocrec.rLicense, TempTVL.V, 6);//电子现金发卡行授权码
+	memcpy(pbocrec->rLicense, TempTVL.V, 6);//电子现金发卡行授权码
 	get_BER_TVL(QpbocTVLFCI.t_9F74.SizeOff, &TempTVL);
-	memcpy(pbocrec.rLicenseACK, "Y3", 2);//授权响应码
+	memcpy(pbocrec->rLicenseACK, "Y3", 2);//授权响应码
 
 	sysferead(BIT_DEVICE_NO, 9, buff);
-	memcpy(pbocrec.rBuPOSSerial, ASC2BCD((char*)buff + 2, 6), 3);//接口设备序列号
-	pbocrec.rDealMoney[0] = TradeResult.TradeMoney[1];//交易金额
-	pbocrec.rDealMoney[1] = TradeResult.TradeMoney[0];
-	pbocrec.rAferMoney[0] = TradeResult.BefMoney[3];//交易后余额
-	pbocrec.rAferMoney[1] = TradeResult.BefMoney[2];
-	pbocrec.rAferMoney[2] = TradeResult.BefMoney[1];
-	pbocrec.rAferMoney[3] = TradeResult.BefMoney[0];
-	memcpy(pbocrec.rDatatiem, (INT8U *)&SysTime, 7);//交易日期时间
+	memcpy(pbocrec->rBuPOSSerial, ASC2BCD((char*)buff + 2, 6), 3);//接口设备序列号
+	pbocrec->rDealMoney[0] = TradeResult.TradeMoney[1];//交易金额
+	pbocrec->rDealMoney[1] = TradeResult.TradeMoney[0];
+	pbocrec->rAferMoney[0] = TradeResult.BefMoney[3];//交易后余额
+	pbocrec->rAferMoney[1] = TradeResult.BefMoney[2];
+	pbocrec->rAferMoney[2] = TradeResult.BefMoney[1];
+	pbocrec->rAferMoney[3] = TradeResult.BefMoney[0];
+	memcpy(pbocrec->rDatatiem, (INT8U *)&SysTime, 7);//交易日期时间
 
-// 	if(QpbocTVLFCI.t_9C.SizeOff == 0)
-// 		pbocrec.rdealType = 0;//TradeResult.TradeType;//交易类型
-// 	else{
-// 		get_BER_TVL(QpbocTVLFCI.t_9C.SizeOff,&TempTVL);
-// 		pbocrec.rdealType = TempTVL.V[0];//电子现金发卡行授权码
-// 	}
-// 	debugstring("######t_9F10.L:");
-// 	debugdata((unsigned char*)&QpbocTVLFCI.t_9C.SizeOff, 4, 0);
-// 	debugdata((unsigned char*)&TempTVL.L, 4, 0);
-// 	debugdata((unsigned char*)TempTVL.V, 4, 1);
-	pbocrec.rdealType = 0xad;
-	SYSgetbussinessNO(pbocrec.rbusinessCode);//两字节商户编号
-//	memcpy(pbocrec.rbusinessCode, "\x00\x00", 2);//运营商户代码
+	if (QpbocTVLFCI.t_9C.SizeOff == 0)
+		pbocrec->rdealType = 0;//TradeResult.TradeType;//交易类型
+	else {
+		get_BER_TVL(QpbocTVLFCI.t_9C.SizeOff, &TempTVL);
+		pbocrec->rdealType = TempTVL.V[0];//电子现金发卡行授权码
+	}
 
-	memcpy(pbocrec.rBuLineDevNo, pFistVary.LineNo, 3);//线路编号
-	memcpy(pbocrec.rBuLineDevNo + 3, ASC2BCD((char*)buff + 2, 6), 3);//汽车编号
-	pbocrec.rNull = transResult;
+	SYSgetbussinessNO(pbocrec->rbusinessCode);//两字节商户编号
+//	memcpy(pbocrec->rbusinessCode, "\x00\x00", 2);//运营商户代码
+
+	memcpy(pbocrec->rBuLineDevNo, pFistVary.LineNo, 3);//线路编号
+	memcpy(pbocrec->rBuLineDevNo + 3, ASC2BCD((char*)buff + 2, 6), 3);//汽车编号
+	pbocrec->rNull = transResult;
 
 	usI = 0;
 	usI = cal_crc16((unsigned char *)&pbocrec, 130);
-	memcpy(pbocrec.rCrc16, (unsigned char*)&usI, 2);//CRC16
-	memset(qrecbuff, 0x5A, qPbocRECORD_LEN);
-	memcpy(qrecbuff, (unsigned char*)&pbocrec, 132);
+	memcpy(pbocrec->rCrc16, (unsigned char*)&usI, 2);//CRC16
 
-
-
-	uiTemp = 132;	//紧接着是公交方用数据
-	memcpy(qrecbuff + uiTemp, DriveCardNo, 4);//司机卡号
-	uiTemp += 4;
-
-
+	memcpy(pbocrec->rDriverNo, DriveCardNo, 4);//司机卡号
 
 	//交易类型
-	switch (emv_get_pay_channel())
+	switch (chanel)
 	{
 	case ODA:
 	case UICS:
-		qrecbuff[uiTemp] = ID_ODA;
+		pbocrec->rfDDAResult = ID_ODA;
 		break;
 	case E_cash:
-		//	qrecbuff[uiTemp] = ID_Electronic;
 		MSG_LOG("PosOfferData.AutenData.TVR=\r\n");
 		debugdata(PosOfferData.AutenData.TVR, 5, 1);
 		if ((PosOfferData.AutenData.TVR[0] != 0) || (PosOfferData.AutenData.TVR[1] != 0))
-			qrecbuff[uiTemp] = 0x10;
+			pbocrec->rfDDAResult = 0x10;
 		else
-			qrecbuff[uiTemp] = 0xE0;//E0表示正常记录，10表示不正常记录
+			pbocrec->rfDDAResult = 0xE0;//E0表示正常记录，10表示不正常记录
 		break;
 	case PAY_Online:
-		qrecbuff[uiTemp] = ID_ONLINE;
+		pbocrec->rfDDAResult = ID_ONLINE;
 		break;
 	default:
 		break;
 	}
-	// 	if (shuangmian)
-	// 	{
-	// 		qrecbuff[uiTemp] = ID_REC_SHUANGMIAN;
-	// 	}
-	uiTemp++;
 
-	qrecbuff[uiTemp++] = gCardinfo.card_catalog;	//卡类
+	pbocrec->rCardType = gCardinfo.card_catalog;	//卡类
 
-	Get_SerialNumF4(qrecbuff + uiTemp);	//设备序列号4
-	uiTemp += 4;
+	Get_SerialNumF4(pbocrec->rDeviceSerial);	//设备序列号4
 
 	get_BER_TVL(QpbocTVLFCI.t_84.SizeOff, &TempTVL);
-	memset(qrecbuff + uiTemp, 0, 8);
-	memcpy(qrecbuff + uiTemp, TempTVL.V, TempTVL.L);//专用文件名称
-	uiTemp += 8;
 	debugstring("专用文件名称:");
 	debugdata(TempTVL.V, TempTVL.L, 1);
+	memset(pbocrec->rZYADD, 0, sizeof(pbocrec->rZYADD));
+	memcpy(pbocrec->rZYADD, TempTVL.V, TempTVL.L);//专用文件名称
 
 	get_BER_TVL(QpbocTVLFCI.t_57.SizeOff, &TempTVL);
-	qrecbuff[uiTemp++] = TempTVL.L;
-	memset(qrecbuff + uiTemp, 0, 19);
-	memcpy(qrecbuff + uiTemp, TempTVL.V, TempTVL.L);//2磁道数据
-	uiTemp += 19;
 	debugstring("2磁道数据:");
 	debugdata(TempTVL.V, TempTVL.L, 1);
+	memset(pbocrec->rCDdata, 0, sizeof(pbocrec->rCDdata));
+	memcpy(pbocrec->rCDdata, TempTVL.V, TempTVL.L);//2磁道数据
+	pbocrec->rCDdataLen = TempTVL.L;
 
-	switch (emv_get_pay_channel())
-	{
-	case ODA:
-	case UICS:
-	case PAY_Online:
-		MSG_LOG("双免记录\r\n");
-		getMobileParameter(6, qrecbuff + uiTemp);	//银联设备号
-		uiTemp += 8;
 
-		getMobileParameter(1, qrecbuff + uiTemp);	//银联设备号
-		uiTemp += 15;
-		//	sprintf(disbuf[index++],"银联商户号:%s",buff);
+	MSG_LOG("双免记录\r\n");
+	getMobileParameter(6, pbocrec->pbocDevId);	//银联设备号
 
-		memset(buff, 0, sizeof(buff));
-		sprintf((char*)buff, "%06u", POS_8583_COUNT);
-		MSG_LOG("pos流水:%s\r\n", buff);
+	getMobileParameter(1, pbocrec->pbocBussinessCode);	//银联商户号
 
-		memcpy(qrecbuff + uiTemp, ASC2BCD((char*)buff, 6), 3);
-		uiTemp += 3;
-		break;
-	default:
-		uiTemp += 26;
-		break;
-	}
+	memset(buff, 0, sizeof(buff));
+	sprintf((char*)buff, "%06u", POS_8583_COUNT);
+	MSG_LOG("pos流水:%s\r\n", buff);
 
-	// 	if (shuangmian)
-	// 	{
-	// 		MSG_LOG("双免记录\r\n");
-	// 		getMobileParameter(6,qrecbuff+uiTemp);	//银联设备号
-	// 		uiTemp += 8;
-	// 		
-	// 		getMobileParameter(1,qrecbuff+uiTemp);	//银联设备号
-	// 		uiTemp += 15;
-	// 	//	sprintf(disbuf[index++],"银联商户号:%s",buff);
-	// 		
-	// 		memset(buff,0,sizeof(buff));
-	// 		sprintf((char*)buff, "%06u", POS_8583_COUNT);
-	// 		MSG_LOG("pos流水:%s\r\n",buff);
-	// 
-	// 		memcpy(qrecbuff+uiTemp, ASC2BCD((char*)buff, 6), 3);
-	// 		uiTemp += 3;
-	// 
-	// 	}
-		//add by zhgfan 增加请款金额
+	memcpy(pbocrec->pbocSysTrackNo, ASC2BCD((char*)buff, 6), 3);
+
+	uiTemp = get_deal_count(BIT_PBOC_NS_BIG);
+	memset(buff, 0, 7);
+	sprintf((char*)buff, "%06u", uiTemp);
+	memcpy(pbocrec->pbocBatchNo, ASC2BCD((char*)buff, 6), 3);
+
+#if 0
+	//add by zhgfan 增加请款金额
 	sprintf((char *)buff, "%012d", PosOfferData.PDOL.DebitMoney);
 	memcpy(buffer, ASC2BCD((char *)buff, 12), 6);
 	memcpy(qrecbuff + uiTemp, buffer, 6);
@@ -3509,298 +3440,19 @@ unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff, unsigned char transResu
 	uiTemp++;
 	memcpy(qrecbuff + uiTemp, StufferNO, 4);
 	uiTemp += 4;
-	debugstring("qPBOC 灰记录 Record1:");
+#endif
+	debugstring("qPBOC 记录 Record1:");
 	debugdata(qrecbuff, 256, 1);
 	debugstring("\r\n");
 
-	//	memcpy((unsigned char*)&uiTemp, TradeResult.TradeMoney, 4);
-	//	addStatMoney(ID_REC_TOLL, uiTemp);
+	if (transResult == 0x00) {
+		memcpy((unsigned char*)&uiTemp, TradeResult.TradeMoney, 4);
+		addStatMoney(ID_REC_TOLL, uiTemp, chanel);
+	}
 
 	return ST_OK;
 }
 
-
-unsigned char qPbocBuildRec(unsigned char *qrecbuff)
-{
-	BER_TVL TempTVL;
-	stPbocRec pbocrec;
-	unsigned int uiTemp;
-	INT16U usI;
-	unsigned char buff[50];
-	unsigned char buffer[10];
-	//unsigned int i=0;
-//	char *p=NULL;
-	unsigned char len = 0;
-
-	memset(qrecbuff, 0x5A, 256);
-	feread(BIT_PBOC_NS, 4, (unsigned char*)&uiTemp);
-
-	if (uiTemp == 0)
-		uiTemp = 1;
-	sprintf((char*)buff, "%012ui", uiTemp);
-	uiTemp++;
-	sysfewrite(BIT_PBOC_NS, 4, (unsigned char*)&uiTemp);
-
-
-	//1.记录流水号
-	memcpy(pbocrec.rpurSerial, ASC2BCD((char*)buff, 12), 6);
-	//2.银联卡编号 3. 卡主帐户 4.卡有效日期 YYMM
-	memset(pbocrec.rBankCardNo, '0', 18);//银联卡编号---------------------
-// 	if(QpbocTVLFCI.t_5A.SizeOff != 0)	//2014.4.29
-// 	{
-// 
-// 
-// 		get_BER_TVL(QpbocTVLFCI.t_5A.SizeOff,&TempTVL);
-// 
-// 		memset(pbocrec.rcardMainNO, 0xFF, 10);
-// 		if(TempTVL.L <= 10)
-// 			memcpy(pbocrec.rcardMainNO+(10-TempTVL.L), TempTVL.V, TempTVL.L);//卡主帐户
-// 		else
-// 			memcpy(pbocrec.rcardMainNO, TempTVL.V, TempTVL.L);//卡主帐户
-// 		
-// 		get_BER_TVL(QpbocTVLFCI.t_5F24.SizeOff,&TempTVL);
-// 		memcpy(pbocrec.rcardlimitdata, TempTVL.V, 2);
-// 		
-// 	}else{
-// 
-// 		memset(pbocrec.rcardMainNO, 0xFF, 10);
-// 		get_BER_TVL(QpbocTVLFCI.t_57.SizeOff,&TempTVL);
-// 		
-// 		MSG_LOG("2磁道数据:");
-// 		BCD_LOG(TempTVL.V, TempTVL.L, 1);
-// 		memset(buff,0,sizeof(buff));
-// 		BCD2Ascii(TempTVL.V,buff,19);
-// 		p = strtok((char *)buff,"D");
-// 		len = strlen(p);
-// 		if (len%2)
-// 		{
-// 			memmove(p+1,p,len);
-// 			p[len++] = 'F';		//
-// 		}
-// 
-// 		MSG_LOG("len:%d,:%s\r\n",len,p);
-// 		Ascii2BCD((unsigned char *)p,(pbocrec.rcardMainNO+10-len/2),len);
-// 		BCD_LOG(pbocrec.rcardMainNO,10,1);
-// 	}
-
-	memset(pbocrec.rcardMainNO, 0xFF, 10);
-	len = get_rcardMainNO(pbocrec.rcardMainNO);
-	MSG_LOG("len:%d\r\n", len);
-	BCD_LOG(pbocrec.rcardMainNO, 10, 1);
-	BCD_LOG(pbocrec.rcardMainNO, 10, 1);
-	//5.卡片序列号
-	memset(pbocrec.rcardseial, 0, 2);
-	get_BER_TVL(QpbocTVLFCI.t_5F34.SizeOff, &TempTVL);
-	MSG_LOG("%04XPIN序号:", QpbocTVLFCI.t_5F34.TagValue);
-	// 	BCD_LOG(TempTVL.V,TempTVL.L,1);
-
-	if (TempTVL.L == 1)
-		pbocrec.rcardseial[1] = TempTVL.V[0];//卡片序列号
-	else
-		memcpy(pbocrec.rcardseial, TempTVL.V, 2);//卡片序列号	
-
-//6.应用密文
-
-	get_BER_TVL(QpbocTVLFCI.t_9F26.SizeOff, &TempTVL);
-	memcpy(pbocrec.rUseKeytext, TempTVL.V, 8);//应用密文
-//7.应用信息数据 	
-	if (PosTradeCout > 0)
-		pbocrec.rUsemsginfo = PosTradeCout - 1;//应用信息数据
-	else
-		pbocrec.rUsemsginfo = PosTradeCout;//应用信息数据
-	//8.发卡行应用数据
-	memset(pbocrec.rpublisBanduse, 0, 32);//发卡行应用数据
-	get_BER_TVL(QpbocTVLFCI.t_9F10.SizeOff, &TempTVL);
-	memcpy(pbocrec.rpublisBanduse, TempTVL.V, TempTVL.L);//发卡行应用数据
-
-	get_BER_TVL(QpbocTVLFCI.t_9F37.SizeOff, &TempTVL);
-	memcpy(pbocrec.rRand, TempTVL.V, 4);//不可预知数
-
-	get_BER_TVL(QpbocTVLFCI.t_9F36.SizeOff, &TempTVL);
-	memcpy(pbocrec.rdealTimer, TempTVL.V, 2);//应用交易计数器HEX
-
-	memcpy(pbocrec.rchekend, PosOfferData.AutenData.TVR, 5);//终端验证结果
-	get_BER_TVL(QpbocTVLFCI.t_82.SizeOff, &TempTVL);
-	memcpy(pbocrec.ryyjfType, TempTVL.V, 2);//应用交互特征
-
-// 	debugstring("######t_9F10.L:");
-// 	debugdata((unsigned char*)&QpbocTVLFCI.t_9F08.SizeOff, 4, 0);
-// 	debugdata((unsigned char*)&TempTVL.L, 4, 0);
-// 	debugdata((unsigned char*)TempTVL.V, 4, 1);
-
-	if (QpbocTVLFCI.t_9F08.SizeOff == 0) {
-		memset(pbocrec.ruseVer, 0, 2);//应用版本号
-	}
-	else {
-		get_BER_TVL(QpbocTVLFCI.t_9F08.SizeOff, &TempTVL);
-		memcpy(pbocrec.ruseVer, TempTVL.V, 2);//应用版本号
-	}
-
-	if (PosTradeCout > 0)
-		uiTemp = PosTradeCout - 1;//交易序列计数器---------------------
-	else
-		uiTemp = PosTradeCout;
-	memcpy(pbocrec.rSrlTimer, (unsigned char*)&uiTemp, 2);//交易序列计数器---------------------
-	RevertTurn(2, pbocrec.rSrlTimer);
-
-	get_BER_TVL(QpbocTVLFCI.t_9F74.SizeOff, &TempTVL);
-	memcpy(pbocrec.rLicense, TempTVL.V, 6);//电子现金发卡行授权码
-	get_BER_TVL(QpbocTVLFCI.t_9F74.SizeOff, &TempTVL);
-	memcpy(pbocrec.rLicenseACK, "Y3", 2);//授权响应码
-
-	sysferead(BIT_DEVICE_NO, 9, buff);
-	memcpy(pbocrec.rBuPOSSerial, ASC2BCD((char*)buff + 2, 6), 3);//接口设备序列号
-	pbocrec.rDealMoney[0] = TradeResult.TradeMoney[1];//交易金额
-	pbocrec.rDealMoney[1] = TradeResult.TradeMoney[0];
-	pbocrec.rAferMoney[0] = TradeResult.BefMoney[3];//交易后余额
-	pbocrec.rAferMoney[1] = TradeResult.BefMoney[2];
-	pbocrec.rAferMoney[2] = TradeResult.BefMoney[1];
-	pbocrec.rAferMoney[3] = TradeResult.BefMoney[0];
-	memcpy(pbocrec.rDatatiem, (INT8U *)&SysTime, 7);//交易日期时间
-
-	if (QpbocTVLFCI.t_9C.SizeOff == 0)
-		pbocrec.rdealType = 0;//TradeResult.TradeType;//交易类型
-	else {
-		get_BER_TVL(QpbocTVLFCI.t_9C.SizeOff, &TempTVL);
-		pbocrec.rdealType = TempTVL.V[0];//电子现金发卡行授权码
-	}
-	// 	debugstring("######t_9F10.L:");
-	// 	debugdata((unsigned char*)&QpbocTVLFCI.t_9C.SizeOff, 4, 0);
-	// 	debugdata((unsigned char*)&TempTVL.L, 4, 0);
-	// 	debugdata((unsigned char*)TempTVL.V, 4, 1);
-
-	SYSgetbussinessNO(pbocrec.rbusinessCode);//两字节商户编号
-//	memcpy(pbocrec.rbusinessCode, "\x00\x00", 2);//运营商户代码
-
-	memcpy(pbocrec.rBuLineDevNo, pFistVary.LineNo, 3);//线路编号
-	memcpy(pbocrec.rBuLineDevNo + 3, ASC2BCD((char*)buff + 2, 6), 3);//汽车编号
-	pbocrec.rNull = 0;
-
-	usI = 0;
-	usI = cal_crc16((unsigned char *)&pbocrec, 130);
-	memcpy(pbocrec.rCrc16, (unsigned char*)&usI, 2);//CRC16
-	memset(qrecbuff, 0x5A, qPbocRECORD_LEN);
-	memcpy(qrecbuff, (unsigned char*)&pbocrec, 132);
-
-
-
-	uiTemp = 132;	//紧接着是公交方用数据
-	memcpy(qrecbuff + uiTemp, DriveCardNo, 4);//司机卡号
-	uiTemp += 4;
-
-
-
-	//交易类型
-	switch (emv_get_pay_channel())
-	{
-	case ODA:
-	case UICS:
-		qrecbuff[uiTemp] = ID_ODA;
-		break;
-	case E_cash:
-		//	qrecbuff[uiTemp] = ID_Electronic;
-		MSG_LOG("PosOfferData.AutenData.TVR=\r\n");
-		debugdata(PosOfferData.AutenData.TVR, 5, 1);
-		if ((PosOfferData.AutenData.TVR[0] != 0) || (PosOfferData.AutenData.TVR[1] != 0))
-			qrecbuff[uiTemp] = 0x10;
-		else
-			qrecbuff[uiTemp] = 0xE0;//E0表示正常记录，10表示不正常记录
-		break;
-	case PAY_Online:
-		qrecbuff[uiTemp] = ID_ONLINE;
-		break;
-	default:
-		break;
-	}
-	// 	if (shuangmian)
-	// 	{
-	// 		qrecbuff[uiTemp] = ID_REC_SHUANGMIAN;
-	// 	}
-	uiTemp++;
-
-	qrecbuff[uiTemp++] = gCardinfo.card_catalog;	//卡类
-
-	Get_SerialNumF4(qrecbuff + uiTemp);	//设备序列号4
-	uiTemp += 4;
-
-	get_BER_TVL(QpbocTVLFCI.t_84.SizeOff, &TempTVL);
-	memset(qrecbuff + uiTemp, 0, 8);
-	memcpy(qrecbuff + uiTemp, TempTVL.V, TempTVL.L);//专用文件名称
-	uiTemp += 8;
-	debugstring("专用文件名称:");
-	debugdata(TempTVL.V, TempTVL.L, 1);
-
-	get_BER_TVL(QpbocTVLFCI.t_57.SizeOff, &TempTVL);
-	qrecbuff[uiTemp++] = TempTVL.L;
-	memset(qrecbuff + uiTemp, 0, 19);
-	memcpy(qrecbuff + uiTemp, TempTVL.V, TempTVL.L);//2磁道数据
-	uiTemp += 19;
-	debugstring("2磁道数据:");
-	debugdata(TempTVL.V, TempTVL.L, 1);
-
-	switch (emv_get_pay_channel())
-	{
-	case ODA:
-	case UICS:
-	case PAY_Online:
-		MSG_LOG("双免记录\r\n");
-		getMobileParameter(6, qrecbuff + uiTemp);	//银联设备号
-		uiTemp += 8;
-
-		getMobileParameter(1, qrecbuff + uiTemp);	//银联设备号
-		uiTemp += 15;
-		//	sprintf(disbuf[index++],"银联商户号:%s",buff);
-
-		memset(buff, 0, sizeof(buff));
-		sprintf((char*)buff, "%06u", POS_8583_COUNT);
-		MSG_LOG("pos流水:%s\r\n", buff);
-
-		memcpy(qrecbuff + uiTemp, ASC2BCD((char*)buff, 6), 3);
-		uiTemp += 3;
-		break;
-	default:
-		uiTemp += 26;
-		break;
-	}
-
-	// 	if (shuangmian)
-	// 	{
-	// 		MSG_LOG("双免记录\r\n");
-	// 		getMobileParameter(6,qrecbuff+uiTemp);	//银联设备号
-	// 		uiTemp += 8;
-	// 		
-	// 		getMobileParameter(1,qrecbuff+uiTemp);	//银联设备号
-	// 		uiTemp += 15;
-	// 	//	sprintf(disbuf[index++],"银联商户号:%s",buff);
-	// 		
-	// 		memset(buff,0,sizeof(buff));
-	// 		sprintf((char*)buff, "%06u", POS_8583_COUNT);
-	// 		MSG_LOG("pos流水:%s\r\n",buff);
-	// 
-	// 		memcpy(qrecbuff+uiTemp, ASC2BCD((char*)buff, 6), 3);
-	// 		uiTemp += 3;
-	// 
-	// 	}
-		//add by zhgfan 增加请款金额
-	sprintf((char *)buff, "%012d", PosOfferData.PDOL.DebitMoney);
-	memcpy(buffer, ASC2BCD((char *)buff, 12), 6);
-	memcpy(qrecbuff + uiTemp, buffer, 6);
-	MSG_LOG("请款金额:%s\r\n", (char *)buff);
-	uiTemp += 6;
-
-	qrecbuff[uiTemp] = 0;//Off_authen;  //存储脱机认证码
-	uiTemp++;
-	memcpy(qrecbuff + uiTemp, StufferNO, 4);
-	uiTemp += 4;
-	debugstring("qPBOC Record1:");
-	debugdata(qrecbuff, sizeof(stPbocRec), 1);
-	debugstring("\r\n");
-
-	memcpy((unsigned char*)&uiTemp, TradeResult.TradeMoney, 4);
-	addStatMoney(ID_REC_TOLL, uiTemp, emv_get_pay_channel());
-
-	return ST_OK;
-}
 
 //写入公交存贮器
 unsigned char qPbocWriteRecord(unsigned char *rec)
@@ -3875,7 +3527,8 @@ unsigned char Read2PublishInfo(void)
 #endif
 
 extern void face_time(void);
-int QpbocOfflineAuten(void);
+extern int QpbocOfflineAuten(void);
+extern int save_file_BuInfo();
 
 void cpuPBOCmain(void)
 {
@@ -3989,7 +3642,7 @@ void cpuPBOCmain(void)
 #endif
 #endif
 
-	gMCardCand = CARDSTYLE_PBOC;
+	gCardinfo.gMCardCand = CARDSTYLE_PBOC;
 
 	PCBSerial = 0x02;
 
@@ -4058,10 +3711,11 @@ void cpuPBOCmain(void)
 	if (ret == qPBOC_RESUL_AAC) {
 		display(0, 0, "拒绝交易:", DIS_Cls);
 		memcpy((unsigned char*)&len, TradeResult.BefMoney, 4);
-		if (len < price) {
+		/*if (len < price) {
 			display(3, 2, "余额不足", 0);
 			audio(Audio_FLING_MONEY);
-		}
+		}*/
+		audio(Audio_FLING_MONEY);
 		delayxms(200);
 		MifareHalt();
 		Pboc_delay_card();
@@ -4086,7 +3740,7 @@ void cpuPBOCmain(void)
 	}
 
 	else if (ret == qPBOC_QpboC_tryAgain) {//需要重刷 //----------2014.3.18-------
-		if (qPbocBuildRec(Buffer) == ST_ERROR) {//临时保存在铁电中，再次刷成功后使用。  //请重刷2 --2014.4.22--
+		if (qPbocBuildRec_hui(Buffer, 0x00) == ST_ERROR) {//临时保存在铁电中，再次刷成功后使用。  //请重刷2 --2014.4.22--
 			return; //如果里需字段有错，说明没取到，直接退出 2014.4.29
 		}
 		audio(Audio_TRY_AGAIN);
@@ -4097,8 +3751,8 @@ void cpuPBOCmain(void)
 		MSG_LOG(" s_sum1=%d, a_sum1=%d \r\n", s_sum1, a_sum1);
 		CheckSno(ERROR_MONEY, OPER_TRANSFER_NO, Buffer);
 
-		sysfewrite(BIT_qPBOC_Rec_Temp, 192, Buffer);
-		MSG_LOG("重刷记录 %s\r\n", BCD2ASC(Buffer, 192));  //请重刷2 --2014.4.22--
+		sysfewrite(BIT_qPBOC_Rec_Temp, qPbocRECORD_LEN, Buffer);
+		MSG_LOG("重刷记录 %s\r\n", BCD2ASC(Buffer, qPbocRECORD_LEN));  //请重刷2 --2014.4.22--
 	}
 	else if ((ret == qPBOC_CONTRY_OUTTRADE) || (ret == qPBOC_QpboC_SIGAN_NO)) {//不是工行的卡
 		display(0, 0, "拒绝交易:", DIS_Cls);
@@ -4172,7 +3826,8 @@ void cpuPBOCmain(void)
 		display_3232(2, 0, "刷卡成功", 0);
 #else
    //display(2, 0, (char*)Buffer, 0);
-		money_msg(ID_REC_TOLL, a_sum1, s_sum1, 0);
+		//a_sum1 = INFINITE;
+		money_msg(ID_REC_TOLL, INFINITE, s_sum1, 0);
 #endif
 		MSG_LOG("刷卡成功************\r\n");
 
@@ -4189,35 +3844,34 @@ void cpuPBOCmain(void)
 		}
 		//		MSG_LOG( "刷卡成功************2\r\n");
 
-		ComSumeFile.SumMoney += price; //当前消费总额
-		len = (((unsigned char*)&ComSumeFile.SumMoney) - ((unsigned char*)&ComSumeFile));
-		sysfewrite(BIT_COMSUME_FILE + len, 4, (unsigned char*)&ComSumeFile.SumMoney);
+		gBuInfo.SumMoney += price; //当前消费总额
+		gBuInfo.SumTi++;
+		save_file_BuInfo();
 
 
 		clr_wdt();
 		if (cardSound != 0) {//重刷成功
-			sysferead(BIT_qPBOC_Rec_Temp, 192, Buffer);   //请重刷2 --2014.4.22--
+			sysferead(BIT_qPBOC_Rec_Temp, qPbocRECORD_LEN, Buffer);   //请重刷2 --2014.4.22--
 			//			debugstring("----------------------------\r\n");
-			MSG_LOG(" 重刷成功记录 %s\r\n", BCD2ASC(Buffer, 192));
+			MSG_LOG(" 重刷成功记录 %s\r\n", BCD2ASC(Buffer, qPbocRECORD_LEN));
 		}
 		else {
-			//			MSG_LOG( "刷卡成功************3\r\n");
 
-			// 			if(qPbocBuildRec(Buffer) == ST_ERROR){//临时保存在铁电中，再次刷成功后使用。  //请重刷2 --2014.4.22--
-			// 				goto qpbocMainEnd;//记录错误,不用写了. 2014.4.29
-			// 			}
-			qPbocBuildRec(Buffer);
+			qPbocBuildRec_hui(Buffer, 0x00);
 			MSG_LOG(" NO重刷记录 %s\r\n", BCD2ASC(Buffer, 192));   //请重刷2 --2014.4.22--
 			//			debugstring("++++++++++++++++++++++++++++\r\n");
 		}
 		//add hbg
-		if (gMCardCand == CARDSTYLE_UNPAY_ODA) {
+#if !SWITCH_ODA_BACKEND
+		if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA) {
+
 			build8583_qpboc_Purse_0200(Buffer_1);
 			save_ODA_infor(ODA_FeRC_Write, repurse_infor);
 			delayxms(3);
 			write_linux_re(MISS_PBOC_UPREC_ODA);//备份0DA
 		}
-		// 		if (gMCardCand == CARDSTYLE_UNPAY_ODA) {
+#endif
+		// 		if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA) {
 		// 			ret = SQDataFromSVT(MISS_PBOC_UPREC_ODA_first, 6000);
 		// 		}
 				//		MSG_LOG( "刷卡成功************4\r\n");
@@ -5353,7 +5007,7 @@ qPBOC_KeyVerExist_OVER:
 //如果没有此公钥，则返回-1，有则返回0
 int qPBOCgetPublicKey(unsigned char pKeyVer, KEY_PUBLICMSG *pKeyOut)
 {
-	unsigned char buff[256];
+	//unsigned char buff[256];
 	unsigned short t, e;
 	int i;
 	int retcode = Ret_OK;
@@ -5364,22 +5018,22 @@ int qPBOCgetPublicKey(unsigned char pKeyVer, KEY_PUBLICMSG *pKeyOut)
 	}
 	retcode = FmOpen(fnt_pboc_cakey, fam_read);
 	//找到了，读出指数 和 模值
-	retcode = FmRead(fnt_pboc_cakey, PKEY_e_offset + (i*PKEY_e_len), buff, PKEY_e_len);
+	retcode = FmRead(fnt_pboc_cakey, PKEY_e_offset + (i*PKEY_e_len), pKeyOut->n_Key, PKEY_e_len);
 	//flashread(FLASH_PUBLICKEY_START + PKEY_e_offset + (i*PKEY_e_len), buff, PKEY_e_len);
-	memcpy((unsigned char*)&e, buff, 2);	//指数
+	memcpy((unsigned char*)&e, pKeyOut->n_Key, 2);	//指数
 	RevertTurn(2, (unsigned char*)&e);
-	memcpy((unsigned char*)&t, buff + 2, 2);	//模长
-	MSG_LOG("   指数:%02X%02X,模长:%d\r\n", buff[0], buff[1], t);
+	memcpy((unsigned char*)&t, pKeyOut->n_Key + 2, 2);	//模长
+	MSG_LOG("   指数:%04X,模长:%d\r\n", e, t);
 
 
-	retcode = FmRead(fnt_pboc_cakey, PKEY_MOZHI_offset + (i * PKEY_e_offset), buff, PKEY_e_len);
+	retcode = FmRead(fnt_pboc_cakey, PKEY_MOZHI_offset + (i * PKEY_e_offset), pKeyOut->n_Key, t);
 	//flashread(FLASH_PUBLICKEY_START + PKEY_MOZHI_offset + (i * 256), buff, t);	//读出模值
 	MSG_LOG("    模值:\r\n");
-	BCD_LOG(buff, t, 1);
+	BCD_LOG(pKeyOut->n_Key, t, 1);
 
 	pKeyOut->e_Key = e;
 	pKeyOut->n_KeyLen = t;
-	memcpy(pKeyOut->n_Key, buff, t);
+	//memcpy(pKeyOut->n_Key, buff, t);
 	return 0;
 }
 #if SWITCH_CODE_USED

@@ -18,7 +18,6 @@
 #include "szct.h"
 
 
-#if (HTTP_SSL != 0)
 #ifndef FALSE
 #define FALSE	0
 #endif
@@ -280,7 +279,7 @@ int https_performSsl(void *pData, int len, unsigned char *pOutput, int *pOLen) {
 	}
 	if (isHasNHttpH == 0) {
 		s_isConnectOk[linkNo] = 0;
-		MSG_LOG("pInput:%s\n", pInput);
+		//MSG_LOG("pInput:%s\n", pInput);
 		pHead = strstr(pInput, "\r\n");
 		if (pHead == NULL) {
 			pHead = strstr(pInput, "\n");
@@ -900,7 +899,7 @@ int socket_performNSsl(void *pData, int len, unsigned char *pOutput, int *pOLen)
 			nsent += res;
 
 			if (totoleRecv == 0 && nsent > 2) {
-				totoleRecv = GET_INT16_B(response) + 2;
+				totoleRecv = GET_INT16(response) + 2;
 			}
 
 			MSG_LOG("totoleRecv:%d\n", totoleRecv);
@@ -1260,4 +1259,3 @@ int https_performSsl_Test(const char* ip, int port, int time) {
 }
 
 
-#endif

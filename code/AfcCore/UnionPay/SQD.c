@@ -28,7 +28,6 @@ extern stcomtime SysTime;
 extern unsigned char gchn_eng;//中英文标志
 extern TCP_IP_PACKET1 tcpipPacket;
 extern time_t BCDTime2Long(unsigned char*timee);
-extern unsigned char gMCardCand;
 extern unsigned char gmissflag;//任务标志 0x00 登陆移动,签到.
 extern unsigned char GPRSLinkProcess;
 extern unsigned char restore_flag;
@@ -402,6 +401,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 		//unsigned long long read_dat=0;
 		//unsigned int count=0;
 	unsigned char disbuff[20];
+	int tmpI = 0;
 	//	BER_TVL TempTVL;
 
 
@@ -415,11 +415,13 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 
 	if (msecends > 0) {
 		flag = 0;
-		if (gMCardCand != CARDSTYLE_UNPAY_ODA)
+		if (gCardinfo.gMCardCand != CARDSTYLE_UNPAY_ODA)
 		{
 			cls();
-			display(6, 0, "通讯中...", DIS_ClsLine | DIS_CENTER);
-			display(8, 0, "请稍等", DIS_ClsLine | DIS_CENTER);
+			tmpI = 0;
+			tmpI += sprintf(disbuff + tmpI, "通讯中...\n请稍等");
+			//display(6, 0, "通讯中...", DIS_ClsLine | DIS_CENTER);
+			display(8, 0, disbuff, DIS_ClsLine | DIS_CENTER);
 		}
 		MSG_LOG("do %s:0x%02X\r\n", __FUNCTION__, SQmode);
 		MSG_LOG("set_timer0(10000,2)--:%d\r\n", msecends);
@@ -454,15 +456,11 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 		outdly = get_timer0(3);
 		if (outdly == 0)
 		{
-			PRINT_ERROR("联机前网络已经超时\r\n");
-			return -1;
+			goto Send_WaitRecvData_OVER;
 		}
 		ret = getkey(1);
-		if (ret == KEY_ESC) {
-			if (gGprsinfo.GPRSLinkProcess == 0xA0)
-				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-			gGprsinfo.gmissflag = MISS_G_FREE;
-			return -1;
+		if (ret == SLZRKEY_ESC) {
+			goto Send_WaitRecvData_OVER;
 		}
 
 		if (gGprsinfo.GPRSLinkProcess < 21) {//已经连接
@@ -555,9 +553,9 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 		while (1) {
 
 			outdly = get_timer0(3);
-			if (gMCardCand != CARDSTYLE_UNPAY_ODA) {
+			if (gCardinfo.gMCardCand != CARDSTYLE_UNPAY_ODA) {
 				memset(disbuff, 0, sizeof(disbuff));
-				sprintf((char *)disbuff, "%dS", outdly / 1000);
+				sprintf((char *)disbuff, "剩余%d秒", outdly / 1000);
 				display(8, 16, (const char *)disbuff, 0);
 			}
 
@@ -573,17 +571,20 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 			//main_GPRS(NULL);
 			//#if SWITCH_PBOC
 
+			if (get_flag_aut() == 0xad)
+			{
+				MSG_LOG("认证返回\r\n");
+				set_flag_aut(0xff);
+				break;
+			}
 			//#endif
 			if (outdly == 0)
 			{
+				emv_set_pboc_result(pr_repurse);
 				MSG_LOG("time out-3-\r\n");
 				tcpipClose(LINK_PBOC);
-				if (gGprsinfo.GPRSLinkProcess == 0xA0)
-					gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-				gGprsinfo.gmissflag = MISS_G_FREE;
 				if (switch_both)
 				{
-
 					// 进入ODA交易
 					shuangmian = 0;
 
@@ -602,40 +603,27 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 				goto Send_WaitRecvData_OVER;
 			}
 
-			if (get_flag_aut() == 0xad)
-			{
-				MSG_LOG("认证返回\r\n");
-				set_flag_aut(0xff);
-				break;
-			}
 			if (ACK_flag != 0xFF)
 			{
 				// 接受交易
 				MSG_LOG("444bit:%d,ACK_flag:%02x   ", msgf[field_ack].bitf, ACK_flag);
 				if ((ACK_flag == 0x00) && (msgf[field_ack].bitf)) {
+					emv_set_pboc_result(pr_success);
 					flag = 0xA5;
 					MSG_LOG("444bit:%d,ACK_flag:%02x   ", msgf[field_ack].bitf, ACK_flag);
 					break;
 				}
 				else {
+					emv_set_pboc_result(pr_fail);
 					MSG_LOG("%s,应答:%02X\r\n", __FUNCTION__, ACK_flag);
 					MSG_LOG("444bit:%d,ACK_flag:%02x   ", msgf[field_ack].bitf, ACK_flag);
-					if (gGprsinfo.GPRSLinkProcess == 0xA0)
-						gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-					gGprsinfo.gmissflag = MISS_G_FREE;
 #ifdef switch_RE
 					Switch_sign(Switch_sign_OVER);
 #endif
-					if (switch_both)
-					{
-						// 进入ODA交易
-						shuangmian = 0;
-					}
 					write_linux_re_build(0xAD); //保存失败的记录
 
-					MSG_LOG("删冲正--\r\n");
+					MSG_LOG("删冲正111--\r\n");
 					memset(repurse_infor, 0, sizeof(repurse_infor));
-					MSG_LOG("删冲正--\r\n");
 #ifdef switch_RE
 					init_timeout_infor(); //清冲正延时上送
 										  //	save_infor_add(FeRC_Dlelt, NULL);
@@ -651,10 +639,8 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 			}
 			else {
 				ret = getkey(1);
-				if (ret == KEY_ESC) {
-					gGprsinfo.gmissflag = MISS_G_FREE;
-					if (gGprsinfo.GPRSLinkProcess == 0xA0)
-						gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
+				if (ret == SLZRKEY_ESC) {
+					emv_set_pboc_result(pr_repurse);
 #ifdef switch_RE
 					Switch_sign(Switch_sign_OVER);
 #endif
@@ -666,11 +652,8 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 			}
 		}//	while (1) 
 	}  //for
-//最后判断
-	if (flag == 0xA5 && gMCardCand != CARDSTYLE_UNPAY_ODA) {	// 收到正确数据 
-		if (gGprsinfo.GPRSLinkProcess == 0xA0)
-			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-		gGprsinfo.gmissflag = MISS_G_FREE;
+	//最后判断
+	if (flag == 0xA5 && gCardinfo.gMCardCand != CARDSTYLE_UNPAY_ODA) {	// 收到正确数据 
 		//			gSendOverTime = 0;
 
 		MSG_LOG("删冲正--\r\n");
@@ -690,29 +673,11 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 		retcode = 0;
 		goto Send_WaitRecvData_OVER;
 	}
-	else
-	{
-		MSG_LOG("其他--\r\n");
-		write_linux_re_build(0xAB); //超时保存一条冲正
-#ifdef switch_RE
-		Switch_sign(Switch_sign_OVER);
-#endif
-		if (switch_both)
-		{
-
-			// 进入ODA交易
-			shuangmian = 0;
-
-		}
-		if (gGprsinfo.GPRSLinkProcess == 0xA0)
-			gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-		gGprsinfo.gmissflag = MISS_G_FREE;
-
-		retcode = -1;
-		goto Send_WaitRecvData_OVER;
-	}
 
 Send_WaitRecvData_OVER:
+
+	if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
+		gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 
 	gGprsinfo.gmissflag = MISS_G_FREE;
 

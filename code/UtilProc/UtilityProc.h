@@ -66,6 +66,8 @@ extern "C"
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
     extern unsigned char getSignXor(unsigned char *pSrc, int len);
+	extern unsigned char getSignAdd(unsigned char *pSrc, int len);
+
     extern int findT1L2VFirst(void *pSrc, int len, TUINT32 tag, stTlv *pTlvs);
     extern int PareseT1L2V(void *pSrc, int len, stTlv *pTlvs, int *pOLen);
     extern int PareseT1L2V_8583(void *pSrc, int len, stTlv pTlvs[65]);

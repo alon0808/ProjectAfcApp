@@ -657,10 +657,6 @@ void find_G_new_mission(void)//此任务一秒进一次
 
 	}
 
-
-
-
-
 	//如果已经签到，看看是否有参数要下发 
 	for (i = 0; i < sl8583fileNum; i++) {
 
@@ -1018,8 +1014,11 @@ void TaskRecWrite(void)
 		if (gGprsinfo.gmissflag == MISS_PBOC_PURSE && s_isAuthOk != 0)
 		{
 			if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA) {
+#if SWITCH_ODA_BACKEND
+				PRINT_ERROR("没有ODA记录\r\n");
+#else
 				save_ODA_infor(ODA_FeRC_Write, repurse_infor);
-
+#endif
 			}
 			else {
 				MSG_LOG("保存冲正\r\n");

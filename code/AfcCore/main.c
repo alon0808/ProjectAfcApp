@@ -30,6 +30,7 @@
 #include "QRCodeMain.h"
 #include "gps.h"
 #include "xStorage.h"
+#include "qpboc_8583.h"
 
 
 TStorageInit s_storInit;
@@ -72,36 +73,53 @@ int  CreateDir(const   char   *sPathName)
 static stUIData s_UIData;
 static stUIData s_backUIData;
 static char s_message[LEN_MESSAGE + 1] = { 0 };
+extern stMobilStyle Sign_Infor;
 
-AFC_CORE__API stUIData* GetStatusData(void) {
-	stUIData *pUIData = &s_UIData;
-	//Get_SerialNum(s_UIData.devId);
-	memcpy(pUIData->devId, gDeviceParaTab.DeviceNo, 8);
-	pUIData->devId[LEN_DEV_ID - 1] = '\0';
-	//s_UIData.isDDOk = gGprsinfo.isNetOK[link_DD];
-	pUIData->isGJOk = gGprsinfo.isNetOK[LINK_GJ];
-	memcpy(pUIData->lineId, gDeviceParaTab.LineNo, LEN_LINE_ID);
-	//s_UIData.devId = 
-	pUIData->linkStatus = gGprsinfo.GPRSLinkProcess;
-	pUIData->modVer = 0x003;	// 3.0
-	pUIData->task = gGprsinfo.gmissflag;
-	pUIData->uploadRec = 0;
-	pUIData->version = SOFT_VER_TIME_LOG;
-	pUIData->basePrice = GET_INT32S(gDeviceParaTab.busPrice);
+extern int GJRec_Send(void);
 
-	pUIData->isNeedUpdate = BOOL_FALSE;
-	pUIData->delayTime = 100;
-	pUIData->stopflag = gBuInfo.stop_flag;
+
+AFC_CORE__API int GetStatusMessage(int timerTrige, char *pMsg, int *pTimeDelay) {
 	if (s_message[0] != '\0') {
-		strcpy(pUIData->message, s_message);
+		if (pMsg == NULL || pTimeDelay == NULL) {
+			return Ret_Err_Param;
+		}
+		strcpy(pMsg, s_message);
 		s_message[0] = '\0';
-		pUIData->isNeedUpdate = BOOL_TRUE;
 
-		pUIData->delayTime = 1000;
+		*pTimeDelay = 1000;
+
+		return Ret_OK;
 	}
-	if (memcmp(&pUIData->isGJOk, &s_backUIData.isGJOk, sizeof(stUIData) - LEN_MESSAGE + 2) != 0) {
-		pUIData->isNeedUpdate = BOOL_TRUE;
-		memcpy(&s_backUIData.isGJOk, &pUIData->isGJOk, sizeof(stUIData) - LEN_MESSAGE + 2);
+
+	return Ret_Error;
+}
+
+AFC_CORE__API stUIData* GetStatusData(int timerTrige) {
+	stUIData *pUIData = &s_UIData;
+
+	if ((timerTrige & 0x1F) == 1) {
+		memcpy(pUIData->ud_devId, gDeviceParaTab.DeviceNo, 8);
+		pUIData->ud_devId[LEN_DEV_ID - 1] = '\0';
+		memcpy(pUIData->ud_lineId, gDeviceParaTab.LineNo, LEN_LINE_ID);
+		pUIData->ud_modVer = 0x003;	// 3.0
+		pUIData->ud_uploadRec = GJRec_Send();
+		pUIData->ud_version = SOFT_VER_TIME_LOG;
+		pUIData->ud_basePrice = GET_INT32S(gDeviceParaTab.busPrice);
+		pUIData->ud_stopflag = gBuInfo.stop_flag;
+		pUIData->ud_isUnpayOk = Sign_Infor.ISOK;
+		pUIData->ud_isGJOk = gGprsinfo.isNetOK[LINK_GJ];
+	}
+	//Get_SerialNum(s_UIData.devId);
+	//s_UIData.isDDOk = gGprsinfo.isNetOK[link_DD];
+	pUIData->ud_linkStatus = gGprsinfo.GPRSLinkProcess;
+	pUIData->ud_task = gGprsinfo.gmissflag;
+
+	pUIData->ud_isNeedUpdate = BOOL_FALSE;
+	pUIData->ud_delayTime = 100;
+
+	if (memcmp(&pUIData->ud_isGJOk, &s_backUIData.ud_isGJOk, sizeof(stUIData) - 1) != 0) {
+		pUIData->ud_isNeedUpdate = BOOL_TRUE;
+		memcpy(&s_backUIData.ud_isGJOk, &pUIData->ud_isGJOk, sizeof(stUIData) - 1);
 	}
 
 	return pUIData;

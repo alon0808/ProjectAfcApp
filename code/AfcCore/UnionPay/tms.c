@@ -971,7 +971,7 @@ int ProcessTmsData(void) {
 		delayxms(10);
 
 		ret = getkey(1);
-		if (ret == KEY_ESC) {
+		if (ret == SLZRKEY_ESC) {
 			//exeStatus = 0;
 			MSG_LOG("TMSKEY_ESC\n");
 			break;
@@ -1266,7 +1266,7 @@ int ProcessTmsData_2(void) {
 		delayxms(10);
 
 		ret = getkey(1);
-		if (ret == KEY_ESC) {
+		if (ret == SLZRKEY_ESC) {
 			//exeStatus = 0;
 			MSG_LOG("TMSKEY_ESC\n");
 			break;
@@ -1824,7 +1824,7 @@ int MenuFrame_tms(char menu[][20], void (*function[])(void), char *titlestr, uns
 					i = ucRnt-'1';
 					ucCurScr = i/MENU_NUM_PER_SCREEN;
 					ucCurLine = i%MENU_NUM_PER_SCREEN;
-					ucRnt = KEY_ENT;
+					ucRnt = SLZRKEY_ENTER;
 				}
 				break;
 			}
@@ -1850,8 +1850,8 @@ int MenuFrame_tms(char menu[][20], void (*function[])(void), char *titlestr, uns
 // 			else
 // 				ucCurLine--;
 // 			break;
-	case KEY_UP:
-		case KEY_DOWN:
+	case SLZRKEY_UP:
+		case SLZRKEY_DOWN:
 			if(ucCurScr == (ucScrNum-1))
 			{
 				if(ucCurLine == (ucLastScrLineNum-1))
@@ -1874,10 +1874,10 @@ int MenuFrame_tms(char menu[][20], void (*function[])(void), char *titlestr, uns
 				break;
 			ucCurScr=0;
 			break;
-		case KEY_ESC:
+		case SLZRKEY_ESC:
 	
 			return -2;
-		case KEY_ENT:
+		case SLZRKEY_ENTER:
 
 			ucMENU_NUM_tms=ucCurScr*MENU_NUM_PER_SCREEN+ucCurLine;
 			MSG_LOG("TMS参数菜单索引=%d\r\n",ucMENU_NUM_tms);
@@ -2043,11 +2043,11 @@ unsigned char  show_para_tms(void)
 	display(6, 0, "确定吗?", DIS_CENTER);
 	while (1) {
 		i = getkey(1);
-		if (i == KEY_ENT)
+		if (i == SLZRKEY_ENTER)
 		{
 			return ST_OK;
 		}
-		else if (i == KEY_ESC)
+		else if (i == SLZRKEY_ESC)
 		{
 			return ST_ERROR;
 		}
