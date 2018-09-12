@@ -5,11 +5,12 @@
 #-------------------------------------------------
 
 QT       -= core gui
-QMAKE_CC = arm-linux-gnueabi-g++
+QMAKE_CC = arm-linux-gnueabi-gcc
 TARGET = HandanCore
 TEMPLATE = lib
 DEFINES += _linux_
-QMAKE_CFLAGS = -fvisibility=hidden -Dhi3536 -Wall -std=c++0x -D_THREAD_SAFE -MMD  -Wno-strict-aliasing -fpermissive #-fexec-charset=GB2312
+QMAKE_CFLAGS = -fvisibility=hidden -Dhi3536 -Wall -D_THREAD_SAFE -MMD  -Wno-strict-aliasing -fpermissive #-fexec-charset=GB2312
+#QMAKE_CFLAGS = -fvisibility=hidden -Dhi3536 -Wall -std=c++0x -D_THREAD_SAFE -MMD  -Wno-strict-aliasing -fpermissive #-fexec-charset=GB2312
 QMAKE_CXXFLAGS = $$QMAKE_CFLAGS
 
 INCLUDEPATH += ../../code/public
@@ -61,13 +62,13 @@ SOURCES += handancore.cpp \
     ../../code/AfcCore/Crypto/sha1.c \
     ../../code/AfcCore/Crypto/rsalib.c \
     ../../code/AfcCore/Crypto/Base64.c \
-    ../../code/AfcCore/Crypto/CRC.C \
     ../../code/debug/debugOut.c \
     ../../code/xStorage/xStorage.c \
     ../../code/xStorage/RamStorage.c \
     ../../code/AfcCore/QRCodeMain.c \
     ../../code/AfcCore/gps.c \
-    ../../code/xStorage/FileManage.c
+    ../../code/xStorage/FileManage.c \
+    ../../code/AfcCore/Crypto/CRC.c
 
 HEADERS += handancore.h\
         handancore_global.h \
