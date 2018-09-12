@@ -4,7 +4,7 @@
 #include "SlzrTypeDef.h"
 #include "SlzrError.h"
 #include "ev.h"
-#include "LtyTimer.h"
+#include "LtyCommon.h"
 #include "Uart.h"
 
 SLZR_U32 speed_arr[] =

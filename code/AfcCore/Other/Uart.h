@@ -6,7 +6,6 @@
 
 #include "LtyCommon.h"
 #include "ev.h"
-#include "LtyTimer.h"
 #include "LtyTypeDef.h"
 
 class CUart 

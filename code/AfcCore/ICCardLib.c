@@ -9,9 +9,11 @@
 #include <sys/time.h>
 
 #include "qPBOC.h"
+#if 1
 #include "inputmisc/PsamCard.h"
 
 #include "inputmisc/GPIOCtrl.h"
+
 
 
 #include "LightColor.h"
@@ -20,6 +22,7 @@
 #include "DemoMain.h"
 
 #include "inputmisc/IcCardCtrlApi.h"
+
 
 #include "MYDES.h"
 #include "CPUCARJTB.h"
@@ -38,6 +41,8 @@
 
 #define _debug_ICcard_
 
+
+
 typedef struct {
 	Parameter6 ErrorDetail[ERROR_DETAIL_SUM];
 	unsigned char error_pointer;		  //缓冲区的指针
@@ -51,7 +56,7 @@ typedef struct {
 } card_Delay;
 card_Delay PCard_delay;
 
-struct pMonthTime_1 MothDelayTime;
+pMonthTime_1 MothDelayTime;
 
 
 stCardInfo gCardinfo;
@@ -75,7 +80,7 @@ sam_pub SamPubInf_ZJB;
 unsigned int s_sum1, a_sum1, dis_sum2;
 unsigned int a_sumR = 0;//手机钱包中的真实金额
 
-void end_card(void);
+extern void end_card(void);
 
 
 
@@ -2824,7 +2829,6 @@ void Sound_cityCMD(unsigned char sMode)
 }
 
 
-
 void ControlDis(unsigned char type)
 {
 	char buffer[20];
@@ -4630,6 +4634,7 @@ month_step10:
 
 unsigned char MonthResultManage(void)
 {
+#if 1
 	unsigned char rRecord[170];
 	unsigned char i = 0, mothFlag;
 	//	unsigned int ii;
@@ -4776,17 +4781,20 @@ kousum_continue:
 	default:
 		break;
 	}
+#endif
 	return ST_ERROR;
 }
 
 
 void main_card(void)
 {
+#if 1
 	unsigned char resPonse = 0;
 	// 	unsigned int ltemp;
 	// 	int headp, curp;
 
 	resPonse = profile(0);
+
 
 	if (resPonse == ST_ERROR) //如果卡不存在
 	{
@@ -4992,14 +5000,6 @@ void main_card(void)
 		break;
 	}
 	return;
+#endif
 }
-
-
-
-
-
-
-
-
-
-
+#endif 

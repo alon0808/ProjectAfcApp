@@ -376,8 +376,6 @@ extern void LEDR(LTY_U8 ON);
 extern void HEX_PRINTF(char *info,LTY_U8 *data,int len);
 extern void Bcd_To_Asc(LTY_U8 *Asc, LTY_U8 *Bcd, LTY_U8 nlen);
 extern int hex_2_ascii(LTY_U8 *INdata, LTY_U8 *buffer, LTY_U32 len);
-extern LTY_U8 HEX2BCD(LTY_U8 hex_data);
-extern LTY_U8 BCD2HEX(char bcd_data);
 extern void HEX8TOBCD(LTY_U32 In, LTY_U8 *Pdata);
 extern LTY_U32  BCDToDec(const LTY_U8 *bcd, LTY_U8 length);
 
@@ -413,6 +411,7 @@ extern pthread_mutex_t m_sysfile;
 #define Dis 0
 
 long int gettime_usec(void);
+
 #define NEW_VandD_Api //新的显示及语音提示模块
 
 

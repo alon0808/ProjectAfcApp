@@ -251,14 +251,22 @@ unsigned write_linux_re(unsigned char mode)
 extern unsigned char WriRecorQRC(unsigned char *rec);
 unsigned char write_linux_re_build(unsigned char transResult)
 {
-	unsigned char revBuf[300], charbuf[16];
+	unsigned char revBuf[300], charbuf[20];
+	int qrinfor_len = 0;
+	int tmpI = 0;
 	memset(revBuf, 0, sizeof(revBuf));
 	memset(charbuf, 0, sizeof(charbuf));
-	memcpy(revBuf, "银行数据", 8);
-	qPbocBuildRec_hui(revBuf + 8, transResult);
-	MSG_LOG("冲正灰记录\r\n");
-	BCD_LOG(revBuf, 256, 1);
-	BCD2Ascii((unsigned char*)&SysTime, charbuf, 7);
+
+	if (emv_get_card_type() == QR_CARD) {
+		BuildUnionpayQrRecord(revBuf, transResult);
+	}
+	else {
+		memcpy(revBuf, "银行数据", 8);
+		qPbocBuildRec_hui(revBuf + 8, transResult);
+		MSG_LOG("冲正灰记录\r\n");
+		BCD_LOG(revBuf, 256, 1);
+		BCD2Ascii((unsigned char*)&SysTime, charbuf, 7);
+	}
 	//buildDataSend_0B(1, 0, 256, 256, revBuf, charbuf, charbuf);//把记录发送给Linux模块
 
 	WriRecorQRC(revBuf);
@@ -563,7 +571,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 				//暂时不去找其他任务
 				//	MSG_LOG("暂时不去找其他任务\r\n");
 				gGprsinfo.gmissflag = SQmode;
-			}
+		}
 
 			usleep(500000);
 
@@ -597,7 +605,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 #ifdef switch_RE
 				Switch_sign(Switch_sign_OVER);
 #endif
-				write_linux_re_build(0xAB);  //超时保存一条冲正
+				write_linux_re_build(pr_repurse);  //超时保存一条冲正
 
 				retcode = -1;
 				goto Send_WaitRecvData_OVER;
@@ -620,7 +628,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 #ifdef switch_RE
 					Switch_sign(Switch_sign_OVER);
 #endif
-					write_linux_re_build(0xAD); //保存失败的记录
+					write_linux_re_build(pr_fail); //保存失败的记录
 
 					MSG_LOG("删冲正111--\r\n");
 					memset(repurse_infor, 0, sizeof(repurse_infor));
@@ -644,21 +652,20 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 #ifdef switch_RE
 					Switch_sign(Switch_sign_OVER);
 #endif
-					write_linux_re_build(0xAB); //超时保存一条冲正
+					write_linux_re_build(pr_repurse); //超时保存一条冲正
 
 					retcode = -1;
 					goto Send_WaitRecvData_OVER;
 				}
-			}
-		}//	while (1) 
+				}
+			}//	while (1) 
 	}  //for
 	//最后判断
 	if (flag == 0xA5 && gCardinfo.gMCardCand != CARDSTYLE_UNPAY_ODA) {	// 收到正确数据 
 		//			gSendOverTime = 0;
 
-		MSG_LOG("删冲正--\r\n");
+		MSG_LOG("删冲正22222--\r\n");
 		memset(repurse_infor, 0, sizeof(repurse_infor));
-		MSG_LOG("删冲正--\r\n");
 #ifdef switch_RE
 		init_timeout_infor(); //清冲正延时上送
 	//	save_infor_add(FeRC_Dlelt, NULL);
@@ -687,4 +694,4 @@ Send_WaitRecvData_OVER:
 
 	return retcode;
 
-}
+	}

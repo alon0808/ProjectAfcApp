@@ -1057,7 +1057,7 @@ typedef struct {
 	unsigned int sCrc32;
 }stStaeInfo;//统计数据记录结构 148
 
-extern void clr_wdt(void);
+//extern void clr_wdt(void);
 
 ////////////////////////////////GPS//////////////////////////
 
@@ -1150,30 +1150,6 @@ typedef struct {
 	unsigned char Cxor;			//校验
 }stFDLineHead;	//分段线路头，卡中是第1扇区每2块。
 //----------------------------------------------
-
-
-
-//其它的二维码记录格式
-typedef struct {
-	unsigned char rQrcrecHead[6];		//记录标识，0-5
-	unsigned char rQrcrecHead2[2];		//记录标识，无线上传时不传记录标识6-7
-
-	unsigned char rCardDealNumb[4];		//设备交易流水8-11
-	unsigned char rDevSerial[4];		//设备唯一序列号 4  12-15
-	unsigned char rCardType;			//卡类 16
-	unsigned char rDealType;			//交易类型  17
-	unsigned char ruserTimes[2];		//使用次数 司机号高位  [分段 全程时间] 如果是中控的记录和下面共18字节为卡片的身份证号 18-19
-	unsigned char rAfterMoney[4];		//原额  20-23
-	unsigned char rDealMoney[3];		//交易金额 24-26
-	unsigned char rDealTime[7];			//交易时间YYYY/MM/DD/HH/MM/SS 27-33
-	unsigned char rDriverNo[4];			//司机卡号 34-37
-	unsigned char rDeviceNo[4];			//设备号 38-41
-	unsigned char rLineNo[2];			//线路号 42-43
-	unsigned char rProVer[2];			//程序版本号 44-45
-	unsigned char rTicket[2];			//票价 46-47
-	unsigned char rQRCdat[204];			//二维码信息。 48-251
-	unsigned char rTAC[4];				//  252-255
-}stOtherQRCrecord;
 
 #include "SlzrTypeDef.h"
 #include "UtilityProc.h"

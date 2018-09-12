@@ -2,7 +2,6 @@
 // @date: 2018.05.18
 
 #include "LtyCommon.h"
-#include "LtyTimer.h"
 #include "SlzrError.h"
 #include "SlzrTypeDef.h"
 

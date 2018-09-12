@@ -1,4 +1,5 @@
-
+#ifndef _INCLUDE_PSAMLIB_H_
+#define _INCLUDE_PSAMLIB_H_
 //creat by lks
 
 extern unsigned char ASCII2ZBcod(char *strin, unsigned char *ZBbuf, unsigned char ZBlen);
@@ -6,9 +7,9 @@ extern unsigned char ZBcod2ASCII(unsigned char *ZBbuf, unsigned char ZBlen, char
 
 
 //最多4组,设置多少ms
-extern void set_timer0(unsigned int tick, unsigned char tID);
+//extern void set_timer0(unsigned int tick, unsigned char tID);
 //最多4组,返回还有多少ms
-extern unsigned int get_timer0(unsigned char tID);
+//extern unsigned int get_timer0(unsigned char tID);
 //输入7个字节的BCD码
 //extern void timewrite(unsigned char *bcdDateTime);
 
@@ -26,8 +27,8 @@ extern void KeyDis(unsigned int value,unsigned char *ptr);
 #define LED_BLUE       ((unsigned char)4)
 #define LED_YELLOW     ((unsigned char)8)
 
-extern void led_on(unsigned char mode);
-extern void led_off(unsigned char mode);
+//extern void led_on(unsigned char mode);
+//extern void led_off(unsigned char mode);
 
 #define Audio_INVALID		2		//非法卡
 #define Audio_NOMONEY		3		//金额不足//余额不足
@@ -67,11 +68,11 @@ extern void led_off(unsigned char mode);
 
 extern void dis_time_mini(unsigned char x, stcomtime *time);
 //语音提示
-extern void audio(unsigned char flag);
+//extern void audio(unsigned char flag);
 extern void soundPlay(char * filename);
 
 //蜂鸣器,次数、响延时、停延时
-extern void beep(unsigned char ucTimes, unsigned int ulBeepms, unsigned int ulNoms);
+//extern void beep(unsigned char ucTimes, unsigned int ulBeepms, unsigned int ulNoms);
 
 // LCD
 #define DIS_CONVERT	(0x1)
@@ -79,6 +80,9 @@ extern void beep(unsigned char ucTimes, unsigned int ulBeepms, unsigned int ulNo
 #define DIS_RIGHT	(0x1 << 2)
 #define DIS_ClsLine	(0x1 << 3)
 #define DIS_Cls		(0x1 << 4)
+
+extern void MifareHalt(void);
+#if 0
 extern void cls(void);
 extern void display(unsigned char x, unsigned char y, const char *str, unsigned char mode);
 extern void miniDispstr(unsigned char x, unsigned char y, const char *lcd_string, unsigned char mode);
@@ -123,7 +127,7 @@ OUT  ： 成功返回接收到的长度
 extern unsigned char SamColdReset(unsigned char CardSelect, unsigned int uiRate, 
 								  unsigned char ucVoltage, unsigned char *atr);
 
-extern unsigned char Get_Challenge(unsigned char Slot, unsigned char *Receivebuf, unsigned char len);
+//extern unsigned char Get_Challenge(unsigned char Slot, unsigned char *Receivebuf, unsigned char len);
 extern unsigned char  Select_FileF(unsigned char Slot,unsigned char *file_ID, unsigned char len);
 extern unsigned char  Select_File(unsigned char Slot,unsigned int file_ID);
 extern unsigned char Verify_private_PIN(unsigned char Slot, unsigned char length, unsigned char *ptr);
@@ -181,7 +185,7 @@ extern unsigned char CPUMAC2(unsigned char PsamID, unsigned char *pMac, unsigned
 extern unsigned char CpuCardSetMac(unsigned char PsamID, unsigned char *pMac, unsigned char *pData, unsigned char len);
 extern unsigned char CpuBlackMac(unsigned char PsamID, unsigned char *pMac, unsigned char *pData, unsigned char len);
 extern unsigned char CpuCardSetMac2(unsigned char PsamID, unsigned char *pMac, unsigned char *pData, unsigned char len);
+#endif
 
-
-
+#endif
 

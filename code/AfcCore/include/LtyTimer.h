@@ -7,6 +7,7 @@
 #include "LtyTypeDef.h"
 #include "LtyError.h"
 
+/*
 typedef struct ev_timer_s
 {
     ev_timer evTimer;
@@ -14,6 +15,7 @@ typedef struct ev_timer_s
     LTY_LPVOID pPrivData;
     LTY_BOOL bIsActive;
 }ev_timer_t;
+*/
 
 class CEvTimer
 {

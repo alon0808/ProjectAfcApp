@@ -96,8 +96,9 @@ typedef signed int S32, INT32S;
 
 //add by zhgfan 2018-1-5
 typedef enum {
-	PREPAID_CARD,
-	CREDIT_CARD
+	PREPAID_CARD,	// 储蓄卡
+	CREDIT_CARD,	// 信用卡
+	QR_CARD			// 银联付款码
 }EMV_CARDTYPE;
 
 typedef enum {
@@ -109,10 +110,10 @@ typedef enum {
 
 typedef enum {
 	pr_invalid = 0,
-	pr_success,
-	pr_fail,
-	pr_repurse,
-	pr_doubt	// timeout
+	pr_success = 0x00,
+	pr_fail = 0xAD,
+	pr_repurse = 0xAB,
+	pr_doubt = 0xAC	// timeout
 }emPbocResult;
 
 typedef union
@@ -579,20 +580,24 @@ typedef struct
 	INT8U	n_Key[256];
 }KEY_PUBLICMSG;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+	extern BIT_TVL_TAG QpbocTVLFCI;
+	extern unsigned char GetDateTime(void);
+	extern void get_BER_TVL(unsigned int  bitPos, BER_TVL *OutTVL);
+	extern void emv_set_pay_channel(PBOC_CHANNEL channel);
+	extern PBOC_CHANNEL emv_get_pay_channel(void);
+	void emv_set_pboc_result(emPbocResult pbocresult);
+	extern void getMobileParameter_test(void);
+	extern unsigned char qrDisp_history(unsigned char mode, unsigned int Index);
+	extern EMV_CARDTYPE emv_get_card_type(void);
+	extern void emv_set_card_type(EMV_CARDTYPE type);
 
-extern BIT_TVL_TAG QpbocTVLFCI;
-EXTERN unsigned char GetDateTime(void);
-extern void get_BER_TVL(unsigned int  bitPos, BER_TVL *OutTVL);
-extern void emv_set_pay_channel(PBOC_CHANNEL channel);
-extern PBOC_CHANNEL emv_get_pay_channel(void);
-void emv_set_pboc_result(emPbocResult pbocresult);
-extern void getMobileParameter_test(void);
-extern unsigned char qrDisp_history(unsigned char mode, unsigned int Index);
-extern EMV_CARDTYPE emv_get_card_type(void);
-extern void emv_set_card_type(EMV_CARDTYPE type);
-
-
+#ifdef __cplusplus
+}
+#endif
 
 #include "RamStorage.h"
 

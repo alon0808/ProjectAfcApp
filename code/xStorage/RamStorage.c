@@ -12,8 +12,6 @@
 #include "ff.h"
 #include "Gszct.h"
 
-
-unsigned char DriveCardNo[4];
 unsigned int g24GDisFlash = 0;//24G¿¨½çÃæË¢ĞÂ
 unsigned int endTime = 0;
 unsigned int GPRSLinkProcess = 0;
@@ -58,10 +56,6 @@ unsigned char getkey(unsigned char beepE) {
 }
 
 void flasherase(unsigned char mode, unsigned int addr) {
-
-}
-
-void addStatMoney(unsigned char mode, unsigned int moneyv, unsigned char type) {
 
 }
 
@@ -252,13 +246,5 @@ int buildSeverInfo_06tls(char cmd, char link, unsigned char mode) {//mode//ÒøÁªÑ
 int buildDataSend_0B(unsigned char mode, unsigned int offset, unsigned int Alen, unsigned int datLen, unsigned char *data, unsigned char *obuf, unsigned char *tmb) {
 
 }
-
-
-void BuildQRCRecorde(unsigned char delType, unsigned char *recBuf, unsigned char *qrcdat, unsigned int qrcdatLen) {
-
-}
-
-
-
 
 

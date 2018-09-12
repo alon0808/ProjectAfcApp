@@ -55,11 +55,8 @@
 // unsigned int gMobilREC_End;//移动指针尾
 // #endif
 
-#ifdef _debug_
-extern void dprintf(const char *fmt, ...);
-#endif
+
 extern unsigned char StufferNO[4];
-extern unsigned char DriveCardNo[4];
 extern unsigned int s_sum1, a_sum1, dis_sum2;
 extern unsigned int a_sumR;//手机钱包中的真实金额
 extern unsigned int c_serial;
@@ -99,9 +96,8 @@ extern PACKET_RCV gPacketRcvBuf[MAX_RCV_PACKET_NUM];	//接收帧缓冲
 extern stPricetable NewPriceTab;
 extern unsigned char gmissflag;
 
-
-extern BIT_TVL_TAG QpbocTVLFCI;
-extern INT8U	QpbocTVLData[LEN_QBOCTVL_DATA];
+BIT_TVL_TAG QpbocTVLFCI;
+static INT8U	QpbocTVLData[LEN_QBOCTVL_DATA];
 
 //SAM卡中能存放最多的公钥文件数量
 //共有文件15个，有一个文件需要算IC卡的签名认证。
@@ -1957,7 +1953,8 @@ int  QpbocAppSelect(void)
 	const unsigned char YL_AID_PREFIX[] = { 0xA0, 0x00, 0x00, 0x03, 0x33 };
 	char tmpCardType = 0;	// 1.存量卡,2.新增卡,3.特定的移动设备卡
 
-	const unsigned char E_CASHFIX[] = { 0x01,0x01,0x01 };
+	const unsigned char E_CASHFIX1[] = { 0x01,0x01,0x02 };
+	const unsigned char E_CASHFIX2[] = { 0x01,0x01,0x03 };
 #ifdef _BankNameLimit
 	char *p;
 #endif
@@ -2037,13 +2034,13 @@ int  QpbocAppSelect(void)
 		send_len = 6 + QpbocAppList[i].LenAID;
 
 		//add by zhgfan 2018-1-6
-		if (memcmp(TempAIDTable[i].DF_AID + 5, E_CASHFIX, 3) == 0) { //check if it's a pre-paid card  2018.01.5 zhgfan		
-			emv_set_card_type(PREPAID_CARD);//储值卡
-			MSG_LOG("储蓄卡\r\n");
-		}
-		else {
+		if (memcmp(TempAIDTable[i].DF_AID + 5, E_CASHFIX1, 3) == 0 || memcmp(TempAIDTable[i].DF_AID + 5, E_CASHFIX2, 3) == 0) { //check if it's a pre-paid card  2018.01.5 zhgfan		
 			emv_set_card_type(CREDIT_CARD);//信用卡
 			MSG_LOG("信用卡\r\n");
+		}
+		else {
+			emv_set_card_type(PREPAID_CARD);//储值卡
+			MSG_LOG("储蓄卡\r\n");
 		}
 		//	
 
@@ -3201,7 +3198,7 @@ void Pboc_delay_card(void)
 #endif
 }
 //extern unsigned char SYSgetbussinessNO(unsigned char *dat);
-extern void addStatMoney(unsigned char mode, unsigned int moneyv, unsigned char type);
+extern void addStatMoney(unsigned char mode, unsigned int moneyv);
 extern void INT2BCD(unsigned int ii, unsigned char *bcdbuf, unsigned char bcdbuflen);
 unsigned char get_rcardMainNO(unsigned char *outdata)
 {
@@ -3260,8 +3257,9 @@ unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff, unsigned char transResu
 	unsigned char chanel = emv_get_pay_channel();
 
 
+
+	memset(qrecbuff, 0x00, sizeof(stPbocRec));
 	pbocrec = (stPbocRec *)qrecbuff;
-	memset(qrecbuff, 0x5A, 256);
 	feread(BIT_PBOC_NS, 4, (unsigned char*)&uiTemp);
 
 	if (uiTemp == 0)
@@ -3370,7 +3368,7 @@ unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff, unsigned char transResu
 	usI = cal_crc16((unsigned char *)&pbocrec, 130);
 	memcpy(pbocrec->rCrc16, (unsigned char*)&usI, 2);//CRC16
 
-	memcpy(pbocrec->rDriverNo, DriveCardNo, 4);//司机卡号
+	memcpy(pbocrec->rDriverNo, gBuInfo.DriverNO, 4);//司机卡号
 
 	//交易类型
 	switch (chanel)
@@ -3428,6 +3426,8 @@ unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff, unsigned char transResu
 	sprintf((char*)buff, "%06u", uiTemp);
 	memcpy(pbocrec->pbocBatchNo, ASC2BCD((char*)buff, 6), 3);
 
+
+	memset(qrecbuff + sizeof(stPbocRec), 0x5A, 256 - sizeof(stPbocRec));
 #if 0
 	//add by zhgfan 增加请款金额
 	sprintf((char *)buff, "%012d", PosOfferData.PDOL.DebitMoney);
@@ -3447,7 +3447,7 @@ unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff, unsigned char transResu
 
 	if (transResult == 0x00) {
 		memcpy((unsigned char*)&uiTemp, TradeResult.TradeMoney, 4);
-		addStatMoney(ID_REC_TOLL, uiTemp, chanel);
+		addStatMoney(ID_REC_TOLL, uiTemp);// , chanel);
 	}
 
 	return ST_OK;
@@ -3457,7 +3457,7 @@ unsigned char qPbocBuildRec_hui(unsigned char *qrecbuff, unsigned char transResu
 //写入公交存贮器
 unsigned char qPbocWriteRecord(unsigned char *rec)
 {
-	//	unsigned char i=0;
+	//	unsigned char i=0; 
 	//	unsigned char buff[RECORD_LEN];
 	unsigned char buffer[qPbocRECORD_LEN + 1];
 	//	unsigned char *tempbuf;
@@ -3543,7 +3543,7 @@ void cpuPBOCmain(void)
 #ifdef Center_Ctrl_BU_ENABEL
 	if (gBuCtrlFlag & BUCTRL_FLAG_qPBOC) {//禁止刷银联卡
 		return;
-	}
+}
 #endif
 	//	InitRC531();
 	//	PKI_INIT();
@@ -3628,7 +3628,7 @@ void cpuPBOCmain(void)
 			cardSound = 0;
 			card_ser = 0;
 #endif
-		}
+	}
 	}
 
 	//	miniDispstr(6, 0, "Q3", 0);
@@ -3869,7 +3869,7 @@ void cpuPBOCmain(void)
 			save_ODA_infor(ODA_FeRC_Write, repurse_infor);
 			delayxms(3);
 			write_linux_re(MISS_PBOC_UPREC_ODA);//备份0DA
-		}
+	}
 #endif
 		// 		if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA) {
 		// 			ret = SQDataFromSVT(MISS_PBOC_UPREC_ODA_first, 6000);
@@ -5310,8 +5310,6 @@ void qPbocDealPkey(void)
 #endif
 #endif
 
-BIT_TVL_TAG QpbocTVLFCI;
-static INT8U	QpbocTVLData[LEN_QBOCTVL_DATA];
 
 char *ASC2BCD(char *strASC, int lenASC)
 {

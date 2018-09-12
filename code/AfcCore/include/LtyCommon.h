@@ -244,6 +244,22 @@ typedef struct {
    unsigned long long RXPreTolCnt;
    unsigned long long RXTolCnt;
 }SZFLOWCNT;
+
+
+#include <assert.h>
+
+#include "ev.h"
+#include "LtyTypeDef.h"
+#include "LtyError.h"
+
+typedef struct ev_timer_s
+{
+	ev_timer evTimer;
+	LTY_U32  u32Type;
+	LTY_LPVOID pPrivData;
+	LTY_BOOL bIsActive;
+}ev_timer_t;
+
 #endif
 
 

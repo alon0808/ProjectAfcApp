@@ -262,6 +262,8 @@ void dis_qboc_ack_code(unsigned char ack);
 void PBOC_hand(unsigned char value);
 void down_kek(void);
 
+extern int BuildUnionpayQrRecord(unsigned char *Rdata, unsigned char pbocResult);
+
 //mode==1  写进铁电，mode==2删掉铁电记录  3 检查是否有记录需要转正      解决消费未完成  断电没记录的情况
 void save_repurse_infor(unsigned char mode, unsigned char *data);
 extern int save_ODA_infor(unsigned char mode, unsigned char *re_infor);

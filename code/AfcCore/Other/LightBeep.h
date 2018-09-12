@@ -7,7 +7,6 @@
 #pragma once
 
 #include "LtyCommon.h"
-#include "LtyTimer.h"
 #include "LtyError.h"
 #include "LtyMsgUserInput.h"
 

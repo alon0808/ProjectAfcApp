@@ -39,6 +39,12 @@ static TUINT8 s_appRam[1000];
 static TUINT8 s_tempRam[1000];
 static TUINT8 s_doublelinkRam[1000];
 
+extern void *main_tidgetQRCode(void *arg);
+extern void main_QRCode_Deal(void);
+extern unsigned short cal_crc16(unsigned char *ptr, unsigned char len);
+extern unsigned int GenerateCRC32(unsigned char *DataBuf, unsigned int len);
+extern unsigned int cal_crc32(unsigned char *ptr, int len);
+
 //
 int  CreateDir(const   char   *sPathName)
 {

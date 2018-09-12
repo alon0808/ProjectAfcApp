@@ -105,7 +105,7 @@ extern void ssl_read_cmd(void);
 #endif
 
 //组织二维码记录（公司以外）
-extern void BuildQRCRecorde(unsigned char delType, unsigned char *recBuf, unsigned char *qrcdat, unsigned int qrcdatLen);
+extern void BuildQRCRecorde(unsigned char delType, unsigned char *recBuf, unsigned char *qrcdat, unsigned int qrcdatLen, unsigned char pbocResult);
 
 stMobilStyle Sign_Infor;
 unsigned char qr_pboc_AccountNo[32] = { 0 };//二维码 的账户 ascii
@@ -637,7 +637,7 @@ extern void setBitmapBits(unsigned char fieldID, unsigned char *sl8583bitmap);
 //extern unsigned char getBitmapBits(unsigned char fieldID, unsigned char *sl8583bitmap);
 
 extern unsigned char StufferNO[4];
-extern unsigned char DriveCardNo[4];
+extern fFlagVary_1 gBuInfo;
 
 /* 贵州银联提供
 无线POS：
@@ -1369,7 +1369,7 @@ unsigned int Build_qpboc_8583_48(unsigned char *dat)
 	len += 8;
 	memcpy(dat + len, "\xFF\x64\x08", 3);
 	len += 3;
-	BCD2Ascii(DriveCardNo, dat + len, 4);
+	BCD2Ascii(gBuInfo.DriverNO, dat + len, 4);
 	len += 8;
 #endif
 	if (gCardinfo.gMCardCand == CARDSTYLE_UNPAY_ODA) {
@@ -4589,6 +4589,53 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 	//	return 0;
 }
 
+int BuildUnionpayQrRecord(unsigned char *Rdata, unsigned char pbocResult) {
+	unsigned char cardlen = 0;
+	unsigned char buffer[64];
+	//unsigned char recordbuff[RECORD_LEN];
+	unsigned char qr_infor[256], qrinfor_len = 0;	//
+	int ret = -1;
+	unsigned int tmpUI = 0;
+
+	//memset(recordbuff, 0, sizeof(recordbuff));
+	memset(qr_infor, 0, sizeof(qr_infor));
+	qrinfor_len = 0;
+
+	cardlen = strlen((const char *)qr_pboc_AccountNo);
+	qr_infor[qrinfor_len++] = cardlen;
+	memcpy(qr_infor + qrinfor_len, qr_pboc_AccountNo, cardlen);
+	qrinfor_len += cardlen;
+
+	getMobileParameter(6, (unsigned char *)qr_infor + qrinfor_len);	//银联设备号
+	qrinfor_len += 8;
+
+	getMobileParameter(1, qr_infor + qrinfor_len);	//银联商户号
+	qrinfor_len += 15;
+
+	memset(buffer, 0, sizeof(buffer));
+	sprintf((char*)buffer, "%06ui", POS_8583_COUNT);
+	MSG_LOG("pos流水:%s\r\n", buffer);
+
+	memcpy(qr_infor + qrinfor_len, ASC2BCD((char*)buffer, 6), 3);	//系统跟踪号
+	qrinfor_len += 3;
+	SYSgetbussinessNO(qr_infor + qrinfor_len);//两字节商户编号
+	qrinfor_len += 2;
+
+	tmpUI = get_deal_count(BIT_PBOC_NS_BIG);
+	memset(buffer, 0, 7);
+	sprintf((char*)buffer, "%06u", tmpUI);
+	memcpy(qr_infor + qrinfor_len, ASC2BCD((char*)buffer, 6), 3);
+	qrinfor_len += 3;
+
+	BuildQRCRecorde(ID_REC_QRC_PBOC, Rdata, qr_infor, qrinfor_len, pbocResult);
+	//QTXQRCWriteRecord(recordbuff);
+	save_h_month();
+	SetTcpPacketTTLTime(RECORD_TTL);
+
+	MSG_LOG("qpboc_qr_main:%d\n", 256);
+	return 256;
+}
+
 //BASE64加密，输出在base64
 extern char *base64_encodesl(const unsigned char * bindata, char * base64, int binlength);
 //BASE64解密，输入base64为字符串\0结束,返回输出的长度
@@ -4601,14 +4648,17 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 	//unsigned char recordbuff[RECORD_LEN];
 	unsigned char qr_infor[256], qrinfor_len = 0;	//
 	int ret = -1;
+	unsigned int tmpUI = 0;
 
 
 	memset(qr_pboc_AccountNo, 0, sizeof(qr_pboc_AccountNo));
 	strcpy((char *)qr_pboc_AccountNo, QRCdat);
 
 	cls();
-	display(0, 0, "交易码:", 0);
+	sprintf(qr_infor, "交易码:%s", qr_pboc_AccountNo);
+	display(0, 0, qr_infor, 0);
 
+	emv_set_card_type(QR_CARD);
 	gCardinfo.gMCardCand = CARDSTYLE_QR_PBOC;
 	gCardinfo.card_catalog = CARD_qPBOC_BUS;
 	s_sum1 = get_s_sum1(0);
@@ -4650,43 +4700,7 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 	MSG_LOG("SQDataFromSVT:ret=%d\r\n", ret);
 	if (ret == 0)
 	{
-
-		money_msg(ID_REC_TOLL, INFINITE, s_sum1, 0);
-		SoundMessage(SOUND_DEAL);
-
-		//memset(recordbuff, 0, sizeof(recordbuff));
-		memset(qr_infor, 0, sizeof(qr_infor));
-		qrinfor_len = 0;
-
-		cardlen = strlen((const char *)qr_pboc_AccountNo);
-		qr_infor[qrinfor_len++] = cardlen;
-		memcpy(qr_infor + qrinfor_len, qr_pboc_AccountNo, cardlen);
-		qrinfor_len += cardlen;
-
-		getMobileParameter(6, (unsigned char *)qr_infor + qrinfor_len);	//银联设备号
-		qrinfor_len += 8;
-
-		getMobileParameter(1, qr_infor + qrinfor_len);	//银联商户号
-		qrinfor_len += 15;
-
-		memset(buffer, 0, sizeof(buffer));
-		sprintf((char*)buffer, "%06ui", POS_8583_COUNT);
-		MSG_LOG("pos流水:%s\r\n", buffer);
-
-		memcpy(qr_infor + qrinfor_len, ASC2BCD((char*)buffer, 6), 3);	//系统跟踪号
-		qrinfor_len += 3;
-		SYSgetbussinessNO(qr_infor + qrinfor_len);//两字节商户编号
-		qrinfor_len += 2;
-		//, unsigned char *Rdata
-
-		BuildQRCRecorde(deal_type, Rdata, qr_infor, qrinfor_len);
-		//QTXQRCWriteRecord(recordbuff);
-		save_h_month();
-		SetTcpPacketTTLTime(RECORD_TTL);
-
-		MSG_LOG("qpboc_qr_main:%d\n", 256);
-		return 256;
-
+		return BuildUnionpayQrRecord(Rdata, pr_success);
 	}
 	else
 	{

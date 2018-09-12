@@ -5,7 +5,6 @@
 /// @date 2018-06-18
 
 #include "LtyCommon.h"
-#include "LtyTimer.h"
 #include "SlzrTypeDef.h"
 #include "Uart.h"
 

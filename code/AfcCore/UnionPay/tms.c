@@ -29,6 +29,8 @@
 #include "City-handan.h"
 #include "GprsSocket.h"
 
+extern fFlagVary_1 gBuInfo;
+
 extern void savesysbupara(void);
 extern void saveCpuInfo(unsigned char mode, unsigned char *dat);
 extern void tcpipClose(unsigned char mode);
@@ -1542,7 +1544,6 @@ void GET_string_int(unsigned char *dataip)
 
 }
 extern unsigned int BCD2HEX(unsigned char *bcd, unsigned char len);
-extern unsigned char DriveCardNo[4];
 void save_tms_para(void)
 {
 	unsigned char U_time=0;
@@ -1670,7 +1671,7 @@ void save_tms_para(void)
 		//Ascii2INT()
 		//U_temp=	BCD2HEX("\x12\x34\x56",3);
 		sysfewrite(BIT_DRICE_CARD, 4, (unsigned char *)&U_temp);
-		memcpy(DriveCardNo, (unsigned char *)&U_temp, 4);
+		memcpy(gBuInfo.DriverNO, (unsigned char *)&U_temp, 4);
 		MSG_LOG("±£´æxjjj=%d\r\n",U_temp);
 		
 		//	sprintf(disbuf[index], "Ë¾»úºÅ:%08d", i);

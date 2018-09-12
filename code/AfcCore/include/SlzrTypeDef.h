@@ -483,7 +483,8 @@ typedef enum
 #define ID_REC_QRC_ZFB		0xA5		//支付宝二维码记录
 #define ID_REC_QRC_PBOC		0xA7		//银联二维码S
 // A8是可充二维码
-#define ID_REC_QRC_UNPAY_BUS	0xA9		//银联乘车码
+#define ID_REC_QRC_UNPAY_BUS	0xAB		//银联乘车码
+#define ID_REC_QRC_LTY			0xAC		//银联乘车码
 
 //mifare
 
@@ -636,12 +637,12 @@ typedef struct
 #define RECORD_DEAL				0xba
 #define RECORD_NONE				0
 
-struct pMonthTime_1	//保存不能连刷卡信息。
+typedef struct 	//保存不能连刷卡信息。
 {
 	unsigned char endptr;
 	unsigned char startptr;
 	unsigned char LastList[LAST_LIST_LEN][7];              //月票保存时间表
-};
+}pMonthTime_1;
 
 #define LEN_CARD_RECORD 16
 
@@ -799,28 +800,27 @@ typedef struct
 
 typedef struct
 {
-	unsigned char rFlag[8];
-	unsigned char rCardDealNumb[4];		//设备交易流水
-	unsigned char rDeviceNo[4];			//设备号(序列号)
-	unsigned char rCardType;			//卡类
-	unsigned char rDealType;			//交易类型
-	unsigned char rPublishNumb_a;		//发行卡流水号最高位  
-	unsigned char rRemain;				//保留   //司机卡高位
+	unsigned char rQrcrecHead[6];		//记录标识，0-5
+	unsigned char rQrcrecHead2[2];		//记录标识，无线上传时不传记录标识6-7
 
-
-//	unsigned char ruserTimes[2];		//使用次数 司机号高位  [分段 全程时间] 如果是中控的记录和下面共18字节为卡片的身份证号
-	unsigned char rAfterMoney[4];		//原额
-	unsigned char rDealMoney[3];		//交易金额
-	unsigned char rDealTime[7];			//交易时间YYYY/MM/DD/HH/MM/SS
-	unsigned char rDriverNo[4];			//司机号
-	unsigned char rDeiceSleNo[4];		//设备自编号 //校验码
-	unsigned char rLineNo[2];			//线路号
-	unsigned char rProVer[2];			//程序版本号
-	unsigned char rPrice_NA[2];			//票价
-	unsigned char QRC_record[204];		//*二维码记录（明文） 字符串，BASE64格式，以0x00为结束符。（此字段为二维码交易记录，需要直接传给腾讯服务器）。
-//	unsigned char QRC_record[212];		//*二维码记录（明文） 字符串，BASE64格式，以0x00为结束符。（此字段为二维码交易记录，需要直接传给腾讯服务器）。
-	unsigned char rTAC[4];				// 校验码
-}DEALRECODE_OTHQRC;	//二维码记录
+	unsigned char rCardDealNumb[4];		//设备交易流水8-11
+	unsigned char rDevSerial[4];		//设备唯一序列号 4  12-15
+	unsigned char rCardType;			//卡类 16
+	unsigned char rDealType;			//交易类型  17
+	unsigned char ruserTimes[2];		//使用次数 司机号高位  [分段 全程时间] 如果是中控的记录和下面共18字节为卡片的身份证号 18-19
+	unsigned char rAfterMoney[4];		//原额  20-23
+	unsigned char rDealMoney[3];		//交易金额 24-26
+	unsigned char rDealTime[7];			//交易时间YYYY/MM/DD/HH/MM/SS 27-33
+	unsigned char rDriverNo[4];			//司机卡号 34-37
+	unsigned char rDeviceNo[4];			//设备号 38-41
+	unsigned char rLineNo[2];			//线路号 42-43
+	unsigned char rProVer[2];			//程序版本号 44-45
+	unsigned char rTicket[2];			//票价 46-47
+	unsigned char rQRCdat[185];			//二维码信息。 48-240
+	unsigned char rDevId[8];			//银联设备号
+	unsigned char rRouteInfo[11];			//二维码信息。241-251,11字节
+	unsigned char rTAC[4];				//  252-255
+}stOtherQRCrecord;	//二维码记录
 
 typedef struct
 {

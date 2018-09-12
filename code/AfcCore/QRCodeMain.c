@@ -1,4 +1,4 @@
-
+#define SWITCH_LTY_QR	0
 #include "Macro_Proj.h"
 #include <unistd.h>
 #include <stdio.h>
@@ -23,7 +23,9 @@
 #include "MYDES.h"
 
 #include "ICCardLib.h"
+#if SWITCH_LTY_QR
 #include "QRScan.h"
+#endif
 #include "gps.h"
 
 #include "GprsSocket.h"
@@ -227,81 +229,129 @@ void *main_tidgetQRCode(void *arg)
 
 
 //组织腾讯二维码的记录结构
-void build_LTYQRC_Record(unsigned char *orecBuf, unsigned char *iQRCdat, unsigned int iQRCdatLen)
+void BuildQRCRecorde(unsigned char delType, unsigned char *orecBuf, unsigned char *iQRCdat, unsigned int iQRCdatLen, unsigned char pbocResult)
 {
-	DEALRECODE_OTHQRC *rRecordDeal;
+	stOtherQRCrecord *rRecordDeal;
 	unsigned int temp;
 	stltyQRCandGPS *ltyR;
+	unsigned int tmpUI = 0;
 
 	//	unsigned short crc_16;
 
 
-	rRecordDeal = (DEALRECODE_OTHQRC *)orecBuf;
+	rRecordDeal = (stOtherQRCrecord *)orecBuf;
 
-	memcpy(rRecordDeal->rFlag, "二维码AC", 8);
+	memcpy(rRecordDeal->rQrcrecHead, "二维码", 6);
+	if (delType == ID_REC_QRC_GZT)
+		memcpy(rRecordDeal->rQrcrecHead2, "A6", 2);
+	else if (delType == ID_REC_QRC_TX)
+		memcpy(rRecordDeal->rQrcrecHead2, "A4", 2);
+	else if (delType == ID_REC_QRC_ZFB)
+		memcpy(rRecordDeal->rQrcrecHead2, "A5", 2);
+
+	else if (delType == ID_REC_QRC_PBOC)
+		memcpy(rRecordDeal->rQrcrecHead2, "A7", 2);
+	else if (delType == ID_REC_QRC_UNPAY_BUS)
+		memcpy(rRecordDeal->rQrcrecHead2, "AB", 2);
+	else if (delType == ID_REC_QRC_LTY)
+		memcpy(rRecordDeal->rQrcrecHead2, "AC", 2);
+	else
+		return;
 
 	//交易流水号
 	temp = gBuInfo.MoneyDealPointer;
 	memcpy(rRecordDeal->rCardDealNumb, (unsigned char*)&temp, 4);  //M1
 
 	gBuInfo.MoneyDealPointer++;
-	if (gBuInfo.MoneyDealPointer > 999999)
+	if (gBuInfo.MoneyDealPointer > 999999)	// 旧平台是6个9,新平台是9个9
 		gBuInfo.MoneyDealPointer = 0;
 	temp = gBuInfo.MoneyDealPointer;
 
-
-	//6.原额 rAfterMoney
-	memcpy(rRecordDeal->rAfterMoney, (unsigned char*)&a_sum1, 4);
-	//7.交易金额----rDealMoney
-	memcpy(rRecordDeal->rDealMoney, (unsigned char *)&s_sum1, 3);
-
-	//2.设备号（序列号）
-	Get_SerialNumF4(rRecordDeal->rDeviceNo);
-	//3.卡类
+	Get_SerialNumF4(rRecordDeal->rDevSerial);
 	rRecordDeal->rCardType = gCardinfo.card_catalog;
-	//4.交易类型
-	rRecordDeal->rDealType = 0xAC;
+	rRecordDeal->rDealType = delType;
+	memset(rRecordDeal->ruserTimes, 0, 2);
+	rRecordDeal->ruserTimes[1] = pbocResult;
 
-	rRecordDeal->rPublishNumb_a = 0;
-	rRecordDeal->rRemain = 0;
-	// 	SYSgetbussinessNO(rRecordDeal->rBussinessNo);
-	//	memset(rRecordDeal->ruserTimes, 0, 2);
+#ifdef _debug_
+	MSG_LOG("__a_sum1:%2X \n", a_sum1);
+	MSG_LOG("__s_sum1:%2X \n", s_sum1);
+#endif
+
+	if (delType == ID_REC_QRC_UNPAY_BUS)		//银联乘车码无余额
+	{
+		unsigned int a_sum1_AB = 0;
+		memcpy(rRecordDeal->rAfterMoney, (unsigned char*)&a_sum1_AB, 4);
+	}
+	else {
+		memcpy(rRecordDeal->rAfterMoney, (unsigned char*)&a_sum1, 4);
+	}
+
+	memcpy(rRecordDeal->rDealMoney, (unsigned char *)&s_sum1, 3);
 	memcpy(rRecordDeal->rDealTime, (unsigned char*)&SysTime, 7);
 	memcpy(rRecordDeal->rDriverNo, gBuInfo.DriverNO, 4);
-	rRecordDeal->rRemain = 0;//DriveCardNo[4];	//司机卡高位
-// #ifdef BUS_YANAN_
-//	memcpy(rRecordDeal->rDeiceSleNo,pFistVary.DeviceNo,4);
-// #else
-	Ascii2BCD(gDeviceParaTab.DeviceNo, rRecordDeal->rDeiceSleNo, 8);
-	// #endif
 
-		//13.线路号
+	CharsToBytes(gDeviceParaTab.DeviceNo, 8, rRecordDeal->rDeviceNo, 4);
 	memcpy(rRecordDeal->rLineNo, gDeviceParaTab.LineNo, 2);
-	//11.司机卡号
-	memcpy(rRecordDeal->rDriverNo, gBuInfo.DriverNO, 4);
-	//21.固件程序版本号
 	memcpy(rRecordDeal->rProVer, gBusVerInfo.busProVer, 2);//程序版本
-//	over_turn(2,rRecordDeal->rProVer);
+	memcpy(rRecordDeal->rTicket, gDeviceParaTab.busPrice, 2);	//票价，2字节，最多65536分
+	memset(rRecordDeal->rQRCdat, 0, sizeof(rRecordDeal->rQRCdat));
 
-	memcpy(rRecordDeal->rPrice_NA, gDeviceParaTab.busPrice, 2);//票价，2字节，最多65536分
+	MSG_LOG("rQRCdat(%d):", iQRCdatLen);
+	BCD_LOG(iQRCdat, iQRCdatLen, 1);
+	memcpy(rRecordDeal->rQRCdat, iQRCdat, iQRCdatLen);
 
+	if (deal_type == ID_REC_QRC_LTY) {
+		ltyR = (stltyQRCandGPS *)rRecordDeal->rQRCdat;
+		temp = (unsigned int)(gprmc.longitude * 1000);
+		memcpy((unsigned char*)ltyR->longitude, (unsigned char*)&temp, 4);
 
-	memcpy(rRecordDeal->QRC_record, iQRCdat, iQRCdatLen);
-	ltyR = (stltyQRCandGPS *)rRecordDeal->QRC_record;
-	temp = (unsigned int)(gprmc.longitude * 1000);
-	memcpy((unsigned char*)ltyR->longitude, (unsigned char*)&temp, 4);
+		temp = (unsigned int)(gprmc.latitude * 1000);
+		memcpy((unsigned char*)ltyR->latitude, (unsigned char*)&temp, 4);
 
-	temp = (unsigned int)(gprmc.latitude * 1000);
-	memcpy((unsigned char*)ltyR->latitude, (unsigned char*)&temp, 4);
+		temp = (unsigned int)(gprmc.direction * 100);
+		memcpy((unsigned char*)ltyR->direction, (unsigned char*)&temp, 4);
 
-	temp = (unsigned int)(gprmc.direction * 100);
-	memcpy((unsigned char*)ltyR->direction, (unsigned char*)&temp, 4);
+		temp = (unsigned int)(gprmc.speed * 100);
+		memcpy((unsigned char*)ltyR->speed, (unsigned char*)&temp, 4);
+	}
+	else if (delType == ID_REC_QRC_UNPAY_BUS) {
+		//getMobileParameter(6, rRecordDeal->rDevId);	//银联设备号
 
-	temp = (unsigned int)(gprmc.speed * 100);
-	memcpy((unsigned char*)ltyR->speed, (unsigned char*)&temp, 4);
+		temp = 0;
+		rRecordDeal->rRouteInfo[temp] = 0x00;
+		++temp;
+		rRecordDeal->rRouteInfo[temp] = (unsigned char)gprmc.direction;
+		++temp;
+		rRecordDeal->rRouteInfo[temp] = 0;
+		++temp;
+		tmpUI = (unsigned int)(gprmc.longitude * 1000);
+		memcpy(rRecordDeal->rRouteInfo + temp, (unsigned char *)&tmpUI, 4);
+		temp += 4;
+		tmpUI = (unsigned int)(gprmc.latitude * 1000);
+		memcpy(rRecordDeal->rRouteInfo + temp, (unsigned char *)&tmpUI, 4);
+#if 0
+		if (memcmp(rRecordDeal->rRouteInfo, "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 11) == 0) {
+			// 110287482-0692DA7A-7ADA9206, 25262823-01817AE7-E77A8101
+			memcpy(rRecordDeal->rRouteInfo, "\x01\x01\x05\x7A\xDA\x92\x06\xE7\x7A\x81\x01", 11);
+		}
+#endif
+	}
 
+	memcpy(rRecordDeal->rTAC, "\xEE\xFF\xDD\xCC", 4);
 
+	if (((delType & 0x7F) == ID_REC_TOLL) || ((delType & 0x7F) == ID_REC_MON)) {
+		addStatMoney((delType & 0x7F), s_sum1);
+#ifdef _Counter_SWcard_times
+		addSCtimes(1);//刷卡次数加1 
+#endif
+	}
+	else
+	{
+		addStatMoney(ID_REC_TOLL, s_sum1);
+	}
 
+	return;
 
 }
 
@@ -387,14 +437,16 @@ void main_QRCode_Deal(void)
 	unsigned char outbuf[1024];
 	unsigned int len;
 	int t, t1;
+#if SWITCH_LTY_QR
 	StHDQRCinput verifyInput;
+	CQR classCQR;
+#endif
 	unsigned char pubkey1[256];
 	unsigned int c_serial_mac;
 	stltyQRCandGPS *ltyp;
 	int i = 0;
 	unsigned int qrLen = 0;
 
-	CQR classCQR;
 	unsigned char *pQrBuf = gQRCdatabuff;
 	unsigned char deal_type;
 
@@ -404,7 +456,7 @@ void main_QRCode_Deal(void)
 #ifdef _debug_QRCode_
 		printf("[%s] QRCode OK,qrLen:%d\n", __FUNCTION__, qrLen);
 #endif
-
+#if SWITCH_LTY_QR
 		if ((qrLen == 36) && ((pQrBuf[0] == '3') || (pQrBuf[0] == '4'))) {	//是蓝泰源的码。
 
 		//虚拟公交卡：标识（固定为3或4）+虚拟卡ID（6字节城市代码+9字节注册唯一码）+日期时间（10字节）+验证码（10字节校验）
@@ -521,7 +573,7 @@ void main_QRCode_Deal(void)
 				goto main_QRCode_Deal_OVER;
 			}
 
-			build_LTYQRC_Record(outbuf, verifyInput.Qrcode, LTY_QRCODE_LEN);
+			BuildQRCRecorde(ID_REC_QRC_LTY, outbuf, verifyInput.Qrcode, LTY_QRCODE_LEN, pr_success);
 			WriRecorQRC(outbuf);
 			money_msg(ID_REC_TOLL, a_sum1, s_sum1, 0);
 
@@ -532,7 +584,9 @@ void main_QRCode_Deal(void)
 
 			ret = 1;
 		}
-		else {
+		else
+#endif
+		{
 			// check all the buffer is numberic
 			for (i = 0; i < qrLen; i++)
 			{

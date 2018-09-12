@@ -1,7 +1,7 @@
 #ifndef LTY_WATCH_DOG_H
 #define LTY_WATCH_DOG_H
 
-#include "LtyTimer.h"
+#include "LtyCommon.h"
 
 class CWatchDog : private CEvTimer
 {
