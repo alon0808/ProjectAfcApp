@@ -131,6 +131,9 @@ typedef enum ltyQr_Source_E
     Qr_Source_Slave
 }Qr_Source_E;
 
+extern int HDQRCodeVerify(StHDQRCinput *inData, unsigned char *OutRecord, unsigned int *OutRecLen);
+
+#if 0
 class CQR 
 {
 public:
@@ -150,6 +153,7 @@ private:
    
     LTY_S32 ParseLtyQr(LTY_U8* u8Qr, LTY_U32 RcvLen);
 };
+#endif
 
 #endif
 

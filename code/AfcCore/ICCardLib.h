@@ -2,6 +2,19 @@
 #define _INCLUDE_ICCARDLIB_H_
 //creat by lks
 
+
+typedef enum {
+	dptm_invalid = 0,
+	dptm_linePrice,	// 保存线路、票价信息。已经赋值到变量结构中了。	
+	dptm_cloundKey = 6,	// 保存云卡密钥
+	dptm_merchId = 7,	// 商户编号
+	dptm_devId = 2,	// 保存设备号
+	dptm_ipPort = 3,	// IP和端口
+	dptm_stopFlag = 9,	// 停止刷卡标志
+	dptm_apn = 8,			// APN
+	dptm_unionpayTerId = 10,	// unionpay terminal id
+}emDevParamTypeMode;
+
 //物理卡号存贮变量
 extern stCardInfo gCardinfo;
 

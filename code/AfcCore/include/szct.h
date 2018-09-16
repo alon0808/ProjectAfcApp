@@ -67,8 +67,8 @@
 
 //³ÌÐò°æ±¾ºÅ
 #ifdef _debug_
-#define SOFT_VER_TIME_LOG 0x008
-#define SOFT_VER_TIME "2018.09.12 14:50 CHANGSHA"	//
+#define SOFT_VER_TIME_LOG 0x009
+#define SOFT_VER_TIME "2018.09.16 16:50 CHANGSHA"	//
 #endif
 
 #define PRAGRAMMER "ZZC"

@@ -34,7 +34,8 @@ typedef enum {
 	ms_idle = 0x00000000,
 	ms_setDevId = 0x00000001,
 	ms_setUnpayDevId = 0x00000002,
-	ms_setUnpayKey = 0x00000004,
+	ms_setUnpayKey = 0x00000003,
+	ms_maskSet = 0x000000FF,
 	ms_showMenu = 0x80000000,
 	ms_setMenu = 0x40000000,
 }emMenuStatus;
@@ -71,6 +72,14 @@ CMainPage2::CMainPage2(QWidget *parent) :
 	QDialog(parent)
 {
 	gMainPageThis = this;
+
+	s_menuStatus = 0;
+	s_menu = NULL;
+	memset(s_action, 0, sizeof(s_action));
+	s_curMenuItem = 0;
+	s_maxMenuItem = 0;
+	s_dialInput = NULL;
+
 	this->setFixedSize(640, 480);
 	this->setObjectName("CMainPage2");
 	this->setStyleSheet("QDialog#CMainPage2{border:0px solid #00ff00;background-color:#000000;}");
@@ -1714,6 +1723,8 @@ void gb2312ToUtf8(std::string& strGb2312)
 	strGb2312 = ByteUtf8.data();
 }
 
+static stUIData *s_uiData = NULL;
+
 void CMainPage2::slot_1s_timer()
 {
 	QString strCurrentTime = QDateTime::currentDateTime().toString("hh:mm:ss");//yyyy-MM-dd
@@ -1768,36 +1779,36 @@ void CMainPage2::slot_1s_timer()
 		m_uiDelayTime -= TIME_INTERVAL;
 	}
 
-	stUIData *uiData = GetStatusData(m_timerTrige);
-	if (uiData->ud_isNeedUpdate != BOOL_FALSE) {
+	s_uiData = GetStatusData(m_timerTrige);
+	if (s_uiData->ud_isNeedUpdate != BOOL_FALSE) {
 		char buffer[500];
 		int pos = 0;
 
 		msgText = "邯郸公交 ";
-		if (uiData->ud_isGJOk) {
+		if (s_uiData->ud_isGJOk) {
 			msgText += "G";
 		}
 		else {
 			msgText += "N";
 		}
-		if (uiData->ud_isUnpayOk) {
+		if (s_uiData->ud_isUnpayOk) {
 			msgText += "G";
 		}
 		else {
 			msgText += "N";
 		}
-		if (uiData->ud_isGpsOk) {
+		if (s_uiData->ud_isGpsOk) {
 			msgText += "R";
 		}
 		else {
 			msgText += "L";
 		}
-		sprintf(buffer, " v%X.%02X %d", (uiData->ud_version >> 8) & 0x00FF, uiData->ud_version & 0x00FF, m_freshTimes);
+		sprintf(buffer, " v%X.%02X %d", (s_uiData->ud_version >> 8) & 0x00FF, s_uiData->ud_version & 0x00FF, m_freshTimes);
 		msgText += (buffer);
 		msgText += ("<br/>");
 		// new line
-		if (uiData->ud_stopflag == BOOL_FALSE) {
-			sprintf(buffer, "<font size=\"10\" color=\"red\">&nbsp;&nbsp;%d.%02d元   </font>", uiData->ud_basePrice / 100, uiData->ud_basePrice % 100);
+		if (s_uiData->ud_stopflag == BOOL_FALSE) {
+			sprintf(buffer, "<font size=\"10\" color=\"red\">&nbsp;&nbsp;%d.%02d元   </font>", s_uiData->ud_basePrice / 100, s_uiData->ud_basePrice % 100);
 		}
 		else {
 			sprintf(buffer, "<font size=\"10\" color=\"red\">&nbsp;&nbsp;&nbsp;&nbsp;暂停打卡</font>");
@@ -1806,21 +1817,21 @@ void CMainPage2::slot_1s_timer()
 		msgText += ("<br/>");
 		// 第二行
 		pos = 0;
-		BytesToChars(uiData->ud_lineId, 2, buffer + pos, 50);
+		BytesToChars(s_uiData->ud_lineId, 2, buffer + pos, 50);
 		pos += 4;
 		buffer[pos] = '-';
 		++pos;
-		BytesToChars(uiData->ud_lineId + 2, 1, buffer + pos, 50);
+		BytesToChars(s_uiData->ud_lineId + 2, 1, buffer + pos, 50);
 		pos += 2;
 		msgText += (buffer);
 		msgText += "路 ";
-		msgText += uiData->ud_devId;
+		msgText += s_uiData->ud_devId;
 		msgText += ("车<br/>");
 		// the third line
-		sprintf(buffer, "IC:%d", uiData->ud_uploadRec);
+		sprintf(buffer, "IC:%d", s_uiData->ud_uploadRec);
 		msgText += buffer;
 
-		sprintf(buffer, " %02X-%02X", uiData->ud_task, uiData->ud_linkStatus);
+		sprintf(buffer, " %02X-%02X", s_uiData->ud_task, s_uiData->ud_linkStatus);
 		msgText += buffer;
 
 		m_textBrown_slzr->setHtml(msgText);
@@ -2075,15 +2086,15 @@ void CMainPage2::createComponent() {
 
 	textBrow = new QTextBrowser(this);
 	textBrow->setFixedSize(230, 120);
-	textBrow->move(200, 350);
+	textBrow->move(200, 300);
 	textBrow->setStyleSheet("QTextBrowser{border:0px;background:transparent;font:15px;color:#ffffff; }");
 	textBrow->setAlignment(Qt::AlignLeft);
 	textBrow->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//设置垂直滚动条不可见
 	textBrow->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//设置水平滚动条不可见
-	m_textBrown_slzrMsg = textBrow; 
+	m_textBrown_slzrMsg = textBrow;
 
 	m_threadKey = new ThreadKeyBoad(NULL);
-	connect(m_threadKey, SIGNAL(ThreadKeyBoad::signal_keyboard_menu(int)), this, SLOT(CMainPage2::slot_keyboard_menu(int)));
+	connect(m_threadKey, SIGNAL(signal_keyboard_menu(struct input_event *)), this, SLOT(slot_keyboard_menu(struct input_event *)));
 	m_threadKey->start();
 
 	printf("CMainPage2.createComponent complete\n");
@@ -2095,17 +2106,175 @@ void CMainPage2::slot_button_menu()
 	qDebug() << "slot_button_menu_test";
 }
 
-void CMainPage2::slot_keyboard_menu(int ID) {
-	printf("slot_keyboard_menu:%d\n", ID);
+void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
+#define CREATEMENUACTION(title, ID)	ptmpItem = new QAction(title, gMainPageThis);\
+	ptmpItem->setCheckable(true);\
+	s_action[s_maxMenuItem] = ptmpItem;\
+	menu->addAction(ptmpItem);\
+	++s_maxMenuItem;
+
+	QAction *ptmpItem = s_action[s_curMenuItem];
+	QAction *ptmpItem1 = NULL;
+	QMenu *menu = s_menu;
+	DialogInput *pDialInput = s_dialInput;
+	char *pDataVal = NULL;
+	char *pRetVal = NULL;
+	int tmpI = 0;
+	int tmpI1 = 0;
+
+	if (menu != NULL) {
+		//ptmpItem1 = ptmpItem->menu()->menuAction();
+		printf("key menu1:%d, %d %s\n", menu->isVisible(), pkeyEvt->code, (pkeyEvt->value) ? "Pressed" : "Released");
+	}
+	//printf("key menu:%d, %d %s\n", ptmpItem1, pkeyEvt->code, (pkeyEvt->value) ? "Pressed" : "Released");
+#if 1
+	if (pkeyEvt->value) {	// pressed
+		switch (pkeyEvt->code)
+		{
+		case SLZRKEY_ENTER:
+			//QMenu *menu = s_menu;
+			if ((s_menuStatus & ms_showMenu) == 0) {
+#if 1	
+				QPoint pos; //= new QPoint(220, 200);
+				pos.setX(225);	// 贴近右侧窗体
+				pos.setY(200);
+				if (menu == NULL) {
+					menu = new QMenu(gMainPageThis);
+					CREATEMENUACTION("设置设备号", ms_setDevId);
+					CREATEMENUACTION("设置银联终端号", ms_setUnpayDevId);
+					CREATEMENUACTION("下载银联密钥", ms_setUnpayKey);
+					//menu->move(230, 200);
+					s_curMenuItem = 0;
+					s_action[0]->setChecked(true);
+					menu->popup(pos);
+
+					s_menu = menu;
+				}
+				else if (!menu->isVisible()) {
+					menu->setVisible(true);
+				}
+				s_menuStatus = ms_showMenu;
+#endif
+			}
+			else if ((s_menuStatus&ms_setMenu) != 0 && pDialInput != NULL) {
+				pRetVal = pDialInput->NextNumber();
+				if (pRetVal != NULL) {
+					tmpI = s_menuStatus&ms_maskSet;
+					printf("slot_keyboard_menu pI = s_menuStatus&ms_mask:%08X\n", tmpI);
+					switch (tmpI)
+					{
+					case ms_setDevId:
+						tmpI = dpt_devId;
+						tmpI1 = 8;
+						break;
+					case ms_setUnpayDevId:
+						tmpI = dpt_unionpayTerId;
+						tmpI1 = 8;
+					default:
+						tmpI = 0;
+						break;
+					}
+					if (tmpI != 0) {
+						SetDevParam(tmpI, (unsigned char *)pRetVal, tmpI1);
+					}
+					printf("slot_keyboard_menu 设置完成:%s\n", pRetVal);
+					pDialInput->hide();
+					// 重新显示菜单 
+					menu->setVisible(true);
+					s_menuStatus &= ~ms_maskSet;
+					s_menuStatus &= ~ms_setMenu;
+				}
+			}
+			else if (ptmpItem != NULL && s_uiData != NULL && (s_menuStatus&ms_setMenu) == 0) {
+				if (pDialInput == NULL) {
+					pDialInput = new DialogInput(gMainPageThis);
+					pDialInput->move(150, 200);
+
+					s_dialInput = pDialInput;
+				}
+				switch (s_curMenuItem + 1)
+				{
+				case ms_setDevId:
+					pDataVal = s_uiData->ud_devId;
+					break;
+				default:
+					break;
+				}
+				if (pDialInput->Init(ptmpItem->text(), "", pDataVal) != 0) {
+					qDebug() << ("slot_keyboard_menu 初始化失败:\n");
+				}
+				pDialInput->show();
+				menu->setVisible(false);
+				s_menuStatus |= ms_setMenu;
+				s_menuStatus &= ~ms_maskSet;
+				s_menuStatus += s_curMenuItem + 1;
+			}
+			break;
+		case SLZRKEY_UP:
+			if (menu != NULL && menu->isVisible()) {
+				ptmpItem->setChecked(false);
+				if (s_curMenuItem >= s_maxMenuItem - 1) {
+					s_curMenuItem = 0;
+				}
+				else {
+					++s_curMenuItem;
+				}
+				ptmpItem = s_action[s_curMenuItem];
+				//printf("s_action %d,%d,%d,%d\n", s_action[0], s_action[1], s_action[2], s_curMenuItem);
+				ptmpItem->setChecked(true);
+			}
+			else if ((s_menuStatus&ms_setMenu) != 0 && pDialInput != NULL) {
+				pDialInput->ChangeValue(1);
+			}
+			break;
+		case SLZRKEY_DOWN:
+			if (menu != NULL && menu->isVisible()) {
+				ptmpItem->setChecked(false);
+				if (s_curMenuItem <= 0) {
+					s_curMenuItem = s_maxMenuItem - 1;
+				}
+				else {
+					--s_curMenuItem;
+				}
+				ptmpItem = s_action[s_curMenuItem];
+				//printf("s_action %d,%d,%d,%d\n", s_action[0], s_action[1], s_action[2], s_curMenuItem);
+				ptmpItem->setChecked(true);
+			}
+			else if ((s_menuStatus&ms_setMenu) != 0 && pDialInput != NULL) {
+				pDialInput->ChangeValue(0);
+			}
+			break;
+		case SLZRKEY_ESC:
+			if (menu != NULL && menu->isVisible()) {
+				menu->setVisible(false);
+				s_menuStatus = 0;
+			}
+			else if (s_menuStatus & ms_setMenu) {
+				pDialInput->hide();
+				menu->setVisible(true);
+				s_menuStatus &= ~ms_maskSet;
+				s_menuStatus &= ~ms_setMenu;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	else {
+		if (pDialInput != NULL) {
+			pDialInput->stopTimer();
+		}
+	}
+#endif
+
+	delete pkeyEvt;
+#undef CREATEMENUACTION
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 ThreadKeyBoad::ThreadKeyBoad(QObject* par) {
-	s_menuStatus = 0;
-	s_menu = NULL;
-	memset(s_action, 0, sizeof(s_action));
-	s_curMenuItem = 0;
+
 }
 
 
@@ -2126,17 +2295,12 @@ key 28 Released
 *
 */
 void ThreadKeyBoad::run() {
-#define CREATEMENUACTION(title, ID)	ptmpItem = new QAction(title, gMainPageThis);\
-	++maxMenuItem; \
-	ptmpItem->setCheckable(true); \
-	s_action[maxMenuItem] = ptmpItem; \
-	menu->addAction(ptmpItem);
 
-	int maxMenuItem = 3;
+
 	int keys_fd;
 	char ret[2];
-	struct input_event t;
-	QAction *ptmpItem = NULL;
+	struct input_event keyEvt;
+
 	keys_fd = open(DEV_PATH_KEY, O_RDONLY);
 	if (keys_fd <= 0)
 	{
@@ -2145,55 +2309,15 @@ void ThreadKeyBoad::run() {
 	}
 	while (1)
 	{
-		if (read(keys_fd, &t, sizeof(t)) == sizeof(t))
+		if (read(keys_fd, &keyEvt, sizeof(keyEvt)) == sizeof(keyEvt))
 		{
-			if (t.type == EV_KEY) {
-				if (t.value == 0 || t.value == 1)
+			if (keyEvt.type == EV_KEY) {
+				if (keyEvt.value == 0 || keyEvt.value == 1)
 				{
-					printf("key %d %s\n", t.code, (t.value) ? "Pressed" : "Released");
+					struct input_event *pkeyEvt = (struct input_event *)malloc(sizeof(struct input_event));
+					memcpy(pkeyEvt, &keyEvt, sizeof(struct input_event));
+					emit signal_keyboard_menu(pkeyEvt);
 
-					switch (t.code)
-					{
-					case SLZRKEY_ENTER:
-						if (t.value) {	// pressed
-							//QMenu *menu = s_menu;
-							if ((s_menuStatus & ms_showMenu) == 0) {
-								emit signal_keyboard_menu(s_curMenuItem);
-#if 0
-								QMenu *menu = new QMenu(gMainPageThis);
-								CREATEMENUACTION("设置设备号", ms_setDevId);
-								s_curMenuItem = 0;
-								CREATEMENUACTION("设置银联终端号", ms_setUnpayDevId);
-								CREATEMENUACTION("下载银联密钥", ms_setUnpayKey);
-								//menu->move(230, 200);
-								s_action[0]->setChecked(true);
-								QPoint pos; //= new QPoint(220, 200);
-								pos.setX(220);
-								pos.setY(200);
-								menu->popup(pos);
-								s_menuStatus = ms_showMenu;
-#endif
-							}
-							else {
-								emit signal_keyboard_menu(s_curMenuItem);
-							}
-						}
-						break;
-					case SLZRKEY_UP:
-						if (s_curMenuItem == 0) {
-							s_curMenuItem = maxMenuItem - 1;
-						}
-						else {
-							--s_curMenuItem;
-						}
-						ptmpItem = s_action[s_curMenuItem];
-						ptmpItem->setChecked(true);
-						break;
-					case SLZRKEY_DOWN:
-					case SLZRKEY_ESC:
-					default:
-						break;
-					}
 				}
 			}
 		}

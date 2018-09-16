@@ -4663,7 +4663,6 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 	gCardinfo.card_catalog = CARD_qPBOC_BUS;
 	s_sum1 = get_s_sum1(0);
 
-
 #ifndef _debug_
 	if ((s_sum1 == 0) || (s_sum1 > 2000))
 	{
@@ -4889,7 +4888,7 @@ void getTradeBatchinfo(unsigned char *oVal)
 mode=1: shopNo[15];//商户编号
 mode=2: KEK[48];//KEK 16字节
 */
-
+extern stDeviceParatable gDeviceParaTab;
 unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 {
 
@@ -4943,8 +4942,10 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 		memcpy(obuf, smpPara.tpdu, 5);
 		break;
 	case 6:
-		memcpy(smpPara.device, "00000001", 8);
-		memcpy(obuf, smpPara.device, 8);
+#if SWITCH_DEBUG_UNIONPAY == 1
+		memcpy(gDeviceParaTab.unionPayInof.unpayTerId, "00000001", 8);
+#endif
+		memcpy(obuf, gDeviceParaTab.unionPayInof.unpayTerId, 8);
 		break;
 	case 7:
 		memcpy(obuf, smpPara.AUTHKEY, 16);
@@ -7036,7 +7037,7 @@ void PAY_MODE_init(void)  //1字节存标志，1个字节存开关
 	shuangmian = buff[0];
 	switch_both = buff[1];
 #else
-	shuangmian = 0;
+	shuangmian = 1;
 	switch_both = 0;
 #endif
 }

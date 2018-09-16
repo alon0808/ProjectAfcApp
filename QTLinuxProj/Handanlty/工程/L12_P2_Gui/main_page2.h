@@ -8,6 +8,7 @@
 #include <QTextBrowser>
 #include <QThread>
 #include "common_data.h"
+#include "dialoginput.h"
 
 class CDynTextParam;
 class CDynamicText;
@@ -33,15 +34,11 @@ public:
 	~ThreadKeyBoad();
 	void run();
 signals:
-	void signal_keyboard_menu(int ID);
+	void signal_keyboard_menu(struct input_event *keyEvt);
 	//void message(const QString& info);
 	//void progress(int present);
 private:
 	int m_runCount;
-	int s_menuStatus;
-	QMenu *s_menu;
-	QAction *s_action[10];
-	int s_curMenuItem;
 };
 
 
@@ -70,11 +67,17 @@ private:
 	ThreadKeyBoad *m_threadKey;
 	//QTimer m_timeKeyBoad;
 	//void* KeyBoard_main(void *pParam);
+	int s_menuStatus;
+	QMenu *s_menu;
+	QAction *s_action[10];
+	int s_maxMenuItem;
+	int s_curMenuItem;
+	DialogInput *s_dialInput;
 
 signals:
 	void signal_button_exit();
 
-	public slots:
+public slots:
 	void slot_head_widget_notify(int _msg, int _event, void *_param);
 	void slot_1s_timer();
 	void slot_init_time_out();
@@ -85,7 +88,7 @@ signals:
 	void slot_button_menu_test();
 	void slot_button_menu();
 
-	void slot_keyboard_menu(int ID);
+	void slot_keyboard_menu(struct input_event *keyEvt);
 
 public:
 	void set_type(char _type);

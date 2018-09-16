@@ -137,7 +137,8 @@ SOURCES += main.cpp\
     system_manage/pos_config_widget.cpp \
     declaration_dialog.cpp \
     state_dialog.cpp \
-    setting_dialog.cpp
+    setting_dialog.cpp \
+    dialoginput.cpp
 
 HEADERS  += \
     menu_widget.h \
@@ -228,7 +229,8 @@ HEADERS  += \
     system_manage/pos_config_widget.h \
     declaration_dialog.h \
     state_dialog.h \
-    setting_dialog.h
+    setting_dialog.h \
+    dialoginput.h
 
  contains(TEMPLATE, "lib") {
     #HEADERS  += include/syszuxpinyin.h \
@@ -293,3 +295,6 @@ unix:!macx: LIBS += -L$$PWD/../Bin/ -lcurl
 
 INCLUDEPATH += $$PWD/../Bin
 DEPENDPATH += $$PWD/../Bin
+
+FORMS += \
+    dialoginput.ui

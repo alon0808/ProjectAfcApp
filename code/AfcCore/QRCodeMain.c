@@ -1,4 +1,4 @@
-#define SWITCH_LTY_QR	0
+#define SWITCH_LTY_QR	1
 #include "Macro_Proj.h"
 #include <unistd.h>
 #include <stdio.h>
@@ -33,6 +33,7 @@
 #include "xSys_Lantaiyuan.h"
 #include "RamStorage.h"
 #include "szct.h"
+#include "qPBOC.h"
 #include "qpboc_8583.h"
 #include "qpboc_head.h"
 #include "add.h"
@@ -439,7 +440,7 @@ void main_QRCode_Deal(void)
 	int t, t1;
 #if SWITCH_LTY_QR
 	StHDQRCinput verifyInput;
-	CQR classCQR;
+	//CQR classCQR;
 #endif
 	unsigned char pubkey1[256];
 	unsigned int c_serial_mac;
@@ -478,7 +479,7 @@ void main_QRCode_Deal(void)
 			verifyInput.u8Angle = 0;
 
 			len = 0;
-			ret = classCQR.HDQRCodeVerify(&verifyInput, outbuf, &len);
+			ret = HDQRCodeVerify(&verifyInput, outbuf, &len);
 
 			printf("[%s] ret = %d, len = %d\r\n", __FUNCTION__, ret, len);
 

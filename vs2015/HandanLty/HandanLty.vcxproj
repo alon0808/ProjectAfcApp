@@ -74,7 +74,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\code\AfcCore\include\;$(SolutionDir)..\code\public\;$(SolutionDir)..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\code\AfcCore\include\;$(SolutionDir)..\code\public\;$(SolutionDir)..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\;$(SolutionDir)..\QTLinuxProj\Bin\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -91,7 +91,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\code\AfcCore\include\;$(SolutionDir)..\code\public\;$(SolutionDir)..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\code\AfcCore\include\;$(SolutionDir)..\code\public\;$(SolutionDir)..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\;$(SolutionDir)..\QTLinuxProj\Bin\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -233,6 +233,7 @@
     <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\msglist.cpp" />
     <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\common_data.cpp" />
     <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\declaration_dialog.cpp" />
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\dialoginput.cpp" />
     <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\dynamic_text.cpp" />
     <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\head_widget.cpp" />
     <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\list_view\common_view\common_query_header.cpp" />
@@ -298,6 +299,7 @@
     <None Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\d2.pro" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\QTLinuxProj\Bin\ui_dialoginput.h" />
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\define_screen.h" />
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\myinputpanel.h" />
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\myinputpanelcontext.h" />
@@ -338,6 +340,7 @@
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\class\msglist.h" />
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\common_data.h" />
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\declaration_dialog.h" />
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\dialoginput.h" />
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\dynamic_text.h" />
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\head_widget.h" />
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\include\myinputpanel.h" />

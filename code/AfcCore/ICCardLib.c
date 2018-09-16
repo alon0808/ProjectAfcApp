@@ -1,6 +1,7 @@
 //兼容原有的函数，方便移植代码。
 
 #include "Macro_Proj.h"
+#include "ICCardLib.h"
 #include <time.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -581,10 +582,10 @@ void restore_disp(void)
 		else
 #endif
 		{
+			memcpy((unsigned char*)&mmoney, gDeviceParaTab.busPrice, 4);
 #if 0
 			//			imm = 0;
 			memset(buffer, 0, 50);
-			memcpy((unsigned char*)&mmoney, gDeviceParaTab.busPrice, 4);
 			// 			if(F_FLAG_VARY.PlusSta){
 			// 				memcpy((unsigned char*)&imm, NewPriceTab.plusPrice, 4);
 			// 			}
@@ -669,10 +670,10 @@ void saveDeviceParaTab(unsigned char mode, unsigned char *dat)
 	unsigned int Crc32;
 
 	switch (mode) {
-	case 1:	//保存线路、票价信息。已经赋值到变量结构中了。	
+	case dptm_linePrice:	//保存线路、票价信息。已经赋值到变量结构中了。	
 
 		break;
-	case 6:	//保存云卡密钥
+	case dptm_cloundKey:	//保存云卡密钥
 		memcpy(gDeviceParaTab.UserKeyA, dat, 16);
 		Crc32 = GenerateCRC32(dat, 16);
 		memcpy(gDeviceParaTab.UserKeyACrc32, (unsigned char*)&Crc32, 4);
@@ -680,32 +681,36 @@ void saveDeviceParaTab(unsigned char mode, unsigned char *dat)
 		Crc32 = GenerateCRC32(dat + 16, 16);
 		memcpy(gDeviceParaTab.UserKeyBCrc32, (unsigned char*)&Crc32, 4);
 		break;
-	case 7://商户编号
+	case dptm_merchId://商户编号
 		memcpy(gDeviceParaTab.BussinessNo, dat, 2);
 		gDeviceParaTab.catalogPOST = 0;
 		Crc32 = GenerateCRC32(dat, 2);
 		memcpy(gDeviceParaTab.BussinessNo + 2, (unsigned char*)&Crc32, 4);
 		break;
-	case 2:		//保存设备号
+	case dptm_devId:		//保存设备号
 		memcpy(gDeviceParaTab.DeviceNo, dat, 8);
 		break;
-	case 3:
+	case dptm_ipPort:
 		printf(gDeviceParaTab.gServerInfo[0].IPaddr, "%d.%d.%d.%d", dat[0], dat[1], dat[2], dat[3]); //memcpy(gDeviceParaTab.gServerInfo[0].IPaddr, dat, 4);
 		gDeviceParaTab.gServerInfo[0].port = 0;
 		memcpy((unsigned char*)&gDeviceParaTab.gServerInfo[0].port, dat + 4, 2);
 		break;
-	case 9://stopflag
+	case dptm_stopFlag://stopflag
 		gDeviceParaTab.stopflag = dat[0];
 		break;
-	case 8://保存APN
+	case dptm_apn://保存APN
+		break;
+	case dptm_unionpayTerId://保存银联终端号
+		memcpy(gDeviceParaTab.unionPayInof.unpayTerId, dat, 8);
 		break;
 	default:
 		return;
 	}
-
+#if 0
 #ifdef _debug_
 	debugstring("save cpu ROM:");
 	debugdata((unsigned char*)&gDeviceParaTab, sizeof(gDeviceParaTab), 1);
+#endif
 #endif
 	save_file_DevicePara();
 }

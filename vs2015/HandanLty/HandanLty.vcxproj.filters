@@ -552,6 +552,9 @@
     <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\myinputpanelcontext.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\dialoginput.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\.conf" />
@@ -869,6 +872,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\inputpanel-d2_p2\define_screen.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\QTLinuxProj\Handanlty\工程\L12_P2_Gui\dialoginput.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\QTLinuxProj\Bin\ui_dialoginput.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

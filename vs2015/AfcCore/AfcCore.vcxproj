@@ -76,7 +76,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;AFC_CORE_EXPORTS</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\code\AfcCore\;$(SolutionDir)..\code\AfcCore\include\;$(SolutionDir)..\code\AfcCore\Crypto\;$(SolutionDir)..\code\public\;$(SolutionDir)..\code\AfcCore\SlDemo\;$(SolutionDir)..\..\linuxsystem_include\;$(SolutionDir)..\code\AfcCore\UnionPay\;$(SolutionDir)..\code\UtilProc\;$(SolutionDir)..\code\AfcCore\lib\;$(SolutionDir)..\code\AfcCore\fathead\;$(SolutionDir)..\code\xStorage\;$(SolutionDir)..\..\linuxsystem_include\arm-linux-gnueabi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -106,7 +106,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;AFC_CORE_EXPORTS</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\code\AfcCore\;$(SolutionDir)..\code\AfcCore\include\;$(SolutionDir)..\code\AfcCore\Crypto\;$(SolutionDir)..\code\public\;$(SolutionDir)..\code\AfcCore\SlDemo\;$(SolutionDir)..\..\linuxsystem_include\;$(SolutionDir)..\code\AfcCore\UnionPay\;$(SolutionDir)..\code\UtilProc\;$(SolutionDir)..\code\AfcCore\lib\;$(SolutionDir)..\code\AfcCore\fathead\;$(SolutionDir)..\code\xStorage\;$(SolutionDir)..\..\linuxsystem_include\arm-linux-gnueabi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

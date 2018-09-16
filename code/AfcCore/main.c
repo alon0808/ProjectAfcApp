@@ -83,6 +83,36 @@ extern stMobilStyle Sign_Infor;
 
 extern int GJRec_Send(void);
 
+AFC_CORE__API int SetDevParam(int paramType, unsigned char *pData, int dLen) {
+	int dptmType = 0;
+	//PRINT_DEBUG("SetDevParam:%d\n", paramType);
+	PRINT_DEBUGBYS("SetDevParam:", pData, dLen);
+	if (pData == NULL) {
+		return Ret_Err_Param;
+	}
+	switch (paramType)
+	{
+	case dpt_devId:
+		dptmType = dptm_devId;
+		if (dLen != 8) {
+			PRINT_ERROR("error length of SetDevParamdptm_devId:%d\n", dLen);
+			return Ret_Err_Param;
+		}
+		break;
+	case dpt_unionpayTerId:
+		dptmType = dptm_unionpayTerId;
+		if (dLen != 8) {
+			PRINT_ERROR("error length of SetDevParamdpt_unionpayTerId:%d\n", dLen);
+			return Ret_Err_Param;
+		}
+		break;
+	default:
+		PRINT_ERROR("unprocess type of SetDevParam:%d\n", paramType);
+		return Ret_Err_Param;
+	}
+	saveDeviceParaTab(dptm_devId, pData);
+	return Ret_OK;
+}
 
 AFC_CORE__API int GetStatusMessage(int timerTrige, char *pMsg, int *pTimeDelay) {
 	if (s_message[0] != '\0') {

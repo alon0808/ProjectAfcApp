@@ -17,6 +17,12 @@
 #define SLZRKEY_F2		KEY_F2
 #endif
 
+typedef enum {
+	dpt_invalid = 0,
+	dpt_devId,
+	dpt_unionpayTerId,
+}emDevParamType;
+
 typedef struct {
 	unsigned char ud_isNeedUpdate;
 	unsigned char ud_isGJOk;
@@ -46,6 +52,7 @@ extern "C" {
 
 	extern AFC_CORE__API void* StartApp(void *argv);
 
+	extern AFC_CORE__API int SetDevParam(int paramType, unsigned char *pData, int dLen);
 
 #ifdef __cplusplus
 }

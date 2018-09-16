@@ -1137,7 +1137,9 @@ typedef struct {
 
 	unsigned char repurseRecord[850];	// reversal message for union pay transaction
 
+	unsigned char unpayTerId[8];
 
+	unsigned char Null[1024];
 }stUnionPayInfor;
 
 typedef struct {
