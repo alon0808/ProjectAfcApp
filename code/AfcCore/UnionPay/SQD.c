@@ -408,7 +408,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 	//	unsigned int i=0;
 		//unsigned long long read_dat=0;
 		//unsigned int count=0;
-	unsigned char disbuff[20];
+	unsigned char disbuff[50];
 	int tmpI = 0;
 	//	BER_TVL TempTVL;
 
@@ -418,7 +418,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 	msecends = msecends * 1000;
 	msecends += 250;
 #else
-	msecends = 7000;
+	msecends = 1000;
 #endif
 
 	if (msecends > 0) {
@@ -427,8 +427,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 		{
 			cls();
 			tmpI = 0;
-			tmpI += sprintf(disbuff + tmpI, "通讯中...\n请稍等");
-			//display(6, 0, "通讯中...", DIS_ClsLine | DIS_CENTER);
+			tmpI += sprintf(disbuff + tmpI, "通讯中...."STR_NEW_LINE"请稍等");
 			display(8, 0, disbuff, DIS_ClsLine | DIS_CENTER);
 		}
 		MSG_LOG("do %s:0x%02X\r\n", __FUNCTION__, SQmode);
@@ -561,7 +560,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 		while (1) {
 
 			outdly = get_timer0(3);
-			if (gCardinfo.gMCardCand != CARDSTYLE_UNPAY_ODA) {
+			if (gCardinfo.gMCardCand != CARDSTYLE_UNPAY_ODA && outdly < TIMEOUT_PBOC_ONLINE - 1000) {
 				memset(disbuff, 0, sizeof(disbuff));
 				sprintf((char *)disbuff, "剩余%d秒", outdly / 1000);
 				display(8, 16, (const char *)disbuff, 0);
@@ -571,7 +570,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 				//暂时不去找其他任务
 				//	MSG_LOG("暂时不去找其他任务\r\n");
 				gGprsinfo.gmissflag = SQmode;
-		}
+			}
 
 			usleep(500000);
 
@@ -657,8 +656,8 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 					retcode = -1;
 					goto Send_WaitRecvData_OVER;
 				}
-				}
-			}//	while (1) 
+			}
+		}//	while (1) 
 	}  //for
 	//最后判断
 	if (flag == 0xA5 && gCardinfo.gMCardCand != CARDSTYLE_UNPAY_ODA) {	// 收到正确数据 
@@ -694,4 +693,4 @@ Send_WaitRecvData_OVER:
 
 	return retcode;
 
-	}
+}

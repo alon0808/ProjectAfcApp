@@ -78,8 +78,10 @@ SLZR_VOID CIcCardCtrlApi(void)
 
 #define CAMER_POWER 227   
 //PH3
-SLZR_U32 R485_Init(void)
+SLZR_U32 R485_Init(int baund)
 {
+	//int baund = 9600;
+
 	m_u485UartFd = 0;
 
 	InitGPIOPin(235, 0/*GPIO_PIN_HI*/, 2/*GPIO_DIR_OUT*/);
@@ -87,7 +89,11 @@ SLZR_U32 R485_Init(void)
 	//这个口软件要拉低
 	InitGPIOPin(CAMER_POWER, 1/*GPIO_PIN_LOW*/, 2/*GPIO_DIR_OUT*/);
 
-	Uart_Init(&m_u485UartFd, (SLZR_U8*)IC_R485_UART, 19200);
+#if KEYBOARD
+	baund = 9600;
+#endif
+
+	Uart_Init(&m_u485UartFd, (SLZR_U8*)IC_R485_UART, baund);
 
 	return SLZR_SUCCESS;
 }
@@ -1069,7 +1075,7 @@ SLZR_U32 R485ReadData(SLZR_U8 *pRecvData, SLZR_U32 *pRcvLen)
 		//PRINT_DEBUG("R485ReadData:%02X\n", m_u485UartFd);
 	u32Ret = UartRead(m_u485UartFd, szRcvBuf, 1);
 
-	PRINT_DEBUG("R485ReadData111:%d, %02X,%02X\n", u32Ret, m_u485UartFd, szRcvBuf[0]);
+	//PRINT_DEBUG("R485ReadData111:%d, %02X,%02X\n", u32Ret, m_u485UartFd, szRcvBuf[0]);
 	//	printf("[%s] m_u485UartFd=%d\r\n", __FUNCTION__, m_u485UartFd);
 
 	if (u32Ret == SLZR_FAILURE)

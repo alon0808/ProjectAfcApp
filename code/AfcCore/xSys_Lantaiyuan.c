@@ -101,10 +101,10 @@ void Get_SerialNum(unsigned char *ser)
 	if (1 == get_file_line((char*)csnbuf, FileName, 3)) {
 		for (icnt = 0; icnt < 10; icnt++)
 			buff[icnt] = (unsigned char)csnbuf[icnt + 20];
-#ifdef _debugPSAM_
-		printf("write00 SN\"%s\"\n", (char*)csnbuf);
-		printf("write 22SN\"%s\" Success.\n", (char*)buff);
-#endif
+//#ifdef _debugPSAM_
+		PRINT_DEBUG("write00 SN\"%s\"\n", (char*)csnbuf);
+		PRINT_DEBUG("write 22SN\"%s\" Success.\n", (char*)buff);
+//#endif
 	}
 
 	memset(kbuf, 0x11, 16);

@@ -13,6 +13,7 @@ typedef enum {
 	dptm_stopFlag = 9,	// 停止刷卡标志
 	dptm_apn = 8,			// APN
 	dptm_unionpayTerId = 10,	// unionpay terminal id
+	dptm_kek,
 }emDevParamTypeMode;
 
 //物理卡号存贮变量

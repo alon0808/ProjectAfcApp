@@ -433,8 +433,10 @@ typedef int boolean;
 #define CARD_MOTH_CI		13				//邯郸次卡  可以随意刷
 #define CARD_LIANGTONG_STUF 14              //手机员工卡
 
+#define CARD_QRC_LTY		15              //蓝泰源二维码
 
-#define CARD_QRC_LTY 15              //蓝泰源二维码
+#define CARD_qPBOC_BUS		16				//91 银行卡卡类 [在有些地方银行卡卡类写成不同的]
+#define CARD_qPBOC_QR		17				//91 银行卡卡类 [在有些地方银行卡卡类写成不同的]
 
 
 #define  CARD_FENDUAN_Line	33		//分段线路票价卡
@@ -1137,7 +1139,9 @@ typedef struct {
 
 	unsigned char repurseRecord[850];	// reversal message for union pay transaction
 
-	unsigned char unpayTerId[8];
+	unsigned char unpayTerId[9];
+	unsigned char mechantId[16];
+	unsigned char upi_kek[16];
 
 	unsigned char Null[1024];
 }stUnionPayInfor;
@@ -1203,6 +1207,8 @@ typedef struct
 	unsigned char verrrr;
 	unsigned char restore_flag;		//不为0，则需要刷新界面到主界面
 	unsigned char g24GDisFlash;		//用于延时刷新界面
+	unsigned char gchn_eng;
+	unsigned char gPsamErrorFlag;
 
 	unsigned char DriverNO[4];		//司机号
 	unsigned char StufferNO[4];		//乘务员号

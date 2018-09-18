@@ -512,7 +512,7 @@ void main_QRCode_Deal(void)
 				goto main_QRCode_Deal_OVER;
 			}
 
-			CountMac((char*)pubkey1, pubkey1 + 20, (unsigned char*)verifyInput.Qrcode, 16, (unsigned char*)&c_serial_mac);//前面16字节，不能带人乘车
+			CountMac((char*)pubkey1, pubkey1 + 20, (unsigned char*)verifyInput.Qrcode, 26, (unsigned char*)&c_serial_mac);//前面16字节，不能带人乘车
 
 			gCardinfo.c_serial = c_serial_mac;
 			t = month_decide();
@@ -521,7 +521,7 @@ void main_QRCode_Deal(void)
 #endif
 			if (t != 0) // 同一个码
 			{
-				if (t > 2) {
+				//if (t > 2) {
 					led_on(LED_RED);
 					memset(pubkey1, 0, 32);
 
@@ -530,9 +530,12 @@ void main_QRCode_Deal(void)
 					MessageBox(1, (char *)pubkey1);
 
 					gBuInfo.restore_flag = 3;
-				}
+				//}
 
 				ret = 0;
+
+				soundPlay((char*)voice_refleshRQC);
+
 				goto main_QRCode_Deal_OVER;
 			}
 
@@ -576,9 +579,9 @@ void main_QRCode_Deal(void)
 
 			BuildQRCRecorde(ID_REC_QRC_LTY, outbuf, verifyInput.Qrcode, LTY_QRCODE_LEN, pr_success);
 			WriRecorQRC(outbuf);
-			money_msg(ID_REC_TOLL, a_sum1, s_sum1, 0);
+			money_msg(ID_REC_TOLL, INFINITE, s_sum1, 0);
 
-			soundPlay((char*)voice_shuamashangche);
+			soundPlay((char*)voice_WelCome);
 
 			save_h_month();
 

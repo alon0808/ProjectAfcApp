@@ -39,6 +39,7 @@
 #include "qpboc_head.h"
 #include "UtilityProc.h"
 #include "RamStorage.h"
+#include "qpboc_8583.h"
 
 #define _debug_ICcard_
 
@@ -80,6 +81,8 @@ sam_pub SamPubInf_ZJB;
 
 unsigned int s_sum1, a_sum1, dis_sum2;
 unsigned int a_sumR = 0;//手机钱包中的真实金额
+
+extern unsigned int did_sum2;
 
 extern void end_card(void);
 
@@ -387,8 +390,9 @@ void DisRetry(void)
 #define KEYBOARD_INPUT 0x55
 unsigned char KeyBoardStyle;	//键盘是否有输入，0x55-有键盘输入，其它-没有键盘输入。没有键盘输入时使用机内票价，有键盘输入时使用输入票价
 
+extern unsigned char g_flagDownKek;
 
-#ifdef KEYBOARD
+#if KEYBOARD
 //外部键盘输入
 void *main_ExKeyBoard(void *arg)
 {
@@ -400,16 +404,22 @@ void *main_ExKeyBoard(void *arg)
 
 		if (R485ReadData(rkbuf, &i) == 0)
 		{
-			PRINT_DEBUG("main_ExKeyBoard:%02X\n", rkbuf[0]);
-			KeyBoardDeal(rkbuf[0]);
-			if (KeyDeal() == ST_OK) {
-				if (KeyBoardStyle != KEYBOARD_INPUT) {//票价需要重新读取
-					KeyBoardStyle = KEYBOARD_INPUT;//2014.7.17
+			//
+			if (g_flagDownKek == 1) {
+				PBOC_hand(rkbuf[0]);
+			}
+			else {
+				PRINT_DEBUG("main_ExKeyBoard:%02X\n", rkbuf[0]);
+				KeyBoardDeal(rkbuf[0]);
+				if (KeyDeal() == ST_OK) {
+					if (KeyBoardStyle != KEYBOARD_INPUT) {//票价需要重新读取
+						KeyBoardStyle = KEYBOARD_INPUT;//2014.7.17
 
-					gBuInfo.restore_flag = 3;
-					keyBoardStart();
+						gBuInfo.restore_flag = 3;
+						keyBoardStart();
+					}
+					KeyBoardStyle = KEYBOARD_INPUT;
 				}
-				KeyBoardStyle = KEYBOARD_INPUT;
 			}
 		}
 	}
@@ -426,7 +436,7 @@ void ICCardInit(void)
 
 	get_file_DevicePara();
 
-#ifdef KEYBOARD
+#if KEYBOARD
 	KeyBoardStyle = 0;
 	keyBoardStart();
 #endif
@@ -593,7 +603,7 @@ void restore_disp(void)
 			sprintf((char*)buffer, "票价:%d.%02d元", mmoney / 100, mmoney % 100);
 			display(4, 1, (char*)buffer, 0);
 #endif
-#ifdef KEYBOARD
+#if KEYBOARD
 			sprintf((char*)buffer, "%d.%02d ", mmoney / 100, mmoney % 100);
 			LED_Dis3((char*)buffer);
 			if (mmoney == 0)
@@ -702,6 +712,9 @@ void saveDeviceParaTab(unsigned char mode, unsigned char *dat)
 		break;
 	case dptm_unionpayTerId://保存银联终端号
 		memcpy(gDeviceParaTab.unionPayInof.unpayTerId, dat, 8);
+		break;
+	case dptm_kek://
+		memcpy(gDeviceParaTab.unionPayInof.upi_kek, dat, 16);
 		break;
 	default:
 		return;
@@ -1177,7 +1190,7 @@ void save_h_month(void)
 	//	unsigned char temp[100];
 
 #ifdef _debug_ICcard_
-	debugstring("save_h_momnth!!!!!!!!!!!!!\r\n");
+	PRINT_DEBUG("save_h_momnth!!!!!!!!!!!!!:%08X\n", gCardinfo.c_serial);
 #endif
 
 	if (MothDelayTime.endptr >= LAST_LIST_LEN)
@@ -1279,17 +1292,18 @@ int month_decide(void)
 	{
 		for (i = MothDelayTime.startptr; i < MothDelayTime.endptr; i++)
 		{
-			MSG_LOG("M111othDelayTime.LastList:");
-			BCD_LOG(MothDelayTime.LastList[i], 7, 1);
 
 			if (!memcmp(MothDelayTime.LastList[i], (unsigned char *)&gCardinfo.c_serial, 4))
 			{
+				PRINT_DEBUGBYS("M222othDelayTime.LastList:", MothDelayTime.LastList[i], 7);
+
 				if (buffer[2] != MothDelayTime.LastList[i][4])
 					continue;
 				else
 				{
 					sT2 = (((MothDelayTime.LastList[i][5] >> 4) * 10 + (MothDelayTime.LastList[i][5] & 0x0f)) * 60 +
 						(MothDelayTime.LastList[i][6] >> 4) * 10 + (MothDelayTime.LastList[i][6] & 0x0f));
+					PRINT_DEBUG("M222othDelayTime.LastList11111:%d\n", sT2);
 					summin = sT1 - sT2;
 					if (summin < MWTime)
 						return summin;
@@ -1301,8 +1315,7 @@ int month_decide(void)
 	{
 		for (i = MothDelayTime.startptr; i < 50; i++)
 		{
-			MSG_LOG("M222othDelayTime.LastList:");
-			BCD_LOG(MothDelayTime.LastList[i], 7, 1);
+			PRINT_DEBUGBYS("M222othDelayTime.LastList:", MothDelayTime.LastList[i], 7);
 
 			if (!memcmp(MothDelayTime.LastList[i], (unsigned char *)&gCardinfo.c_serial, 4))
 			{
@@ -1312,6 +1325,7 @@ int month_decide(void)
 				{
 					sT2 = (((MothDelayTime.LastList[i][5] >> 4) * 10 + (MothDelayTime.LastList[i][5] & 0x0f)) * 60 +
 						(MothDelayTime.LastList[i][6] >> 4) * 10 + (MothDelayTime.LastList[i][6] & 0x0f));
+					PRINT_DEBUG("M222othDelayTime.LastList2222:%d\n", sT2);
 					summin = sT1 - sT2;
 					if (summin < MWTime)
 						return summin;
@@ -1321,17 +1335,19 @@ int month_decide(void)
 		}
 		for (i = 0; i < MothDelayTime.endptr; i++)
 		{
-			MSG_LOG("M333othDelayTime.LastList:");
-			BCD_LOG(MothDelayTime.LastList[i], 7, 1);
 
 			if (!memcmp(MothDelayTime.LastList[i], (unsigned char *)&gCardinfo.c_serial, 4))
 			{
+
+				PRINT_DEBUGBYS("M222othDelayTime.LastList:", MothDelayTime.LastList[i], 7);
+
 				if (buffer[2] != MothDelayTime.LastList[i][4])
 					continue;
 				else
 				{
 					sT2 = (((MothDelayTime.LastList[i][5] >> 4) * 10 + (MothDelayTime.LastList[i][5] & 0x0f)) * 60 +
 						(MothDelayTime.LastList[i][6] >> 4) * 10 + (MothDelayTime.LastList[i][6] & 0x0f));
+					PRINT_DEBUG("M222othDelayTime.LastList33333:%d\n", sT2);
 					summin = sT1 - sT2;
 					if (summin < MWTime)
 						return summin;
@@ -2017,12 +2033,13 @@ unsigned char Card_typeProcess(void)
 	gCardinfo.Zicard_catalog = 0;
 #endif
 
-
+#if 0
 #ifdef _debug_ICcard_
 	if (gCardinfo.card_catalog == CARD_STUDENT)
 	{
 		gCardinfo.card_catalog = CARD_YOUFU_BUS;								//卡类		1  测试用
 	}
+#endif
 #endif
 
 	if (gCardinfo.card_catalog == CARD_WHITE_BUS)
@@ -2388,7 +2405,7 @@ void addStatMoney(unsigned char mode, unsigned int moneyv)
 void BuildRecorde(unsigned char delType, unsigned char *recBuf)
 {
 	DEALRECODE *rRecordDeal;
-	unsigned int temp;
+	unsigned int temp, temp1;
 
 	rRecordDeal = (DEALRECODE *)recBuf;
 
@@ -2408,8 +2425,10 @@ void BuildRecorde(unsigned char delType, unsigned char *recBuf)
 		gBuInfo.MonthDealPointer++;
 		if (gBuInfo.MonthDealPointer > 0x3B9AC9FF)
 			gBuInfo.MonthDealPointer = 0;
+
 		temp = gBuInfo.MonthDealPointer;
-		memcpy(rRecordDeal->rDealMoney, (unsigned char *)&s_sum1, 3);
+		temp1 = s_sum1 - did_sum2;
+		memcpy(rRecordDeal->rDealMoney, (unsigned char *)&temp1, 3);
 	}
 	else {
 		memcpy(rRecordDeal->rDealTime, (unsigned char*)&SysTime, 7);
@@ -2465,13 +2484,20 @@ void BuildRecorde(unsigned char delType, unsigned char *recBuf)
 #ifdef _debug_
 	debugstring("BLD REC:");
 	debugdata(recBuf, 64, 1);
+	PRINT_DEBUG("did_sum2:%d\n", did_sum2);
 #endif
 
 
+	//#endif  //#ifdef BUS_HANDAN_
 	if (((delType & 0x7F) == ID_REC_TOLL) || ((delType & 0x7F) == ID_REC_MON)) {
-		addStatMoney((delType & 0x7F), s_sum1);
+		if ((delType & 0x7F) == ID_REC_TOLL)
+			addStatMoney((delType & 0x7F), s_sum1);
+		else if ((delType & 0x7F) == ID_REC_MON)
+			addStatMoney((delType & 0x7F), s_sum1 - did_sum2);
+#ifdef _Counter_SWcard_times
+		addSCtimes(1);//刷卡次数加1
+#endif
 	}
-
 
 	save_file_BuInfo();	//保存参数.
 
@@ -2581,6 +2607,10 @@ int getCardtypeHANDAN(char *cardD, unsigned char type)
 	{
 		strcpy(cardD, "员工手机卡");
 	}
+	else if (type == CARD_QRC_LTY)
+	{
+		strcpy(cardD, "坐公交码");
+	}
 	else if (type == CARD_qPBOC_BUS)
 	{
 		strcpy(cardD, "银行卡");
@@ -2655,10 +2685,11 @@ void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsign
 
 	if (dmode == ID_REC_TOLL)	//扣费
 	{
+		len = 0;
 		if (remM != INFINITE) {
-			len += sprintf(dispBuf + len, "余额:%d.%02d元\n", remM / 100, remM % 100);
+			len += sprintf(dispBuf + len, "余额:%d.%02d元"STR_NEW_LINE, remM / 100, remM % 100);
 		}
-		len += sprintf(dispBuf + len, "扣款:%d.%02d元\n", pucM / 100, pucM % 100);
+		len += sprintf(dispBuf + len, "扣款:%d.%02d元"STR_NEW_LINE, pucM / 100, pucM % 100);
 
 		len += sprintf(dispBuf + len, "卡类:");
 		if (getCardtype(dispBuf + len, gCardinfo.card_catalog) == ST_ERROR) {
@@ -2673,36 +2704,41 @@ void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsign
 	else if (dmode == ID_REC_MON)
 	{
 		if (s_sum1 == 0) {
-			display(5, 0, "欢迎乘车!", DIS_CENTER);
+			len = 0;
+			len += sprintf(dispBuf + len, "欢迎乘车"STR_NEW_LINE);
 			if (gCardinfo.card_catalog == CARD_DRIVER_BUS) {
-				display(3, 1, "员工卡", DIS_CENTER);
+				len += sprintf(dispBuf + len, "员工卡");
 			}
 			else {
-				getCardtype((char*)dispBuf, gCardinfo.card_catalog);
-				display(3, 0, dispBuf, DIS_CENTER);
+				getCardtype((char*)dispBuf + len, gCardinfo.card_catalog);
+				len = strlen(dispBuf);
 			}
 		}
 		else
 		{
-			sprintf(dispBuf, "余次:%d", remM);
-			display(2, 1, dispBuf, 0);
-			sprintf(dispBuf, "扣次:%d", pucM);
-			display(4, 1, dispBuf, 0);
+			len = 0;
+			len += sprintf(dispBuf + len, "余次:%d"STR_NEW_LINE, remM);
+			//display(2, 1, dispBuf, 0);
+			len += sprintf(dispBuf + len, "扣次:%d"STR_NEW_LINE, pucM);
+			//display(4, 1, dispBuf, 0);
 
-			sprintf(dispBuf, "C%2d", pucM);
-			LED_Dis3(dispBuf);
+			sprintf(dispBuf + len, "C%2d", pucM);
+			LED_Dis3(dispBuf + len);
 		}
 
-		strcpy(dispBuf, "卡类:");
-		if (getCardtype(dispBuf + 5, gCardinfo.card_catalog) == ST_ERROR) {
-			sprintf(dispBuf + 5, "%d", gCardinfo.card_catalog);
+		len += sprintf(dispBuf + len, "卡类:");
+		if (getCardtype(dispBuf + len, gCardinfo.card_catalog) == ST_ERROR) {
+			sprintf(dispBuf + len, "%d", gCardinfo.card_catalog);
 		}
 		display(0, 1, dispBuf, 0);
 	}
 	else
 	{
-		display(0, 5, "老人卡B", DIS_CENTER);
-		display(3, 2, "欢迎乘车!", 0);
+		len = 0;
+		len += sprintf(dispBuf + len, "老人卡"STR_NEW_LINE);
+		//display(2, 1, dispBuf, 0);
+		len += sprintf(dispBuf + len, "欢迎乘车!");
+		display(0, 1, dispBuf, 0);
 	}
 	// 	if(gMCardCand == CARDSTYLE_24CPU){
 	// 		display(6, 0, "移动手机卡", DIS_CENTER);
@@ -4111,7 +4147,7 @@ unsigned int get_Month_s_sum1(void)
 		ctype = gCardinfo.card_catalog - 0x40;
 	else
 		ctype = gCardinfo.card_catalog;
-
+	did_sum2 = 0;
 #ifdef _debug_ICcard_
 	debugstring("card_catalog:");
 	debugdata(&ctype, 1, 1);
@@ -4648,7 +4684,7 @@ unsigned char MonthResultManage(void)
 	//clr_dog();
 	memset(rRecord, 0, 128);
 #ifdef _debug_ICcard_
-	debugstring("MonthResultManage Programer!\r\n");
+	PRINT_DEBUG("MonthResultManage Programer!:%d\n", gCardinfo.card_catalog);
 #endif
 	mothFlag = gCardinfo.card_catalog;
 	if (mothFlag >= 0x40)

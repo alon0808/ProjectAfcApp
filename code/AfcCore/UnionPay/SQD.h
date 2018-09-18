@@ -1,5 +1,8 @@
 #ifndef _SQD_H_
 #define _SQD_H_
+
+#define TIMEOUT_PBOC_ONLINE	6000
+
 typedef struct
 {
 	unsigned char ack_flge[2];

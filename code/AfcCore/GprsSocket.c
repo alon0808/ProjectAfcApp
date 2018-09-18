@@ -507,11 +507,12 @@ void GPRSSocketParaINIT(void)
 	gDeviceParaTab.gServerInfo[i].linkAttr.dataCh = 0;
 	++i;
 
-#if SWITCH_DEBUG_UNIONPAY
+#if SWITCH_DEBUG_UNIONPAY == 1
 	strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "202.101.25.188");			////139.199.213.63:2020 ≤‚ ‘°£
 	gDeviceParaTab.gServerInfo[i].port = 20141;
 #else
-	strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "120.204.69.139");			////139.199.213.63:2020 ≤‚ ‘°£
+	//strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "101.231.141.158");			////139.199.213.63:2020 ≤‚ ‘°£
+	strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "120.204.69.139");
 	gDeviceParaTab.gServerInfo[i].port = 30000;
 #endif
 	strcpy(gDeviceParaTab.gServerInfo[i].APN, "CMNET");
@@ -1254,6 +1255,7 @@ void *main_GPRS(void *arg)
 					gGprsinfo.GPRSLinkProcess = GPRS_FREE;
 					send_timeout = 0;
 				}
+				return;
 			}
 			else {
 				send_timeout = 0;

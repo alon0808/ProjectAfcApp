@@ -801,7 +801,7 @@ extern "C" {
 	//·µ»Ø1 ÐÂ£¬0¾É
 	unsigned char getAudioStyle(void);
 
-	extern void over_turn(unsigned char length, unsigned char *ptr);
+	//extern void RevertTurn(unsigned char length, unsigned char *ptr);
 	extern unsigned char ValidDevNo(unsigned char *dvcbuf);
 	extern unsigned char ValidlineNo(unsigned char*lineB);
 

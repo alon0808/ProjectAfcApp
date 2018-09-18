@@ -57,7 +57,7 @@
 
 
 extern unsigned char StufferNO[4];
-extern unsigned int s_sum1, a_sum1, dis_sum2;
+extern unsigned int s_sum1, a_sum1, dis_sum2, did_sum2;;
 extern unsigned int a_sumR;//手机钱包中的真实金额
 extern unsigned int c_serial;
 extern unsigned char cardSound;			//刷卡没有成功标志
@@ -3530,6 +3530,8 @@ extern void face_time(void);
 extern int QpbocOfflineAuten(void);
 extern int save_file_BuInfo();
 
+extern volatile unsigned char ACK_flag_real;
+
 void cpuPBOCmain(void)
 {
 	BER_TVL *TempTVL;
@@ -3666,12 +3668,14 @@ void cpuPBOCmain(void)
 // #endif
 
 // 	price = 1;
-
+	
+#if 0
 	if (month_decide()) // 第二次去扣钱包(次数不能连刷)
 	{
 		disp_no_swipe();
 		return;
 	}
+#endif
 
 	s_sum1 = price;
 #ifndef _debug_
@@ -3777,11 +3781,11 @@ void cpuPBOCmain(void)
 		cardSound = 0;
 	}
 	else if (ret == qPBOC_CARD_forbid) {
-		if (ACK_flag != 0)
+		if (ACK_flag_real != 0)
 		{
 			//	SoundMessage(SOUND_FLING_MONEY);
 			//	audio(Audio_TRY_AGAIN);	//非法卡
-			dis_qboc_ack_code(ACK_flag);
+			dis_qboc_ack_code(ACK_flag_real);
 		}
 		//	if (switch_both==1 &&ACK_flag ==0xFF)
 		//		{

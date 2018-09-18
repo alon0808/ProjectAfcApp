@@ -67,8 +67,8 @@
 
 //程序版本号
 #ifdef _debug_
-#define SOFT_VER_TIME_LOG 0x009
-#define SOFT_VER_TIME "2018.09.16 16:50 CHANGSHA"	//
+#define SOFT_VER_TIME_LOG 0x011
+#define SOFT_VER_TIME "2018.09.18 21:50 CHANGSHA"	//
 #endif
 
 #define PRAGRAMMER "ZZC"
@@ -360,7 +360,7 @@ key 28 Released*/
 #define ADF2_DEAL_COUNT		0x0004
 
 #ifdef _debug_
-#define WAIT_TIME 1
+#define WAIT_TIME 300
 #else
 #ifdef BUS_SYBAOSHI_
 #define WAIT_TIME 20
@@ -473,29 +473,7 @@ key 28 Released*/
 #define CARD_WHITE_CPU		52				//CPU白卡
 
 //////////////////////////用户卡的定义///////////////////////////
-							//用户卡 
-#define CARD_NORMAL			0				//普通A卡
-#define CARD_STUDENT		1				//学生A卡(九江 义务教育卡)
-
-#define CARD_OLDMAN			2				//老年卡
-#define CARD_STUFF			3				//员工卡
-#define CARD_COUPON			4				//（邯郸 成人月票卡(市内)）
-#define CARD_RELATION_BUS	5				//（邯郸 成人月票卡(市外)）
-#define	CARD_HANDICAPPED	6				//残疾人卡 (九江低保卡) (邯郸 普通B卡)
-#define CARD_NORMAL_B		7				// 邯郸 邯钢专线卡
-
-#define CARD_CAP_BUS		8				//[邯郸 联通手机卡】
-
-#define CARD_JILIAN_BUS		9				// (邯郸 建行卡)
-#define CARD_YOUFU_BUS		10				//（邯郸 优抚卡）
-#define CARD_17RD_BUS		11				//(九江 17路专用卡)
-#define CARD_JTB			12				//市民卡/交通部的卡类
-#define CARD_MOTH_CI		13				//邯郸次卡  可以随意刷
-#define CARD_LIANGTONG_STUF 14              //手机员工卡
-#define CARD_qPBOC_BUS		16				//91 银行卡卡类 [在有些地方银行卡卡类写成不同的]
-#define CARD_qPBOC_QR		17				//91 银行卡卡类 [在有些地方银行卡卡类写成不同的]
-
-#define  CARD_FENDUAN_Line	33		//分段线路票价卡
+			
 ///////////////////////////////语音端口号//////////////////////////////
 #ifdef AUDIO_SOUND_OLD //老的16段语音
 //两片8段语音

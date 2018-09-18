@@ -87,12 +87,12 @@ AFC_CORE__API int SetDevParam(int paramType, unsigned char *pData, int dLen) {
 	int dptmType = 0;
 	//PRINT_DEBUG("SetDevParam:%d\n", paramType);
 	PRINT_DEBUGBYS("SetDevParam:", pData, dLen);
-	if (pData == NULL) {
-		return Ret_Err_Param;
-	}
 	switch (paramType)
 	{
 	case dpt_devId:
+		if (pData == NULL) {
+			return Ret_Err_Param;
+		}
 		dptmType = dptm_devId;
 		if (dLen != 8) {
 			PRINT_ERROR("error length of SetDevParamdptm_devId:%d\n", dLen);
@@ -100,17 +100,34 @@ AFC_CORE__API int SetDevParam(int paramType, unsigned char *pData, int dLen) {
 		}
 		break;
 	case dpt_unionpayTerId:
+		if (pData == NULL) {
+			return Ret_Err_Param;
+		}
 		dptmType = dptm_unionpayTerId;
 		if (dLen != 8) {
 			PRINT_ERROR("error length of SetDevParamdpt_unionpayTerId:%d\n", dLen);
 			return Ret_Err_Param;
 		}
 		break;
+	case dpt_unionpayDownKey:	// 银联灌密钥
+		if (pData == NULL) {
+			if (pthread_create(&dptmType, NULL, down_kek, NULL) != 0)
+			{
+				printf("Create thread down_kek error!\n");
+				//exit(1);
+			}
+			printf("Create thread down_kek, TID: %lu\n", dptmType);
+		}
+		else {
+			set_downkekTimeout();
+		}
+		//down_kek();
+		return Ret_OK;
 	default:
 		PRINT_ERROR("unprocess type of SetDevParam:%d\n", paramType);
 		return Ret_Err_Param;
 	}
-	saveDeviceParaTab(dptm_devId, pData);
+	saveDeviceParaTab(dptmType, pData);
 	return Ret_OK;
 }
 
@@ -137,6 +154,8 @@ AFC_CORE__API stUIData* GetStatusData(int timerTrige) {
 		memcpy(pUIData->ud_devId, gDeviceParaTab.DeviceNo, 8);
 		pUIData->ud_devId[LEN_DEV_ID - 1] = '\0';
 		memcpy(pUIData->ud_lineId, gDeviceParaTab.LineNo, LEN_LINE_ID);
+		memcpy(pUIData->ud_unionpayDevId, gDeviceParaTab.unionPayInof.unpayTerId, 8);
+		pUIData->ud_unionpayDevId[LEN_DEV_ID - 1] = '\0';
 		pUIData->ud_modVer = 0x003;	// 3.0
 		pUIData->ud_uploadRec = GJRec_Send();
 		pUIData->ud_version = SOFT_VER_TIME_LOG;
@@ -165,7 +184,8 @@ AFC_CORE__API stUIData* GetStatusData(int timerTrige) {
 void MessageBox(unsigned char mode, const char *dStr)
 {
 	if (strlen(dStr) > LEN_MESSAGE) {
-		PRINT_ERR_LOCATION("超过了message的最大缓冲50", "");
+		PRINT_ERROR("strlen(dStr):%d\n", strlen(dStr));
+		PRINT_ERR_LOCATION("超过了message的最大缓冲100", "");
 		memcpy(s_message, dStr, LEN_MESSAGE);
 		s_message[LEN_MESSAGE] = '\0';
 		return;
@@ -199,7 +219,7 @@ AFC_CORE__API void* StartApp(void *argv)//int argc,
 	SLZR_U32 u32Ret;
 
 
-#ifdef KEYBOARD
+#if KEYBOARD
 	pthread_t tidmain_ExKeyBoard;
 #endif
 	pthread_t tidmain_NetConnect;
@@ -253,7 +273,7 @@ AFC_CORE__API void* StartApp(void *argv)//int argc,
 
 	//	QRCodeMainInit();
 	Card_Init();
-	R485_Init();
+	R485_Init(12900);
 
 
 	if (pthread_create(&tidmain_NetConnect, NULL, main_NetConnect, NULL) != 0)
@@ -312,7 +332,7 @@ AFC_CORE__API void* StartApp(void *argv)//int argc,
 		printf("Create thread getNetData3 error!\n");
 		//exit(1);
 	}
-#ifdef KEYBOARD
+#if KEYBOARD
 	if (pthread_create(&tidmain_ExKeyBoard, NULL, main_ExKeyBoard, (void *)0) != 0)
 	{
 		printf("Create thread getNetData3 error!\n");

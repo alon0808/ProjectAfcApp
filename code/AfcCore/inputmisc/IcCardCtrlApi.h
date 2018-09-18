@@ -56,7 +56,7 @@ extern SLZR_U32 CMDPSAM_BPS(SLZR_U32 u32Num, SLZR_U8 *pBuf, SLZR_U32 *pLen, SLZR
 extern SLZR_U32 CMD_PSAMAUTH(SLZR_U32 u32Num, SLZR_U8 *pBuf, SLZR_U32 *pLen, SLZR_U8 *pStatus);
 extern SLZR_U32 CmdPSAMbps(LTY_U8 BpsFlag);
 
-extern SLZR_U32 R485_Init(void);
+extern SLZR_U32 R485_Init(int baund);
 extern SLZR_U32 R485WriteData(SLZR_U8 *pSendData, SLZR_U32 u32SendLen);
 extern SLZR_U32 R485ReadData(SLZR_U8 *pRecvData, SLZR_U32 *pRcvLen);
 extern int GPRS_ping_Hi(void);

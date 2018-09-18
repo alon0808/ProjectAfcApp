@@ -30,15 +30,6 @@
 #define MESSAGE_FONT_SIZE       16
 #define MESSAGE_SHOW_LENGTH     395
 
-typedef enum {
-	ms_idle = 0x00000000,
-	ms_setDevId = 0x00000001,
-	ms_setUnpayDevId = 0x00000002,
-	ms_setUnpayKey = 0x00000003,
-	ms_maskSet = 0x000000FF,
-	ms_showMenu = 0x80000000,
-	ms_setMenu = 0x40000000,
-}emMenuStatus;
 
 static CMainPage2 *gMainPageThis = NULL;
 
@@ -312,6 +303,7 @@ void CMainPage2::main_page_demo()
 	m_pushbutton_exit->setText("退出");
 	connect(m_pushbutton_exit, SIGNAL(clicked()), this, SIGNAL(signal_button_exit()));
 	m_pushbutton_exit->setStyleSheet("QPushButton{font:15px;}");
+	m_pushbutton_exit->hide();
 #endif
 
 
@@ -492,7 +484,7 @@ void CMainPage2::main_page_up_down()
 	m_pushbutton_exit->setText("退出");
 	connect(m_pushbutton_exit, SIGNAL(clicked()), this, SIGNAL(signal_button_exit()));
 	m_pushbutton_exit->setStyleSheet("QPushButton{font:15px;}");
-
+	m_pushbutton_exit->hide();
 
 #endif
 }
@@ -573,6 +565,7 @@ void CMainPage2::left_right_init1()
 	m_pushbutton_menu = new QPushButton(this);
 	CCommonInterface::init_new_button(m_pushbutton_menu, 238 + 5 + 36 + 10, 18, 50, 42, str_sheet);
 	m_pushbutton_menu->setText("退出");
+	m_pushbutton_menu->hide();
 	connect(m_pushbutton_menu, SIGNAL(clicked()), this, SIGNAL(signal_pushbutton_quit()));
 #endif
 #endif
@@ -633,6 +626,7 @@ void CMainPage2::left_right_init1()
 	m_pushbutton_exit->setText("退出");
 	connect(m_pushbutton_exit, SIGNAL(clicked()), this, SIGNAL(signal_button_exit()));
 	m_pushbutton_exit->setStyleSheet("QPushButton{font:15px;}");
+	m_pushbutton_exit->hide();
 #endif
 
 
@@ -1762,7 +1756,7 @@ void CMainPage2::slot_1s_timer()
 			std::string tmpStr;
 
 			m_uiDelayTime = timeDelay;
-			msgText = "<font size=\"10\" color=\"red\">";
+			msgText = "<font size=\"5\" color=\"red\">";
 			tmpStr = msg;
 			gb2312ToUtf8(tmpStr);
 			msgText += QString::fromStdString(tmpStr);
@@ -1833,6 +1827,10 @@ void CMainPage2::slot_1s_timer()
 
 		sprintf(buffer, " %02X-%02X", s_uiData->ud_task, s_uiData->ud_linkStatus);
 		msgText += buffer;
+		msgText += ("<br/>");
+
+		msgText += s_uiData->ud_unionpayDevId;
+		msgText += ("终端<br/>");
 
 		m_textBrown_slzr->setHtml(msgText);
 		++m_freshTimes;
@@ -2075,18 +2073,18 @@ bool CMainPage2::get_debug_interface()
 void CMainPage2::createComponent() {
 
 	QTextBrowser *textBrow = new QTextBrowser(this);
-	textBrow->setFixedSize(230, 120);
+	textBrow->setFixedSize(230, 200);
 	textBrow->move(450, 300);
 	textBrow->setStyleSheet("QTextBrowser{border:0px;background:transparent;font:15px;color:#ffffff; }");
 	textBrow->setAlignment(Qt::AlignLeft);
 	textBrow->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//设置垂直滚动条不可见
 	textBrow->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//设置水平滚动条不可见
-	textBrow->setText("邯郸公交2018.1.1");
+	textBrow->setText("邯郸公交2018.9.16");
 	m_textBrown_slzr = textBrow;
 
 	textBrow = new QTextBrowser(this);
-	textBrow->setFixedSize(230, 120);
-	textBrow->move(200, 300);
+	textBrow->setFixedSize(260, 200);
+	textBrow->move(180, 300);
 	textBrow->setStyleSheet("QTextBrowser{border:0px;background:transparent;font:15px;color:#ffffff; }");
 	textBrow->setAlignment(Qt::AlignLeft);
 	textBrow->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//设置垂直滚动条不可见
@@ -2134,15 +2132,16 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 		case SLZRKEY_ENTER:
 			//QMenu *menu = s_menu;
 			if ((s_menuStatus & ms_showMenu) == 0) {
-#if 1	
+#if 1
 				QPoint pos; //= new QPoint(220, 200);
 				pos.setX(225);	// 贴近右侧窗体
 				pos.setY(200);
 				if (menu == NULL) {
 					menu = new QMenu(gMainPageThis);
+					CREATEMENUACTION("查询设备信息", ms_getDevInfo);
 					CREATEMENUACTION("设置设备号", ms_setDevId);
 					CREATEMENUACTION("设置银联终端号", ms_setUnpayDevId);
-					CREATEMENUACTION("下载银联密钥", ms_setUnpayKey);
+					CREATEMENUACTION("下载银联密钥", ms_setUnpayDownKey);
 					//menu->move(230, 200);
 					s_curMenuItem = 0;
 					s_action[0]->setChecked(true);
@@ -2197,13 +2196,20 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 				case ms_setDevId:
 					pDataVal = s_uiData->ud_devId;
 					break;
+				case ms_setUnpayDevId:
+					pDataVal = s_uiData->ud_unionpayDevId;
+					break;
+				case ms_setUnpayDownKey:
+					pDataVal = (char *)1;
+					break;
 				default:
+					pDataVal = (char *)NULL;
 					break;
 				}
 				if (pDialInput->Init(ptmpItem->text(), "", pDataVal) != 0) {
-					qDebug() << ("slot_keyboard_menu 初始化失败:\n");
+					printf("slot_keyboard_menu 初始化失败:\n");
 				}
-				pDialInput->show();
+				//pDialInput->show();
 				menu->setVisible(false);
 				s_menuStatus |= ms_setMenu;
 				s_menuStatus &= ~ms_maskSet;
@@ -2250,6 +2256,9 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 				s_menuStatus = 0;
 			}
 			else if (s_menuStatus & ms_setMenu) {
+				if ((s_menuStatus & ms_maskSet) == ms_setUnpayDownKey) {
+					SetDevParam(dpt_unionpayDownKey, (unsigned char *)1, 0);
+				}
 				pDialInput->hide();
 				menu->setVisible(true);
 				s_menuStatus &= ~ms_maskSet;

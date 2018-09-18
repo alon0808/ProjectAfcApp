@@ -5,7 +5,7 @@
 
 #define LEN_DEV_ID	9
 #define LEN_LINE_ID	3
-#define LEN_MESSAGE	50
+#define LEN_MESSAGE	100
 
 #ifndef SLZRKEY_UP
 #define SLZRKEY_UP		115	// Arrow Up
@@ -21,6 +21,7 @@ typedef enum {
 	dpt_invalid = 0,
 	dpt_devId,
 	dpt_unionpayTerId,
+	dpt_unionpayDownKey,
 }emDevParamType;
 
 typedef struct {
@@ -32,6 +33,7 @@ typedef struct {
 	unsigned char ud_stopflag;
 	unsigned char  ud_lineId[LEN_LINE_ID];
 	char ud_devId[LEN_DEV_ID];
+	char ud_unionpayDevId[LEN_DEV_ID];
 	int ud_task;
 	int ud_linkStatus;
 	int ud_uploadRec;

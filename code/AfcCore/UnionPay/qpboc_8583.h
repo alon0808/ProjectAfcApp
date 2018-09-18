@@ -23,8 +23,9 @@
 #define		BUSS_ID	"898520154110004"
 #else
 //#define		TPDU	"6000270000"	// 上海银联TPDU
-#define		TPDU	"6005370000"	// 上海银联TPDU
-#define		HEAD	"613200324605"	
+//#define		TPDU	"6005370000"	// 上海银联TPDU
+#define		TPDU	"6005010000"	// 上海银联TPDU
+#define		HEAD	"613200324605"
 #endif
 
 #define MISS_PBOC_LOGIN_aut 0x29
@@ -79,7 +80,7 @@ typedef struct {//批上送信息保存 保存在铁电中
 typedef struct {
 	unsigned char shopNo[16];//商户编号 只用15字节
 	unsigned char KEK[16];
-	unsigned char AUTHKEY[16];  
+	unsigned char AUTHKEY[16];
 	unsigned char ip[4];
 	unsigned char port[4];
 	unsigned char tpdu[5];	//压缩BCD	
@@ -88,7 +89,7 @@ typedef struct {
 	unsigned char KEK_1[16];  //分量1
 	unsigned char KEK_2[16];   //分量2
 	unsigned char ODA_FLAGE[2];//OK
-	unsigned char ODA_NO[9]; 
+	unsigned char ODA_NO[9];
 	unsigned char domain_LEN_1;
 	unsigned char domain_name_1[24];
 	unsigned char domain_LEN_2;
@@ -107,7 +108,7 @@ typedef struct {
 	unsigned char TMS_KEY_FLAGE;
 	unsigned char TMS_FLAGE_FIRST;
 	unsigned char domain_APN[18];
-	unsigned char reserver[3+20];//保留
+	unsigned char reserver[3 + 20];//保留
 	unsigned char CrcCheck[4];//32位CRC校验
 }stMobileParameter;//中心下发的参数缓冲结构  128     48+8+14+16+16+10=78+24+10=112+16=128 +128 =256
 typedef struct
@@ -260,7 +261,8 @@ void set_pboc_menu(void);
 void Show_pboc_minu(void);
 void dis_qboc_ack_code(unsigned char ack);
 void PBOC_hand(unsigned char value);
-void down_kek(void);
+void *down_kek(void *pParam);
+void set_downkekTimeout(void);
 
 extern int BuildUnionpayQrRecord(unsigned char *Rdata, unsigned char pbocResult);
 
@@ -284,10 +286,10 @@ extern void PAY_MODE_init(void);  //1字节存标志，1个字节存开关
 extern void online_(unsigned char mode);
 extern unsigned char switch_both;
 extern void PAY_MODE_init_first(void);
-extern void PAY_MODE_SWITCH(unsigned char shuangmian_T, unsigned char switch_both_T) ;
+extern void PAY_MODE_SWITCH(unsigned char shuangmian_T, unsigned char switch_both_T);
 extern  unsigned char shuangmian;
 extern unsigned char pay_time;
-extern unsigned char s_isAuthOk ;
+extern unsigned char s_isAuthOk;
 extern unsigned char s_isDownOdaBlkList;
 extern QPBOC_TYPE_63 TYPE_63;
 extern unsigned char ODA_time;
@@ -298,7 +300,7 @@ extern unsigned int gSendGLogin_qpoc;
 extern  unsigned char deal_type;
 extern unsigned char g_supportQR;
 extern void EnableCREDIT_CARD(void);
-extern void DisableCREDIT_CARD(void) ;
+extern void DisableCREDIT_CARD(void);
 extern void qpoc_init_singe(void);
 extern void add_qpoc_flag(void);
 extern unsigned char qpoc_flag_or(void);
@@ -308,19 +310,19 @@ extern void set_dns_para(void);
 extern void oda_and_dns_first(void);
 extern void set_para_w(void);
 extern  void sercel(void);
-extern int qpoc_nfc_(unsigned char mode );
+extern int qpoc_nfc_(unsigned char mode);
 extern unsigned char qrDisp_history(unsigned char mode, unsigned int Index);
 extern void Q_QPBOC_para_INIT(void);
 extern stMobileParameter Q_QPBOC_para;
 extern void online_1(void);
 extern void online_2(void);
 extern void online_3(void);
-extern void DisableAliPay(void); 
+extern void DisableAliPay(void);
 extern void DisableWeiXin(void);
-extern void EnableWeiXin(void) ;
-extern void EnableAliPay(void) ;
+extern void EnableWeiXin(void);
+extern void EnableAliPay(void);
 extern void Enableqpoc(void);
-extern void Disableqpoc(void); 
+extern void Disableqpoc(void);
 #endif
 
 

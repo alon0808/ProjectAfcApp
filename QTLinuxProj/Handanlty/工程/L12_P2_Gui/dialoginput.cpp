@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include "libHandanCore.h"
 
 #define TIMER_TIMEOUT	400
 
@@ -31,21 +32,35 @@ DialogInput::~DialogInput()
 int DialogInput::Init(QString title, QString msg, char *pVal) {
 	ui->label_title->setText(title);
 	//ui->label_title->adjustSize();
-	if (pVal != NULL) {
-		ui->lineEdit_value->setText(pVal);
-		m_maxlen = strlen(pVal);
-		if (m_maxlen > sizeof(textVal) - 1) {
-			return -1;
-		}
-		memcpy(textVal, pVal, m_maxlen);
+
+	if (pVal == (char *)1) {
+		ui->lineEdit_value->hide();
+		ui->buttonBox->setStandardButtons(QDialogButtonBox::NoButton);
+
+		SetDevParam(dpt_unionpayDownKey, NULL, 0);
+
+		this->hide();
 	}
 	else {
-		m_maxlen = 0;
-		textVal[0] = '\0';
-	}
-	m_curPos = 0;
-	ui->lineEdit_value->setSelection(m_curPos, 1);
+		ui->lineEdit_value->show();
+		ui->buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
+		if (pVal != NULL) {
+			ui->lineEdit_value->setText(pVal);
+			m_maxlen = strlen(pVal);
+			if (m_maxlen > sizeof(textVal) - 1) {
+				return -1;
+			}
+			memcpy(textVal, pVal, m_maxlen);
+		}
+		else {
+			m_maxlen = 0;
+			textVal[0] = '\0';
+		}
+		m_curPos = 0;
+		ui->lineEdit_value->setSelection(m_curPos, 1);
 
+		this->show();
+	}
 	return 0;
 }
 

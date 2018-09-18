@@ -42,7 +42,7 @@
 #define SWITCH_DEBUG_PRJ	1
 
 #if SWITCH_DEBUG_PRJ
-#define SWITCH_DEBUG_PRICE	1	// transaction price force 0.01 yuan
+#define SWITCH_DEBUG_PRICE		1	// transaction price force 0.01 yuan
 #define SWITCH_DEBUG_UNIONPAY	1	// use HanDan test parameter
 #define debug_GJ_TLVDeal_	1
 #define SWITCH_DEBUG_GPS	0
@@ -128,7 +128,7 @@ typedef struct {
 #define INFINITE 0xFFFFFFFF
 #endif
 
-
+#define STR_NEW_LINE	"<br/>"
 
 
 #include "debugOut.h"

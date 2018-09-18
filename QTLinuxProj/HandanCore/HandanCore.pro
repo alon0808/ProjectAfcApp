@@ -68,7 +68,8 @@ SOURCES += handancore.cpp \
     ../../code/AfcCore/QRCodeMain.c \
     ../../code/AfcCore/gps.c \
     ../../code/xStorage/FileManage.c \
-    ../../code/AfcCore/Crypto/CRC.c
+    ../../code/AfcCore/Crypto/CRC.c \
+    ../../code/AfcCore/EC20Lx_HTTP.c
 
 HEADERS += handancore.h\
         handancore_global.h \
@@ -209,7 +210,8 @@ HEADERS += handancore.h\
     ../../code/AfcCore/QRCodeMain.h \
     ../../code/AfcCore/gps.h \
     ../../code/xStorage/FileManage.h \
-    ../../code/AfcCore/EC20Lx_HTTPS.h
+    ../../code/AfcCore/EC20Lx_HTTPS.h \
+    ../../code/AfcCore/EC20Lx_HTTP.h
 
 unix {
     target.path = /usr/lib

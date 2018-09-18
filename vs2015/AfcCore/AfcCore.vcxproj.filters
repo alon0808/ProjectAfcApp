@@ -498,6 +498,9 @@
     <ClInclude Include="..\..\code\AfcCore\EC20Lx_HTTPS.h">
       <Filter>关注文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\code\AfcCore\EC20Lx_HTTP.h">
+      <Filter>关注文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\code\AfcCore\CPUCard.c">
@@ -628,6 +631,9 @@
     </ClCompile>
     <ClCompile Include="..\..\code\xStorage\FileManage.c">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\AfcCore\EC20Lx_HTTP.c">
+      <Filter>关注文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

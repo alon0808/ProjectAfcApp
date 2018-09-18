@@ -26,6 +26,7 @@
 #include "GprsSocket.h"
 #include "ff.h"
 #include "RamStorage.h"
+#include "ICCardLib.h"
 
 #include <string.h>
 
@@ -110,6 +111,7 @@ extern void BuildQRCRecorde(unsigned char delType, unsigned char *recBuf, unsign
 stMobilStyle Sign_Infor;
 unsigned char qr_pboc_AccountNo[32] = { 0 };//二维码 的账户 ascii
 volatile unsigned char ACK_flag = 0xFF;	//后台应答39域的值  bcd
+volatile unsigned char ACK_flag_real = 0xFF;	//后台应答39域的值  bcd
 unsigned char  ACK_flag_oda = 0xFF;
 unsigned int POS_8583_COUNT = 0;	//受卡方系统跟踪号 在8583 11域
 
@@ -160,7 +162,7 @@ extern void delallBlacInbus(void);
 extern unsigned char GetDateTime(void);
 extern void getbusticketVer(void);
 extern void getProVer(void);
-extern unsigned char SYSgetbussinessNO(unsigned char *dat);
+//extern unsigned char SYSgetbussinessNO(unsigned char *dat);
 extern void sysSaveDevice(unsigned char *dbuf);
 extern void getCpuInfo(stCpuInfo *inP);
 extern void saveCpuInfo(unsigned char mode, unsigned char *dat);
@@ -173,7 +175,7 @@ extern void dis_messgebox(char *istr, int code, unsigned char row);
 
 extern void save_normal(void);
 extern void save_h_month(void);
-extern unsigned char month_decide(void);
+//extern unsigned char month_decide(void);
 extern void Save_delayCardinfo(unsigned char Cmode);
 extern unsigned char getMiKey(void);
 extern unsigned char Delay_Normal(void);
@@ -743,7 +745,11 @@ int Build_qpboc_8583_HD(unsigned char *Odat, int headType)
 {
 	unsigned int pos = 0;
 
+#if SWITCH_DEBUG_UNIONPAY == 1
+	Ascii2BCD("6005370000", Odat, sizeof(TPDU));
+#else
 	Ascii2BCD(TPDU, Odat, sizeof(TPDU));
+#endif
 	pos += sizeof(TPDU) / 2;		//60 0632 0000  TPDU
 
 	Ascii2BCD(HEAD, Odat + pos, sizeof(HEAD));
@@ -1978,22 +1984,22 @@ unsigned int tag_A2(unsigned char *dat)
 	pos += 16;
 #else
 
-	memcpy(dat + pos, DEV_TYPE, 8);
-	A2_pos += 8;
-	pos += 8;
-	memcpy(dat + pos, pFistVary.DeviceNo, 8);
-	A2_pos += 8;
-	pos += 8;
-
-
 	// 	memcpy(dat + pos, DEV_TYPE, 8);
 	// 	A2_pos += 8;
 	// 	pos += 8;
-	// 
-	// 	Get_SerialNumF4((unsigned char *)buffer);//Get_SerialNumF4_Self(buff);//
-	// 	BCD2Ascii((unsigned char *)buffer, dat + pos, 4);
+	// 	memcpy(dat + pos, pFistVary.DeviceNo, 8);
 	// 	A2_pos += 8;
 	// 	pos += 8;
+
+
+	memcpy(dat + pos, DEV_TYPE, 8);
+	A2_pos += 8;
+	pos += 8;
+
+	Get_SerialNumF4((unsigned char *)buffer);//Get_SerialNumF4_Self(buff);//
+	BCD2Ascii((unsigned char *)buffer, dat + pos, 4);
+	A2_pos += 8;
+	pos += 8;
 #endif
 
 	memcpy(dat + pos, "03006", 5);//加密随机因子取值说明：银行卡交易采用2域卡号后6位；扫码付交易采用C2B码后6位
@@ -2835,16 +2841,15 @@ int build8583_qpboc_Auth(unsigned char *oDat, unsigned inout) {
 	ilen += 16;
 #else
 
+// 	memcpy(oDat + ilen, DEV_TYPE, 8);
+// 	ilen += 8;
+// 	memcpy(oDat + ilen, pFistVary.DeviceNo, 8);
+// 	ilen += 8;
 	memcpy(oDat + ilen, DEV_TYPE, 8);
 	ilen += 8;
-	memcpy(oDat + ilen, pFistVary.DeviceNo, 8);
+	Get_SerialNumF4((unsigned char *)oDat + ilen + 8);//Get_SerialNumF4_Self(buff);//
+	BCD2Ascii(oDat + ilen + 8, oDat + ilen, 4);
 	ilen += 8;
-	//	memcpy(oDat + ilen, "ESF3000L", 8);
-	// 	memcpy(buff + pos, DEV_TYPE, 8);
-	// 	ilen += 8;
-	// 	Get_SerialNumF4((unsigned char *)oDat + ilen + 8);//Get_SerialNumF4_Self(buff);//
-	// 	BCD2Ascii(oDat + ilen + 8, oDat + ilen, 4);
-	// 	ilen += 8;
 #endif
 	MSG_LOG("DEV_TYPE:%s", oDat + ilen - 16);
 	memset(oDat + ilen, ' ', 22);
@@ -3820,6 +3825,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 
 	ACK_flag = getbuff[0];
+	ACK_flag_real = getbuff[0];
 
 	MSG_LOG("bit:%d,ACK_flag:%02X\r\n", msgf[field_ack].bitf, ACK_flag);
 
@@ -4323,11 +4329,12 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 	//	unsigned int i=0;
 		//unsigned long long read_dat=0;
 		//unsigned int count=0;
-	unsigned char disbuff[20];
+	unsigned char disbuff[50];
 	//	BER_TVL TempTVL;
+	int tmpI = 0;
 
 #if 1
-	msecends = 7000;
+	msecends = 6000;
 #endif
 
 	if (msecends > 0) {
@@ -4335,8 +4342,10 @@ int SQDataFromSVT(unsigned char SQmode, int msecends)
 		if (gCardinfo.gMCardCand != CARDSTYLE_UNPAY_ODA)
 		{
 			cls();
-			display(6, 0, "通讯中...", DIS_ClsLine | DIS_CENTER);
-			display(8, 0, "请稍等", DIS_ClsLine | DIS_CENTER);
+			tmpI = 0;
+			tmpI += sprintf(disbuff + tmpI, "通讯中..."STR_NEW_LINE"请稍等");
+			//display(6, 0, "通讯中...", DIS_ClsLine | DIS_CENTER);
+			display(8, 0, disbuff, DIS_ClsLine | DIS_CENTER);
 		}
 
 		MSG_LOG("do %s:0x%02X\r\n", __FUNCTION__, SQmode);
@@ -4683,11 +4692,13 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 	memcpy(buffer, &qr_pboc_AccountNo[cardlen - 8], 8);
 	Ascii2BCD(buffer, (unsigned char *)&c_serial, 8);
 
+#if 0
 	if (month_decide()) // 第二次去扣钱包(次数不能连刷)
 	{
 		disp_no_swipe();
 		return ST_OK;
 	}
+#endif
 
 	MSG_LOG("交易码:%s\r\n", qr_pboc_AccountNo);
 
@@ -4703,10 +4714,10 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 	}
 	else
 	{
-		if (ACK_flag != 0)
+		if (ACK_flag_real != 0)
 		{
 			//SoundMessage(SOUND_FLING_MONEY);
-			dis_qboc_ack_code(ACK_flag);
+			dis_qboc_ack_code(ACK_flag_real);
 		}
 
 
@@ -4891,7 +4902,7 @@ mode=2: KEK[48];//KEK 16字节
 extern stDeviceParatable gDeviceParaTab;
 unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 {
-
+	stUnionPayInfor *pUpInfor = &gDeviceParaTab.unionPayInof;
 	stMobileParameter smpPara;
 	unsigned int itemp;
 	// 	MSG_LOG("使用铁电的大小=%d=\r\n",BIT_END_ADDR);
@@ -4922,15 +4933,14 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 	switch (mode) {
 	case 1:
 #if SWITCH_DEBUG_UNIONPAY == 1
-		memcpy(smpPara.shopNo, "898130175230001", 15);
-#elif SWITCH_DEBUG_UNIONPAY == 2
-		memcpy(smpPara.shopNo, "898131141110001", 15);
+		memcpy(pUpInfor->mechantId, "898130175230001", 15);
+#else
+		memcpy(pUpInfor->mechantId, "898130441110005", 15);
 #endif
-		memcpy(obuf, smpPara.shopNo, 15);
+		memcpy(obuf, pUpInfor->mechantId, 15);
 		break;
 	case 2:
-		memcpy(obuf, smpPara.KEK, 16);
-
+		memcpy(obuf, pUpInfor->upi_kek, 16);
 		break;
 	case 3:
 		memcpy(obuf, smpPara.ip, 4);
@@ -4944,6 +4954,8 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 	case 6:
 #if SWITCH_DEBUG_UNIONPAY == 1
 		memcpy(gDeviceParaTab.unionPayInof.unpayTerId, "00000001", 8);
+#else SWITCH_DEBUG_UNIONPAY == 2
+		memcpy(gDeviceParaTab.unionPayInof.unpayTerId, "04892612", 8);
 #endif
 		memcpy(obuf, gDeviceParaTab.unionPayInof.unpayTerId, 8);
 		break;
@@ -5069,6 +5081,7 @@ mode=2: KEK[48];//KEK 16字节
 */
 void saveMobileParameter(unsigned char mode, const void *pParam)
 {
+	stUnionPayInfor *pUpInfor = &gDeviceParaTab.unionPayInof;
 	stMobileParameter smpPara;
 	unsigned int itemp;
 	unsigned char *buf = (unsigned char *)pParam;
@@ -5083,12 +5096,14 @@ void saveMobileParameter(unsigned char mode, const void *pParam)
 
 	switch (mode) {
 	case 1:
-		memcpy(smpPara.shopNo, buf, 15);
+		//memcpy(smpPara.shopNo, buf, 15);
 		break;
 	case 2:
 		MSG_LOG("明文KEY:");
 		BCD_LOG(buf, 16, 1);
-		memcpy(smpPara.KEK, buf, 16);
+
+		saveDeviceParaTab(dptm_kek, buf);
+		//memcpy(pUpInfor->upi_kek, buf, 16);
 		break;
 	case 3:
 		memcpy(smpPara.ip, buf, 4);
@@ -5100,7 +5115,8 @@ void saveMobileParameter(unsigned char mode, const void *pParam)
 		memcpy(smpPara.tpdu, buf, 5);
 		break;
 	case 6:
-		memcpy(smpPara.device, buf, 8);
+		saveDeviceParaTab(dptm_unionpayTerId, buf);
+		//memcpy(pUpInfor->unpayTerId, buf, 8);
 		break;
 	case 7:
 		memcpy(smpPara.AUTHKEY, buf, 16);
@@ -5487,13 +5503,16 @@ void PBOC_hand(unsigned char value)
 	//	unsigned char i;
 	unsigned char xorCh = 0;
 	//	unsigned char buff[10];
+	unsigned char rkbuf[32];
+	unsigned int i;
+
 
 	ii = value;
 
 	//if (value != 0x0D && value != 0x0A && value != 0x00) {
-	MSG_LOG("%02X", value);
 	//}
 
+	//MSG_LOG("PBOC_hand:%02X", value);
 	if (rev_finish != 0xee)			//空则接收数据
 	{
 		if (rev_finish == 0xaa) {
@@ -5913,15 +5932,21 @@ void down_kek_TMS(void)
 	//	return ST_OK;
 }
 
-void down_kek(void)
+unsigned char g_flagDownKek = 0;
+static unsigned int s_outdly = 0;
+
+void set_downkekTimeout() {
+	s_outdly = 0x0FFFFFFF;
+}
+
+void *down_kek(void *pParam)
 {
 	unsigned char ret = 0;
 	//	unsigned char i=0;
-	unsigned int outdly = 0;
 	unsigned char buff[100];
 	//	unsigned char len=0;
 	//	unsigned char XOR;
-	unsigned char kekMM[30];
+	unsigned char kekMM[100];
 	//	unsigned char resbuff[16];
 	unsigned char rands[16];
 	unsigned char stCh = mpsc_ok;
@@ -5929,6 +5954,7 @@ void down_kek(void)
 	int len = 0;
 	unsigned char backComDbg = 0;
 	int pos = 0;
+	int tmpI = 0;
 	unsigned char isAuthkey = 0;
 
 
@@ -5936,37 +5962,39 @@ void down_kek(void)
 
 	//	cls();
 	//	display(0,0,"等待接收母POS",DIS_CENTER);
-	outdly = 0;
+	s_outdly = 0;
 	rev_finish = 0;
 
 	//	printf("qing%d\r\n",i);
+
+	//R485_Init(9600);
 
 	SetUSART1mode(0xFE);
 	backComDbg = DEBUG_COM;
 	DEBUG_COM = COM4;
 
-	com_init(COM1, 9600);
-	COM_it_enable(COM1);
-
+	//com_init(COM1, 9600);
+	//COM_it_enable(COM1);
+	g_flagDownKek = 1;
 	ComTest_index = 0;
 	while (1) {
 
-		if (outdly % 200 == 0) {
+		if (s_outdly % 40 == 0)
+		{
 			cls();
-			display(0, 0, "请连接机器COM1口9600", 0);
-			sprintf((char *)kekMM, "等待接收母POS数据:%d", outdly / 100);
-			display(2, 0, (char *)kekMM, 0);
+			tmpI = 0;
+			tmpI += sprintf(kekMM + tmpI, "请连接机器COM1口9600"STR_NEW_LINE);
+
+			tmpI += sprintf(kekMM + tmpI, "等待接收母POS数据:%d"STR_NEW_LINE, s_outdly / 100);
+			//display(2, 0, (char *)kekMM, 0);
 
 			memset(buff, 0, sizeof(buff));
 			getMobileParameter(1, buff);
-			memset(kekMM, 0, sizeof(kekMM));
-			sprintf((char *)kekMM, "银联商户号:%s", buff);
-			display(4, 0, (char *)kekMM, 0);
+			tmpI += sprintf(kekMM + tmpI, "银联商户号:%s"STR_NEW_LINE, buff);
 
 			memset(buff, 0, sizeof(buff));
 			getMobileParameter(6, buff);
-			memset(kekMM, 0, sizeof(kekMM));
-			sprintf((char *)kekMM, "银联设备号:%s", buff);
+			tmpI += sprintf(kekMM + tmpI, "银联设备号:%s", buff);
 			display(6, 0, (char *)kekMM, 0);
 
 			//com_snd(COM4,len,buff);
@@ -6013,6 +6041,7 @@ void down_kek(void)
 				// 主密钥号 M 为 1 字节
 				//if (irda_rxBuf[mpc_data] == 0x0A)
 				// 后面16字密文密钥
+				PRINT_DEBUGBYS("随机数:", rands, 16);
 				DES3_decrypt(irda_rxBuf + mpc_data + 1, rands, buff);
 				DES3_decrypt(irda_rxBuf + mpc_data + 1 + 8, rands, buff + 8);
 				//	if (irda_rxBuf[mpc_data] == 0x00) {
@@ -6039,11 +6068,11 @@ void down_kek(void)
 				saveMobileParameter(6, irda_rxBuf + mpc_data + 15);		//
 
 				gGprsinfo.gmissflag = MISS_G_FREE;
-				Sign_Infor.ISOK = 0;
 				display(8, 0, "商户号和设备号下载成功", DIS_CONVERT | DIS_CENTER);
 				ret = 0xF0;
 				beep(1, 200, 50);
 				delayxms(1000);
+				Sign_Infor.ISOK = 0;
 				break;
 			case 0x36:
 				if (irda_rxBuf[mpc_ln] != 0x01) {
@@ -6094,15 +6123,18 @@ void down_kek(void)
 			if (len > 0) {
 				MSG_LOG("回复POS响应(%d):", len);
 				BCD_LOG(buff, len, 1);
-				com_snd(COM1, len, buff);
+				R485WriteData(buff, len);
 			}
 
 			memset(irda_rxBuf, 0, MaxPackLen);
 			ComTest_index = 0;
 			rev_finish = 0;
 			//break;
+			//continue;
 		}
-		delayxms(10);
+		else {
+			usleep(50000);
+		}
 
 		if (ret == 0xF0) {
 			break;
@@ -6111,7 +6143,7 @@ void down_kek(void)
 		if (ret == SLZRKEY_ESC) {
 			break;
 		}
-		if (outdly++ > 1000) {
+		if (s_outdly++ > 1200) {
 
 			display(2, 0, "接收超时", DIS_CONVERT | DIS_CENTER);
 			beep(3, 100, 30);
@@ -6127,6 +6159,10 @@ void down_kek(void)
 	COM_it_enable(COM1);
 
 	DEBUG_COM = backComDbg;
+
+	g_flagDownKek = 0;
+
+	return 1;
 }
 #if 0
 static int inline ReadM1Block(int block, unsigned char key[6], unsigned char serialId[4], unsigned char output[16]) {
@@ -7294,52 +7330,47 @@ void Show_pboc_minu(void)
 
 void dis_qboc_ack_code(unsigned char ack)
 {
-	unsigned char Buffer[32];
+	unsigned char Buffer[100];
+	int len = 0;;
+
+	if (ack == 0) {
+		return;
+	}
 	cls();
 	memset(Buffer, 0, sizeof(Buffer));
-	sprintf((char *)Buffer, "拒绝交易,错误码:%02X", ACK_flag);
-	display(0, 0, (const char *)Buffer, 0);
+	len += sprintf((char *)Buffer + len, "拒绝交易,错误码:%02X"STR_NEW_LINE, ack);
 
-	switch (ACK_flag)
+	switch (ack)
 	{
 	case 0x51:
-		display_3232(2, 0, "帐号余额不足", 0);
-		SoundMessage(SOUND_FLING_MONEY);
+		len += sprintf((char *)Buffer + len, "帐号余额不足");
 		break;
 	case 0x14:
 	case 0x05:
-		display_3232(2, 0, "无效卡号", 0);
-		SoundMessage(SOUND_FLING_MONEY);
+		len += sprintf((char *)Buffer + len, "无效卡号");
 		break;
 	case 0x55:
-
-		display_3232(2, 0, "发卡行未开通免密免签功能", 0);
-		SoundMessage(SOUND_FLING_MONEY);
+		len += sprintf((char *)Buffer + len, "发卡行未开通免密免签功能");
 		break;
 	case 0x40:
-
-		display_3232(2, 0, "发卡行不支持的交易类型", 0);
-		SoundMessage(SOUND_FLING_MONEY);
+		len += sprintf((char *)Buffer + len, "发卡行不支持的交易类型");
 		break;
 	case 0x65:
-		display_3232(2, 0, "超出消费次数限制", 0);
-		SoundMessage(SOUND_FLING_MONEY);
+		len += sprintf((char *)Buffer + len, "超出消费次数限制");
 		break;
 	case 0xFF:
-		display_3232(2, 0, "网络超时", DIS_CENTER);
-		display_3232(6, 0, "请重刷", DIS_CENTER);
-		audio(Audio_TRY_AGAIN);  //s双通道
+		len += sprintf((char *)Buffer + len, "网络超时, 请重刷");
 		break;
 	case 0xFE:
-		display_3232(2, 0, "请稍等", DIS_CENTER);
-		display_3232(6, 0, "上一笔正在冲正", DIS_CENTER);
-		audio(Audio_TRY_AGAIN);  //s双通道
+		len += sprintf((char *)Buffer + len, "上一笔正在冲正");
 		break;
 
 	default:
 		break;
 	}
 
+
+	display(0, 0, (const char *)Buffer, 0);
 }
 
 unsigned char read_re_infor(unsigned char *out_infor, int *pOlen)

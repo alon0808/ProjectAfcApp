@@ -39,7 +39,7 @@
 //定义为新的模具车载机,需要更换编译工程。
 #define _New_Bu_mode_
 //使用外接键盘，现在用COM1
-#define KEYBOARD
+#define KEYBOARD	1
 //使用长沙测试平台
 #define _MOBILE_IP_CHANGSHA_
 #define _MOBILE_CMNET_
