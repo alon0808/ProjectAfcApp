@@ -152,6 +152,11 @@ AFC_CORE__API stUIData* GetStatusData(int timerTrige) {
 
 	if ((timerTrige & 0x1F) == 1) {
 		memcpy(pUIData->ud_devId, gDeviceParaTab.DeviceNo, 8);
+		if (strlen(pUIData->ud_devId) != 8) {
+			PRINT_ERRORBYS("GetStatusDatapUIData->ud_devId:", pUIData->ud_devId, LEN_DEV_ID);
+			memset(pUIData->ud_devId, '0', LEN_DEV_ID - 1);
+			pUIData->ud_devId[LEN_DEV_ID - 1] = '\0';
+		}
 		pUIData->ud_devId[LEN_DEV_ID - 1] = '\0';
 		memcpy(pUIData->ud_lineId, gDeviceParaTab.LineNo, LEN_LINE_ID);
 		memcpy(pUIData->ud_unionpayDevId, gDeviceParaTab.unionPayInof.unpayTerId, 8);

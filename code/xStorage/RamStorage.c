@@ -70,6 +70,9 @@ static void *getConfigPointer(unsigned int Address_f) {
 
 	switch (Address_f)
 	{
+	case BIT_LINENO:
+		pConfig = gDeviceParaTab.LineNo;
+		break;
 	case BIS_BLK_63:
 		pConfig = &gDeviceParaTab.unionPayInof.TYPE_63;
 		break;

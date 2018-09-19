@@ -70,6 +70,7 @@ private:
 	int s_menuStatus;
 	QMenu *s_menu;
 	QAction *s_action[10];
+	int s_actionFlag[10];
 	int s_maxMenuItem;
 	int s_curMenuItem;
 	DialogInput *s_dialInput;

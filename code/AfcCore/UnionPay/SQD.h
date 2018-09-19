@@ -1,7 +1,7 @@
 #ifndef _SQD_H_
 #define _SQD_H_
 
-#define TIMEOUT_PBOC_ONLINE	6000
+#define TIMEOUT_PBOC_ONLINE	5000
 
 typedef struct
 {

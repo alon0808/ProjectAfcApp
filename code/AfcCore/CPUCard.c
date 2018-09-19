@@ -867,14 +867,14 @@ unsigned char CPUcardType(void)
 	else
 		ret = gCardinfo.card_catalog;
 
-
+	PRINT_DEBUG("gDeviceParaTab.rate[gCardin11111:%d\n", gDeviceParaTab.rate[gCardinfo.card_catalog]);
 	if (gDeviceParaTab.rate[gCardinfo.card_catalog] == 0) {//折扣为0，不能消费
 		return ST_OK;
 	}
 
 	if (gDeviceParaTab.rate[gCardinfo.card_catalog] == 202)//免费消费
 	{
-		return MONTH_CARD;
+		return CARD_FREE;
 	}
 	else if ((gDeviceParaTab.rate[gCardinfo.card_catalog] == 104) || (gDeviceParaTab.rate[gCardinfo.card_catalog] == 204)) {
 		return CARD_forbid;//此卡被禁止使用
@@ -926,7 +926,7 @@ unsigned char cpuWriteFile03(unsigned char mode)
 
 	memset(buffer_3, 0, 16);
 
-	timeread((unsigned char*)&SysTime);//取时间
+	GetDateTime();//取时间
 	sysferead(BIT_LINENO, 3, buffer_2);//取线路号
 	memcpy(buffer_3, (unsigned char*)&SysTime, 7);
 	memcpy(buffer_3 + 7, buffer_2, 3);//线路号
@@ -935,7 +935,7 @@ unsigned char cpuWriteFile03(unsigned char mode)
 #else
 	Get_SerialNum(buffer_3 + 7 + 3);//改成序列号吧
 #endif
-									//	Ascii2BCD(pFistVary.DeviceNo,buffer_3+7+3,8); //保存设备编号 2016-7-28 15:54:49
+									//	Ascii2BCD(gDeviceParaTab.DeviceNo,buffer_3+7+3,8); //保存设备编号 2016-7-28 15:54:49
 	if (memcmp(old_Infor.resear, "\xAA\xAA", 2) == 0)//已经优惠过了
 		memset(buffer_3, 0, 16);
 	buffer_3[15] = MiBlockInvalid(0, 15, buffer_3);//校验码
@@ -1047,6 +1047,7 @@ unsigned char CPUDealCard(unsigned char mode, unsigned char cool)
 #ifdef _debug_CPU_
 	debugstring("选择应用 3F01:开始\r\n");
 #endif
+
 	if (cardSound == 0xaa) {
 		if (card_ser != gCardinfo.c_serial) {
 			card_ser = 0;
@@ -1149,23 +1150,30 @@ unsigned char CPUDealCard(unsigned char mode, unsigned char cool)
 	//	gCardinfo.card_catalog = CARD_NORMAL; CPU卡中有卡类
 	if (mode == MONTH_CARD)
 		s_sum1 = 1;
-	else
+	else {
 		s_sum1 = get_s_sum1(0);//取得消费金额
+#ifdef _debug_CPU_
+		//PRINT_DEBUG("get_s_sum1:%d\n", s_sum1);
+#endif
+	}
+	// #warning "处理扣费-----"
+	// 	if(s_sum1 == 0)//ttttttttttttttttt
+	// 		s_sum1 = 1;
 
-							   // #warning "处理扣费-----"
-							   // 	if(s_sum1 == 0)//ttttttttttttttttt
-							   // 		s_sum1 = 1;
-
-							   //	if ((s_sum1 == 0) || (s_sum1 > 20000))
+	//	if ((s_sum1 == 0) || (s_sum1 > 20000))
 	if (s_sum1 > 10000)
 		return 22;
 	value = s_sum1;
+#ifdef _debug_CPU_
+	PRINT_DEBUG("value:%d\n", value);
+#endif
 	RevertTurn(4, (unsigned char*)&value);
 	memcpy(sndbuf + i, (unsigned char*)&value, 4); i += 4;
 	if (ZJB_CARD)
 		memcpy(sndbuf + i, psamZJB.CardNO, 6);
-	else
+	else {
 		memcpy(sndbuf + i, psamZJB.CardNO, 6);
+	}
 	i += 6;
 	//	sndbuf[i++] = 0x0f;
 	deal2or3(sndbuf);
@@ -1516,6 +1524,51 @@ unsigned char OperCPUBlackCard(void)
 }
 
 
+unsigned char CPU3F01(void)
+{
+	unsigned int ret;
+	unsigned char sndbuf[100];
+	unsigned char revbuf[100];
+
+#ifdef _debug_CPU_
+	debugstring("选择应用 3F01:::开始\r\n");
+#endif
+
+	memcpy(sndbuf, "\x02\x00\xA4\x00\x00\x02\x3F\x01", 8);//有此卡需要用文件名，所以取不到时需要处理一下。
+	deal2or3(sndbuf);
+	ret = RfPassthrough(revbuf, 2, sndbuf, 8);
+#ifdef _debug_CPU_
+	debugdata(sndbuf, 8, 1);
+	debugstring("RCV::");
+	debugdata(revbuf, ret, 1);
+#endif
+	if (ret == 0)
+		return ST_ERROR;
+
+	if (memcmp(revbuf + ret - 2, "\x6A\x82", 2) == 0) {//不存在这个文件名，就按AID选文件
+
+		memcpy(sndbuf, "\x02\x00\xA4\x04\x00\x09\xA0\x00\x00\x00\x03\x86\x98\x07\x01", 15);
+		deal2or3(sndbuf);
+#ifdef _debug_CPU_
+		debugstring("select AID1:");
+		debugdata(sndbuf, 15, 1);
+#endif
+		ret = RfPassthrough(revbuf, 2, sndbuf, 15);
+#ifdef _debug_CPU_
+		debugdata(revbuf, ret, 1);
+#endif
+		if (ret == 0)
+			return ST_ERROR;
+	}
+
+	if (memcmp(revbuf + ret - 2, "\x90\x00", 2) != 0)
+		return ST_ERROR;
+
+	return ST_OK;
+}
+
+
+
 void CPUMainCard(void)
 {
 
@@ -1604,11 +1657,11 @@ void CPUMainCard(void)
 #endif
 		if ((ret == 3) || (ret == 4))//余额不足
 		{
-			// 			ret = CPU3F01();
-			// 			if (ret != ST_OK)
-			// 				break;
-			// 
-			// 			ret = CPUDealCard(MONEY_CARD, ret);//扣钱, 不能使用，因为会优惠信息，如果是月票的会把月票信息覆盖。
+			ret = CPU3F01();
+			if (ret != ST_OK)
+				break;
+
+			ret = CPUDealCard(MONEY_CARD, ret);//扣钱, 不能使用，因为会优惠信息，如果是月票的会把月票信息覆盖。
 			break;
 		}
 		break;
@@ -1770,8 +1823,10 @@ void CPUMainCard(void)
 	}
 CPUMEnd:
 	end_close_card(1);
-	gBuInfo.g24GDisFlash = 3;
-	gBuInfo.restore_flag = 0;
+	PRINT_DEBUG("CPUMainCard over\n");
+	//gBuInfo.g24GDisFlash = 3;
+	//gBuInfo.restore_flag = 0;
 
+	PRINT_DEBUG("CPUMainCard over111\n");
 }
 #endif // #ifdef BUS_CPU_

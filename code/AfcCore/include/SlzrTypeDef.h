@@ -433,11 +433,12 @@ typedef int boolean;
 #define CARD_MOTH_CI		13				//邯郸次卡  可以随意刷
 #define CARD_LIANGTONG_STUF 14              //手机员工卡
 
-#define CARD_QRC_LTY		15              //蓝泰源二维码
+#define CARD_XT_BANK		15				//邢台银行联名卡 
 
 #define CARD_qPBOC_BUS		16				//91 银行卡卡类 [在有些地方银行卡卡类写成不同的]
 #define CARD_qPBOC_QR		17				//91 银行卡卡类 [在有些地方银行卡卡类写成不同的]
 
+#define CARD_QRC_LTY		18              //蓝泰源二维码
 
 #define  CARD_FENDUAN_Line	33		//分段线路票价卡
 

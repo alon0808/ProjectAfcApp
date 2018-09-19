@@ -520,6 +520,9 @@ void audio(unsigned char flag)
 	case Audio_TRY_AGAIN:
 		strcat(wavfile, voice_showagain);
 		break;
+	case Audio_CY:
+		strcat(wavfile, voice_youfucard);
+		break;
 	default:
 		wavfile[0] = 0;
 		break;
@@ -716,7 +719,7 @@ unsigned char MiBlockInvalid(unsigned char mode, unsigned char count, unsigned c
 unsigned char GetTypeAUID(unsigned char *pUID)
 {
 #define _debugPSAM_
-	unsigned char buff[64];
+	unsigned char buff[164];
 	unsigned int len = 0;
 	unsigned int ret;
 

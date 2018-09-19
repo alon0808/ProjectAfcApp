@@ -377,10 +377,10 @@ void set_oda_para(void)
 		{
 #ifndef _New_Bu_mode_
 		case SLZRKEY_UP:
-			if ((pFistVary.DeviceNo[i] <= '0') || (pFistVary.DeviceNo[i] > '9'))
-				pFistVary.DeviceNo[i] = '9';
-			else if ((pFistVary.DeviceNo[i] <= '9') && (pFistVary.DeviceNo[i] > '0'))
-				pFistVary.DeviceNo[i]--;
+			if ((gDeviceParaTab.DeviceNo[i] <= '0') || (gDeviceParaTab.DeviceNo[i] > '9'))
+				gDeviceParaTab.DeviceNo[i] = '9';
+			else if ((gDeviceParaTab.DeviceNo[i] <= '9') && (gDeviceParaTab.DeviceNo[i] > '0'))
+				gDeviceParaTab.DeviceNo[i]--;
 
 			break;
 		case SLZRKEY_F2:
@@ -388,7 +388,7 @@ void set_oda_para(void)
 			if (i == 8)
 				i = 0;
 			memset(buffer, 0, 10);
-			memcpy(buffer, pFistVary.DeviceNo, 8);
+			memcpy(buffer, gDeviceParaTab.DeviceNo, 8);
 			display(2, 4, (char*)buffer, 0);
 			break;
 		case SLZRKEY_F1:
@@ -397,7 +397,7 @@ void set_oda_para(void)
 			else
 				i = 7;
 			memset(buffer, 0, 10);
-			memcpy(buffer, pFistVary.DeviceNo, 8);
+			memcpy(buffer, gDeviceParaTab.DeviceNo, 8);
 			display(2, 4, (char*)buffer, 0);
 			break;
 		case SLZRKEY_DOWN:
@@ -418,7 +418,7 @@ void set_oda_para(void)
 				ODA_BUFF[i] = '0';
 			break;
 		case SLZRKEY_ESC:
-			//memcpy(pFistVary.DeviceNo, pFistVary.DeviceNo_1, 8);
+			//memcpy(gDeviceParaTab.DeviceNo, gDeviceParaTab.DeviceNo_1, 8);
 			goto SetupDevi_exit;
 		case SLZRKEY_ENTER:
 #ifdef _New_Bu_mode_
@@ -512,10 +512,10 @@ void set__para(unsigned char len, unsigned char mode)
 		{
 #ifndef _New_Bu_mode_
 		case SLZRKEY_UP:
-			if ((pFistVary.DeviceNo[i] <= '0') || (pFistVary.DeviceNo[i] > '9'))
-				pFistVary.DeviceNo[i] = '9';
-			else if ((pFistVary.DeviceNo[i] <= '9') && (pFistVary.DeviceNo[i] > '0'))
-				pFistVary.DeviceNo[i]--;
+			if ((gDeviceParaTab.DeviceNo[i] <= '0') || (gDeviceParaTab.DeviceNo[i] > '9'))
+				gDeviceParaTab.DeviceNo[i] = '9';
+			else if ((gDeviceParaTab.DeviceNo[i] <= '9') && (gDeviceParaTab.DeviceNo[i] > '0'))
+				gDeviceParaTab.DeviceNo[i]--;
 
 			break;
 		case SLZRKEY_F2:
@@ -523,7 +523,7 @@ void set__para(unsigned char len, unsigned char mode)
 			if (i == 8)
 				i = 0;
 			memset(buffer, 0, 10);
-			memcpy(buffer, pFistVary.DeviceNo, 8);
+			memcpy(buffer, gDeviceParaTab.DeviceNo, 8);
 			display(2, 4, (char*)buffer, 0);
 			break;
 		case SLZRKEY_F1:
@@ -532,7 +532,7 @@ void set__para(unsigned char len, unsigned char mode)
 			else
 				i = 7;
 			memset(buffer, 0, 10);
-			memcpy(buffer, pFistVary.DeviceNo, 8);
+			memcpy(buffer, gDeviceParaTab.DeviceNo, 8);
 			display(2, 4, (char*)buffer, 0);
 			break;
 		case SLZRKEY_DOWN:
@@ -1371,7 +1371,7 @@ unsigned int Build_qpboc_8583_48(unsigned char *dat)
 	//sysferead(BIT_DRICE_CARD, 4, tmpChs);
 	//	sysferead(BIT_car_num, BIT_car_num_LEN, tmpChs);
 	//BCD2Ascii(tmpChs, dat + len, 4);
-	memcpy(dat + len, pFistVary.DeviceNo, 8); //车牌号
+	memcpy(dat + len, gDeviceParaTab.DeviceNo, 8); //车牌号
 	len += 8;
 	memcpy(dat + len, "\xFF\x64\x08", 3);
 	len += 3;
@@ -1622,7 +1622,7 @@ unsigned int Build_qpboc_8583_55(unsigned char *dat, unsigned char isSetbitMap)
 	MSG_LOG("55.15:9F1E:设备序列号:");
 	memcpy(dat + pos, "\x9F\x1E\x08", 3);
 	pos += 3;
-	//	memcpy(dat+pos, pFistVary.DeviceNo,8);
+	//	memcpy(dat+pos, gDeviceParaTab.DeviceNo,8);
 	memcpy(dat + pos, INFO_9F1E, 8);
 	BCD_LOG(dat + pos, 8, 1);
 	pos += 8;
@@ -1987,7 +1987,7 @@ unsigned int tag_A2(unsigned char *dat)
 	// 	memcpy(dat + pos, DEV_TYPE, 8);
 	// 	A2_pos += 8;
 	// 	pos += 8;
-	// 	memcpy(dat + pos, pFistVary.DeviceNo, 8);
+	// 	memcpy(dat + pos, gDeviceParaTab.DeviceNo, 8);
 	// 	A2_pos += 8;
 	// 	pos += 8;
 
@@ -2843,7 +2843,7 @@ int build8583_qpboc_Auth(unsigned char *oDat, unsigned inout) {
 
 // 	memcpy(oDat + ilen, DEV_TYPE, 8);
 // 	ilen += 8;
-// 	memcpy(oDat + ilen, pFistVary.DeviceNo, 8);
+// 	memcpy(oDat + ilen, gDeviceParaTab.DeviceNo, 8);
 // 	ilen += 8;
 	memcpy(oDat + ilen, DEV_TYPE, 8);
 	ilen += 8;
@@ -3952,6 +3952,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 			//CDE39991B206A0F6BDD85D2F0417B7FC
 			memcpy(KEK, "\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31", 16);
 #endif
+#elif SWITCH_DEBUG_UNIONPAY == 2
+			memcpy(KEK, "\x2A\xB3\xF1\xA8\x8F\x7F\xC1\x29\x2A\x32\xF4\x5E\xFD\x8C\x94\xA7", 16);
 #endif
 
 			MSG_LOG("(char*)smpPara.KEK:\n");
@@ -5857,7 +5859,7 @@ void down_kek_TMS(void)
 				BCD_LOG(buff_2, 80, 1);
 
 				// 
-				// 			if(memcmp(pFistVary.DeviceNo,buff_2+24,8)!=0)
+				// 			if(memcmp(gDeviceParaTab.DeviceNo,buff_2+24,8)!=0)
 				// 			{
 				// 				cls();
 				// 				display(2, 0, "获取失败，请重试", DIS_CONVERT | DIS_CENTER);

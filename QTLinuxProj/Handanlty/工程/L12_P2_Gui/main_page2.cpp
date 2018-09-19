@@ -67,6 +67,7 @@ CMainPage2::CMainPage2(QWidget *parent) :
 	s_menuStatus = 0;
 	s_menu = NULL;
 	memset(s_action, 0, sizeof(s_action));
+	memset(s_actionFlag, 0, sizeof(s_actionFlag));
 	s_curMenuItem = 0;
 	s_maxMenuItem = 0;
 	s_dialInput = NULL;
@@ -2108,8 +2109,9 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 #define CREATEMENUACTION(title, ID)	ptmpItem = new QAction(title, gMainPageThis);\
 	ptmpItem->setCheckable(true);\
 	s_action[s_maxMenuItem] = ptmpItem;\
-	menu->addAction(ptmpItem);\
-	++s_maxMenuItem;
+	s_actionFlag[s_maxMenuItem] = ID;\
+	menu->addAction(ptmpItem); \
+		++s_maxMenuItem;
 
 	QAction *ptmpItem = s_action[s_curMenuItem];
 	QAction *ptmpItem1 = NULL;
@@ -2191,7 +2193,8 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 
 					s_dialInput = pDialInput;
 				}
-				switch (s_curMenuItem + 1)
+				printf("s_actionFlag[s_curMenuItem]:%d\n", s_actionFlag[s_curMenuItem]);
+				switch (s_actionFlag[s_curMenuItem])
 				{
 				case ms_setDevId:
 					pDataVal = s_uiData->ud_devId;
@@ -2213,7 +2216,7 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 				menu->setVisible(false);
 				s_menuStatus |= ms_setMenu;
 				s_menuStatus &= ~ms_maskSet;
-				s_menuStatus += s_curMenuItem + 1;
+				s_menuStatus += s_actionFlag[s_curMenuItem];
 			}
 			break;
 		case SLZRKEY_UP:

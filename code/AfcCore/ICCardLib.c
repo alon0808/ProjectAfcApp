@@ -182,7 +182,8 @@ int File_read(unsigned char mode)
 		fd = open(fullName, O_CREAT | O_WRONLY, S_IRWXG | S_IRWXO | S_IRWXU);	//写黑名单索引文件
 	}
 
-	if (ret < dLen) {	//文件不存在 当前新建一个
+	PRINT_DEBUG("文件情况.%d.%d.%d.%d", ret, dLen, ret < dLen, ret < (int)dLen);
+	if (ret < (int)dLen) {	//文件不存在 当前新建一个
 		PRINT_DEBUG("创建或者修改文件:%d, %d", ret, dLen);
 		if (fd >= 0)
 		{
@@ -798,7 +799,7 @@ void end_card(void)
 {
 	unsigned int i;
 	unsigned int sno1;
-	unsigned char buffer[10];
+	unsigned char buffer[20];
 	//	unsigned char key;
 
 	//	debugstring("int-------------\r\n");
@@ -843,6 +844,7 @@ void end_card(void)
 
 	//	printf("[%s] END :%04X\r\n", __FUNCTION__, i);
 	MifareHalt();
+	PRINT_DEBUG("end_card over\n");
 	return;
 }
 
@@ -966,6 +968,7 @@ void setAudioHANDAN(void)//邯郸
 	gDeviceParaTab.voice[CARD_NORMAL_B] = Audio_zuanxian;		//邯钢专线卡  //增加专线卡 2014.4.8
 	gDeviceParaTab.voice[CARD_YOUFU_BUS] = Audio_DONG;		//邯钢优抚卡， 扣次报“优抚”，扣钱“咚”
 	gDeviceParaTab.voice[CARD_LIANGTONG_STUF] = Audio_STUFF; //员工手机卡
+	gDeviceParaTab.voice[CARD_XT_BANK] = Audio_DONG; //邢台银行卡
 
 }
 
@@ -1573,7 +1576,7 @@ unsigned char PsamInitialize(void)
 	if (Verify_private_PIN(psamZJB.SLot, 3, buffer) == 0) {
 		debugstring("verify PIN ERROR!!\r\n");
 		return ST_ERROR;
-	}
+}
 #endif
 	//	delayxms(10);
 #ifdef _debug_ICcard_
@@ -2081,7 +2084,7 @@ unsigned char Card_typeProcess(void)
 	}
 	if (gCardinfo.card_catalog == CARD_FENDUAN_Line) {
 		return CONTROL_CARD;
-	}
+}
 #endif //#ifdef BUS_Cloud_
 
 #ifdef _debug_ICcard_
@@ -2603,9 +2606,9 @@ int getCardtypeHANDAN(char *cardD, unsigned char type)
 	{
 		strcpy(cardD, "员工手机卡");
 	}
-	else if (type == CARD_LIANGTONG_STUF)
+	else if (type == CARD_XT_BANK)
 	{
-		strcpy(cardD, "员工手机卡");
+		strcpy(cardD, "邢台银行卡");
 	}
 	else if (type == CARD_QRC_LTY)
 	{
@@ -2647,11 +2650,12 @@ void disp_no_swipe(void)
 	led_on(LED_RED);
 	cls();
 	getCardtype(dnssbuf, gCardinfo.card_catalog);
-	display(0, 0, dnssbuf, DIS_CENTER);
-	display(4, 1, "不能带人乘车!", DIS_CENTER);
+	//display(0, 0, dnssbuf, DIS_CENTER);
+	strcat(dnssbuf, STR_NEW_LINE"不能带人乘车!");
+	display(4, 1, dnssbuf, DIS_CENTER);
 
 #ifdef _debug_ICcard_
-	sleep(5);
+	//sleep(5);
 #endif
 
 }
@@ -2706,14 +2710,16 @@ void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsign
 		if (s_sum1 == 0) {
 			len = 0;
 			len += sprintf(dispBuf + len, "欢迎乘车"STR_NEW_LINE);
+#if 0
 			if (gCardinfo.card_catalog == CARD_DRIVER_BUS) {
 				len += sprintf(dispBuf + len, "员工卡");
 			}
 			else {
 				getCardtype((char*)dispBuf + len, gCardinfo.card_catalog);
 				len = strlen(dispBuf);
-			}
 		}
+#endif
+	}
 		else
 		{
 			len = 0;
@@ -2731,7 +2737,7 @@ void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsign
 			sprintf(dispBuf + len, "%d", gCardinfo.card_catalog);
 		}
 		display(0, 1, dispBuf, 0);
-	}
+}
 	else
 	{
 		len = 0;
@@ -3914,7 +3920,7 @@ again:
 	eemoney = s_sum1 * 4;
 	if ((a_sum1 >= s_sum1) && (a_sum1 < eemoney)) {
 		gCardinfo.gucSoudnorm = 1;
-	}
+}
 #else
 	if ((a_sum1 >= s_sum1) && (a_sum1 < 500)) {
 		gCardinfo.gucSoudnorm = 1;
@@ -4671,7 +4677,7 @@ month_step9:
 month_step10:
 	ErrorOper(IS_EFFECT_MONTH);
 	return 5;
-}
+	}
 
 unsigned char MonthResultManage(void)
 {
@@ -4889,7 +4895,7 @@ void main_card(void)
 	if ((resPonse == MONTH_CARD) || (resPonse == CARD_MONEY) || (resPonse == CARD_YEAR) || (resPonse == CARD_STUFF_BUS)) {
 		FengDuan_BUS_card();
 		return;
-	}
+}
 #endif	//#ifdef FengDuan_BU_
 
 

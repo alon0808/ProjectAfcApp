@@ -196,7 +196,7 @@ void set_over_time(unsigned char mode, unsigned char len) {
 			break;
 
 		case SLZRKEY_ESC:
-			//memcpy(pFistVary.DeviceNo, pFistVary.DeviceNo_1, 8);
+			//memcpy(gDeviceParaTab.DeviceNo, gDeviceParaTab.DeviceNo_1, 8);
 			goto SetupDevi_exit;
 		case SLZRKEY_ENTER:
 

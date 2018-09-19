@@ -412,14 +412,14 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 	int tmpI = 0;
 	//	BER_TVL TempTVL;
 
-
 #if 0
 	msecends = Q_QPBOC_para.shuangmian_OVER_TIME;//get_over_time_shuang();
 	msecends = msecends * 1000;
 	msecends += 250;
 #else
-	msecends = 1000;
+	msecends = 5000;
 #endif
+	msecends = TIMEOUT_PBOC_ONLINE;
 
 	if (msecends > 0) {
 		flag = 0;

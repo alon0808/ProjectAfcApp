@@ -30,6 +30,7 @@
 #include "GprsSocket.h"
 
 extern fFlagVary_1 gBuInfo;
+extern stDeviceParatable gDeviceParaTab;
 
 extern void savesysbupara(void);
 extern void saveCpuInfo(unsigned char mode, unsigned char *dat);
@@ -357,7 +358,7 @@ unsigned char get_SN(unsigned char * SN, unsigned char mode)
 	memset(buff, 0, sizeof(buff));
 	strcat((char*)buff + len, DEV_TYPE);
 	len += (strlen(DEV_TYPE));
-	memcpy(buff + len, pFistVary.DeviceNo, 8);
+	memcpy(buff + len, gDeviceParaTab.DeviceNo, 8);
 	len += 8;
 	MSG_LOG("厂商序列号=%d\r\n", (strlen(DEV_TYPE) + 8));
 	//MSG_LOG("长度=%d\r\n", len);
@@ -1612,9 +1613,9 @@ void save_tms_para(void)
 		// 			break;
 		// 		}
 #if 0
-		memcpy(pFistVary.DeviceNo,TMS_para.para_04000014.val, 9);
-		memcpy(buffer, pFistVary.DeviceNo, 9);
-		sysfewrite(BIT_DEVICE_NO, 9, pFistVary.DeviceNo);
+		memcpy(gDeviceParaTab.DeviceNo,TMS_para.para_04000014.val, 9);
+		memcpy(buffer, gDeviceParaTab.DeviceNo, 9);
+		sysfewrite(BIT_DEVICE_NO, 9, gDeviceParaTab.DeviceNo);
 		sysferead(BIT_DEVICE_NO, 9, buffer);
 		savesysbupara();
 		saveCpuInfo(2, buffer);
