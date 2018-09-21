@@ -28,7 +28,7 @@
 #endif
 
 
-#define DownDir	"/mnt/appbak/"
+#define DownDir	"/mnt/posdata/"
 
 pthread_t tidmain_mainDownload = 0;
 
@@ -264,11 +264,21 @@ unsigned long get_file_size(const char *filename)
 void download(int client_socket, char *file_name, long content_length, char *shortFilename)
 {
 	/*下载文件函数*/
-	long hasrecieve = 0;//记录已经下载的长度
+	unsigned long hasrecieve = 0;//记录已经下载的长度
 	struct timeval t_start, t_end;//记录一次读取的时间起点和终点, 计算速度
-	int mem_size = 8192;//缓冲区大小8K
+	int mem_size = 20480;//缓冲区大小8K
 	int buf_len = mem_size;//理想状态每次读取8K大小的字节流
 	int len;
+	char *buf = NULL;
+
+	//从套接字流中读取文件流
+	long diff = 0;
+	int prelen = 0;
+	int speed;
+
+	int pos = 0;
+	unsigned char sndbuf[128];
+	unsigned char tmpBuf[100];
 
 	//创建文件描述符
 	int fd = open(file_name, O_CREAT | O_WRONLY, S_IRWXG | S_IRWXO | S_IRWXU);
@@ -277,36 +287,31 @@ void download(int client_socket, char *file_name, long content_length, char *sho
 		printf("文件创建失败!\n");
 		return;
 	}
-
-	char *buf = (char *)malloc(mem_size * sizeof(char));
-
-	//从套接字流中读取文件流
-	long diff = 0;
-	int prelen = 0;
-	double speed;
-
-	int pos = 0;
-	unsigned char sndbuf[128];
-
+	PRINT_DEBUG(" *)malloc(mem_si:%d\n", mem_size);
+	buf = (char *)malloc(mem_size * sizeof(char));
 	while (hasrecieve < content_length)
 	{
 		gettimeofday(&t_start, NULL); //获取开始时间
 		len = read(client_socket, buf, buf_len);
+		if (len <= 0) {
+			continue;
+		}
 		write(fd, buf, len);
 		gettimeofday(&t_end, NULL); //获取结束时间
 
 		hasrecieve += len;//更新已经下载的长度
 
 						  //计算速度
-		if (t_end.tv_usec - t_start.tv_usec >= 0 && t_end.tv_sec - t_start.tv_sec >= 0)
-			diff += 1000000 * (t_end.tv_sec - t_start.tv_sec) + (t_end.tv_usec - t_start.tv_usec);//us
+		diff += (t_end.tv_sec - t_start.tv_sec) * 1000000 + (t_end.tv_usec - t_start.tv_usec);//us
 
 		if (diff >= 1000000)//当一个时间段大于1s=1000000us时, 计算一次速度
 		{
-			speed = (double)(hasrecieve - prelen) / (double)diff * (1000000.0 / 1024.0);
+			PRINT_DEBUG("hasrecieve - prelen,diff:%d,%d,%d\n", hasrecieve, prelen, diff);
+			diff /= 1000000;
+			speed = (hasrecieve - prelen) / (diff * 1024);
 			prelen = hasrecieve;//清零下载量
 			diff = 0;//清零时间段长度
-
+#if 0
 			memset(sndbuf, 0, sizeof(sndbuf));	//发送进度到主机,速度太快时，小于1秒钟下载完成则进不来。
 			sndbuf[pos++] = 2;
 			strcpy((char *)sndbuf + pos, shortFilename);
@@ -316,6 +321,11 @@ void download(int client_socket, char *file_name, long content_length, char *sho
 			memcpy(sndbuf + pos, (unsigned char*)&hasrecieve, 4);
 			pos += 4;
 			//com_send_data_OTHER_CMD(0, 0x09, pos, sndbuf);//CMD发09，主机不应答，如果要应答需要发29
+#endif
+
+			sprintf(tmpBuf, "进度:%d%%<br/>速度:%dKB/s", (hasrecieve * 100) / content_length, speed);
+			PRINT_DEBUG(tmpBuf);
+			miniDispstr(0, 0, tmpBuf, 1);
 		}
 
 
@@ -323,6 +333,7 @@ void download(int client_socket, char *file_name, long content_length, char *sho
 		//progress_bar(hasrecieve, content_length, speed);
 
 		if (hasrecieve == content_length) {
+#if 0
 			memset(sndbuf, 0, sizeof(sndbuf));	//发送进度到主机,完成了，要发。
 			sndbuf[pos++] = 2;
 			strcpy((char *)sndbuf + pos, shortFilename);
@@ -332,8 +343,18 @@ void download(int client_socket, char *file_name, long content_length, char *sho
 			memcpy(sndbuf + pos, (unsigned char*)&hasrecieve, 4);
 			pos += 4;
 			//com_send_data_OTHER_CMD(0, 0x09, pos, sndbuf);//CMD发09，主机不应答，如果要应答需要发29
+#endif
+			sprintf(tmpBuf, "http下载完成:%s\n", file_name);
+			//PRINT_DEBUG(tmpBuf);
+			miniDispstr(0, 0, tmpBuf, 1);
 			break;
 		}
+	}
+	if (buf != NULL) {
+		free(buf);
+	}
+	if (fd >= 0) {
+		close(fd);
 	}
 }
 
@@ -482,18 +503,17 @@ int processHTTPDown(int mode, char *url, char *DFileName)
 	}
 
 	strcpy(file_name, DownDir);
-	strcat(file_name, "/");
 	strcat(file_name, DFileName);	//使用传进来的文件名
 	puts("\n>>>>下载地址解析成功<<<<");
 	printf("\t下载地址: %s\n", url);
 	printf("\t远程主机: %s\n", host);
 	printf("\tIP 地 址: %s\n", ip_addr);
 	printf("\t主机PORT: %d\n", port);
-	printf("\t 文件名 : %s\n\n", file_name);
+	printf("\t  文件名: %s\n\n", file_name);
 
 
 	strcpy(downfiletemp, DownDir);
-	strcat(downfiletemp, "/downtemp.tar");
+	strcat(downfiletemp, "downtemp.tar");
 
 	//设置http请求头信息
 	char header[2048] = { 0 };
@@ -569,7 +589,7 @@ int processHTTPDown(int mode, char *url, char *DFileName)
 
 		length += len;
 	}
-
+	PRINT_DEBUG("httphead:%d\n", response);
 	struct HTTP_RES_HEADER resp = parse_header(response);
 
 	printf("\n>>>>http响应头解析成功:<<<<\n");
@@ -627,25 +647,28 @@ int processHTTPDown(int mode, char *url, char *DFileName)
 
 void* main_HTTPDataDown(void *arg)
 {
+//#define _debug_
 	int n, ret;
 	boolean f = FALSE;
 	char fullName[256];
 	char IndexName[256];
+	char tmpBuffer[256];
 	char tarName[256];
 	//	char HttpDes[] = "http://120.77.173.234/download/";		//这里还是使用的固定目录,正式使用时要和公交的通讯服务器地址一样
 	//	char HttpDes[] = "http://139.199.161.164:12020/File/Down?merchant=00000000&file=BLKBUS&ver=0012";
 
-
+#ifdef _debug_
+	printf("main_HTTPDataDown:%s\r\n", gHttpDinfo.Filename);
+#endif
 	while (1) {
-		if (gGprsinfo.isNetOK[LINK_GJ] == TRUE) {
+		if (gGprsinfo.isNetOK[LINK_GJ] != BOOL_FALSE) {
 			if (gHttpDinfo.Dtype == HTTP_NEED_DOWN) {
 #ifdef _debug_
-				printf("HTTPData gHttpDinfo.Filename:%s\r\n", gHttpDinfo.Filename);
+				printf("HTTPData gHttpDinfo.Filename:%s\r\n", gHttpDinfo.Filename, gHttpDinfo.HttpAddr);
 #endif
 				if (strlen(gHttpDinfo.Filename) != 0) {	//文件名根据应用生成
 
 					strcpy(fullName, DownDir);
-					strcat(fullName, "/");
 					strcat(fullName, gHttpDinfo.Filename);
 
 					getFilesName(gHttpDinfo.FFlag, IndexName);
@@ -675,7 +698,6 @@ void* main_HTTPDataDown(void *arg)
 
 							memset(IndexName, 0, sizeof(IndexName));
 							strcpy(IndexName, DownDir);
-							strcat(IndexName, "/");
 							memcpy(IndexName + strlen(IndexName), gHttpDinfo.FFlag, 3);
 							strcat(IndexName, "index");
 							if (access(IndexName, F_OK) != -1)
@@ -700,37 +722,57 @@ void* main_HTTPDataDown(void *arg)
 								strcpy(tarName, EC20PRO_LIST_FILE_NAME);
 
 							remove(tarName);
-							if (rename(fullName, tarName) == 0) {
+
+
+							sprintf(tmpBuffer, "mv %s %s", fullName, tarName);
+							printf("mv system:%s.\n", tmpBuffer);
+							ret = system(tmpBuffer);
+							if (ret == 0) {
 								printf("\n%s complete! ^_^\n\n", tarName);
 							}
 							else
 							{
-								remove(fullName);
+								//remove(fullName);
 								perror("rename");
 							}
 
 							if (memcmp(gHttpDinfo.FFlag, SL8583FileFLAG_EC20, 3) == 0) {
 								//把原有程序备份
-								if (access("/usrdata/qr/wxhj_bak/", F_OK) == -1) {
-									mkdir("/usrdata/qr/wxhj_bak", 0777);
+								if (access(BackDir, F_OK) == -1) {
+									mkdir(BackDir, 0777);
 								}
 
-								system("mv -f /usrdata/qr/ec20net /usrdata/qr/wxhj_bak/");
+								system("cp -r "APPDIR BackDir);
 
-								strcpy(tarName, "tar -xvf ");
+								strcpy(tarName, "tar -zxvf ");
 								strcat(tarName, EC20PRO_LIST_FILE_NAME);
-								strcat(tarName, " -C /usrdata/qr/");
+								strcat(tarName, " -C "APPDIR);
 
+								printf("ar -zxv :%s.\n", tarName);
 								ret = system(tarName);
 
 								remove(IndexName);
 								MSG_LOG("SYStem:ret:%d\r\n", ret);
 								sleep(1);
 								system("reboot");
-
+								sleep(10);
 							}
 							else if (memcmp(gHttpDinfo.FFlag, SL8583FileFLAG_PRO, 3) == 0) {	//下载了车载机程序，下载完成后需要把程序传给车载机
-																								//								SendPROtoBUS();	//在 OtherMission 定时任务内下发
+
+								system("cp -r "APPDIR" "BackDir);
+
+								strcpy(tarName, "tar -xvf ");
+								strcat(tarName, BUSPRO_LIST_FILE_NAME);
+								strcat(tarName, " -C "APPDIR);
+								strcat(tarName, " && chmod +x /mnt/app/ltyapp/upgradeLty.sh && /mnt/app/ltyapp/upgradeLty.sh");
+
+								ret = system(tarName);
+
+								remove(IndexName);
+								MSG_LOG("SYStem:ret:%d\r\n", ret);
+								sleep(1);
+								//system("reboot");	// SendPROtoBUS();	//在 OtherMission 定时任务内下发
+								sleep(10);
 							}
 							else {
 								getEc20FilesVer();	//重新获取文件版本，把版本信息给主机
@@ -765,6 +807,7 @@ void* main_HTTPDataDown(void *arg)
 		}
 		sleep(1);
 	}
+	tidmain_mainDownload = 0;
 	pthread_exit((void *)2);  // Explicitly exit the thread, and return (void *)2
 
 }

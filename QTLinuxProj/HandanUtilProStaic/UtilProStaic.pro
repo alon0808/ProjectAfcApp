@@ -6,6 +6,7 @@
 
 QT       -= core gui
 
+QMAKE_CC = arm-linux-gnueabi-gcc
 TARGET = UtilPro
 TEMPLATE = lib
 CONFIG += staticlib
@@ -14,9 +15,9 @@ DEFINES += _linux_
 INCLUDEPATH += ../../code/AfcCore/include/
 INCLUDEPATH += ../../code/public/
 INCLUDEPATH += ../../code/UtilProc/
+INCLUDEPATH += ../../code/xStorage/
 
-SOURCES += utilprostaic.cpp \
-    ../../code/UtilProc/UtilityProc.c \
+SOURCES += ../../code/UtilProc/UtilityProc.c \
     ../../code/UtilProc/ProcTlv.c \
     ../../code/UtilProc/ConvertData.c \
     ../../code/UtilProc/cJSON.c

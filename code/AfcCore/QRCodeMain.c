@@ -56,7 +56,7 @@
 // //libQRScan.a 库内函数，验证蓝泰源二维码
 // extern "C" int HDQRCodeVerify(StHDQRCinput *inData, unsigned char *OutRecord, unsigned int *OutRecLen);
 
-#define _debug_QRCode_
+//#define _debug_QRCode_
 
 
 

@@ -2324,10 +2324,10 @@ int QPBOC_TMS_DataDeal(char *pData, int datlen) {
 	int ret;
 	unsigned char kek1[16];
 	unsigned char kek2[16];
-#ifdef _debug_
+
 	int tmpI;
 	//	unsigned char jsonChs1[500];
-#endif
+
 	unsigned int valUInt32 = 0;
 
 	char *pTmpCh = NULL;

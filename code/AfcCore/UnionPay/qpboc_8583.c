@@ -3954,6 +3954,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 #endif
 #elif SWITCH_DEBUG_UNIONPAY == 2
 			memcpy(KEK, "\x2A\xB3\xF1\xA8\x8F\x7F\xC1\x29\x2A\x32\xF4\x5E\xFD\x8C\x94\xA7", 16);
+			saveMobileParameter(2, KEK);
 #endif
 
 			MSG_LOG("(char*)smpPara.KEK:\n");
@@ -4116,7 +4117,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 					ODA_time = 0;
 					PAY_MODE_SWITCH(shuangmian, switch_both);//双通道切换
 				}
-			}
+		}
 #endif
 			//	PAY_MODE_SWITCH(shuangmian, switch_both);//双通道切换
 			MSG_LOG("上传ODA交易记录返离开的\r\n");
@@ -4127,7 +4128,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 			if (gGprsinfo.GPRSLinkProcess == GPRS_SENDING_CMD)
 				gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
-		}
+	}
 		//add hbg
 		else if (ACK_flag == 0)
 		{
@@ -4186,7 +4187,7 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 		break;
 
 
-	}
+}
 
 	clr_wdt();
 pboc_8583dataDealEnd:
@@ -4283,7 +4284,7 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 	if (save_infor_add(ODA_FeRC_Check, NULL) != Ret_NO) {
 		MSG_LOG("要上传冲正交易---\r\n");
 		gGprsinfo.gmissflag = MISS_PBOC_RE_PURSE;
-	}
+}
 #else
 	//	MSG_LOG("Q_pos_infor.flge=%x--get_repurse_num()=%d-\r\n",Q_pos_infor.flge,get_repurse_num());
 	if (get_repurse_num() == ST_OK  && Q_pos_infor.flge != 0xad)  //再请款Q_pos_infor.flge!=0xea
@@ -4699,7 +4700,7 @@ int qpboc_qr_main(char *QRCdat, unsigned char *Rdata)
 	{
 		disp_no_swipe();
 		return ST_OK;
-	}
+}
 #endif
 
 	MSG_LOG("交易码:%s\r\n", qr_pboc_AccountNo);
@@ -4929,7 +4930,7 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 		MSG_LOG("覆盖flash 2 fe\r\n");
 		sysfewrite(BIT_qpbpc_para, sizeof(stMobileParameter), (unsigned char *)&smpPara);
 		return ST_ERROR;
-	}
+}
 #endif
 
 	switch (mode) {
@@ -5088,13 +5089,15 @@ void saveMobileParameter(unsigned char mode, const void *pParam)
 	unsigned int itemp;
 	unsigned char *buf = (unsigned char *)pParam;
 
+#if 0
 	MSG_LOG("%s,%d\r\n", __FUNCTION__, mode);
 	sysferead(BIT_qpbpc_para, sizeof(stMobileParameter), (unsigned char *)&smpPara);
 
 	itemp = __cpuCrc32((unsigned char*)&smpPara, (sizeof(stMobileParameter) - 4));
 	if (memcmp((unsigned char*)&itemp, smpPara.CrcCheck, 4) != 0) {//校验错
 		memset((unsigned char*)&smpPara, 0, sizeof(stMobileParameter));
-	}
+}
+#endif
 
 	switch (mode) {
 	case 1:

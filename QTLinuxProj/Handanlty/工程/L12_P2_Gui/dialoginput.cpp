@@ -44,31 +44,34 @@ int DialogInput::Init(int type, QString title, int len, char *pVal) {
 
 		this->hide();
 	}
-	else if (type == ms_getDevInfo) {
-		ui->lineEdit_value->hide();
-		ui->buttonBox->setStandardButtons(QDialogButtonBox::NoButton);
-
-		BytesToChars(pVal, len, tmpBuffer, 1000);
-		//SetDevParam(dpt_unionpayDownKey, NULL, 0);
-		ui->label_Infor->setText(tmpBuffer);
-	}
 	else {
-		ui->lineEdit_value->show();
-		ui->buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
-		if (pVal != NULL) {
-			ui->lineEdit_value->setText(pVal);
-			m_maxlen = strlen(pVal);
-			if (m_maxlen > sizeof(textVal) - 1) {
-				return -1;
-			}
-			memcpy(textVal, pVal, m_maxlen);
+		if (type == ms_getDevInfo) {
+			ui->lineEdit_value->hide();
+			ui->buttonBox->setStandardButtons(QDialogButtonBox::NoButton);
+
+			BytesToChars(pVal, len, tmpBuffer, 1000);
+			//SetDevParam(dpt_unionpayDownKey, NULL, 0);
+			ui->label_Infor->setText(tmpBuffer);
 		}
 		else {
-			m_maxlen = 0;
-			textVal[0] = '\0';
+			ui->lineEdit_value->show();
+			ui->buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
+			if (pVal != NULL) {
+				ui->lineEdit_value->setText(pVal);
+				m_maxlen = strlen(pVal);
+				if (m_maxlen > sizeof(textVal) - 1) {
+					return -1;
+				}
+				memcpy(textVal, pVal, m_maxlen);
+			}
+			else {
+				m_maxlen = 0;
+				textVal[0] = '\0';
+			}
+			m_curPos = 0;
+			ui->lineEdit_value->setSelection(m_curPos, 1);
+
 		}
-		m_curPos = 0;
-		ui->lineEdit_value->setSelection(m_curPos, 1);
 
 		this->show();
 	}

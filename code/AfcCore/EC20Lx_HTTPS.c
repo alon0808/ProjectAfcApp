@@ -30,8 +30,8 @@
 static SSL_CTX* s_hSslCtx = NULL;
 static SSL *s_hSsl;
 
-#define CACERT_DIR		"/usrdata/qr/"
-#define CACERT_FILEPATH	"/usrdata/qr/cacert.pem"
+#define CACERT_DIR		BackDir
+#define CACERT_FILEPATH	CACERT_DIR"cacert.pem"
 
 typedef struct {
 	char *memory;
@@ -1218,11 +1218,11 @@ int https_performSsl_Test(const char* ip, int port, int time) {
 	curl_easy_setopt(hnd, CURLOPT_WRITEDATA, &chunk);
 
 	curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYPEER, 0);
-	curl_easy_setopt(hnd, CURLOPT_CAPATH, "/usrdata/qr/");
+	curl_easy_setopt(hnd, CURLOPT_CAPATH, CACERT_DIR);
 	//curl_easy_setopt(hnd,CURLOPT_CAINFO,"./res/cacert-test.pem"); 
 	curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYHOST, 0);//不验证主机证书// 
 
-	curl_easy_setopt(hnd, CURLOPT_CAINFO, "/usrdata/qr/cacert.pem");
+	curl_easy_setopt(hnd, CURLOPT_CAINFO, CACERT_FILEPATH);
 
 
 	curl_easy_setopt(hnd, CURLOPT_VERBOSE, 1L);

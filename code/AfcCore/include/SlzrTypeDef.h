@@ -1274,7 +1274,9 @@ typedef enum {
 #define voice_invalidRQC	"/mnt/qrdata/wav/invalidRQC.wav"		//无效二维码*
 
 //文件相关定义
-#define WorkDir "/mnt/posdata"
+#define WorkDir "/mnt/posdata/"
+#define BackDir "/mnt/appbak/"
+#define APPDIR "/mnt/app/ltyapp/"
 
 //设备信息文件,保存不是经常更改的设备信息，比如商户号、设备号、票价、线路号等
 #define _File_DevicePara "/DevicePara.inf"

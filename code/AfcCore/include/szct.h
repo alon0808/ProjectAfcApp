@@ -10,7 +10,7 @@
 #include "BuCtrlFlag.H"
 
 
-#if 1
+#if 0
 //#define _debug_sys_info_
 #define _debug_
 //#define debug_IF2_TLVDeal_
@@ -66,10 +66,8 @@
 #define GPS_COM COM5
 
 //程序版本号
-#ifdef _debug_
-#define SOFT_VER_TIME_LOG 0x013
-#define SOFT_VER_TIME "2018.09.21 11:50 CHANGSHA"	//
-#endif
+#define SOFT_VER_TIME_LOG 0x0100
+#define SOFT_VER_TIME "2018.09.21 21:25 CHANGSHA"	//
 
 #define PRAGRAMMER "ZZC"
 
@@ -369,7 +367,7 @@ key 28 Released*/
 #elif defined _HD_XIAOER_ //邯郸小额消费等待时间2小时
 #define WAIT_TIME 20
 #else
-#define WAIT_TIME 5
+#define WAIT_TIME 300
 #endif
 #endif
 
@@ -473,7 +471,7 @@ key 28 Released*/
 #define CARD_WHITE_CPU		52				//CPU白卡
 
 //////////////////////////用户卡的定义///////////////////////////
-			
+
 ///////////////////////////////语音端口号//////////////////////////////
 #ifdef AUDIO_SOUND_OLD //老的16段语音
 //两片8段语音

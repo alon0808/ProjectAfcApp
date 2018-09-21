@@ -34,7 +34,7 @@
 #include "szct.h"
 #include "EC20Lx_HTTP.h"
 
-#define _debug_SL8583
+//#define _debug_SL8583
 
 #define SL_8583_VER "\x02\x00"			// 2.0 协议
 
@@ -2540,28 +2540,21 @@ int BuildHTTPPackge(unsigned char *revBuf, unsigned char mode)
 
 
 	if (tidmain_mainDownload == 0) {
+		PRINT_DEBUG("发送模块下载文件指令.Ver:%02X%02X\r\n", gsl8583FileDownPara.Miss_ver[0], gsl8583FileDownPara.Miss_ver[1]);
 		switch (mode)
 		{
 		case MISS_HTTP_BLK:
-			MSG_LOG("发送模块下载文件指令.Ver:%02X%02X\r\n", gsl8583FileDownPara.Miss_ver[0], gsl8583FileDownPara.Miss_ver[1]);
-
 			pfflag = SL8583FileFLAG_BLK;
 			pfflag2 = "BUS";
-
 			break;
 		case MISS_HTTP_EC20:
-			MSG_LOG("发送模块下载文件指令.Ver:%02X%02X\r\n", gsl8583FileDownPara.Miss_ver[0], gsl8583FileDownPara.Miss_ver[1]);
 
 			pfflag = SL8583FileFLAG_PRO;
 			pfflag2 = POS_Cand_FLAG;
-
 			break;
 		case MISS_HTTP_PRO:
-			MSG_LOG("发送模块下载文件指令.Ver:%02X%02X\r\n", gsl8583FileDownPara.Miss_ver[0], gsl8583FileDownPara.Miss_ver[1]);
-
 			pfflag = SL8583FileFLAG_PRO;
 			pfflag2 = POS_Cand_FLAG;
-
 			break;
 		default:
 			break;
@@ -2571,11 +2564,12 @@ int BuildHTTPPackge(unsigned char *revBuf, unsigned char mode)
 		memcpy(gHttpDinfo.Filename, pfflag, 3);
 		memset(gHttpDinfo.HttpAddr, 0, sizeof(gHttpDinfo.HttpAddr));
 		memcpy(gHttpDinfo.HttpAddr, "http://", 7);
-		pos += 7;
+		pos = strlen(gHttpDinfo.HttpAddr);
 		sprintf(gHttpDinfo.HttpAddr + pos, "%s:%d", gDeviceParaTab.gServerInfo[LINK_GJ].IPaddr, gDeviceParaTab.gServerInfo[LINK_GJ].port + 10000);
 		strcat((char*)gHttpDinfo.HttpAddr, "/File/Down?merchant=0000");
 		pos = strlen(gHttpDinfo.HttpAddr);
-		sprintf(gHttpDinfo.HttpAddr + pos, "%04X", CLOUD_BUSSINESSNO);//商户号
+		relen = BytesToChars(CLOUD_BUSSINESSNO, 2, gHttpDinfo.HttpAddr + pos, 10);
+		printf("BytesToChars111:%d,%s\n", relen, gHttpDinfo.HttpAddr + pos);
 		strcat(gHttpDinfo.HttpAddr, "&file=");
 		pos = strlen(gHttpDinfo.HttpAddr);
 		memcpy(gHttpDinfo.HttpAddr + pos, pfflag, 3);//文件标识 主+从
@@ -2583,7 +2577,9 @@ int BuildHTTPPackge(unsigned char *revBuf, unsigned char mode)
 		memcpy(gHttpDinfo.HttpAddr + pos, pfflag2, 3);//文件标识 主+从
 		strcat(gHttpDinfo.HttpAddr, "&ver=");
 		pos = strlen(gHttpDinfo.HttpAddr);
-		BytesToChars(gsl8583FileDownPara.Miss_ver, 2, gHttpDinfo.HttpAddr + pos, 4);
+		memcpy(revBuf, gsl8583FileDownPara.Miss_ver, 2);
+		RevertTurn(2, revBuf);
+		BytesToChars(revBuf, 2, gHttpDinfo.HttpAddr + pos, 10);
 		pos += 4;
 
 		gHttpDinfo.Dtype = HTTP_NEED_DOWN;

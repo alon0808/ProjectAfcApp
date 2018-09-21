@@ -48,9 +48,7 @@
 #include "EC20Lx_HTTPS.h"
 #include "Gszct.h"
 
-#define _debug_gprs
-
-
+//#define _debug_gprs
 
 stBusVerIfo gBusVerInfo;
 stGPRSinfo gGprsinfo;

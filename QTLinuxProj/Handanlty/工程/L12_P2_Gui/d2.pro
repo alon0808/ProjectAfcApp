@@ -273,11 +273,6 @@ unix:!macx: LIBS += -L$$PWD/../../../Bin/ -lHandanCore
 INCLUDEPATH += $$PWD/../../../Bin
 DEPENDPATH += $$PWD/../../../Bin
 
-unix:!macx: LIBS += -L$$PWD/../../../Bin/ -lUtilPro
-
-INCLUDEPATH += $$PWD/../../../Bin
-DEPENDPATH += $$PWD/../../../Bin
-
 unix:!macx: PRE_TARGETDEPS += $$PWD/../../../Bin/libUtilPro.a
 
 unix:!macx: LIBS += -L$$PWD/../../../../code/AfcCore/lib/ -lQrcode

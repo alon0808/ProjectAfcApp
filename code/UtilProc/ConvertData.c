@@ -4,6 +4,7 @@
 #include <string.h>
 #include "UtilityProc.h"
 //#include <stdio.h>
+#include "szct.h"
 
 
 #ifndef xAssert
@@ -251,12 +252,13 @@ TINT32 BytesToChars(const void *pvSrc, TINT32 nSrcLen, void *pvDest, TINT32 nDes
 	TINT32 nPos;
 	TINT32 nLow;
 	TINT32 nHigh;
-	TINT32 retValue = nSrcLen << 1;
+	TINT32 retValue = nSrcLen * 2;
 	/*@owned@*/
-	static const char *p = "0123456789ABCDEF";
+	static const char p[16] = "0123456789ABCDEF";
 	const TUINT8 *pSrc = (TUINT8 *)pvSrc;
 	TUINT8 *pDest = (TUINT8 *)pvDest;
 
+	//printf("BytesToChars11111:%d,%d\n", nSrcLen, nDestLen);
 	xAssert(pSrc != NULL);
 	xAssert(nSrcLen >= 0);
 
@@ -280,21 +282,23 @@ TINT32 BytesToChars(const void *pvSrc, TINT32 nSrcLen, void *pvDest, TINT32 nDes
 	{
 		return -1;
 	}
-
+	nPos = 0;
 	for (i = 0; i < nSrcLen; i++)
 	{
-		nPos = i << 1;
+		//nPos = i << 1;
 
 		nHigh = HighByte(pSrc[i]);
 		nLow = LowByte(pSrc[i]);
 
 		pDest[nPos] = (TUINT8)p[nHigh];
-		pDest[nPos + 1] = (TUINT8)p[nLow];
+		++nPos;
+		pDest[nPos] = (TUINT8)p[nLow];
+		++nPos;
 	}
 
-	pDest[retValue] = 0x00;
+	pDest[nPos] = 0x00;
 
-	return (retValue);
+	return (nPos);
 }
 
 //amount is 12 chars 00 00 00 00 00 10

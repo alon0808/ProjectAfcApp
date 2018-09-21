@@ -1780,6 +1780,8 @@ void CMainPage2::slot_1s_timer()
 		char buffer[500];
 		int pos = 0;
 
+
+		//printf("BytesToChars66:\n");
 		msgText = "邯郸公交 ";
 		if (s_uiData->ud_isGJOk) {
 			msgText += "G";
@@ -1813,12 +1815,16 @@ void CMainPage2::slot_1s_timer()
 		msgText += ("<br/>");
 		// 第二行
 		pos = 0;
+		//printf("BytesToChars00:\n");
 		BytesToChars(s_uiData->ud_lineId, 2, buffer + pos, 50);
+		//printf("BytesToChars33:%s\n", buffer);
 		pos += 4;
 		buffer[pos] = '-';
 		++pos;
+		//printf("BytesToChars11:%s\n", buffer);
 		BytesToChars(s_uiData->ud_lineId + 2, 1, buffer + pos, 50);
 		pos += 2;
+		//printf("BytesToChars22:%s\n", buffer);
 		msgText += (buffer);
 		msgText += "路 ";
 		msgText += s_uiData->ud_devId;
