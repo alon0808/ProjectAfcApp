@@ -31,7 +31,9 @@ typedef struct {
 	unsigned char ud_isUnpayOk;
 	unsigned char ud_isGpsOk;
 	unsigned char ud_stopflag;
+	unsigned char ud_set_device_status;
 	unsigned char  ud_lineId[LEN_LINE_ID];
+	char ud_serailNum[4];
 	char ud_devId[LEN_DEV_ID];
 	char ud_unionpayDevId[LEN_DEV_ID];
 	int ud_task;

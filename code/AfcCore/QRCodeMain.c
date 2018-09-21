@@ -302,9 +302,10 @@ void BuildQRCRecorde(unsigned char delType, unsigned char *orecBuf, unsigned cha
 	BCD_LOG(iQRCdat, iQRCdatLen, 1);
 	memcpy(rRecordDeal->rQRCdat, iQRCdat, iQRCdatLen);
 
-	if (deal_type == ID_REC_QRC_LTY) {
+	if (delType == ID_REC_QRC_LTY) {
 		ltyR = (stltyQRCandGPS *)rRecordDeal->rQRCdat;
 		temp = (unsigned int)(gprmc.longitude * 1000);
+		PRINT_DEBUGBYS("gprmc.longitude:gprmc:", &gprmc, sizeof(GPRMC));
 		memcpy((unsigned char*)ltyR->longitude, (unsigned char*)&temp, 4);
 
 		temp = (unsigned int)(gprmc.latitude * 1000);
@@ -315,6 +316,8 @@ void BuildQRCRecorde(unsigned char delType, unsigned char *orecBuf, unsigned cha
 
 		temp = (unsigned int)(gprmc.speed * 100);
 		memcpy((unsigned char*)ltyR->speed, (unsigned char*)&temp, 4);
+
+		ltyR->subLineNo = gDeviceParaTab.LineNo[2];
 	}
 	else if (delType == ID_REC_QRC_UNPAY_BUS) {
 		//getMobileParameter(6, rRecordDeal->rDevId);	//银联设备号
@@ -335,9 +338,9 @@ void BuildQRCRecorde(unsigned char delType, unsigned char *orecBuf, unsigned cha
 		if (memcmp(rRecordDeal->rRouteInfo, "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 11) == 0) {
 			// 110287482-0692DA7A-7ADA9206, 25262823-01817AE7-E77A8101
 			memcpy(rRecordDeal->rRouteInfo, "\x01\x01\x05\x7A\xDA\x92\x06\xE7\x7A\x81\x01", 11);
-		}
-#endif
 	}
+#endif
+}
 
 	memcpy(rRecordDeal->rTAC, "\xEE\xFF\xDD\xCC", 4);
 
@@ -522,14 +525,14 @@ void main_QRCode_Deal(void)
 			if (t != 0) // 同一个码
 			{
 				//if (t > 2) {
-					led_on(LED_RED);
-					memset(pubkey1, 0, 32);
+				led_on(LED_RED);
+				memset(pubkey1, 0, 32);
 
-					strcpy((char *)pubkey1, "二维码已刷");
+				strcpy((char *)pubkey1, "二维码已刷");
 
-					MessageBox(1, (char *)pubkey1);
+				MessageBox(1, (char *)pubkey1);
 
-					gBuInfo.restore_flag = 3;
+				gBuInfo.restore_flag = 3;
 				//}
 
 				ret = 0;
@@ -651,7 +654,7 @@ void main_QRCode_Deal(void)
 #else	// 暂时不支持付款码
 				ret = -1;
 #endif
-			}
+				}
 			else {
 				BCD_LOG(pQrBuf, qrLen, 1);
 				ret = -1;
@@ -692,9 +695,9 @@ void main_QRCode_Deal(void)
 			else if (ret == -7) {
 				MessageBox(1, "二维码行业使用错误");
 			}
-		}
+			}
 		goto main_QRCode_Deal_OVER;
-	}
+		}
 	return;
 main_QRCode_Deal_OVER:
 	if (ret < 0) {
@@ -708,7 +711,7 @@ main_QRCode_Deal_OVER:
 	gQRCdataFlag = 0;
 	qrLen = 0;
 	return;
-}
+	}
 
 
 

@@ -55,6 +55,19 @@
     </rect>
    </property>
   </widget>
+  <widget class="QLabel" name="label_Infor">
+   <property name="geometry">
+    <rect>
+     <x>6</x>
+     <y>46</y>
+     <width>231</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>

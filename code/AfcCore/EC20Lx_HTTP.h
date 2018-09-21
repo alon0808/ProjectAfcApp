@@ -20,11 +20,26 @@
 #define SL8583FileFLAG_WHT	"WHT"	//白名单 包括公交白名单或者银联白名单
 
 #define SL8583FileFLAG_EC20	"EC2"	//Linux 模块的应用程序
+#define SL8583FileFLAG_BUS	"BUS"	//Linux 模块的应用程序
 
 #define HTTP_FINISH_DOWN 0
 #define HTTP_NEED_DOWN 0x01
 #define HTTP_START_DOWN 0x02
 
+
+typedef struct
+{
+	int Dtype;	//下载类型
+	long hasrecieve;		//已经接收到的文件大小
+	long allLen;			//文件总大小
+	char FFlag[3];			//文件标识
+	char FVer[2];			//文件版本
+	char Filename[32];		//文件名
+	char HttpAddr[2048];	//url
+}stHttpDownInfo;
+
+extern stHttpDownInfo gHttpDinfo;
+extern pthread_t tidmain_mainDownload;
 
 #ifdef __cplusplus
 extern "C" {

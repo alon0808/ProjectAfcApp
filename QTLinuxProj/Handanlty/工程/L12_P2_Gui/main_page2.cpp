@@ -70,6 +70,7 @@ CMainPage2::CMainPage2(QWidget *parent) :
 	memset(s_actionFlag, 0, sizeof(s_actionFlag));
 	s_curMenuItem = 0;
 	s_maxMenuItem = 0;
+	s_escCount = 0;
 	s_dialInput = NULL;
 
 	this->setFixedSize(640, 480);
@@ -1806,7 +1807,7 @@ void CMainPage2::slot_1s_timer()
 			sprintf(buffer, "<font size=\"10\" color=\"red\">&nbsp;&nbsp;%d.%02d元   </font>", s_uiData->ud_basePrice / 100, s_uiData->ud_basePrice % 100);
 		}
 		else {
-			sprintf(buffer, "<font size=\"10\" color=\"red\">&nbsp;&nbsp;&nbsp;&nbsp;暂停打卡</font>");
+			sprintf(buffer, "<font size=\"10\" color=\"red\">&nbsp;&nbsp;暂停打卡</font>");
 		}
 		msgText += (buffer);
 		msgText += ("<br/>");
@@ -2121,7 +2122,11 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 	char *pRetVal = NULL;
 	int tmpI = 0;
 	int tmpI1 = 0;
+	int len = 0;
 
+	if (s_uiData == NULL) {
+		return;
+	}
 	if (menu != NULL) {
 		//ptmpItem1 = ptmpItem->menu()->menuAction();
 		printf("key menu1:%d, %d %s\n", menu->isVisible(), pkeyEvt->code, (pkeyEvt->value) ? "Pressed" : "Released");
@@ -2141,9 +2146,12 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 				if (menu == NULL) {
 					menu = new QMenu(gMainPageThis);
 					CREATEMENUACTION("查询设备信息", ms_getDevInfo);
-					CREATEMENUACTION("设置设备号", ms_setDevId);
-					CREATEMENUACTION("设置银联终端号", ms_setUnpayDevId);
-					CREATEMENUACTION("下载银联密钥", ms_setUnpayDownKey);
+					if (s_uiData->ud_set_device_status)
+					{
+						CREATEMENUACTION("设置设备号", ms_setDevId);
+						CREATEMENUACTION("设置银联终端号", ms_setUnpayDevId);
+						CREATEMENUACTION("下载银联密钥", ms_setUnpayDownKey);
+					}
 					//menu->move(230, 200);
 					s_curMenuItem = 0;
 					s_action[0]->setChecked(true);
@@ -2196,11 +2204,17 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 				printf("s_actionFlag[s_curMenuItem]:%d\n", s_actionFlag[s_curMenuItem]);
 				switch (s_actionFlag[s_curMenuItem])
 				{
+				case ms_getDevInfo:
+					pDataVal = s_uiData->ud_serailNum;
+					len = 4;
+					break;
 				case ms_setDevId:
 					pDataVal = s_uiData->ud_devId;
+					len = 8;
 					break;
 				case ms_setUnpayDevId:
 					pDataVal = s_uiData->ud_unionpayDevId;
+					len = 8;
 					break;
 				case ms_setUnpayDownKey:
 					pDataVal = (char *)1;
@@ -2209,7 +2223,7 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 					pDataVal = (char *)NULL;
 					break;
 				}
-				if (pDialInput->Init(ptmpItem->text(), "", pDataVal) != 0) {
+				if (pDialInput->Init(s_actionFlag[s_curMenuItem], ptmpItem->text(), len, pDataVal) != 0) {
 					printf("slot_keyboard_menu 初始化失败:\n");
 				}
 				//pDialInput->show();
@@ -2266,6 +2280,13 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 				menu->setVisible(true);
 				s_menuStatus &= ~ms_maskSet;
 				s_menuStatus &= ~ms_setMenu;
+			}
+			else {
+				++s_escCount;
+				if (s_escCount >= 3) {
+					system("reboot");
+					sleep(10000);
+				}
 			}
 			break;
 		default:

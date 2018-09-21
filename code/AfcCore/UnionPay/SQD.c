@@ -417,7 +417,7 @@ int Send_WaitRecvData(unsigned char SQmode, int msecends)
 	msecends = msecends * 1000;
 	msecends += 250;
 #else
-	msecends = 5000;
+	msecends = 2000;
 #endif
 	msecends = TIMEOUT_PBOC_ONLINE;
 

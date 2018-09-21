@@ -150,6 +150,12 @@ AFC_CORE__API int GetStatusMessage(int timerTrige, char *pMsg, int *pTimeDelay) 
 AFC_CORE__API stUIData* GetStatusData(int timerTrige) {
 	stUIData *pUIData = &s_UIData;
 
+	if (timerTrige == 1) {
+
+		Get_SerialNum(s_UIData.ud_serailNum);
+		pUIData->ud_version = SOFT_VER_TIME_LOG;
+
+	}
 	if ((timerTrige & 0x1F) == 1) {
 		memcpy(pUIData->ud_devId, gDeviceParaTab.DeviceNo, 8);
 		if (strlen(pUIData->ud_devId) != 8) {
@@ -163,14 +169,13 @@ AFC_CORE__API stUIData* GetStatusData(int timerTrige) {
 		pUIData->ud_unionpayDevId[LEN_DEV_ID - 1] = '\0';
 		pUIData->ud_modVer = 0x003;	// 3.0
 		pUIData->ud_uploadRec = GJRec_Send();
-		pUIData->ud_version = SOFT_VER_TIME_LOG;
 		pUIData->ud_basePrice = GET_INT32S(gDeviceParaTab.busPrice);
 		pUIData->ud_stopflag = gBuInfo.stop_flag;
+		pUIData->ud_set_device_status = gBuInfo.set_device_status;
 		pUIData->ud_isUnpayOk = Sign_Infor.ISOK;
 		pUIData->ud_isGJOk = gGprsinfo.isNetOK[LINK_GJ];
 	}
-	//Get_SerialNum(s_UIData.devId);
-	//s_UIData.isDDOk = gGprsinfo.isNetOK[link_DD];
+	s_UIData.ud_isGpsOk = (gprmc.pos_state == 'A') ? BOOL_TRUE : BOOL_FALSE;
 	pUIData->ud_linkStatus = gGprsinfo.GPRSLinkProcess;
 	pUIData->ud_task = gGprsinfo.gmissflag;
 
@@ -205,6 +210,8 @@ void MessageBox(unsigned char mode, const char *dStr)
 extern void PAY_MODE_init(void);
 
 void SysParInit(void) {
+
+	memset(&gBuInfo, 0x00, sizeof(fFlagVary_1));
 	PAY_MODE_init();
 }
 
@@ -302,6 +309,13 @@ AFC_CORE__API void* StartApp(void *argv)//int argc,
 
 	InitQpboc8583();
 
+
+	if (pthread_create(&tidgps, NULL, GPS_main, (void *)0) != 0)
+	{
+		printf("Create thread getNetData3 error!\n");
+		//exit(1);
+	}
+
 	if (pthread_create(&tidmain_GPRS, NULL, main_GPRS, NULL) != 0)
 	{
 		printf("Create thread tidmain_GPRS error!\n");
@@ -351,11 +365,6 @@ AFC_CORE__API void* StartApp(void *argv)//int argc,
 		//exit(1);
 	}
 
-	if (pthread_create(&tidgps, NULL, GPS_main, (void *)0) != 0)
-	{
-		printf("Create thread getNetData3 error!\n");
-		//exit(1);
-	}
 
 	Light_main(QR_LIGHT, LIGHT_OPEN, QR_W, (char *)buf);
 

@@ -40,7 +40,7 @@ private slots:
 	void onTimeout();
 
 public:
-	int Init(QString title, QString msg, char *pVal);
+	int Init(int type, QString title, int len, char *pVal);
 	QString GetValue();
 	void ChangeValue(int addormunus);
 	char * NextNumber();

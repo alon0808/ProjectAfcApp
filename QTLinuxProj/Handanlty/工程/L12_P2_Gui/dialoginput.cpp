@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "libHandanCore.h"
+#include "UtilityProc.h"
 
 #define TIMER_TIMEOUT	400
 
@@ -29,17 +30,27 @@ DialogInput::~DialogInput()
 	delete ui;
 }
 
-int DialogInput::Init(QString title, QString msg, char *pVal) {
+int DialogInput::Init(int type, QString title, int len, char *pVal) {
+	char tmpBuffer[1000];
+
 	ui->label_title->setText(title);
 	//ui->label_title->adjustSize();
 
-	if (pVal == (char *)1) {
+	if (type == ms_setUnpayDownKey) {
 		ui->lineEdit_value->hide();
 		ui->buttonBox->setStandardButtons(QDialogButtonBox::NoButton);
 
 		SetDevParam(dpt_unionpayDownKey, NULL, 0);
 
 		this->hide();
+	}
+	else if (type == ms_getDevInfo) {
+		ui->lineEdit_value->hide();
+		ui->buttonBox->setStandardButtons(QDialogButtonBox::NoButton);
+
+		BytesToChars(pVal, len, tmpBuffer, 1000);
+		//SetDevParam(dpt_unionpayDownKey, NULL, 0);
+		ui->label_Infor->setText(tmpBuffer);
 	}
 	else {
 		ui->lineEdit_value->show();
@@ -60,6 +71,14 @@ int DialogInput::Init(QString title, QString msg, char *pVal) {
 		ui->lineEdit_value->setSelection(m_curPos, 1);
 
 		this->show();
+	}
+
+
+	if (type != ms_getDevInfo) {
+		ui->label_Infor->hide();
+	}
+	else {
+		ui->label_Infor->show();
 	}
 	return 0;
 }

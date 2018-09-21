@@ -563,9 +563,7 @@ void display(unsigned char x, unsigned char y, const char *str, unsigned char mo
 }
 void miniDispstr(unsigned char x, unsigned char y, const char *lcd_string, unsigned char mode)
 {
-	#warning "miniDispstr need code";
-	printf("%s ", lcd_string);
-
+	MessageBox(0, lcd_string);
 }
 
 void dis_time_mini(unsigned char x, stcomtime *time)
@@ -942,7 +940,7 @@ void changePsaminfo(unsigned char Slot)
 		else
 			CmdPSAMbps(0);
 		usleep(100000);
-	}
+}
 	lPsaminfo.curSlot = Slot;	//ÇÐ»»¿¨×ù
 
 
@@ -1051,7 +1049,7 @@ unsigned char IccCommand(unsigned char Slot, ISO7816_ADPU_SEND *ApduSend,
 		ApduRecv->SW1 = 0x00;
 		ApduRecv->SW2 = 0x00;
 		return 0;
-	}
+}
 
 	ApduRecv->LE = rt - 2;
 	memcpy(ApduRecv->DATA, revbuf, rt - 2);

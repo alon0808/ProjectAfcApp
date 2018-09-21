@@ -21,7 +21,6 @@ unsigned char gchn_eng = 'C';//中英文标志
 TCP_IP_PACKET1 tcpipPacket;
 unsigned int c_serial;
 unsigned char irda_rxBuf[MaxPackLen];
-unsigned char deal_type;
 unsigned int gSendGLogin;//登陆命令
 unsigned int nowTime = 0;
 unsigned int startTime = 0;

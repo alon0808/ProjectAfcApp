@@ -67,6 +67,8 @@ volatile int g_socketfd[_SOCKET_MAXNUM];
 stNetSendList Netsendline[_SOCKET_MAXNUM];	//需要发送到网络上的数据，数据来源任务传入。
 stNetRevList Netrecvline[_SOCKET_MAXNUM];	//收到的网络数据，需要处理
 
+extern int BuildHTTPPackge(unsigned char *revBuf, unsigned char mode);
+
 int setnonblocking(int fd)
 {
 	int old_option = fcntl(fd, F_GETFL);
@@ -516,11 +518,16 @@ void GPRSSocketParaINIT(void)
 #if SWITCH_DEBUG_UNIONPAY == 1
 	strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "202.101.25.188");			////139.199.213.63:2020 测试。
 	gDeviceParaTab.gServerInfo[i].port = 20141;
+#elif SWITCH_DEBUG_UNIONPAY == 2	
+	strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "101.231.141.158");		// 电信	////139.199.213.63:2020 测试。
+	//strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "120.204.69.139");	//移动
+	//strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "140.207.168.62");		//联通
 #else
-	//strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "101.231.141.158");			////139.199.213.63:2020 测试。
-	strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "120.204.69.139");
-	gDeviceParaTab.gServerInfo[i].port = 30000;
+	strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "101.231.141.158");		// 电信	////139.199.213.63:2020 测试。
+	//strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "120.204.69.139");	//移动
+	//strcpy(gDeviceParaTab.gServerInfo[i].IPaddr, "140.207.168.62");		//联通
 #endif
+	gDeviceParaTab.gServerInfo[i].port = 30000;
 	strcpy(gDeviceParaTab.gServerInfo[i].APN, "CMNET");
 	gDeviceParaTab.gServerInfo[i].linkAttr.dataCh = 0x01;
 #if !HTTP_HEAD
@@ -780,7 +787,6 @@ void find_G_new_mission(void)//此任务一秒进一次
 
 
 		}
-
 		else if (memcmp(gsl8583filelist[i].filename, SL8583FileFLAG_PRO, 3) == 0) {//有设备程序下载
 //50524F 5053540000000000 0121   PROPST  0121
 			if (memcmp(gsl8583filelist[i].fileVer2, POS_Cand_FLAG, 3) != 0)
@@ -836,9 +842,14 @@ load_cs:
 
 		MSG_LOG("downfile:%s,VER:0x%02X%02X\r\n", gsl8583FileDownPara.Miss_Fileflag, gsl8583FileDownPara.Miss_ver[0], gsl8583FileDownPara.Miss_ver[1]);
 
-		gGprsinfo.gmissflag = MISS_G_FILES;//都使用同一个命令
 		saveFileDownPara();
+		if (memcmp(gsl8583filelist[i].filename, SL8583FileFLAG_PRO, 3) == 0) {//有LINUX程序包下载
+			gGprsinfo.gmissflag = MISS_HTTP_PRO;
+		}
+		else {
 
+			gGprsinfo.gmissflag = MISS_G_FILES;//都使用同一个命令
+		}
 		return;
 	}
 
@@ -959,10 +970,11 @@ void TaskRecWrite(void)
 		}
 		gGprsinfo.GPRSLinkProcess = GPRS_SENDING_CMD;
 		gSendOverTime = DE_SendOverTime;
+		break;
 	case MISS_HTTP_BLK:	//通过模块下载
 	case MISS_HTTP_EC20:
 	case MISS_HTTP_PRO:
-		//		uilen = BuildHTTPPackge(buffer, gGprsinfo.gmissflag);
+		uilen = BuildHTTPPackge(buffer, gGprsinfo.gmissflag);
 		break;
 	case MISS_PBOC_PURSE:
 		break;

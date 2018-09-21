@@ -297,7 +297,6 @@ extern void SHANGHU_INIT_F(void);
 extern void InitQpboc8583(void);
 
 extern unsigned int gSendGLogin_qpoc;
-extern  unsigned char deal_type;
 extern unsigned char g_supportQR;
 extern void EnableCREDIT_CARD(void);
 extern void DisableCREDIT_CARD(void);

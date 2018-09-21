@@ -1,4 +1,5 @@
 #include "Macro_Proj.h"
+#include <pthread.h>
 #include "EC20Lx_HTTP.h"
 #include <stdio.h>//printf
 #include <string.h>//字符串处理
@@ -29,24 +30,14 @@
 
 #define DownDir	"/mnt/appbak/"
 
+pthread_t tidmain_mainDownload = 0;
+
 struct HTTP_RES_HEADER//保持相应头信息
 {
 	int status_code;//HTTP/1.1 '200' OK
 	char content_type[128];//Content-Type: application/gzip
 	long content_length;//Content-Length: 11683079
 };
-
-typedef struct
-{
-	int Dtype;	//下载类型
-	long hasrecieve;		//已经接收到的文件大小
-	long allLen;			//文件总大小
-	char FFlag[3];			//文件标识
-	char FVer[2];			//文件版本
-	char Filename[32];		//文件名
-	char HttpAddr[2048];	//url
-}stHttpDownInfo;
-
 
 typedef struct
 {
@@ -643,6 +634,7 @@ void* main_HTTPDataDown(void *arg)
 	char tarName[256];
 	//	char HttpDes[] = "http://120.77.173.234/download/";		//这里还是使用的固定目录,正式使用时要和公交的通讯服务器地址一样
 	//	char HttpDes[] = "http://139.199.161.164:12020/File/Down?merchant=00000000&file=BLKBUS&ver=0012";
+
 
 	while (1) {
 		if (gGprsinfo.isNetOK[LINK_GJ] == TRUE) {

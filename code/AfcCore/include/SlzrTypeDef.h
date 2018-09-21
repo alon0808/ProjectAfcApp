@@ -836,7 +836,7 @@ typedef struct
 	unsigned char latitude[4];		///维度 4字节 
 	unsigned char direction[4];		//方向4字节
 	unsigned char speed[4];			//速度4字节
-
+	unsigned char subLineNo;		//子线路字节
 }stltyQRCandGPS;
 
 typedef struct {

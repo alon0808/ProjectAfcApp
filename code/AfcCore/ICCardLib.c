@@ -1318,10 +1318,10 @@ int month_decide(void)
 	{
 		for (i = MothDelayTime.startptr; i < 50; i++)
 		{
-			PRINT_DEBUGBYS("M222othDelayTime.LastList:", MothDelayTime.LastList[i], 7);
 
 			if (!memcmp(MothDelayTime.LastList[i], (unsigned char *)&gCardinfo.c_serial, 4))
 			{
+				PRINT_DEBUGBYS("M222othDelayTime.LastList:", MothDelayTime.LastList[i], 7);
 				if (buffer[2] != MothDelayTime.LastList[i][4])
 					continue;
 				else
@@ -1576,7 +1576,7 @@ unsigned char PsamInitialize(void)
 	if (Verify_private_PIN(psamZJB.SLot, 3, buffer) == 0) {
 		debugstring("verify PIN ERROR!!\r\n");
 		return ST_ERROR;
-}
+	}
 #endif
 	//	delayxms(10);
 #ifdef _debug_ICcard_
@@ -2084,7 +2084,7 @@ unsigned char Card_typeProcess(void)
 	}
 	if (gCardinfo.card_catalog == CARD_FENDUAN_Line) {
 		return CONTROL_CARD;
-}
+	}
 #endif //#ifdef BUS_Cloud_
 
 #ifdef _debug_ICcard_
@@ -2717,9 +2717,9 @@ void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsign
 			else {
 				getCardtype((char*)dispBuf + len, gCardinfo.card_catalog);
 				len = strlen(dispBuf);
-		}
+			}
 #endif
-	}
+		}
 		else
 		{
 			len = 0;
@@ -2737,7 +2737,7 @@ void money_msg(unsigned char dmode, unsigned int remM, unsigned int pucM, unsign
 			sprintf(dispBuf + len, "%d", gCardinfo.card_catalog);
 		}
 		display(0, 1, dispBuf, 0);
-}
+	}
 	else
 	{
 		len = 0;
@@ -3252,6 +3252,7 @@ void ControlMagane(void)
 		if (gBuInfo.stop_flag)
 		{
 			led_on(LED_RED);
+			end_card();
 			return;
 		}
 #endif
@@ -3289,6 +3290,9 @@ void ControlMagane(void)
 		break;
 	case CARD_DEV_SET:
 		beep(1, 100, 10);
+		if (gBuInfo.stop_flag) {
+			gBuInfo.set_device_status = 1;
+		}
 		//		ShowSetInfo();
 		//		set_device();
 		break;
@@ -3326,6 +3330,8 @@ void ControlMagane(void)
 			SwitchBusClose(0);
 			wRiteControlRecord(ID_REC_LEVBUS);				//发车卡记录
 			wRiteControlRecord(ID_REC_DRIVENO);				//司机卡记录
+
+			gBuInfo.set_device_status = 0;
 		}
 		else
 		{//到站
@@ -3920,7 +3926,7 @@ again:
 	eemoney = s_sum1 * 4;
 	if ((a_sum1 >= s_sum1) && (a_sum1 < eemoney)) {
 		gCardinfo.gucSoudnorm = 1;
-}
+	}
 #else
 	if ((a_sum1 >= s_sum1) && (a_sum1 < 500)) {
 		gCardinfo.gucSoudnorm = 1;
@@ -4677,7 +4683,7 @@ month_step9:
 month_step10:
 	ErrorOper(IS_EFFECT_MONTH);
 	return 5;
-	}
+}
 
 unsigned char MonthResultManage(void)
 {
@@ -4895,7 +4901,7 @@ void main_card(void)
 	if ((resPonse == MONTH_CARD) || (resPonse == CARD_MONEY) || (resPonse == CARD_YEAR) || (resPonse == CARD_STUFF_BUS)) {
 		FengDuan_BUS_card();
 		return;
-}
+	}
 #endif	//#ifdef FengDuan_BU_
 
 

@@ -11,7 +11,7 @@
 #define SYS_HEAD_STREn	"  HANDAN  "
 #define PCityCode "\x07\x55"
 
-#define CLOUD_BUSSINESSNO "\x99\x98"//"\x03\x10"
+#define CLOUD_BUSSINESSNO "\x03\x10"	// "\x99\x98"
 
 //192.168.1.4 8818
 #define GJ_IP 0x0401A8C0

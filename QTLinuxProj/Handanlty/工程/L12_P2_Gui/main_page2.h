@@ -68,6 +68,7 @@ private:
 	//QTimer m_timeKeyBoad;
 	//void* KeyBoard_main(void *pParam);
 	int s_menuStatus;
+	int s_escCount;
 	QMenu *s_menu;
 	QAction *s_action[10];
 	int s_actionFlag[10];
