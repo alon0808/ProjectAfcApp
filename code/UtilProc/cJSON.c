@@ -44,9 +44,9 @@ int parseJsonCurLevel(char *pInput, int iLen, stJSON *pstJson, int *pCount) {
 	int decimalN = -1;
 	int valLen = 0;
 
-	MSG_LOG("parseJsonCurLevel:%s\n", pInput);
+	//MSG_LOG("parseJsonCurLevel:%s\n", pInput);
 	if (pInput == NULL || pstJson == NULL || pCount == NULL || iLen < 0) {
-		MSG_LOG("parseJsonCurLevel:参数有非法\n");
+		//MSG_LOG("parseJsonCurLevel:参数有非法\n");
 		return -1;
 	}
 	limit = *pCount;
@@ -55,7 +55,7 @@ int parseJsonCurLevel(char *pInput, int iLen, stJSON *pstJson, int *pCount) {
 		return 0;
 	}
 	if (limit <= 0) {
-		MSG_LOG("parseJsonCurLevel:输出缓冲空间非法:%d\n", limit);
+		//MSG_LOG("parseJsonCurLevel:输出缓冲空间非法:%d\n", limit);
 		return -2;
 	}
 
@@ -65,7 +65,7 @@ int parseJsonCurLevel(char *pInput, int iLen, stJSON *pstJson, int *pCount) {
 	{
 		valCh = *pCh;
 		if (valCh == '\0') {
-			MSG_LOG("parseJsonCurLevel:数据非法,带了截止符\n");
+			//MSG_LOG("parseJsonCurLevel:数据非法,带了截止符\n");
 			return -6;
 		}
 
@@ -85,7 +85,7 @@ int parseJsonCurLevel(char *pInput, int iLen, stJSON *pstJson, int *pCount) {
 				type = JTarray;
 			}*/
 			else {
-				MSG_LOG("查找名字错误:%c\n", valCh);
+				//MSG_LOG("查找名字错误:%c\n", valCh);
 				return -1;
 			}
 		}
@@ -105,7 +105,7 @@ int parseJsonCurLevel(char *pInput, int iLen, stJSON *pstJson, int *pCount) {
 				status = JSprevalue;
 			}
 			else {
-				MSG_LOG("名字后的分隔符错误:%c\n", valCh);
+				//MSG_LOG("名字后的分隔符错误:%c\n", valCh);
 				return -2;
 			}
 		}
@@ -142,7 +142,7 @@ int parseJsonCurLevel(char *pInput, int iLen, stJSON *pstJson, int *pCount) {
 				type = JTnumber;
 			}
 			else {
-				MSG_LOG("数据前的分隔符错误:%c\n", valCh);
+				//MSG_LOG("数据前的分隔符错误:%c\n", valCh);
 				return -2;
 			}
 
@@ -213,13 +213,13 @@ int parseJsonCurLevel(char *pInput, int iLen, stJSON *pstJson, int *pCount) {
 				}
 				else if (valCh == '.') {
 					if (decimalN >= 1) {
-						MSG_LOG("多个小数点:%d,%s\n", decimalN, pstJson[index].pmName);
+						//MSG_LOG("多个小数点:%d,%s\n", decimalN, pstJson[index].pmName);
 						return -2;
 					}
 					decimalN = 1;
 				}
 				else {
-					//MSG_LOG("number222222222222(%c):%f,%d,%d\n", valCh, number, isNegative, decimalN);
+					////MSG_LOG("number222222222222(%c):%f,%d,%d\n", valCh, number, isNegative, decimalN);
 					if (isNegative) {
 						number *= -1;
 					}
@@ -241,13 +241,13 @@ int parseJsonCurLevel(char *pInput, int iLen, stJSON *pstJson, int *pCount) {
 						status = JSagain;
 					}
 					else {
-						MSG_LOG("非数值类型:%c\n", valCh);
+						//MSG_LOG("非数值类型:%c\n", valCh);
 						return -2;
 					}
 				}
 				break;
 			default:
-				MSG_LOG("无此类型的值:%d\n", type);
+				//MSG_LOG("无此类型的值:%d\n", type);
 				return -2;
 			//	break;
 			}
@@ -266,13 +266,13 @@ int parseJsonCurLevel(char *pInput, int iLen, stJSON *pstJson, int *pCount) {
 				valLen = 0;
 				++index;
 				if (index >= limit) {
-					MSG_LOG("parseJsonCurLevel:输出缓冲空间非法(%d):%d\n", index, limit);
+					//MSG_LOG("parseJsonCurLevel:输出缓冲空间非法(%d):%d\n", index, limit);
 					return -4;
 				}
 				status = JSagain;
 			}
 			else {
-				MSG_LOG("数据后的分隔符错误:%c\n", valCh);
+				//MSG_LOG("数据后的分隔符错误:%c\n", valCh);
 				return -2;
 			}
 		}
@@ -284,15 +284,15 @@ int parseJsonCurLevel(char *pInput, int iLen, stJSON *pstJson, int *pCount) {
 			else if (valCh == '\"') {
 				status = JSname;
 				pstJson[index].pmName = pCh;
-				//MSG_LOG("tJson[index].pmName = pCh;:%s\n", pCh);
+				////MSG_LOG("tJson[index].pmName = pCh;:%s\n", pCh);
 			}
 			else {
-				MSG_LOG("继续查找名字错误\n");
+				//MSG_LOG("继续查找名字错误\n");
 				return -1;
 			}
 		}
 		else {
-			MSG_LOG("状态非法:%d\n", status);
+			//MSG_LOG("状态非法:%d\n", status);
 			return -10;
 		}
 	}
@@ -311,7 +311,7 @@ stJSON *getJsonObjByName(stJSON *pstJson, int count, char *pName) {
 	int i = 0;
 	int len = 0;
 
-	MSG_LOG("1111getJsonObjByName:%s,%d\n", pName, count);
+	//MSG_LOG("1111getJsonObjByName:%s,%d\n", pName, count);
 	//BCD_LOG((unsigned char *)pstJson, sizeof(stJSON)*count, 1);
 	if (pstJson == NULL || pName == NULL || count <= 0) {
 		return NULL;
@@ -320,9 +320,9 @@ stJSON *getJsonObjByName(stJSON *pstJson, int count, char *pName) {
 
 	for (i = 0; i < count; ++i)
 	{
-		//MSG_LOG("pstJson->pmName:%s\n", pstJson->pmName);
-		//MSG_LOG("pstJson->pmValue:%s\n", pstJson->pmValue);
-		//MSG_LOG("pstJson->type:%d\n", pstJson->type);
+		////MSG_LOG("pstJson->pmName:%s\n", pstJson->pmName);
+		////MSG_LOG("pstJson->pmValue:%s\n", pstJson->pmValue);
+		////MSG_LOG("pstJson->type:%d\n", pstJson->type);
 		if (memcmp(pstJson->pmName, pName, len) == 0) {
 			//BCD_LOG((unsigned char *)pstJson, sizeof(stJSON), 1);
 			return  pstJson;
@@ -340,7 +340,7 @@ int getJsonString(stJSON *pstJson, int count, char *pOut, int *pLen) {
 	stJSON *tmpJson = NULL;
 
 	if (pstJson == NULL || pOut == NULL || pLen == NULL || count < 0) {
-		MSG_LOG("getJsonString:参数有非法\n");
+		//MSG_LOG("getJsonString:参数有非法\n");
 		return -1;
 	}
 	limit = *pLen;
@@ -349,7 +349,7 @@ int getJsonString(stJSON *pstJson, int count, char *pOut, int *pLen) {
 		return 0;
 	}
 	if (limit <= 0) {
-		MSG_LOG("getJsonString:缓冲缓冲不够:%d\n", limit);
+		//MSG_LOG("getJsonString:缓冲缓冲不够:%d\n", limit);
 		return -1;
 	}
 
@@ -378,7 +378,7 @@ int getJsonString(stJSON *pstJson, int count, char *pOut, int *pLen) {
 			len += sprintf(pOut + len, "%s", tmpJson->pmValue);
 			break;
 		default:
-			MSG_LOG("无此类型的值:%d\n", tmpJson->type);
+			//MSG_LOG("无此类型的值:%d\n", tmpJson->type);
 			return -2;
 //			break;
 		}
