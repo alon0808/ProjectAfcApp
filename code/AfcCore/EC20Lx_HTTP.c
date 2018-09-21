@@ -266,7 +266,7 @@ void download(int client_socket, char *file_name, long content_length, char *sho
 	/*下载文件函数*/
 	unsigned long hasrecieve = 0;//记录已经下载的长度
 	struct timeval t_start, t_end;//记录一次读取的时间起点和终点, 计算速度
-	int mem_size = 20480;//缓冲区大小8K
+	int mem_size = 10240;//缓冲区大小8K
 	int buf_len = mem_size;//理想状态每次读取8K大小的字节流
 	int len;
 	char *buf = NULL;
@@ -287,8 +287,12 @@ void download(int client_socket, char *file_name, long content_length, char *sho
 		printf("文件创建失败!\n");
 		return;
 	}
-	PRINT_DEBUG(" *)malloc(mem_si:%d\n", mem_size);
-	buf = (char *)malloc(mem_size * sizeof(char));
+	PRINT_DEBUG(" *)calloc(mem_si:%d\n", mem_size);
+	buf = (char *)calloc(mem_size, sizeof(char));
+	if (buf == NULL) {
+		printf("内存申请失败!\n");
+		return;
+	}
 	while (hasrecieve < content_length)
 	{
 		gettimeofday(&t_start, NULL); //获取开始时间
@@ -613,8 +617,9 @@ int processHTTPDown(int mode, char *url, char *DFileName)
 		printf("%s文件存在，删除\n", downfiletemp);
 		remove(downfiletemp);
 	}
-	else
+	else {
 		printf("没有缓冲文件\n");
+	}
 	download(client_socket, downfiletemp, resp.content_length, DFileName);
 	printf("8: 关闭套接字\n");
 
@@ -647,7 +652,7 @@ int processHTTPDown(int mode, char *url, char *DFileName)
 
 void* main_HTTPDataDown(void *arg)
 {
-//#define _debug_
+	//#define _debug_
 	int n, ret;
 	boolean f = FALSE;
 	char fullName[256];
@@ -771,7 +776,7 @@ void* main_HTTPDataDown(void *arg)
 								remove(IndexName);
 								MSG_LOG("SYStem:ret:%d\r\n", ret);
 								sleep(1);
-								//system("reboot");	// SendPROtoBUS();	//在 OtherMission 定时任务内下发
+								system("reboot");	// SendPROtoBUS();	//在 OtherMission 定时任务内下发
 								sleep(10);
 							}
 							else {

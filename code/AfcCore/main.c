@@ -275,7 +275,7 @@ AFC_CORE__API void* StartApp(void *argv)//int argc,
 
 		//printf("hello World\n");
 
-	if (CreateDir(WorkDir) != 0) {	//建立工作目录，如果存在则不建，否则新建
+	if (CreateDir(WorkDir11) != 0) {	//建立工作目录，如果存在则不建，否则新建
 		MessageBox(1, "工作目录建立失败");
 		while (1)
 		{

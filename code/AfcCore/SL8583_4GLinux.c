@@ -183,7 +183,7 @@ int saveFileDownPara(void)
 	char filename[128];
 	int fd, ret = -1;
 
-	strcpy(filename, WorkDir);
+	strcpy(filename, WorkDir11);
 	strcat(filename, _File_FileDownPara);
 
 	fd = file_open_creat(filename);
@@ -1437,7 +1437,7 @@ unsigned char checkNewPrice_new(void)
 	debugdata((unsigned char*)&SysTime, 7, 1);
 #endif
 
-	strcpy(fullName, WorkDir);
+	strcpy(fullName, WorkDir11);
 	strcat(fullName, _File_TempFile);
 
 	fd = open(fullName, O_RDONLY);
@@ -1518,7 +1518,7 @@ unsigned char save_csn(void)
 	int fd = -1, ret = -1;
 	//	temp1 = BlackLength*4;
 
-	strcpy(fullName, WorkDir);
+	strcpy(fullName, WorkDir11);
 	strcat(fullName, _File_TempFile);
 
 	fd = open(fullName, O_RDONLY);
@@ -1660,7 +1660,7 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 
 	//	delallBlacInbus();//清除机内黑名单
 		MSG_LOG("第一个包\r\n*******************");
-		strcpy(filename, WorkDir);
+		strcpy(filename, WorkDir11);
 		strcat(filename, _File_TempFile);
 		gsl8583FileDownPara.tmpfilehand = file_open_creat(filename);
 		if (gsl8583FileDownPara.tmpfilehand <= 0) {
@@ -1683,7 +1683,7 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 	//******************************************************************************
 	if (gsl8583FileDownPara.tmpfilehand <= 0) {
 		MSG_LOG("[%s] open<%s>\r\n", __FUNCTION__, filename);
-		strcpy(filename, WorkDir);
+		strcpy(filename, WorkDir11);
 		strcat(filename, _File_TempFile);
 		gsl8583FileDownPara.tmpfilehand = file_open_creat(filename);
 	}
@@ -1704,14 +1704,14 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 		filename2[0] = 0;
 		close(gsl8583FileDownPara.tmpfilehand);	//关闭临时文件
 
-		strcpy(filename, WorkDir);
+		strcpy(filename, WorkDir11);
 		strcat(filename, _File_TempFile);
 
 		if (memcmp(gsl8583FileDownPara.Miss_Fileflag, SL8583FileFLAG_BLK, 3) == 0) {//是黑名单
 			MSG_LOG("黑名单下载完\r\n");
 			memcpy(gBusVerInfo.busBLKVer, gsl8583FileDownPara.Miss_ver, 2);					//新黑名单版本号替现在的。
 			gBusVerInfo.BlackListNum = (gsl8583FileDownPara.Miss_ALL_LEn / BLK_SNO_LEN) - 1;	//黑名单条数
-			strcpy(filename2, WorkDir);
+			strcpy(filename2, WorkDir11);
 			strcat(filename2, _File_BlackList_bus);
 		}
 		// 		else if(memcmp(gsl8583FileDownPara.Miss_Fileflag, SL8583FileFLAG_TPK, 3) == 0){//腾讯公钥 腾讯根密钥
@@ -1729,7 +1729,7 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 				MSG_LOG("住建部白名单下载完\r\n");
 				memcpy(gBusVerInfo.White_Ver, gsl8583FileDownPara.Miss_ver, 2);
 				gBusVerInfo.WHTBusListNum = (gsl8583FileDownPara.Miss_ALL_LEn / BLK_SNO_LEN) - 1;
-				strcpy(filename2, WorkDir);
+				strcpy(filename2, WorkDir11);
 				strcat(filename2, _File_WiteListBUS);
 
 			}
@@ -1738,7 +1738,7 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 				MSG_LOG("交通部白名单下载完\r\n");
 				memcpy(gBusVerInfo.White_Ver_JTB, gsl8583FileDownPara.Miss_ver, 2);
 				gBusVerInfo.WHTJTBListNum = (gsl8583FileDownPara.Miss_ALL_LEn / BLK_SNO_LEN) - 1;
-				strcpy(filename2, WorkDir);
+				strcpy(filename2, WorkDir11);
 				strcat(filename2, _File_WiteListJTB);
 			}
 		}
@@ -1746,7 +1746,7 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 			MSG_LOG("参数文件下载完\r\n");
 			memcpy(gBusVerInfo.CSN_BUSVer, gsl8583FileDownPara.Miss_ver, 2);
 			gBusVerInfo.WHTJTBListNum = (gsl8583FileDownPara.Miss_ALL_LEn / BLK_SNO_LEN) - 1;
-			strcpy(filename2, WorkDir);
+			strcpy(filename2, WorkDir11);
 			strcat(filename2, _File_Bus_csn);
 
 			save_csn();	//保存参数。
@@ -1755,7 +1755,7 @@ int sl8583ECHO6003(unsigned char *dfileinfo, unsigned char *dfiledata, unsigned 
 			MSG_LOG("票价信息下载完\r\n");
 			memcpy(gBusVerInfo.busticketVer, gsl8583FileDownPara.Miss_ver, 2);
 			gBusVerInfo.WHTJTBListNum = (gsl8583FileDownPara.Miss_ALL_LEn / BLK_SNO_LEN) - 1;
-			strcpy(filename2, WorkDir);
+			strcpy(filename2, WorkDir11);
 			strcat(filename2, _File_Bus_PRI);
 
 			checkNewPrice_new();

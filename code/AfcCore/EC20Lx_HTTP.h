@@ -1,13 +1,13 @@
 #ifndef _INCLUDE_EC20LX_HTTP_H
 #define _INCLUDE_EC20LX_HTTP_H
 
-//#include "SlzrTypeDef.h"
+#include "SlzrTypeDef.h"
 
-#define BLKindex_LIST_FILE_NAME WorkDir"BLKindex"
-#define BLACK_LIST_FILE_NAME WorkDir"blacklist"
-#define BUSPRO_LIST_FILE_NAME WorkDir"buspro"
-#define PROindex_LIST_FILE_NAME WorkDir"PROindex"
-#define EC20PRO_LIST_FILE_NAME WorkDir"ec20pro"
+#define BLKindex_LIST_FILE_NAME WorkDir11"BLKindex"
+#define BLACK_LIST_FILE_NAME WorkDir11"blacklist"
+#define BUSPRO_LIST_FILE_NAME WorkDir11"buspro"
+#define PROindex_LIST_FILE_NAME WorkDir11"PROindex"
+#define EC20PRO_LIST_FILE_NAME WorkDir11"ec20pro"
 
 
 #define SL8583FileFLAG_PRO	"PRO"	//程序文件按照《三联众瑞POS终端接入规范v2.00.docx》 修订通讯格式 

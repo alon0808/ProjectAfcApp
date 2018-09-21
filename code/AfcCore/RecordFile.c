@@ -76,7 +76,7 @@ int RecordFile_open(void)
 	int i, ret = -1, flag = 1;
 
 
-	strcpy(fullName, WorkDir);
+	strcpy(fullName, WorkDir11);
 	strcat(fullName, _File_Record_Cur);	//当前文件，2M空间
 
 	ret = access(fullName, F_OK);
@@ -135,7 +135,7 @@ int Record_PointFile_open(void)
 	char fullName[300];
 	int fd = -1, ret = -1, flag = 1;
 
-	strcpy(fullName, WorkDir);
+	strcpy(fullName, WorkDir11);
 	strcat(fullName, _File_Record_Point);	//当前文件，2M空间
 
 	ret = access(fullName, F_OK);
@@ -264,7 +264,7 @@ int SaveFAT_hisRecInfor(unsigned char num, stFAT_hisRec *hisinfor)
 	hisinfor->scrc32 = GenerateCRC32((unsigned char *)&hisinfor->colStyle, BIT_REORD_HIS_LEN - 4);
 
 
-	strcpy(fullName, WorkDir);
+	strcpy(fullName, WorkDir11);
 	strcat(fullName, _File_His_Collect);
 
 	remove(fullName);
@@ -304,7 +304,7 @@ int Record_PointFile_save(void)
 	int fd = -1, ret = -1, flag = 1;
 
 
-	strcpy(fullName, WorkDir);
+	strcpy(fullName, WorkDir11);
 	strcat(fullName, _File_Record_Point);	//当前文件，2M空间
 
 
@@ -362,7 +362,7 @@ int open_rfile_Wrecord(void)
 
 	memset(ghisfile.fileName, 0, sizeof(ghisfile.fileName));
 
-	strcpy(ghisfile.fileName, WorkDir);
+	strcpy(ghisfile.fileName, WorkDir11);
 	strcat(ghisfile.fileName, "/his");
 	BCD2Ascii(gDeviceParaTab.SN, (unsigned char*)ghisfile.fileName + strlen(ghisfile.fileName), 4);	//设备序列号
 	memcpy(ghisfile.fileName + strlen(ghisfile.fileName), datet + 4, 4);	//日期时间

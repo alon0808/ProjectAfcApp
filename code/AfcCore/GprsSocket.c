@@ -413,7 +413,7 @@ int savBusVerInfo(void)
 
 	int fd = -1, ret = -1;
 
-	strcpy(fullName, WorkDir);
+	strcpy(fullName, WorkDir11);
 	strcat(fullName, _File_BusVer);
 
 	fd = open(fullName, O_CREAT | O_WRONLY, S_IRWXG | S_IRWXO | S_IRWXU);
@@ -443,7 +443,7 @@ int getBusVerInfo(void)
 
 	int fd = -1, ret = -1;
 
-	strcpy(fullName, WorkDir);
+	strcpy(fullName, WorkDir11);
 	strcat(fullName, _File_BusVer);
 
 	memset((unsigned char*)&gBusVerInfo, 0, sizeof(stBusVerIfo));
@@ -493,7 +493,7 @@ void GPRSSocketParaINIT(void)
 		gGprsinfo.isNetOK[i] = 0;
 	gGprsinfo.netwwwOk = FALSE;
 
-	strcpy(filename, WorkDir);
+	strcpy(filename, WorkDir11);
 	strcat(filename, _File_FileDownPara);
 	GetFileDatac(filename, 0, sizeof(gsl8583FileDownPara), (unsigned char *)&gsl8583FileDownPara); //读出下载的信息用于续传
 

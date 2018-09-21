@@ -100,14 +100,14 @@ int File_read(unsigned char mode)
 	if (mode == _File_DevicePara_mode) {
 		dp = (unsigned char *)&gDeviceParaTab;
 		dLen = sizeof(stDeviceParatable);
-		strcpy(fullName, WorkDir);
+		strcpy(fullName, WorkDir11);
 		strcat(fullName, _File_DevicePara);
 	}
 	else if (mode == _File_BuInfo_mode) {
 		PRINT_DEBUG("size of fFlagVary_1\n", sizeof(fFlagVary_1));
 		dp = (unsigned char *)&gBuInfo;
 		dLen = sizeof(fFlagVary_1);
-		strcpy(fullName, WorkDir);
+		strcpy(fullName, WorkDir11);
 		strcat(fullName, _File_BuInfo);
 	}
 	else {
@@ -233,13 +233,13 @@ int File_save(unsigned char mode)
 	if (mode == _File_DevicePara_mode) {
 		dp = (unsigned char *)&gDeviceParaTab;
 		dLen = sizeof(stDeviceParatable);
-		strcpy(fullName, WorkDir);
+		strcpy(fullName, WorkDir11);
 		strcat(fullName, _File_DevicePara);
 	}
 	else if (mode == _File_BuInfo_mode) {
 		dp = (unsigned char *)&gBuInfo;
 		dLen = sizeof(fFlagVary_1);
-		strcpy(fullName, WorkDir);
+		strcpy(fullName, WorkDir11);
 		strcat(fullName, _File_BuInfo);
 	}
 	else {
@@ -278,7 +278,7 @@ int  save_file_MothDelayTime(void)
 	char filename[128];
 	int fd, ret = -1;
 
-	strcpy(filename, WorkDir);
+	strcpy(filename, WorkDir11);
 	strcat(filename, _File_MothDelayTime);
 
 	fd = file_open_creat(filename);
@@ -294,7 +294,7 @@ int get_file_MonthDelayTime(void)
 {
 	char filename[128];
 
-	strcpy(filename, WorkDir);
+	strcpy(filename, WorkDir11);
 	strcat(filename, _File_MothDelayTime);
 	return GetFileDatac(filename, 0, sizeof(pMonthTime_1), (unsigned char *)&MothDelayTime); //读出下载的信息用于续传
 }
@@ -304,7 +304,7 @@ int  save_file_ErrorCard(void)
 	char filename[128];
 	int fd, ret = -1;
 
-	strcpy(filename, WorkDir);
+	strcpy(filename, WorkDir11);
 	strcat(filename, _File_ErrorCard);
 
 	fd = file_open_creat(filename);
@@ -320,7 +320,7 @@ int get_file_ErrorCard(void)
 {
 	char filename[128];
 
-	strcpy(filename, WorkDir);
+	strcpy(filename, WorkDir11);
 	strcat(filename, _File_ErrorCard);
 	return GetFileDatac(filename, 0, sizeof(gErrorCard), (unsigned char *)&gErrorCard); //读出下载的信息用于续传
 }
@@ -858,7 +858,7 @@ unsigned int IsInBlackList(unsigned char *sno)
 	unsigned int i_end, i_start, i;
 	unsigned int i_cur, addr;
 
-	strcpy(filename, WorkDir);
+	strcpy(filename, WorkDir11);
 	strcat(filename, _File_BlackList_bus);
 
 	MSG_LOG("[%s] sno:", __FUNCTION__);
