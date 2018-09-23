@@ -37,9 +37,9 @@
 
 #define WHICH_DEV	_ACR322_DEV_V
 
-#define SWITCH_CODE_USED	0
+#define SWITCH_CODE_USED		0
 
-#define SWITCH_DEBUG_PRJ	0
+#define SWITCH_DEBUG_PRJ		0
 
 #if SWITCH_DEBUG_PRJ
 #define SWITCH_DEBUG_PRICE		0	// transaction price force 0.01 yuan

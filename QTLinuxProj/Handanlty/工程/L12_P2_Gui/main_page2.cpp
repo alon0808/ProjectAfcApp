@@ -2117,7 +2117,6 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 	ptmpItem->setCheckable(true);\
 	s_action[s_maxMenuItem] = ptmpItem;\
 	s_actionFlag[s_maxMenuItem] = ID;\
-	menu->addAction(ptmpItem); \
 		++s_maxMenuItem;
 
 	QAction *ptmpItem = s_action[s_curMenuItem];
@@ -2145,29 +2144,40 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 		case SLZRKEY_ENTER:
 			//QMenu *menu = s_menu;
 			if ((s_menuStatus & ms_showMenu) == 0) {
-#if 1
 				QPoint pos; //= new QPoint(220, 200);
-				pos.setX(225);	// 贴近右侧窗体
-				pos.setY(200);
+#if 1
 				if (menu == NULL) {
 					menu = new QMenu(gMainPageThis);
 					CREATEMENUACTION("查询设备信息", ms_getDevInfo);
-					if (s_uiData->ud_set_device_status)
-					{
-						CREATEMENUACTION("设置设备号", ms_setDevId);
-						CREATEMENUACTION("设置银联终端号", ms_setUnpayDevId);
-						CREATEMENUACTION("下载银联密钥", ms_setUnpayDownKey);
-					}
-					//menu->move(230, 200);
-					s_curMenuItem = 0;
-					s_action[0]->setChecked(true);
-					menu->popup(pos);
+					CREATEMENUACTION("设置设备号", ms_setDevId);
+					CREATEMENUACTION("设置银联终端号", ms_setUnpayDevId);
+					CREATEMENUACTION("下载银联密钥", ms_setUnpayDownKey);
 
+					menu->addAction(s_action[0]);
+
+					s_action[0]->setChecked(true);
 					s_menu = menu;
 				}
-				else if (!menu->isVisible()) {
-					menu->setVisible(true);
+				//menu->move(230, 200);
+				s_curMenuItem = 0;
+
+				if (s_uiData->ud_set_device_status == 0)
+				{
+					menu->removeAction(s_action[1]);
+					menu->removeAction(s_action[2]);
+					menu->removeAction(s_action[3]);
 				}
+				else {
+					menu->addAction(s_action[1]);
+					menu->addAction(s_action[2]);
+					menu->addAction(s_action[3]);
+				}
+
+				pos.setX(225);	// 贴近右侧窗体
+				pos.setY(200);
+				//menu->setVisible(true);
+				menu->popup(pos);
+
 				s_menuStatus = ms_showMenu;
 #endif
 			}
@@ -2185,6 +2195,7 @@ void CMainPage2::slot_keyboard_menu(struct input_event *pkeyEvt) {
 					case ms_setUnpayDevId:
 						tmpI = dpt_unionpayTerId;
 						tmpI1 = 8;
+						break;
 					default:
 						tmpI = 0;
 						break;

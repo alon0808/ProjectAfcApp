@@ -82,6 +82,8 @@ sam_pub SamPubInf_ZJB;
 unsigned int s_sum1, a_sum1, dis_sum2;
 unsigned int a_sumR = 0;//手机钱包中的真实金额
 
+unsigned char g_set_device_status = 0;
+
 extern unsigned int did_sum2;
 
 extern void end_card(void);
@@ -431,6 +433,9 @@ void *main_ExKeyBoard(void *arg)
 //IC卡消费时的变量参数初始化
 void ICCardInit(void)
 {
+#ifdef _debug_
+	g_set_device_status = 1;
+#endif
 	printf("[%s] sizeof stDeviceParatable=%d[B]\r\n", __FUNCTION__, sizeof(stDeviceParatable));
 
 	get_file_BuInfo();
@@ -720,10 +725,10 @@ void saveDeviceParaTab(unsigned char mode, unsigned char *dat)
 	default:
 		return;
 	}
-#if 0
+#if 1
 #ifdef _debug_
 	debugstring("save cpu ROM:");
-	debugdata((unsigned char*)&gDeviceParaTab, sizeof(gDeviceParaTab), 1);
+	debugdata((unsigned char*)gDeviceParaTab.unionPayInof.unpayTerId, 8, 1);
 #endif
 #endif
 	save_file_DevicePara();
@@ -3291,7 +3296,8 @@ void ControlMagane(void)
 	case CARD_DEV_SET:
 		beep(1, 100, 10);
 		if (gBuInfo.stop_flag) {
-			gBuInfo.set_device_status = 1;
+			ControlDis(CARD_DEV_SET);
+			g_set_device_status = 1;
 		}
 		//		ShowSetInfo();
 		//		set_device();
@@ -3331,7 +3337,7 @@ void ControlMagane(void)
 			wRiteControlRecord(ID_REC_LEVBUS);				//发车卡记录
 			wRiteControlRecord(ID_REC_DRIVENO);				//司机卡记录
 
-			gBuInfo.set_device_status = 0;
+			g_set_device_status = 0;
 		}
 		else
 		{//到站
@@ -3734,7 +3740,7 @@ unsigned char  MoneyCoverly(unsigned char *buffer)
 
 	return ST_OK;
 
-}
+	}
 
 //钱包处理，老方式
 unsigned char PurseProcess(unsigned char mode)
@@ -3926,7 +3932,7 @@ again:
 	eemoney = s_sum1 * 4;
 	if ((a_sum1 >= s_sum1) && (a_sum1 < eemoney)) {
 		gCardinfo.gucSoudnorm = 1;
-	}
+}
 #else
 	if ((a_sum1 >= s_sum1) && (a_sum1 < 500)) {
 		gCardinfo.gucSoudnorm = 1;
@@ -4683,7 +4689,7 @@ month_step9:
 month_step10:
 	ErrorOper(IS_EFFECT_MONTH);
 	return 5;
-}
+	}
 
 unsigned char MonthResultManage(void)
 {
@@ -4901,7 +4907,7 @@ void main_card(void)
 	if ((resPonse == MONTH_CARD) || (resPonse == CARD_MONEY) || (resPonse == CARD_YEAR) || (resPonse == CARD_STUFF_BUS)) {
 		FengDuan_BUS_card();
 		return;
-	}
+}
 #endif	//#ifdef FengDuan_BU_
 
 

@@ -3953,8 +3953,9 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 			memcpy(KEK, "\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31\x31", 16);
 #endif
 #elif SWITCH_DEBUG_UNIONPAY == 2
-			memcpy(KEK, "\x2A\xB3\xF1\xA8\x8F\x7F\xC1\x29\x2A\x32\xF4\x5E\xFD\x8C\x94\xA7", 16);
-			saveMobileParameter(2, KEK);
+			memcpy(KEK, "\x1A\xB3\xF1\xA8\x8F\x7F\xC1\x29\x2A\x32\xF4\x5E\xFD\x8C\x94\xA7", 16);
+			//memcpy(KEK, "\x2A\xB3\xF1\xA8\x8F\x7F\xC1\x29\x2A\x32\xF4\x5E\xFD\x8C\x94\xA7", 16);
+			//saveMobileParameter(2, KEK);
 #endif
 
 			MSG_LOG("(char*)smpPara.KEK:\n");
@@ -4191,6 +4192,8 @@ unsigned char QPBOC_DataDeal(unsigned char *pakege, int packLen)
 
 	clr_wdt();
 pboc_8583dataDealEnd:
+	gGprsinfo.gmissflag = MISS_G_FREE;
+	gGprsinfo.GPRSLinkProcess = TCPSTARTSTAT;
 	MSG_LOG(" gjend..%d ", nestpLen);
 	if ((nestpP != 0) && (nestpLen > 0))//有重包，需要移到前面
 	{
@@ -4262,7 +4265,7 @@ void find_qpboc_new_mission(void)//此任务一秒进一次
 	// 		return ;
 	// 	}
 //add hbg
-	if (qpoc_flag.POBC_time > 2) {
+	if (qpoc_flag.POBC_time > 4) {
 		return;
 	}
 	if (Sign_Infor.ISOK == 0) {//还没有签过到
@@ -4957,7 +4960,7 @@ unsigned char getMobileParameter(unsigned char mode, unsigned char *obuf)
 	case 6:
 #if SWITCH_DEBUG_UNIONPAY == 1
 		memcpy(gDeviceParaTab.unionPayInof.unpayTerId, "00000001", 8);
-#else SWITCH_DEBUG_UNIONPAY == 2
+#elif (SWITCH_DEBUG_UNIONPAY == 2)
 		memcpy(gDeviceParaTab.unionPayInof.unpayTerId, "04892612", 8);
 #endif
 		memcpy(obuf, gDeviceParaTab.unionPayInof.unpayTerId, 8);

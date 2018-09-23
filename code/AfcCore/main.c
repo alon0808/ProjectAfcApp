@@ -154,7 +154,7 @@ AFC_CORE__API stUIData* GetStatusData(int timerTrige) {
 		pUIData->ud_version = SOFT_VER_TIME_LOG;
 
 	}
-	if ((timerTrige & 0x1F) == 1) {
+	if ((timerTrige & 0x1F) == 5) {
 		memcpy(pUIData->ud_devId, gDeviceParaTab.DeviceNo, 8);
 		if (strlen(pUIData->ud_devId) != 8) {
 			PRINT_ERRORBYS("GetStatusDatapUIData->ud_devId:", pUIData->ud_devId, LEN_DEV_ID);
@@ -174,7 +174,7 @@ AFC_CORE__API stUIData* GetStatusData(int timerTrige) {
 		pUIData->ud_uploadRec = GJRec_Send();
 		pUIData->ud_basePrice = GET_INT32S(gDeviceParaTab.busPrice);
 		pUIData->ud_stopflag = gBuInfo.stop_flag;
-		pUIData->ud_set_device_status = gBuInfo.set_device_status;
+		pUIData->ud_set_device_status = g_set_device_status;
 		pUIData->ud_isUnpayOk = Sign_Infor.ISOK;
 		pUIData->ud_isGJOk = gGprsinfo.isNetOK[LINK_GJ];
 	}

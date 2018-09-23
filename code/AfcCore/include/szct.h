@@ -66,8 +66,8 @@
 #define GPS_COM COM5
 
 //程序版本号
-#define SOFT_VER_TIME_LOG 0x0100
-#define SOFT_VER_TIME "2018.09.21 21:25 CHANGSHA"	//
+#define SOFT_VER_TIME_LOG 0x0103	// 1.03,与1.02一致
+#define SOFT_VER_TIME "2018.09.23 23:25 CHANGSHA"	//
 
 #define PRAGRAMMER "ZZC"
 

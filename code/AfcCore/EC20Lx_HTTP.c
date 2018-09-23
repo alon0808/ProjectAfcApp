@@ -747,7 +747,7 @@ void* main_HTTPDataDown(void *arg)
 									mkdir(BackDir, 0777);
 								}
 
-								system("cp -r "APPDIR BackDir);
+								//system("cp -r "APPDIR BackDir);
 
 								strcpy(tarName, "tar -zxvf ");
 								strcat(tarName, EC20PRO_LIST_FILE_NAME);
@@ -764,7 +764,7 @@ void* main_HTTPDataDown(void *arg)
 							}
 							else if (memcmp(gHttpDinfo.FFlag, SL8583FileFLAG_PRO, 3) == 0) {	//下载了车载机程序，下载完成后需要把程序传给车载机
 
-								system("cp -r "APPDIR" "BackDir);
+								//system("tar -cvf "BackDir"ltyapp.tar "APPDIR);
 
 								strcpy(tarName, "tar -xvf ");
 								strcat(tarName, BUSPRO_LIST_FILE_NAME);

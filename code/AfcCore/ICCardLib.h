@@ -16,6 +16,10 @@ typedef enum {
 	dptm_kek,
 }emDevParamTypeMode;
 
+// 存储ram变量
+extern unsigned char g_set_device_status;
+
+
 //物理卡号存贮变量
 extern stCardInfo gCardinfo;
 
